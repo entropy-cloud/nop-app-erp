@@ -92,13 +92,13 @@ public class ProductionVarianceAcctDocProvider implements IErpFinAcctDocProvider
         List<VoucherFact> facts = new ArrayList<>();
 
         appendElementFacts(facts, data, KEY_MATERIAL_VARIANCE, KEY_MATERIAL_DIRECTION,
-                SUBJECT_MATERIAL_VARIANCE, "制造差异-材料", SUBJECT_WIP_MATERIAL, "在制品-材料", event);
+                SUBJECT_MATERIAL_VARIANCE, null, SUBJECT_WIP_MATERIAL, null, "Material variance", "WIP material", event);
         appendElementFacts(facts, data, KEY_LABOR_VARIANCE, KEY_LABOR_DIRECTION,
-                SUBJECT_LABOR_VARIANCE, "制造差异-人工", SUBJECT_WIP_LABOR, "在制品-人工", event);
+                SUBJECT_LABOR_VARIANCE, null, SUBJECT_WIP_LABOR, null, "Labor variance", "WIP labor", event);
         appendElementFacts(facts, data, KEY_OVERHEAD_VARIANCE, KEY_OVERHEAD_DIRECTION,
-                SUBJECT_OVERHEAD_VARIANCE, "制造差异-制造费用", SUBJECT_WIP_OVERHEAD, "在制品-制造费用", event);
+                SUBJECT_OVERHEAD_VARIANCE, null, SUBJECT_WIP_OVERHEAD, null, "Overhead variance", "WIP overhead", event);
         appendElementFacts(facts, data, KEY_SUBCONTRACT_VARIANCE, KEY_SUBCONTRACT_DIRECTION,
-                SUBJECT_SUBCONTRACT_VARIANCE, "制造差异-委外", SUBJECT_WIP_SUBCONTRACT, "在制品-委外", event);
+                SUBJECT_SUBCONTRACT_VARIANCE, null, SUBJECT_WIP_SUBCONTRACT, null, "Subcontract variance", "WIP subcontract", event);
 
         return facts;
     }
@@ -107,13 +107,14 @@ public class ProductionVarianceAcctDocProvider implements IErpFinAcctDocProvider
                                     String amountKey, String directionKey,
                                     String varianceSubject, String varianceSubjectName,
                                     String wipSubject, String wipSubjectName,
+                                    String varianceMemoLabel, String wipMemoLabel,
                                     PostingEvent event) {
         BigDecimal amount = readAmount(data.get(amountKey));
         if (amount == null || amount.signum() <= 0) {
             return;
         }
         String direction = readDirection(data.get(directionKey));
-        String memo = buildMemo(data, varianceSubjectName);
+        String memo = buildMemo(data, varianceMemoLabel, wipMemoLabel);
         if (DIRECTION_DEBIT.equals(direction)) {
             facts.add(fact(varianceSubject, varianceSubjectName, DC_DEBIT, amount, memo, event,
                     ACCOUNT_KEY_MANUFACTURING_VARIANCE));
@@ -158,8 +159,8 @@ public class ProductionVarianceAcctDocProvider implements IErpFinAcctDocProvider
         return value != null ? value.toString() : DIRECTION_DEBIT;
     }
 
-    private String buildMemo(Map<String, Object> data, String subjectName) {
+    private String buildMemo(Map<String, Object> data, String varianceMemoLabel, String wipMemoLabel) {
         Object code = data.get(KEY_WORKORDER_CODE);
-        return code != null ? subjectName + "（工单 " + code + "）" : subjectName;
+        return code != null ? varianceMemoLabel + " (WO " + code + ") / " + wipMemoLabel : varianceMemoLabel + " / " + wipMemoLabel;
     }
 }

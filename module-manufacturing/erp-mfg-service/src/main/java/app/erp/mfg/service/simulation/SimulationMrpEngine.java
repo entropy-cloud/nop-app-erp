@@ -125,7 +125,7 @@ public class SimulationMrpEngine {
         computed.setBusinessDate(basePlan.getBusinessDate());
         computed.setPlanningHorizonDays(basePlan.getPlanningHorizonDays());
         computed.setStatus(ErpMfgConstants.MRP_STATUS_DRAFT);
-        computed.setRemark("仿真计算结果（场景 " + scenario.getCode() + " v" + nextVersionNo + "）");
+        computed.setRemark("Simulation result (scenario " + scenario.getCode() + " v" + nextVersionNo + ")");
         daoProvider.daoFor(ErpMfgMrpPlan.class).saveEntity(computed);
 
         // 2. 整合需求：从基线 plan 加载已整合的 demand 行（基线 plan 已 COMPUTED，其 demands 为整合后的快照）。
@@ -219,7 +219,7 @@ public class SimulationMrpEngine {
         promoted.setBusinessDate(computed.getBusinessDate());
         promoted.setPlanningHorizonDays(computed.getPlanningHorizonDays());
         promoted.setStatus(ErpMfgConstants.MRP_STATUS_DRAFT);
-        promoted.setRemark("仿真版本 v" + version.getVersionNo() + " 转正式计划");
+        promoted.setRemark("Simulation v" + version.getVersionNo() + " promoted to formal plan");
         daoProvider.daoFor(ErpMfgMrpPlan.class).saveEntity(promoted);
 
         // 复制计划行（重置 isFirmed / convertedBillCode）

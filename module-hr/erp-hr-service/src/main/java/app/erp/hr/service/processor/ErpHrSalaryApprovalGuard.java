@@ -15,10 +15,10 @@ import jakarta.inject.Inject;
  * {@link ErpHrErrors#ERR_SALARY_ILLEGAL_STATUS_TRANSITION} + salaryId/currentStatus/expectedStatus
  * （common 码作 cause 保留）。
  *
- * <p><strong>机制替代注记</strong>：计划原案「XScript try/catch common NopException → cause-chain 领域码」在
- * XLang 引擎不可行——{@code TryStatement} 语法节点被 {@code BuildExecutableProcessor} 拒绝
- * （{@code nop.err.xlang.exec.not-supported-node}，XLang 不支持 try/catch）。故将「Bean 抛 common 码 →
- * 领域映射」下沉到本 Java 守卫 Bean（契约 §7 的接线层职责），XScript 仅 inject 本守卫调用
+ * <p><strong>机制注记（2026-09-07 勘误）</strong>：计划原案「XScript try/catch common NopException → cause-chain
+ * 领域码」在 2026-08 时因 XLang 引擎不支持 {@code TryStatement}（{@code nop.err.xlang.exec.not-supported-node}）
+ * 而不可行；nop-entropy plan 2258 后 XScript 已支持 try/catch/finally。本守卫 Bean 下沉「Bean 抛 common 码 →
+ * 领域映射」是事务边界与可测试性的架构偏好（契约 §7 的接线层职责），XScript 仅 inject 本守卫调用
  * {@code assertCanXxx(entity)} + 经 Bean {@code *TargetStatus()} 写回目标态。行为与错误码契约不变。
  *
  * <p>供 {@code ErpHrSalary.xbiz} 五个审批轴动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）

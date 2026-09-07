@@ -27,7 +27,7 @@
     "postedBy": null,
     "approvedBy": null,
     "approvedAt": "*",
-    "remark": "由 ASN 自动创建（B2B_ASN 弱指针）",
+    "remark": "Auto-created from ASN (B2B_ASN weak pointer)",
     "delVersion": 0,
     "version": 2,
     "createdBy": "autotest-ref",

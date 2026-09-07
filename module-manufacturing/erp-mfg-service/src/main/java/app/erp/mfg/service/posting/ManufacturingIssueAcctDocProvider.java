@@ -76,12 +76,12 @@ public class ManufacturingIssueAcctDocProvider implements IErpFinAcctDocProvider
             String materialCode = readString(line.get(KEY_MATERIAL_CODE), "");
 
             // 贷方：原材料存货（按物料分列）
-            facts.add(fact(invSubject, "原材料存货", DC_CREDIT, lineCost,
+            facts.add(fact(invSubject, null, DC_CREDIT, lineCost,
                     buildMemo(workOrderCode, materialCode), event, ACCOUNT_KEY_INVENTORY));
         }
 
         // 借方：WIP 在制品（汇总）
-        facts.add(fact(wipSubject, "在制品-WIP", DC_DEBIT, totalCost,
+        facts.add(fact(wipSubject, null, DC_DEBIT, totalCost,
                 buildMemo(workOrderCode, null), event, ACCOUNT_KEY_MANUFACTURING_WIP));
 
         return facts;
@@ -108,11 +108,11 @@ public class ManufacturingIssueAcctDocProvider implements IErpFinAcctDocProvider
 
     private String buildMemo(String workOrderCode, String materialCode) {
         if (workOrderCode == null) {
-            return "生产领料";
+            return "Material issue";
         }
         return materialCode != null && !materialCode.isEmpty()
-                ? "领料（工单 " + workOrderCode + " / " + materialCode + "）"
-                : "领料（工单 " + workOrderCode + "）";
+                ? "Issue (WO " + workOrderCode + " / " + materialCode + ")"
+                : "Issue (WO " + workOrderCode + ")";
     }
 
     private BigDecimal readAmount(Object value) {

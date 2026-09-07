@@ -508,7 +508,7 @@ public class ErpCtContractBizModel extends AbstractErpCrudBizModel<ErpCtContract
             if (sb.length() > 0) {
                 sb.append(" ");
             }
-            sb.append("[附件:").append(attachmentId).append("]");
+            sb.append("[attachment:").append(attachmentId).append("]");
         }
         return sb.length() == 0 ? null : sb.toString();
     }

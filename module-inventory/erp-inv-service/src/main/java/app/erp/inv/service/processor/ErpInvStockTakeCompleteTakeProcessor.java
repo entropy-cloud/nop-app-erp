@@ -200,7 +200,7 @@ public class ErpInvStockTakeCompleteTakeProcessor {
     }
 
     protected String buildDiffMoveRemark(String takeCode, boolean gain) {
-        return "盘点差异 " + takeCode + (gain ? " 盘盈" : " 盘亏");
+        return "Stocktake diff " + takeCode + (gain ? " gain" : " loss");
     }
 
     /**

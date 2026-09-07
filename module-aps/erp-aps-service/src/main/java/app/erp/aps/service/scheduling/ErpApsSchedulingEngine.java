@@ -108,8 +108,8 @@ public class ErpApsSchedulingEngine {
                 op.setPlannedEndDateT(null);
                 op.setStatus(ErpApsConstants.OP_STATUS_UNSCHEDULABLE);
                 result.addConflict(op.getId(), "NO_AVAILABLE_ROUTING",
-                        "工序 " + (op.getCode() == null ? op.getId() : op.getCode())
-                                + " 全部启用路由被过滤（生效期/批量约束），无候选路由");
+                        "Operation " + (op.getCode() == null ? op.getId() : op.getCode())
+                                + ": all enabled routings filtered (validity/batch constraints), no candidate routing");
                 continue;
             }
 
@@ -133,15 +133,15 @@ public class ErpApsSchedulingEngine {
                     op.setPlannedEndDateT(null);
                     op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
                     result.addConflict(op.getId(), "NO_AVAILABLE_SLOT",
-                            "工作中心 " + op.getMachineId() + " 展望期内无连续可用时段");
+                            "Work center " + op.getMachineId() + ": no continuous available slot within horizon");
                 } else {
                     op.setPlannedStartDateT(null);
                     op.setPlannedEndDateT(null);
                     op.setStatus(ErpApsConstants.OP_STATUS_UNSCHEDULABLE);
                     result.addConflict(op.getId(), "NO_AVAILABLE_ROUTING",
-                            "工序 " + (op.getCode() == null ? op.getId() : op.getCode())
-                                    + " 全部候选路由（含主选" + (fallbackDisabled(op) ? "，降级已关闭" : "")
-                                    + "）无连续可用时段");
+                            "Operation " + (op.getCode() == null ? op.getId() : op.getCode())
+                                    + ": all candidate routings (incl. primary" + (fallbackDisabled(op) ? ", fallback disabled" : "")
+                                    + ") have no continuous available slot");
                 }
                 continue;
             }
@@ -187,8 +187,8 @@ public class ErpApsSchedulingEngine {
             if (candidates.isEmpty()) {
                 op.setStatus(ErpApsConstants.OP_STATUS_UNSCHEDULABLE);
                 result.addConflict(op.getId(), "NO_AVAILABLE_ROUTING",
-                        "工序 " + (op.getCode() == null ? op.getId() : op.getCode())
-                                + " 全部启用路由被过滤（生效期/批量约束），无候选路由");
+                        "Operation " + (op.getCode() == null ? op.getId() : op.getCode())
+                                + ": all enabled routings filtered (validity/batch constraints), no candidate routing");
                 continue;
             }
 
@@ -196,7 +196,7 @@ public class ErpApsSchedulingEngine {
             if (before == null) {
                 op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
                 result.addConflict(op.getId(), "NO_DEADLINE",
-                        "工序未配置 latestEndDateT 且排产方案未限定 horizonEnd，后向排产无终点");
+                        "Operation has no latestEndDateT and schedule does not limit horizonEnd; backward scheduling has no end anchor");
                 continue;
             }
             // 后续工序的倒推终点可能由其 successor 的 start - buffer 给出
@@ -217,11 +217,11 @@ public class ErpApsSchedulingEngine {
                 if (isLegacyOnly(candidates)) {
                     op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
                     result.addConflict(op.getId(), "NO_AVAILABLE_SLOT",
-                            "工作中心 " + op.getMachineId() + " 终点前无连续可用时段");
+                            "Work center " + op.getMachineId() + ": no continuous available slot before end anchor");
                 } else {
                     op.setStatus(ErpApsConstants.OP_STATUS_UNSCHEDULABLE);
                     result.addConflict(op.getId(), "NO_AVAILABLE_ROUTING",
-                            "工序 " + (op.getCode() == null ? op.getId() : op.getCode()) + " 全部候选路由终点前无连续可用时段");
+                            "Operation " + (op.getCode() == null ? op.getId() : op.getCode()) + ": all candidate routings have no slot before end anchor");
                 }
                 continue;
             }
@@ -231,7 +231,7 @@ public class ErpApsSchedulingEngine {
                 op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
                 result.setFeasible(false);
                 result.addConflict(op.getId(), "DEADLINE_NOT_REACHABLE",
-                        "推算开工 " + start + " 早于最早可开工 " + earliest);
+                        "Derived start " + start + " earlier than earliest possible start " + earliest);
                 continue;
             }
             LocalDateTime end = start.plusMinutes(chosen.duration);
@@ -332,8 +332,8 @@ public class ErpApsSchedulingEngine {
             op.setPlannedEndDateT(null);
             op.setStatus(ErpApsConstants.OP_STATUS_UNSCHEDULABLE);
             result.addConflict(op.getId(), "NO_AVAILABLE_ROUTING",
-                    "工序 " + (op.getCode() == null ? op.getId() : op.getCode())
-                            + " 全部启用路由被过滤（生效期/批量约束），无候选路由");
+                    "Operation " + (op.getCode() == null ? op.getId() : op.getCode())
+                            + ": all enabled routings filtered (validity/batch constraints), no candidate routing");
             return;
         }
         LocalDateTime earliest = effectiveEarliestStart(op, floor);
@@ -355,7 +355,7 @@ public class ErpApsSchedulingEngine {
             op.setPlannedEndDateT(null);
             op.setStatus(ErpApsConstants.OP_STATUS_UNSCHEDULABLE);
             result.addConflict(op.getId(), "NO_AVAILABLE_SLOT",
-                    "工序 " + (op.getCode() == null ? op.getId() : op.getCode()) + " 展望期内无连续可用时段（TOC）");
+                    "Operation " + (op.getCode() == null ? op.getId() : op.getCode()) + ": no continuous available slot within horizon (TOC)");
             return;
         }
         LocalDateTime end = start.plusMinutes(chosen.duration);
@@ -377,8 +377,8 @@ public class ErpApsSchedulingEngine {
         if (candidates.isEmpty()) {
             op.setStatus(ErpApsConstants.OP_STATUS_UNSCHEDULABLE);
             result.addConflict(op.getId(), "NO_AVAILABLE_ROUTING",
-                    "工序 " + (op.getCode() == null ? op.getId() : op.getCode())
-                            + " 全部启用路由被过滤（生效期/批量约束），无候选路由");
+                    "Operation " + (op.getCode() == null ? op.getId() : op.getCode())
+                            + ": all enabled routings filtered (validity/batch constraints), no candidate routing");
             return;
         }
         LocalDateTime before = op.getLatestEndDateT() != null ? op.getLatestEndDateT().toLocalDateTime() : horizonEnd;
@@ -388,7 +388,7 @@ public class ErpApsSchedulingEngine {
         if (before == null) {
             op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
             result.addConflict(op.getId(), "NO_DEADLINE",
-                    "工序未配置 latestEndDateT 且排产方案未限定 horizonEnd，TOC 后向倒排无终点");
+                    "Operation has no latestEndDateT and schedule does not limit horizonEnd; TOC backward scheduling has no end anchor");
             return;
         }
         before = applySuccessorConstraint(op, before, chainByWorkOrder);
@@ -407,7 +407,7 @@ public class ErpApsSchedulingEngine {
         if (chosen == null) {
             op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
             result.addConflict(op.getId(), "NO_AVAILABLE_SLOT",
-                    "工序 " + (op.getCode() == null ? op.getId() : op.getCode()) + " 终点前无连续可用时段（TOC 倒排）");
+                    "Operation " + (op.getCode() == null ? op.getId() : op.getCode()) + ": no continuous slot before end anchor (TOC backward)");
             return;
         }
         LocalDateTime earliest = effectiveEarliestStart(op, floor);
@@ -415,7 +415,7 @@ public class ErpApsSchedulingEngine {
             op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
             result.setFeasible(false);
             result.addConflict(op.getId(), "DEADLINE_NOT_REACHABLE",
-                    "TOC 倒排开工 " + start + " 早于最早可开工 " + earliest);
+                    "TOC backward derived start " + start + " earlier than earliest possible start " + earliest);
             return;
         }
         LocalDateTime end = start.plusMinutes(chosen.duration);

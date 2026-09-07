@@ -106,7 +106,7 @@ public class SpcOutOfControlHandler {
         ncr.setQuantity(java.math.BigDecimal.ONE);
         ncr.setSeverity(mapSeverity(violatedRules));
         ncr.setStatus(ErpQaConstants.NCR_STATUS_OPEN);
-        ncr.setDescription("SPC 失控预警：chart=" + chart.getCode()
+        ncr.setDescription("SPC out-of-control alert: chart=" + chart.getCode()
                 + " subgroupNo=" + sample.getSubgroupNo()
                 + " mean=" + sample.getMean()
                 + " violatedRules=" + (sample.getViolatedRules() == null ? "" : sample.getViolatedRules())
@@ -117,8 +117,8 @@ public class SpcOutOfControlHandler {
         ErpQaAction action = actionDao.newEntity();
         action.setNcrId(ncr.getId());
         action.setActionType("CAPA");
-        action.setDescription("SPC 失控 CAPA：调查并消除特殊原因（chart=" + chart.getCode()
-                + ", subgroup=" + sample.getSubgroupNo() + "）");
+        action.setDescription("SPC out-of-control CAPA: investigate and eliminate special cause (chart=" + chart.getCode()
+                + ", subgroup=" + sample.getSubgroupNo() + ")");
         action.setStatus(ErpQaConstants.ACTION_STATUS_PENDING);
         actionDao.saveEntity(action);
     }

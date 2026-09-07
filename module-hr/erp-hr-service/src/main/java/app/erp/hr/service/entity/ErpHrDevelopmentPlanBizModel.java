@@ -150,8 +150,8 @@ public class ErpHrDevelopmentPlanBizModel extends AbstractErpCrudBizModel<ErpHrD
         item.setCompetencyId(gap.getCompetencyId());
         item.setGapId(gap.getId());
         item.setTargetLevel(gap.getRequiredLevel());
-        item.setDevelopmentAction("针对胜任力差距 (gap=" + nz(gap.getGapValue())
-                + ",severity=" + gap.getGapSeverity() + ") 的建议发展行动");
+        item.setDevelopmentAction("Suggested development action for competency gap (gap=" + nz(gap.getGapValue())
+                + ",severity=" + gap.getGapSeverity() + ")");
         item.setStatus(ErpHrConstants.PLAN_ITEM_STATUS_NOT_STARTED);
         item.setStartDate(CoreMetrics.currentDate());
         item.setEndDate(CoreMetrics.currentDate().plusMonths(3));

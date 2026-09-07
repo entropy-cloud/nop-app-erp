@@ -384,7 +384,7 @@ public class FunnelAggregationEngine {
         if (unknownCount > 0 && list.size() < topN) {
             Map<String, Object> row = new LinkedHashMap<>();
             row.put("lostReasonId", null);
-            row.put("reasonName", "(未知)");
+            row.put("reasonName", "(unknown)");
             row.put("count", unknownCount);
             list.add(row);
         }

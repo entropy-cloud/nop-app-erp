@@ -220,7 +220,7 @@ public class ErpMfgScheduleToJobCardProcessor {
         jc.setStatus(ErpMfgConstants.JOB_CARD_STATUS_OPEN);
         jc.setSourceScheduleId(slot.getOperationOrderId());
         jc.setCode(buildJobCardCode(wo, slot));
-        jc.setRemark("APS排程自动生成");
+        jc.setRemark("Auto-generated from APS schedule");
         // JobCard 无 plannedStartT/plannedEndT 字段（仅有 actualStartTime/actualEndTime）；
         // 排程时间经 sourceScheduleId 弱参照溯源至 ErpApsOperationOrder，不重复冗余存储。
         return jc;

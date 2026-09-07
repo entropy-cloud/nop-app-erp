@@ -84,28 +84,28 @@ public class PurAcctDocProvider implements IErpFinAcctDocProvider {
                 // 增 PPV 行（|差异| 量值，涨价借 1404 / 降价贷 1404），两者合计恒等于原 TOTAL_AMOUNT（Dr Σ = Cr Σ 保持）。
                 // A1：设置 accountKey 让 GL 映射规则解析器有机会覆盖 subjectCode（plan 2026-07-21-0827-1）。
                 // 既有 SUBJECT_* 常量保留作为 fallback（规则表无匹配时仍走既有，行为完全不变）。
-                facts.add(fact(SUBJECT_PURCHASE, "在途物资", DC_DEBIT, amount.subtract(variance), rate, event, ACCOUNT_KEY_PURCHASE));
-                facts.add(fact(SUBJECT_INPUT_VAT, "应交税费-进项税额", DC_DEBIT, tax, rate, event, ACCOUNT_KEY_INPUT_VAT));
-                facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_CREDIT, withTax, rate, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
+                facts.add(fact(SUBJECT_PURCHASE, null, DC_DEBIT, amount.subtract(variance), rate, event, ACCOUNT_KEY_PURCHASE));
+                facts.add(fact(SUBJECT_INPUT_VAT, null, DC_DEBIT, tax, rate, event, ACCOUNT_KEY_INPUT_VAT));
+                facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, null, DC_CREDIT, withTax, rate, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
                 boolean priceUp = variance.signum() > 0;
-                facts.add(fact(SUBJECT_PRICE_VARIANCE, "材料成本差异", priceUp ? DC_DEBIT : DC_CREDIT,
+                facts.add(fact(SUBJECT_PRICE_VARIANCE, null, priceUp ? DC_DEBIT : DC_CREDIT,
                         variance.abs(), rate, event, ACCOUNT_KEY_PRICE_VARIANCE));
             } else {
                 // A1：设置 accountKey 让 GL 映射规则解析器有机会覆盖 subjectCode（plan 2026-07-21-0827-1）。
                 // 既有 SUBJECT_* 常量保留作为 fallback（规则表无匹配时仍走既有，行为完全不变）。
-                facts.add(fact(SUBJECT_PURCHASE, "在途物资", DC_DEBIT, amount, rate, event, ACCOUNT_KEY_PURCHASE));
-                facts.add(fact(SUBJECT_INPUT_VAT, "应交税费-进项税额", DC_DEBIT, tax, rate, event, ACCOUNT_KEY_INPUT_VAT));
-                facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_CREDIT, withTax, rate, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
+                facts.add(fact(SUBJECT_PURCHASE, null, DC_DEBIT, amount, rate, event, ACCOUNT_KEY_PURCHASE));
+                facts.add(fact(SUBJECT_INPUT_VAT, null, DC_DEBIT, tax, rate, event, ACCOUNT_KEY_INPUT_VAT));
+                facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, null, DC_CREDIT, withTax, rate, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
             }
         } else if (event.getBusinessType() == ErpFinBusinessType.PURCHASE_RETURN) {
             // 反向 PURCHASE_INPUT：借暂估应付 / 贷存货（不含税，对齐 InvAcctDocProvider.PURCHASE_INPUT 的 1401/2202）
             BigDecimal amount = readDecimal(event, KEY_TOTAL_AMOUNT);
-            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款-暂估", DC_DEBIT, amount, rate, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
-            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, amount, rate, event, ACCOUNT_KEY_INVENTORY));
+            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, null, DC_DEBIT, amount, rate, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
+            facts.add(fact(SUBJECT_INVENTORY, null, DC_CREDIT, amount, rate, event, ACCOUNT_KEY_INVENTORY));
         } else { // PAYMENT
             BigDecimal total = readDecimal(event, KEY_TOTAL);
-            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_DEBIT, total, rate, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
-            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, total, rate, event, ACCOUNT_KEY_BANK_DEPOSIT));
+            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, null, DC_DEBIT, total, rate, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
+            facts.add(fact(SUBJECT_BANK_DEPOSIT, null, DC_CREDIT, total, rate, event, ACCOUNT_KEY_BANK_DEPOSIT));
         }
         return facts;
     }

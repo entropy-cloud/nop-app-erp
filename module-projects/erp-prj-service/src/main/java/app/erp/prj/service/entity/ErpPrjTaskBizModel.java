@@ -258,7 +258,7 @@ public class ErpPrjTaskBizModel extends AbstractErpCrudBizModel<ErpPrjTask> impl
 
         String[] statuses = {ErpPrjConstants.TASK_STATUS_TODO, ErpPrjConstants.TASK_STATUS_IN_PROGRESS,
                 ErpPrjConstants.TASK_STATUS_DONE, ErpPrjConstants.TASK_STATUS_BLOCKED};
-        String[] titles = {"待开始", "进行中", "已完成", "阻塞"};
+        String[] titles = {"To Do", "In Progress", "Done", "Blocked"};
 
         Map<String, Object> board = new LinkedHashMap<>();
         List<String> rootChildren = new ArrayList<>();

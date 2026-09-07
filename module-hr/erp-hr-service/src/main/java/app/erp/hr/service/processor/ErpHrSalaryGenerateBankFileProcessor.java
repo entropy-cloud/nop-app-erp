@@ -37,7 +37,7 @@ public class ErpHrSalaryGenerateBankFileProcessor extends AbstractErpHrSalaryPro
             total = total.add(net);
             content.append(String.format("%03d", count)).append(",")
                     .append(s.getEmployeeId()).append(",")
-                    .append(net.toPlainString()).append(",工资\n");
+                    .append(net.toPlainString()).append(",SALARY\n");
             s.setPaymentBatchNo(batchNo);
             s.setPaymentStatus(paymentStateMachine.markPaidTargetStatus());
             s.setPaymentDate(CoreMetrics.today());

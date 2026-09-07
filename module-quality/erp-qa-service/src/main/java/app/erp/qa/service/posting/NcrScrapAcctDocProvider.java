@@ -59,9 +59,9 @@ public class NcrScrapAcctDocProvider implements IErpFinAcctDocProvider {
         String warehouseId = (String) event.getBillData().get(KEY_WAREHOUSE_ID);
 
         List<VoucherFact> facts = new ArrayList<>(2);
-        facts.add(fact(SUBJECT_LOSS, "营业外支出-报废损失", DC_DEBIT, amount, materialId, warehouseId, event,
+        facts.add(fact(SUBJECT_LOSS, null, DC_DEBIT, amount, materialId, warehouseId, event,
                 ACCOUNT_KEY_NON_OPERATING_EXPENSE));
-        facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, amount, materialId, warehouseId, event,
+        facts.add(fact(SUBJECT_INVENTORY, null, DC_CREDIT, amount, materialId, warehouseId, event,
                 ACCOUNT_KEY_INVENTORY));
         return facts;
     }

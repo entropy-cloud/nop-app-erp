@@ -100,7 +100,7 @@ public class SalaryPostingDispatcher {
             } else {
                 LOG.error("Salary accrual posting error, salary record {} remains APPROVED", salary.getId(), e);
             }
-            dispatchFailureAlert(salary, "计提", e);
+            dispatchFailureAlert(salary, "ACCRUAL", e);
             return false;
         }
     }
@@ -129,7 +129,7 @@ public class SalaryPostingDispatcher {
             } else {
                 LOG.error("Employer social insurance posting error, salary record {} remains APPROVED", salary.getId(), e);
             }
-            dispatchFailureAlert(salary, "社保", e);
+            dispatchFailureAlert(salary, "SOCIAL_INSURANCE", e);
             return false;
         }
     }
@@ -158,7 +158,7 @@ public class SalaryPostingDispatcher {
             } else {
                 LOG.error("Employer housing fund posting error, salary record {} remains APPROVED", salary.getId(), e);
             }
-            dispatchFailureAlert(salary, "公积金", e);
+            dispatchFailureAlert(salary, "HOUSING_FUND", e);
             return false;
         }
     }
@@ -185,7 +185,7 @@ public class SalaryPostingDispatcher {
             } else {
                 LOG.error("Salary payment posting error, salary record {} already PAID", salary.getId(), e);
             }
-            dispatchFailureAlert(salary, "发放", e);
+            dispatchFailureAlert(salary, "PAYMENT", e);
             return false;
         }
     }

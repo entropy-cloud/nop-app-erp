@@ -41,7 +41,7 @@ public class ErpQaNonConformanceUpgradeToRecallProcessor extends AbstractErpQaNo
 
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "RC-FROM-NCR-" + ncr.getId());
-        data.put("recallName", "NCR升级召回:" + ncr.getCode());
+        data.put("recallName", "NCR upgrade recall: " + ncr.getCode());
         data.put("triggerType", ErpQaConstants.RECALL_TRIGGER_BATCH_NCR_UPGRADE);
         data.put("sourceNcrId", ncr.getId());
         if (ncr.getMaterialId() != null) {

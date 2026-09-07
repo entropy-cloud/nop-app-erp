@@ -214,7 +214,7 @@ public class CostAdjustmentService {
         header.setOrgId(adjust.getOrgId());
         header.setBusinessDate(adjust.getBusinessDate() != null ? adjust.getBusinessDate() : CoreMetrics.today());
         header.orm_propValueByName("status", StandardCostResolver.STATUS_FIRMED);
-        header.setRemark("由成本调整单自动发布");
+        header.setRemark("Auto-published from cost adjustment");
         headerDao.saveEntity(header);
 
         IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);

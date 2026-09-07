@@ -79,10 +79,10 @@ public class MaintenanceLaborAcctDocProvider implements IErpFinAcctDocProvider {
         String memo = buildMemo(equipmentCode, visitCode);
 
         // 借方：维修费用（科目编码 6602，种子 subjectName 经实测为「折旧费用」）
-        facts.add(fact(expenseSubject, "维修费用", DC_DEBIT, amount, memo, event, ACCOUNT_KEY_MAINTENANCE_EXPENSE));
+        facts.add(fact(expenseSubject, null, DC_DEBIT, amount, memo, event, ACCOUNT_KEY_MAINTENANCE_EXPENSE));
 
         // 贷方：应付职工薪酬（科目编码 2211，权责发生制员工薪酬计提）
-        facts.add(fact(payableSubject, "应付职工薪酬", DC_CREDIT, amount, memo, event, ACCOUNT_KEY_SALARY_PAYABLE));
+        facts.add(fact(payableSubject, null, DC_CREDIT, amount, memo, event, ACCOUNT_KEY_SALARY_PAYABLE));
 
         return facts;
     }
@@ -113,15 +113,15 @@ public class MaintenanceLaborAcctDocProvider implements IErpFinAcctDocProvider {
     }
 
     private String buildMemo(String equipmentCode, String visitCode) {
-        StringBuilder sb = new StringBuilder("维修工时费用化");
+        StringBuilder sb = new StringBuilder("Maintenance labor expense");
         if (visitCode != null && !visitCode.isEmpty()) {
-            sb.append("（访问 ").append(visitCode);
+            sb.append(" (visit ").append(visitCode);
             if (equipmentCode != null && !equipmentCode.isEmpty()) {
-                sb.append(" / 设备 ").append(equipmentCode);
+                sb.append(" / equip ").append(equipmentCode);
             }
-            sb.append("）");
+            sb.append(")");
         } else if (equipmentCode != null && !equipmentCode.isEmpty()) {
-            sb.append("（设备 ").append(equipmentCode).append("）");
+            sb.append(" (equip ").append(equipmentCode).append(")");
         }
         return sb.toString();
     }

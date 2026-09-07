@@ -66,11 +66,11 @@ public class SubcontractIssueAcctDocProvider implements IErpFinAcctDocProvider {
             String invSubject = readString(line.get(KEY_INVENTORY_SUBJECT), ErpMfgConstants.SUBJECT_FINISHED_GOODS);
             String materialCode = readString(line.get(KEY_MATERIAL_CODE), "");
 
-            facts.add(fact(invSubject, "原材料存货", DC_CREDIT, lineCost,
+            facts.add(fact(invSubject, null, DC_CREDIT, lineCost,
                     buildMemo(subcontractCode, materialCode), event, ACCOUNT_KEY_INVENTORY));
         }
 
-        facts.add(fact(subcontractSubject, "委外物资", DC_DEBIT, totalCost,
+        facts.add(fact(subcontractSubject, null, DC_DEBIT, totalCost,
                 buildMemo(subcontractCode, null), event, ACCOUNT_KEY_SUBCONTRACT_MATERIAL));
         return facts;
     }
@@ -96,11 +96,11 @@ public class SubcontractIssueAcctDocProvider implements IErpFinAcctDocProvider {
 
     private String buildMemo(String subcontractCode, String materialCode) {
         if (subcontractCode == null) {
-            return "委外发料";
+            return "Subcontract issue";
         }
         return materialCode != null && !materialCode.isEmpty()
-                ? "委外发料（" + subcontractCode + " / " + materialCode + "）"
-                : "委外发料（" + subcontractCode + "）";
+                ? "Subcontract issue (" + subcontractCode + " / " + materialCode + ")"
+                : "Subcontract issue (" + subcontractCode + ")";
     }
 
     private BigDecimal readAmount(Object value) {

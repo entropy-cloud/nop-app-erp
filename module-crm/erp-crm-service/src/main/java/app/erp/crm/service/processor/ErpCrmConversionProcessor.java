@@ -206,7 +206,7 @@ public class ErpCrmConversionProcessor {
         if (lead.getCompanyName() != null && !lead.getCompanyName().trim().isEmpty()) {
             return lead.getCompanyName();
         }
-        return lead.getContactName() != null ? lead.getContactName() : ("客户-" + lead.getId());
+        return lead.getContactName() != null ? lead.getContactName() : ("Customer-" + lead.getId());
     }
 
     protected void ifPresent(Map<String, Object> data, String key, String value) {

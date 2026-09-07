@@ -7,7 +7,7 @@
     "planningHorizonDays": 30,
     "status": "DRAFT",
     "status_label": "DRAFT-草稿",
-    "remark": "仿真版本 v1 转正式计划",
+    "remark": "Simulation v1 promoted to formal plan",
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",

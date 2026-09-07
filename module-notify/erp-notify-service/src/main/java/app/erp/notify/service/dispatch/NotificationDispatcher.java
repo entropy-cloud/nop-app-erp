@@ -125,7 +125,7 @@ public class NotificationDispatcher {
             if (existing != null) {
                 int prevCount = existing.getMergeCount() == null ? 1 : existing.getMergeCount();
                 String mergedBody = StringHelper.isBlank(body) ? body
-                        : body + "\n[合并 +" + prevCount + "]";
+                        : body + "\n[merged +" + prevCount + "]";
                 return mergeCoordinator.mergeInto(existing, subject, mergedBody);
             }
         }

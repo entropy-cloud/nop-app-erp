@@ -197,7 +197,7 @@ public class ErpB2bAsnHandleInboundWebhookProcessor {
         log.setDirection(direction);
         log.setRequestPayload(requestPayload);
         log.setResultCode(error ? ErpB2bConstants.EDI_RESULT_ERROR : ErpB2bConstants.EDI_RESULT_SUCCESS);
-        log.setResultMsg(error ? ("PARSE_FAILED: " + errorMsg) : "RECEIVE: 入站报文解析成功");
+        log.setResultMsg(error ? ("PARSE_FAILED: " + errorMsg) : "RECEIVE: inbound document parsed successfully");
         log.setLogTime(CoreMetrics.currentTimestamp());
         dao.saveEntity(log);
     }

@@ -226,13 +226,13 @@ public class TestErpSalReturnExchange extends JunitAutoTestCase {
         assertEquals(0, new BigDecimal("15").compareTo(invoice.getTotalAmountWithTax()),
                 "补差价发票含税金额 = Δ = 30 − 15 = 15");
         assertEquals(CUSTOMER_ID, invoice.getCustomerId(), "补差价发票客户继承退货单");
-        assertTrue(invoice.getRemark() != null && invoice.getRemark().contains("换货补差价"),
+        assertTrue(invoice.getRemark() != null && invoice.getRemark().contains("Exchange price difference"),
                 "补差价发票 remark 记录价差来源");
 
         ErpSalReturn returnOrder = reload(returnId);
         ErpSalDelivery delivery = daoProvider.daoFor(ErpSalDelivery.class)
                 .getEntityById(returnOrder.getExchangeDeliveryId());
-        assertTrue(delivery.getRemark() != null && delivery.getRemark().contains("补差价开票"),
+        assertTrue(delivery.getRemark() != null && delivery.getRemark().contains("price-difference invoice"),
                 "换货出库单 remark 记录价差方向（审计可追溯）");
     }
 
@@ -278,7 +278,7 @@ public class TestErpSalReturnExchange extends JunitAutoTestCase {
         ErpSalReturn returnOrder = reload(returnId);
         ErpSalDelivery delivery = daoProvider.daoFor(ErpSalDelivery.class)
                 .getEntityById(returnOrder.getExchangeDeliveryId());
-        assertTrue(delivery.getRemark() != null && delivery.getRemark().contains("退款"),
+        assertTrue(delivery.getRemark() != null && delivery.getRemark().contains("refund"),
                 "换货出库单 remark 记录价差方向（审计可追溯）");
     }
 

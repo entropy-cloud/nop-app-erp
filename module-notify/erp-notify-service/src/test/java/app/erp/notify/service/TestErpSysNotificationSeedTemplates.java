@@ -70,7 +70,7 @@ public class TestErpSysNotificationSeedTemplates extends JunitAutoTestCase {
         assertEquals(1, list.size(), "业务提醒 5 分钟窗口内两次应合并为 1 条: " + list.size());
         ErpSysNotification n = list.get(0);
         assertTrue(n.getMergeCount() >= 2, "mergeCount 应 >=2");
-        assertTrue(n.getBody().contains("[合并"), "合并 body 含次数标记: " + n.getBody());
+        assertTrue(n.getBody().contains("[merged"), "合并 body 含次数标记: " + n.getBody());
         assertEquals(ErpNotifyConstants.CHANNEL_IN_APP, n.getChannel());
     }
 

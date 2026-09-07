@@ -22,6 +22,6 @@ public class ManualOcrEngine implements IErpCtOcrEngine {
 
     @Override
     public OcrRecognizeResponse recognize(OcrRecognizeRequest request) {
-        return OcrRecognizeResponse.failure("manual 引擎无自动识别能力，请人工补录 ocrText（submitOcrText）");
+        return OcrRecognizeResponse.failure("Manual engine has no automatic recognition capability; submit ocrText manually (submitOcrText)");
     }
 }

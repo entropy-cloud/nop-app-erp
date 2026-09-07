@@ -211,7 +211,7 @@ public class ErpSalPricingRuleEngine {
         giftLine.setQuantity(rule.getGiftQuantity() != null ? rule.getGiftQuantity() : BigDecimal.ONE);
         giftLine.setAmount(BigDecimal.ZERO);
         giftLine.setPricingSource(PRICING_SOURCE_PROMOTION);
-        giftLine.setRemark("赠品行");
+        giftLine.setRemark("Gift line");
         result.getModifiedLines().add(giftLine);
         result.getGiftRuleIds().add(rule.getId());
     }

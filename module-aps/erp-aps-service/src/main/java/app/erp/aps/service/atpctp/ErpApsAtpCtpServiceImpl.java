@@ -154,7 +154,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
         List<ErpApsOperationOrder> shadows = buildShadowOps(materialId, qty);
         if (shadows.isEmpty()) {
             result.setFeasible(false);
-            result.setReason("物料 " + materialId + " 无可用工艺路线（默认 BOM 缺失或无工序）");
+            result.setReason("Material " + materialId + ": no available routing (default BOM missing or no operations)");
             result.setEarliestCompletionDate(desiredDate);
             return result;
         }
@@ -174,7 +174,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
             if (start == null) {
                 result.setFeasible(false);
                 result.setBottleneckWorkcenter(String.valueOf(shadow.getMachineId()));
-                result.setReason("工作中心 " + shadow.getMachineId() + " 无可用时段容纳影子工序");
+                result.setReason("Work center " + shadow.getMachineId() + ": no available slot for shadow operation");
                 result.setEarliestCompletionDate(desiredDate);
                 return result;
             }
@@ -216,7 +216,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
             ErpApsOperationOrder shadow = apsDao.newEntity();
             shadow.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
             shadow.setMachineId(bo.getWorkcenterId());
-            shadow.setOperationName("工序-" + bo.getLineNo());
+            shadow.setOperationName("OP-" + bo.getLineNo());
             shadow.setSequence(seq);
             shadow.setSetupTime(BigDecimal.ZERO);
             shadow.setRuntimePerUnit(bo.getStandardTime() == null ? BigDecimal.ZERO : bo.getStandardTime());

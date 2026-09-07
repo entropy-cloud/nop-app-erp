@@ -45,7 +45,7 @@ public class ErpB2bEdiDocCreateInboundProcessor {
         daoProvider.daoFor(ErpB2bEdiDoc.class).saveEntity(doc);
 
         writeLog(doc, ErpB2bConstants.DIRECTION_INBOUND, ErpB2bConstants.EDI_RESULT_SUCCESS,
-                "RECEIVE: 收到入站报文", rawPayload, null);
+                "RECEIVE: inbound document received", rawPayload, null);
         return doc;
     }
 

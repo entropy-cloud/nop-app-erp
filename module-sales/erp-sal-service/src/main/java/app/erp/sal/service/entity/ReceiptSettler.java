@@ -129,7 +129,7 @@ public class ReceiptSettler {
         reversal.setReceiptId(receipt.getId());
         reversal.setInvoiceId(invoiceId);
         reversal.setAmount(settled.negate());
-        reversal.setRemark("核销冲销");
+        reversal.setRemark("Settlement reversal");
         lineDao.saveEntity(reversal);
 
         recomputeInvoiceReceived(invoiceId);

@@ -89,7 +89,7 @@ public class TestErpSysNotificationDispatch extends JunitAutoTestCase {
         assertEquals(1, list.size(), "频控窗口内二次 notify 应合并为 1 行: " + list.size());
         ErpSysNotification n = list.get(0);
         assertTrue(n.getMergeCount() >= 2, "mergeCount 应递增到 >=2: " + n.getMergeCount());
-        assertTrue(n.getBody().contains("[合并"), "合并 body 应含合并标记: " + n.getBody());
+        assertTrue(n.getBody().contains("[merged"), "合并 body 应含合并标记: " + n.getBody());
     }
 
     @Test

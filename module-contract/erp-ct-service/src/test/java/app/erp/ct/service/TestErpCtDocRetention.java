@@ -187,7 +187,7 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
         assertTrue(purged.getDelVersion() != null && purged.getDelVersion() > 0,
                 "delVersion 软删标记已置（实际: " + purged.getDelVersion() + "）");
         assertNotNull(purged.getRemark(), "remark 销毁事件记录（耐久审计载体）");
-        assertTrue(purged.getRemark().contains("已销毁(purge)"), "remark 含销毁事件: " + purged.getRemark());
+        assertTrue(purged.getRemark().contains("Purged:"), "remark 含销毁事件: " + purged.getRemark());
         assertTrue(purged.getRemark().contains(PURGE_ADMIN_USER), "remark 含操作人");
 
         // 审计通知派发（有 ACTIVE 模板）

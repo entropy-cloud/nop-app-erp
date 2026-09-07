@@ -76,7 +76,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
         receive.setDocStatus("UNSUBMITTED");
         receive.setApproveStatus("UNSUBMITTED");
         receive.setReceiveStatus("NOT_RECEIVED");
-        receive.setRemark("由 ASN 自动创建（B2B_ASN 弱指针）");
+        receive.setRemark("Auto-created from ASN (B2B_ASN weak pointer)");
         daoProvider.daoFor(ErpPurReceive.class).saveEntity(receive);
 
         // 行级回填：iterate AsnLine → ErpPurReceiveLine（plan 2026-07-19-0849-1 Phase 1 Decision）
@@ -159,7 +159,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
 
             // warehouseId 复用 Receive 头（Decision (d)②）
             receiveLine.setWarehouseId(receive.getWarehouseId());
-            receiveLine.setRemark("由 ASN AsnLine #" + asnLine.getLineNo() + " 自动回填");
+            receiveLine.setRemark("Auto-filled from ASN AsnLine #" + asnLine.getLineNo());
 
             try {
                 lineDao.saveEntity(receiveLine);

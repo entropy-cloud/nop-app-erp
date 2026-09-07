@@ -111,7 +111,7 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
         // 死信：保留 ADVISED + remark 错误
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_ADVISED, result.getStatus());
         assertNotNull(result.getRemark());
-        assertTrue(result.getRemark().contains("网关重试耗尽"), "remark 应含死信标记");
+        assertTrue(result.getRemark().contains("gateway retries exhausted"), "remark 应含死信标记");
 
         // 失败日志落库
         List<ErpLogShipmentLog> logs = findLogs(shipmentId);
@@ -131,7 +131,7 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
         // 4xx 不重试直接死信：保留 ADVISED
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_ADVISED, result.getStatus());
         assertNotNull(result.getRemark());
-        assertTrue(result.getRemark().contains("不可重试"), "remark 应含 4xx 不可重试标记");
+        assertTrue(result.getRemark().contains("non-retryable"), "remark 应含 4xx 不可重试标记");
     }
 
     @Test

@@ -66,14 +66,14 @@ public class PurchasePriceVarianceAcctDocProvider implements IErpFinAcctDocProvi
 
         List<VoucherFact> facts = new ArrayList<>(2);
         if (DIRECTION_DEBIT.equals(direction)) {
-            facts.add(fact(SUBJECT_PPV, "材料成本差异", DC_DEBIT, amount, materialId, warehouseId, event,
+            facts.add(fact(SUBJECT_PPV, null, DC_DEBIT, amount, materialId, warehouseId, event,
                     ACCOUNT_KEY_PURCHASE_PRICE_VARIANCE));
-            facts.add(fact(SUBJECT_ESTIMATED_AP, "应付账款-暂估", DC_CREDIT, amount, materialId, warehouseId, event,
+            facts.add(fact(SUBJECT_ESTIMATED_AP, null, DC_CREDIT, amount, materialId, warehouseId, event,
                     ACCOUNT_KEY_ACCOUNTS_PAYABLE));
         } else {
-            facts.add(fact(SUBJECT_ESTIMATED_AP, "应付账款-暂估", DC_DEBIT, amount, materialId, warehouseId, event,
+            facts.add(fact(SUBJECT_ESTIMATED_AP, null, DC_DEBIT, amount, materialId, warehouseId, event,
                     ACCOUNT_KEY_ACCOUNTS_PAYABLE));
-            facts.add(fact(SUBJECT_PPV, "材料成本差异", DC_CREDIT, amount, materialId, warehouseId, event,
+            facts.add(fact(SUBJECT_PPV, null, DC_CREDIT, amount, materialId, warehouseId, event,
                     ACCOUNT_KEY_PURCHASE_PRICE_VARIANCE));
         }
         return facts;

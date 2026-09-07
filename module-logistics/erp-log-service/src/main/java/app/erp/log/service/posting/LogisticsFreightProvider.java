@@ -53,12 +53,12 @@ public class LogisticsFreightProvider implements IErpFinAcctDocProvider {
 
         List<VoucherFact> facts = new ArrayList<>();
         // 借：销售费用-运费
-        facts.add(fact(expenseSubject, "销售费用-运费", DC_DEBIT, freightAmount, event));
+        facts.add(fact(expenseSubject, null, DC_DEBIT, freightAmount, event));
 
         // 贷方按 freightTerms：PREPAID→银行存款（已预付现金）；COLLECT→应付账款（欠承运商）
         boolean collect = Objects.equals(freightTerms, ErpLogConstants.FREIGHT_TERMS_COLLECT);
         String creditSubject = collect ? SUBJECT_PAYABLE : SUBJECT_BANK_DEPOSIT;
-        String creditName = collect ? "应付账款" : "银行存款";
+        String creditName = null;
         VoucherFact credit = fact(creditSubject, creditName, DC_CREDIT, freightAmount, event);
         if (collect) {
             // 到付挂应付账款，携带承运商往来维度（partnerId = 承运商 partnerId，String id 直传）

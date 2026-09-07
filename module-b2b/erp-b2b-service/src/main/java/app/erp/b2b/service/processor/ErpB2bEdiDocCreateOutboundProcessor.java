@@ -66,7 +66,7 @@ public class ErpB2bEdiDocCreateOutboundProcessor {
         daoProvider.daoFor(ErpB2bEdiDoc.class).saveEntity(doc);
 
         writeLog(doc, ErpB2bConstants.DIRECTION_OUTBOUND, ErpB2bConstants.EDI_RESULT_SUCCESS,
-                "SEND: 生成出站 EDI 报文，待发送", payload, null);
+                "SEND: outbound EDI document generated, pending send", payload, null);
         return doc;
     }
 

@@ -49,9 +49,9 @@ public class InvOwnershipTransferProvider implements IErpFinAcctDocProvider {
 
         List<VoucherFact> facts = new ArrayList<>(2);
         // 借：存货(自有) —— VMI 消耗后归自有，存货成本入账
-        facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_DEBIT, total, materialId, warehouseId, partnerId, event));
+        facts.add(fact(SUBJECT_INVENTORY, null, DC_DEBIT, total, materialId, warehouseId, partnerId, event));
         // 贷：应付-供应商 —— 暂估应付，待供应商采购发票核销
-        facts.add(fact(SUBJECT_AP, "应付账款-供应商", DC_CREDIT, total, materialId, warehouseId, partnerId, event));
+        facts.add(fact(SUBJECT_AP, null, DC_CREDIT, total, materialId, warehouseId, partnerId, event));
         return facts;
     }
 

@@ -299,8 +299,8 @@ public class SpcCapabilityCalculator {
         ErpQaRiskRegister risk = dao.newEntity();
         risk.setCode("RISK-SPC-" + chart.getCode() + "-" + CoreMetrics.today().toString().replace("-", ""));
         risk.setRiskDate(CoreMetrics.today());
-        risk.setDescription("SPC 过程能力不足：chart=" + chart.getCode() + " Cpk=" + cpk
-                + " level=" + capabilityLevel + "（<ACCEPTABLE），需调查并改进过程");
+        risk.setDescription("SPC process capability insufficient: chart=" + chart.getCode() + " Cpk=" + cpk
+                + " level=" + capabilityLevel + " (<ACCEPTABLE), investigation and improvement required");
         risk.setCategory("SPC_PROCESS_CAPABILITY");
         risk.setLikelihood(3);
         risk.setSeverity(4);

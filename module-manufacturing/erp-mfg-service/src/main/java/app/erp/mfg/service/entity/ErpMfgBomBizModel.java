@@ -81,8 +81,8 @@ public class ErpMfgBomBizModel extends AbstractErpCrudBizModel<ErpMfgBom> implem
         for (BomExplosionNode n : flat) {
             Map<String, Object> node = new LinkedHashMap<>();
             node.put("id", n.getMaterialId());
-            node.put("name", "物料 " + n.getMaterialId() + " [" + (n.isManufactured() ? "制造件" : "采购件")
-                    + "] ×" + n.getQuantity());
+            node.put("name", "Material " + n.getMaterialId() + " [" + (n.isManufactured() ? "Manufactured" : "Purchased")
+                    + "] x" + n.getQuantity());
             node.put("materialId", n.getMaterialId());
             node.put("quantity", n.getQuantity());
             node.put("operationId", n.getOperationId());

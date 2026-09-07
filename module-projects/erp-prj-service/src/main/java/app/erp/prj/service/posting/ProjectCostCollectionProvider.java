@@ -66,7 +66,7 @@ public class ProjectCostCollectionProvider implements IErpFinAcctDocProvider {
         BigDecimal rate = resolveRate(ctx);
 
         List<VoucherFact> facts = new ArrayList<>(2);
-        VoucherFact debit = fact(debitSubjectCode, "项目成本", DC_DEBIT, amount, rate, event, memo);
+        VoucherFact debit = fact(debitSubjectCode, null, DC_DEBIT, amount, rate, event, memo);
         debit.setProjectId(projectId);
         facts.add(debit);
 
@@ -78,10 +78,8 @@ public class ProjectCostCollectionProvider implements IErpFinAcctDocProvider {
     }
 
     private String creditSubjectName(String sourceBillType) {
-        if (ErpPrjConstants.SOURCE_BILL_TYPE_TIMESHEET.equals(sourceBillType)) {
-            return "应付职工薪酬";
-        }
-        return "项目费用贷方";
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
+        return null;
     }
 
     private String buildMemo(PostingEvent event, String sourceBillType) {

@@ -129,7 +129,7 @@ public class TestErpCtDocumentRepository extends JunitAutoTestCase {
         ErpCtDocument doc = documentById(docId);
         assertEquals(ErpCtDaoConstants.OCR_STATUS_FAILED, doc.getOcrStatus(), "manual 引擎识别恒失败");
         assertNotNull(doc.getRemark(), "失败原因应记 remark");
-        assertTrue(doc.getRemark().contains("OCR 失败"), "remark 记录失败原因: " + doc.getRemark());
+        assertTrue(doc.getRemark().contains("OCR failed"), "remark 记录失败原因: " + doc.getRemark());
         assertNull(doc.getOcrText(), "失败不写 ocrText");
     }
 

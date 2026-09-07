@@ -57,7 +57,7 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
 
         // PO 已关闭/取消 → blockingLevel=ERROR
         if (isPoClosedOrCancelled(po)) {
-            asn.setRemark("采购订单已关闭/取消：" + asn.getRelatedBillCode());
+            asn.setRemark("Purchase order closed/cancelled: " + asn.getRelatedBillCode());
             daoProvider.daoFor(ErpB2bAsn.class).saveOrUpdateEntity(asn);
             markEdiDocError(asn.getSourceEdiDocId(), "PO_CLOSED: " + asn.getRelatedBillCode(), context);
             LOG.warn("ASN {} associated purchase order {} closed/cancelled", asn.getCode(), asn.getRelatedBillCode());
@@ -86,7 +86,7 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
         // 匹配成功 → MATCHED
         asn.setStatus(stateMachine.matchPurchaseOrderTargetStatus());
         if (overQuantity) {
-            asn.setRemark("部分行超 PO 数量（blockingLevel=WARN）");
+            asn.setRemark("Some lines exceed PO quantity (blockingLevel=WARN)");
         }
         daoProvider.daoFor(ErpB2bAsn.class).saveOrUpdateEntity(asn);
 

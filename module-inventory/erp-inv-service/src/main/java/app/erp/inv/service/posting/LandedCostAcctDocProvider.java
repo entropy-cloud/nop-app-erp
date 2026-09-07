@@ -63,7 +63,7 @@ public class LandedCostAcctDocProvider implements IErpFinAcctDocProvider {
             }
             VoucherFact fact = new VoucherFact();
             fact.setSubjectCode(SUBJECT_INVENTORY);
-            fact.setSubjectName("库存商品");
+            fact.setSubjectName(null);
             fact.setDcDirection(DC_DEBIT);
             fact.setAmount(amount);
             fact.setAccountKey(ACCOUNT_KEY_INVENTORY);
@@ -82,7 +82,7 @@ public class LandedCostAcctDocProvider implements IErpFinAcctDocProvider {
             }
             VoucherFact fact = new VoucherFact();
             fact.setSubjectCode(SUBJECT_AP);
-            fact.setSubjectName("应付账款");
+            fact.setSubjectName(null);
             fact.setDcDirection(DC_CREDIT);
             fact.setAmount(amount);
             fact.setAccountKey(ACCOUNT_KEY_ACCOUNTS_PAYABLE);

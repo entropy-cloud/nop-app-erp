@@ -174,7 +174,7 @@ public class ErpCtDocumentBizModel extends AbstractErpCrudBizModel<ErpCtDocument
 
         String operator = resolveOperator();
         doc.setRemark(appendRemark(doc.getRemark(),
-                "已销毁(purge): " + today + " by " + operator + "（D4 逻辑删除，物理删除 successor）"));
+                "Purged: " + today + " by " + operator + " (D4 logical delete, physical delete is a successor)"));
         updateEntity(doc, null, context);
         notifyPurged(doc, context);
 
@@ -261,7 +261,7 @@ public class ErpCtDocumentBizModel extends AbstractErpCrudBizModel<ErpCtDocument
             doc.setOcrStatus(ErpCtDaoConstants.OCR_STATUS_COMPLETED);
         } else {
             doc.setOcrStatus(ErpCtDaoConstants.OCR_STATUS_FAILED);
-            doc.setRemark(appendRemark(doc.getRemark(), "OCR 失败: " + response.getErrorMsg()));
+            doc.setRemark(appendRemark(doc.getRemark(), "OCR failed: " + response.getErrorMsg()));
         }
         rebuildFullTextSearch(doc);
         updateEntity(doc, null, context);

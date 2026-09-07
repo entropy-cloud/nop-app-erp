@@ -55,10 +55,10 @@ public class SubcontractFeeAcctDocProvider implements IErpFinAcctDocProvider {
             return facts;
         }
 
-        String memo = subcontractCode != null ? "委外加工费（" + subcontractCode + "）" : "委外加工费";
+        String memo = subcontractCode != null ? "Subcontract fee (" + subcontractCode + ")" : "Subcontract fee";
 
-        facts.add(fact(subcontractSubject, "委外物资", DC_DEBIT, fee, memo, event, ACCOUNT_KEY_SUBCONTRACT_MATERIAL));
-        facts.add(fact(ErpMfgConstants.SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_CREDIT, fee, memo, event,
+        facts.add(fact(subcontractSubject, null, DC_DEBIT, fee, memo, event, ACCOUNT_KEY_SUBCONTRACT_MATERIAL));
+        facts.add(fact(ErpMfgConstants.SUBJECT_ACCOUNTS_PAYABLE, null, DC_CREDIT, fee, memo, event,
                 ACCOUNT_KEY_ACCOUNTS_PAYABLE));
         return facts;
     }

@@ -12,14 +12,15 @@
         §4/§7，plan 2026-08-14-0456-2 M4.64）：XScript inject ErpHrSalaryApprovalStateMachine
         （*TargetStatus() 写回目标态）+ ErpHrSalaryApprovalGuard（守卫经 Bean assertCanXxx，非法边由 Bean 抛
         common 码、Guard Java 侧映射为领域码 ERR_SALARY_ILLEGAL_STATUS_TRANSITION + salaryId/currentStatus/
-        expectedStatus，common 码作 cause 保留）。机制替代注记：计划原案「XScript try/catch」在 XLang 引擎
-        不可行（TryStatement 语法节点不被编译支持），映射下沉 Java Guard Bean，行为契约不变（见 Guard javadoc）。
+         expectedStatus，common 码作 cause 保留）。机制注记（2026-09-07 勘误）：计划原案「XScript try/catch
+         在 XLang 引擎不可行」为 2026-08 时点结论——nop-entropy plan 2258 后 XScript 已支持 try/catch/finally；
+         本处编排/失败隔离下沉 Java Guard Bean 是事务边界与可测试性的架构偏好（行为契约不变，见 Guard javadoc）。
         approve/reject/reverseApprove 由 approval-support.xbiz 标准 source 提供，wf 结束经 .xwf listener 回调。
 
         approve 后置计提过账（RC-R1.89，payroll.md §6.5/§9.1）：approve 状态写回后委托
         ErpHrSalaryPostApprovalProcessor（270 SALARY + 290 SOCIAL_INSURANCE_ER + 300 HOUSING_FUND_ER
-        三连计提 + posted writer D3 语义）——编排/失败隔离在 Java Bean 侧（XScript try/catch 不可行，
-        同上机制注记），本 source 仅一行 inject 委托；wf 回调与直批共用本 action 单一接线点。
+        三连计提 + posted writer D3 语义）——编排/失败隔离在 Java Bean 侧（架构偏好，非 XScript 能力限制，
+        同上勘误），本 source 仅一行 inject 委托；wf 回调与直批共用本 action 单一接线点。
     -->
     <actions>
         <mutation name="submitForApproval">

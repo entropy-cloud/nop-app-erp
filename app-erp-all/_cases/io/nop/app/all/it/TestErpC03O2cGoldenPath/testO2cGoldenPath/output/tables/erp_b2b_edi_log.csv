@@ -1,2 +1,2 @@
 _chgType,ID,EDI_DOC_ID,ORG_ID,DIRECTION,REQUEST_PAYLOAD,RESPONSE_PAYLOAD,RESULT_CODE,RESULT_MSG,LOG_TIME,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,100001,100000,,INBOUND,<Order><Customer>华东科技</Customer><Line><Material>MAT-001</Material><Qty>10</Qty></Line></Order>,,SUCCESS,RECEIVE: 收到入站报文,@var:ErpB2bEdiLog@logTime,,0,0,autotest-ref,*,autotest-ref,*
+A,100001,100000,,INBOUND,<Order><Customer>华东科技</Customer><Line><Material>MAT-001</Material><Qty>10</Qty></Line></Order>,,SUCCESS,RECEIVE: inbound document received,@var:ErpB2bEdiLog@logTime,,0,0,autotest-ref,*,autotest-ref,*

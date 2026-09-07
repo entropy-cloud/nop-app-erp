@@ -43,12 +43,12 @@ public class ErpHrSalarySimulationConvertToFormalProcessor extends AbstractErpHr
 
             if (hasPaidSalary(empId, targetYear, targetMonth)) {
                 conflicts.add(conflictEntry(empId, "PAID_CONFLICT",
-                        "目标期间 " + targetPeriod + " 已存在 PAID 正式薪酬"));
+                        "PAID formal salary already exists in target period " + targetPeriod));
                 continue;
             }
             if (hasNonVoidSalary(empId, targetYear, targetMonth)) {
                 conflicts.add(conflictEntry(empId, "DUPLICATE",
-                        "员工 " + empId + " 在目标期间 " + targetPeriod + " 已存在正式薪酬"));
+                        "Employee " + empId + " already has formal salary in target period " + targetPeriod));
                 continue;
             }
 

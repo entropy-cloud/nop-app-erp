@@ -79,12 +79,12 @@ public class MaintenanceIssueAcctDocProvider implements IErpFinAcctDocProvider {
             String materialCode = readString(line.get(KEY_MATERIAL_CODE), "");
 
             // 贷方：存货（按物料分列）
-            facts.add(fact(invSubject, "存货", DC_CREDIT, lineAmount,
+            facts.add(fact(invSubject, null, DC_CREDIT, lineAmount,
                     buildMemo(equipmentCode, materialCode), event, ACCOUNT_KEY_INVENTORY));
         }
 
         // 借方：维修费用（汇总）
-        facts.add(fact(expenseSubject, "维修费用", DC_DEBIT, totalAmount,
+        facts.add(fact(expenseSubject, null, DC_DEBIT, totalAmount,
                 buildMemo(equipmentCode, null), event, ACCOUNT_KEY_MAINTENANCE_EXPENSE));
 
         return facts;
@@ -111,11 +111,11 @@ public class MaintenanceIssueAcctDocProvider implements IErpFinAcctDocProvider {
 
     private String buildMemo(String equipmentCode, String materialCode) {
         if (equipmentCode == null) {
-            return "维修备件消耗";
+            return "Spare part consumption";
         }
         return materialCode != null && !materialCode.isEmpty()
-                ? "备件消耗（设备 " + equipmentCode + " / " + materialCode + "）"
-                : "备件消耗（设备 " + equipmentCode + "）";
+                ? "Spare part consumption (equip " + equipmentCode + " / " + materialCode + ")"
+                : "Spare part consumption (equip " + equipmentCode + ")";
     }
 
     private BigDecimal readAmount(Object value) {

@@ -241,7 +241,7 @@ public class ErpHrReportBizModel {
             r.put("advanceBalance", advance);
             r.put("expenseBalance", expense);
             r.put("netBalance", net);
-            r.put("netDirection", net.signum() > 0 ? "员工欠公司" : (net.signum() < 0 ? "公司欠员工" : "结平"));
+            r.put("netDirection", net.signum() > 0 ? "Employee owes company" : (net.signum() < 0 ? "Company owes employee" : "Settled"));
             rows.add(r);
         }
         return rows;
@@ -332,7 +332,7 @@ public class ErpHrReportBizModel {
         for (String departmentId : deptOrder) {
             Map<String, Object> r = new LinkedHashMap<>();
             r.put("departmentId", departmentId);
-            r.put("employeeName", "部门小计");
+            r.put("employeeName", "Department subtotal");
             r.put("difference", deptDiff.get(departmentId));
             r.put("rowType", "DEPT_SUBTOTAL");
             rows.add(r);

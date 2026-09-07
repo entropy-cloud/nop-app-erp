@@ -140,7 +140,7 @@ public class PaymentSettler {
         reversal.setPaymentId(payment.getId());
         reversal.setInvoiceId(invoiceId);
         reversal.setAmount(settled.negate());
-        reversal.setRemark("核销冲销");
+        reversal.setRemark("Settlement reversal");
         lineDao.saveEntity(reversal);
 
         recomputeInvoicePaid(invoiceId);

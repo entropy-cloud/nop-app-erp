@@ -202,7 +202,7 @@ public class ErpPrjProjectSettlementProcessor {
         ErpPrjProject project = loadProject(settlement.getProjectId());
         Map<String, Object> data = new HashMap<>();
         data.put("code", "AST-PRJ-" + settlement.getProjectId() + "-" + CoreMetrics.currentTimeMillis());
-        data.put("name", (project != null ? project.getName() : "项目") + "-转固");
+        data.put("name", (project != null ? project.getName() : "Project") + "-Capitalized");
         data.put("orgId", settlement.getOrgId());
         data.put("acquisitionDate", settlement.getBusinessDate());
         data.put("originalValue", nz(settlement.getFinalCost()));

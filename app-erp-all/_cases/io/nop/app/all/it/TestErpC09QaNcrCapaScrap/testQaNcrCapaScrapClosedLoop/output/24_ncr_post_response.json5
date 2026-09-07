@@ -8,7 +8,7 @@
     "materialId": "@var:pId",
     "inspectionId": "@var:insId",
     "quantity": 2.0000,
-    "description": "不合格项: 关键尺寸=5",
+    "description": "Non-conformance items: 关键尺寸=5",
     "severity": "NORMAL",
     "severity_label": "NORMAL-一般",
     "dispositionType": "SCRAP",

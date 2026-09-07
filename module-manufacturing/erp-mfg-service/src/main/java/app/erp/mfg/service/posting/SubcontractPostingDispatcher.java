@@ -97,7 +97,7 @@ public class SubcontractPostingDispatcher {
         }
         List<ErpMfgSubcontractOrderLine> lines = loadLines(subcontractOrderId);
         PostingEvent event = buildIssueEvent(order, move, ledgers, lines);
-        postEvent(event, order, "发料");
+        postEvent(event, order, "ISSUE");
     }
 
     /**
@@ -117,7 +117,7 @@ public class SubcontractPostingDispatcher {
             return;
         }
         PostingEvent event = buildReceiptEvent(order, move, ledgers);
-        postEvent(event, order, "收货");
+        postEvent(event, order, "RECEIPT");
     }
 
     /**
@@ -148,7 +148,7 @@ public class SubcontractPostingDispatcher {
             } else {
                 LOG.error("Subcontract processing fee posting error, subcontract order {} remains posted=false", order.getCode(), e);
             }
-            dispatchFailureAlert(order, "加工费", e);
+            dispatchFailureAlert(order, "FEE", e);
         }
     }
 

@@ -306,7 +306,7 @@ public class ErpInvLandedCostProcessor {
         adjust.setOrgId(landedCost.getOrgId());
         adjust.setBusinessDate(landedCost.getBusinessDate());
         adjust.setAdjustType(ErpInvConstants.ADJUST_TYPE_LANDED_COST_SUPPLEMENT);
-        adjust.setReason("到岸成本分摊：" + landedCost.getCode());
+        adjust.setReason("Landed cost allocation: " + landedCost.getCode());
         adjust.setDocStatus(ErpInvConstants.DOC_STATUS_DRAFT);
         adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_APPROVED);
         adjust.setPosted(false);
@@ -326,7 +326,7 @@ public class ErpInvLandedCostProcessor {
             line.setNewUnitCost(newUnitCost);
             line.setAdjustAmount(r.getAllocatedAmount());
             line.setCurrencyId(landedCost.getCurrencyId());
-            line.setRemark("到岸成本行 " + r.getReceiveLineId());
+            line.setRemark("Landed cost line " + r.getReceiveLineId());
             lineDao.saveEntity(line);
             adjustLines.add(line);
         }

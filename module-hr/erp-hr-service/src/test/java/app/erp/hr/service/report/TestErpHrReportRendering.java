@@ -113,7 +113,7 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
         assertEquals(0, bd("1000").compareTo(toBd(emp1.get("advanceBalance"))), "emp1 预支余额=1000");
         assertEquals(0, bd("300").compareTo(toBd(emp1.get("expenseBalance"))), "emp1 报销余额=300");
         assertEquals(0, bd("700").compareTo(toBd(emp1.get("netBalance"))), "emp1 净余额=700");
-        assertEquals("员工欠公司", emp1.get("netDirection"), "净额>0 → 员工欠公司");
+        assertEquals("Employee owes company", emp1.get("netDirection"), "净额>0 → 员工欠公司");
     }
 
     @Test

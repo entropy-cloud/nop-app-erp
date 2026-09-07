@@ -110,7 +110,7 @@ public class ErpB2bPartnerProfileBizModel extends AbstractErpCrudBizModel<ErpB2b
     public ErpB2bPartnerProfile deactivate(@Name("profileId") String profileId, IServiceContext context) {
         ErpB2bPartnerProfile profile = requireEntity(profileId, null, context);
         String from = profile.getStatus();
-        assertCan("deactivate", profile, from, "非终态（REGISTERED/TESTING/CERTIFIED/PRODUCTION/SUSPENDED）");
+        assertCan("deactivate", profile, from, "not in terminal state (REGISTERED/TESTING/CERTIFIED/PRODUCTION/SUSPENDED)");
         profile.setStatus(stateMachine.deactivateTargetStatus());
         profile.setArchivedAt(CoreMetrics.currentTimestamp());
         updateEntity(profile, null, context);
@@ -188,7 +188,7 @@ public class ErpB2bPartnerProfileBizModel extends AbstractErpCrudBizModel<ErpB2b
             }
         }
         if (mandatoryItems.isEmpty()) {
-            unpassed.add("空清单（无认证检查记录）");
+            unpassed.add("Empty checklist (no certification check records)");
         }
         if (!unpassed.isEmpty()) {
             throw new NopException(ErpB2bErrors.ERR_B2B_PARTNER_CERTIFICATION_NOT_MET)

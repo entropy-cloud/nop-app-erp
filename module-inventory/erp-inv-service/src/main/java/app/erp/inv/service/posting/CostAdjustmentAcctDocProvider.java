@@ -52,14 +52,14 @@ public class CostAdjustmentAcctDocProvider implements IErpFinAcctDocProvider {
 
         List<VoucherFact> facts = new ArrayList<>(2);
         if (ErpInvConstants.DIRECTION_INCREASE.equals(direction)) {
-            facts.add(fact(ErpInvConstants.SUBJECT_INVENTORY, "库存商品", DC_DEBIT, amount, materialId, warehouseId, event,
+            facts.add(fact(ErpInvConstants.SUBJECT_INVENTORY, null, DC_DEBIT, amount, materialId, warehouseId, event,
                     ACCOUNT_KEY_INVENTORY));
-            facts.add(fact(ErpInvConstants.SUBJECT_COST_VARIANCE, "成本差异", DC_CREDIT, amount, materialId, warehouseId, event,
+            facts.add(fact(ErpInvConstants.SUBJECT_COST_VARIANCE, null, DC_CREDIT, amount, materialId, warehouseId, event,
                     ACCOUNT_KEY_COST_VARIANCE));
         } else {
-            facts.add(fact(ErpInvConstants.SUBJECT_COST_VARIANCE, "成本差异", DC_DEBIT, amount, materialId, warehouseId, event,
+            facts.add(fact(ErpInvConstants.SUBJECT_COST_VARIANCE, null, DC_DEBIT, amount, materialId, warehouseId, event,
                     ACCOUNT_KEY_COST_VARIANCE));
-            facts.add(fact(ErpInvConstants.SUBJECT_INVENTORY, "库存商品", DC_CREDIT, amount, materialId, warehouseId, event,
+            facts.add(fact(ErpInvConstants.SUBJECT_INVENTORY, null, DC_CREDIT, amount, materialId, warehouseId, event,
                     ACCOUNT_KEY_INVENTORY));
         }
         return facts;

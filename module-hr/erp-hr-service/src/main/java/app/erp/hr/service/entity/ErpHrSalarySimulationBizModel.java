@@ -264,18 +264,18 @@ public class ErpHrSalarySimulationBizModel extends AbstractErpCrudBizModel<ErpHr
             BigDecimal netChange = changeRatio(srcNet, simNet);
             if (netChange != null && netChange.abs().compareTo(netThreshold) > 0) {
                 anomalies.add(anomalyEntry(empId, ErpHrConstants.ANOMALY_NET_PAY_CHANGE,
-                        "实发变化 " + pct(netChange) + " 超阈值 " + pct(netThreshold),
+                        "Net pay change " + pct(netChange) + " exceeds threshold " + pct(netThreshold),
                         "netChangeRatio", netChange));
             }
             BigDecimal grossChange = changeRatio(srcGross, simGross);
             if (grossChange != null && grossChange.abs().compareTo(totalThreshold) > 0) {
                 anomalies.add(anomalyEntry(empId, ErpHrConstants.ANOMALY_TOTAL_CHANGE,
-                        "应发变化 " + pct(grossChange) + " 超阈值 " + pct(totalThreshold),
+                        "Gross pay change " + pct(grossChange) + " exceeds threshold " + pct(totalThreshold),
                         "grossChangeRatio", grossChange));
             }
             if (taxJumpAlert && taxBracketJumped(r.source, r.simulated)) {
                 anomalies.add(anomalyEntry(empId, ErpHrConstants.ANOMALY_TAX_BRACKET_JUMP,
-                        "个税有效税率跳档（来源有效税率→模拟有效税率跨档）",
+                        "Income tax effective rate bracket jump (source -> simulated crosses bracket)",
                         "sourceEffectiveRate", effectiveRate(r.source),
                         "simulatedEffectiveRate", effectiveRate(r.simulated)));
             }

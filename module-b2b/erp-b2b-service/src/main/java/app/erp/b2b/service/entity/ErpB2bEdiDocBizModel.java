@@ -78,7 +78,7 @@ public class ErpB2bEdiDocBizModel extends AbstractErpCrudBizModel<ErpB2bEdiDoc> 
         doc.setSentAt(CoreMetrics.currentTimestamp());
         daoProvider().daoFor(ErpB2bEdiDoc.class).saveOrUpdateEntity(doc);
         writeLog(doc, ErpB2bConstants.DIRECTION_OUTBOUND, ErpB2bConstants.EDI_RESULT_SUCCESS,
-                "SEND: 报文已发送", null, null);
+                "SEND: document sent", null, null);
         return doc;
     }
 
@@ -92,7 +92,7 @@ public class ErpB2bEdiDocBizModel extends AbstractErpCrudBizModel<ErpB2bEdiDoc> 
         doc.setAcknowledgedAt(CoreMetrics.currentTimestamp());
         daoProvider().daoFor(ErpB2bEdiDoc.class).saveOrUpdateEntity(doc);
         writeLog(doc, ErpB2bConstants.DIRECTION_OUTBOUND, ErpB2bConstants.EDI_RESULT_SUCCESS,
-                "ACKNOWLEDGE: 对方已确认", null, null);
+                "ACKNOWLEDGE: acknowledged by partner", null, null);
         return doc;
     }
 
@@ -131,7 +131,7 @@ public class ErpB2bEdiDocBizModel extends AbstractErpCrudBizModel<ErpB2bEdiDoc> 
         doc.setBlockingLevel(ErpB2bConstants.BLOCKING_LEVEL_INFO);
         daoProvider().daoFor(ErpB2bEdiDoc.class).saveOrUpdateEntity(doc);
         writeLog(doc, ErpB2bConstants.DIRECTION_OUTBOUND, ErpB2bConstants.EDI_RESULT_SUCCESS,
-                "RETRY: 从 ERROR 恢复到 TO_SEND", null, null);
+                "RETRY: recovered from ERROR to TO_SEND", null, null);
         return doc;
     }
 
@@ -144,7 +144,7 @@ public class ErpB2bEdiDocBizModel extends AbstractErpCrudBizModel<ErpB2bEdiDoc> 
         doc.setState(stateMachine.cancelTargetStatus());
         daoProvider().daoFor(ErpB2bEdiDoc.class).saveOrUpdateEntity(doc);
         writeLog(doc, ErpB2bConstants.DIRECTION_OUTBOUND, ErpB2bConstants.EDI_RESULT_SUCCESS,
-                "CANCEL: 已取消", null, null);
+                "CANCEL: cancelled", null, null);
         return doc;
     }
 
@@ -167,7 +167,7 @@ public class ErpB2bEdiDocBizModel extends AbstractErpCrudBizModel<ErpB2bEdiDoc> 
         doc.setState(stateMachine.archiveTargetStatus());
         daoProvider().daoFor(ErpB2bEdiDoc.class).saveOrUpdateEntity(doc);
         writeLog(doc, ErpB2bConstants.DIRECTION_INBOUND, ErpB2bConstants.EDI_RESULT_SUCCESS,
-                "ARCHIVE: 入站处理完成，已归档", null, null);
+                "ARCHIVE: inbound processing completed, archived", null, null);
         return doc;
     }
 

@@ -68,20 +68,20 @@ public class InvAcctDocProvider implements IErpFinAcctDocProvider {
 
         List<VoucherFact> facts = new ArrayList<>(2);
         if (event.getBusinessType() == ErpFinBusinessType.PURCHASE_INPUT) {
-            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_DEBIT, total, materialId, warehouseId, event,
+            facts.add(fact(SUBJECT_INVENTORY, null, DC_DEBIT, total, materialId, warehouseId, event,
                     ACCOUNT_KEY_INVENTORY));
-            facts.add(fact(SUBJECT_ESTIMATED_AP, "应付账款-暂估", DC_CREDIT, total, materialId, warehouseId, event,
+            facts.add(fact(SUBJECT_ESTIMATED_AP, null, DC_CREDIT, total, materialId, warehouseId, event,
                     ACCOUNT_KEY_ACCOUNTS_PAYABLE));
         } else if (event.getBusinessType() == ErpFinBusinessType.MANUFACTURING_RECEIPT) {
             String wipSubject = resolveWipSubjectCode();
-            facts.add(fact(SUBJECT_INVENTORY, "产成品存货", DC_DEBIT, total, materialId, warehouseId, event,
+            facts.add(fact(SUBJECT_INVENTORY, null, DC_DEBIT, total, materialId, warehouseId, event,
                     ACCOUNT_KEY_INVENTORY));
-            facts.add(fact(wipSubject, "在制品-WIP", DC_CREDIT, total, materialId, warehouseId, event,
+            facts.add(fact(wipSubject, null, DC_CREDIT, total, materialId, warehouseId, event,
                     ACCOUNT_KEY_MANUFACTURING_WIP));
         } else {
-            facts.add(fact(SUBJECT_COGS, "主营业务成本", DC_DEBIT, total, materialId, warehouseId, event,
+            facts.add(fact(SUBJECT_COGS, null, DC_DEBIT, total, materialId, warehouseId, event,
                     ACCOUNT_KEY_COGS));
-            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, total, materialId, warehouseId, event,
+            facts.add(fact(SUBJECT_INVENTORY, null, DC_CREDIT, total, materialId, warehouseId, event,
                     ACCOUNT_KEY_INVENTORY));
         }
         return facts;

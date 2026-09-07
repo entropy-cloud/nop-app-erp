@@ -81,9 +81,9 @@ public class NcrLifecycleService {
 
     private String buildRejectDescription(List<ErpQaInspectionLine> lines) {
         if (lines == null || lines.isEmpty()) {
-            return "质检不合格";
+            return "QC non-conformance";
         }
-        StringBuilder sb = new StringBuilder("不合格项: ");
+        StringBuilder sb = new StringBuilder("Non-conformance items: ");
         boolean first = true;
         for (ErpQaInspectionLine line : lines) {
             if (line.getResult() != null && Objects.equals(line.getResult(), ErpQaConstants.INSPECTION_RESULT_REJECTED)) {
@@ -94,7 +94,7 @@ public class NcrLifecycleService {
                 first = false;
             }
         }
-        return first ? "质检不合格" : sb.toString();
+        return first ? "QC non-conformance" : sb.toString();
     }
 
     boolean allActionsCompletedAndVerified(String ncrId, String noCapaReason) {

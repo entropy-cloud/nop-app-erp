@@ -189,14 +189,14 @@ public class ErpHrRecruitmentBizModel extends AbstractErpCrudBizModel<ErpHrRecru
 
     static String extractFirstName(String candidateName) {
         if (candidateName == null || candidateName.isEmpty()) {
-            return "新";
+            return "New";
         }
         return candidateName.substring(0, 1);
     }
 
     static String extractLastName(String candidateName) {
         if (candidateName == null || candidateName.length() <= 1) {
-            return "员工";
+            return "Employee";
         }
         return candidateName.substring(1);
     }

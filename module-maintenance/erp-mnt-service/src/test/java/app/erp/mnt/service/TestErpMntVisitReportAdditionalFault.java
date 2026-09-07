@@ -89,7 +89,7 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
         assertNull(visit.getResult(), "E4: 不写 result");
         assertNull(visit.getTotalMinutes(), "E4: 不写 totalMinutes（工时归 complete 流程）");
         assertNotNull(visit.getRemark(), "E3: visit remark 已记录");
-        assertTrue(visit.getRemark().contains("[额外故障] 液压泵异响"), "remark 追加内容: " + visit.getRemark());
+        assertTrue(visit.getRemark().contains("[Additional fault] 液压泵异响"), "remark 追加内容: " + visit.getRemark());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
         ApiResponse<?> resp = reportAdditionalFault(visitId, "皮带老化", null, null);
         assertEquals(0, resp.getStatus());
         String remark = loadVisit(visitId).getRemark();
-        assertTrue(remark.startsWith("已完成基础保养\n[额外故障] 皮带老化"), "E3 追加语义保留既有记录: " + remark);
+        assertTrue(remark.startsWith("已完成基础保养\n[Additional fault] 皮带老化"), "E3 追加语义保留既有记录: " + remark);
     }
 
     @Test

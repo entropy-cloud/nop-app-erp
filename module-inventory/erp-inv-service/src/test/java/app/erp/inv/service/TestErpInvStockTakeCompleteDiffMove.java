@@ -101,8 +101,8 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
                 "D2 选项 A：独立移动单应停 CONFIRMED 待库管员二次确认");
         assertEquals(ErpInvConstants.RELATED_BILL_TYPE_STOCK_TAKE, move.getRelatedBillType(), "D2/D3 判别载体类型键");
         assertNull(move.getRelatedBillCode(), "D2：relatedBillCode 置空保持独立语义");
-        assertTrue(move.getRemark().contains(take.getCode()) && move.getRemark().contains("盘盈"),
-                "D4-a：remark 应承载「盘点差异 {code} 盘盈」关联");
+        assertTrue(move.getRemark().contains(take.getCode()) && move.getRemark().contains("gain"),
+                "D4-a：remark 应承载「Stocktake diff {code} gain」关联");
         assertEquals(WAREHOUSE_ID, move.getDestWarehouseId(), "盘盈目的仓 = 盘点仓库");
 
         List<ErpInvStockMoveLine> lines = loadMoveLines(move.getId());
@@ -134,7 +134,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
         assertEquals(ErpInvConstants.MOVE_TYPE_OUTGOING, move.getMoveType(), "盘亏应生成 OUTGOING 移动单");
         assertEquals(ErpInvConstants.DOC_STATUS_CONFIRMED, move.getDocStatus(),
                 "D2 选项 A：停 CONFIRMED 待库管员二次确认");
-        assertTrue(move.getRemark().contains("盘亏"), "D4-a：remark 应含「盘亏」");
+        assertTrue(move.getRemark().contains("loss"), "D4-a：remark 应含「loss」");
         assertEquals(WAREHOUSE_ID, move.getSourceWarehouseId(), "盘亏源仓 = 盘点仓库");
 
         List<ErpInvStockMoveLine> lines = loadMoveLines(move.getId());
@@ -255,8 +255,8 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
         ErpInvStockTake take = findTake(takeId);
         assertEquals(ErpInvConstants.DOC_STATUS_DONE, take.getDocStatus(), "盘点单应 DONE（失败隔离）");
 
-        List<ErpInvStockMove> gainMoves = findDiffMovesByRemark(take.getCode(), "盘盈");
-        List<ErpInvStockMove> lossMoves = findDiffMovesByRemark(take.getCode(), "盘亏");
+        List<ErpInvStockMove> gainMoves = findDiffMovesByRemark(take.getCode(), "gain");
+        List<ErpInvStockMove> lossMoves = findDiffMovesByRemark(take.getCode(), "loss");
         assertEquals(1, gainMoves.size(), "成功行移动单应生成");
         assertEquals(ErpInvConstants.MOVE_TYPE_INCOMING, gainMoves.get(0).getMoveType());
         assertEquals(0, lossMoves.size(), "失败行孤立 DRAFT 移动单应被同事务补偿删除（强制修正裁决 (a)）");
@@ -283,7 +283,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
         startTake(takeId);
         assertEquals(0, completeTake(takeId).getStatus());
 
-        assertEquals(1, findDiffMovesByRemark(findTake(takeId).getCode(), "盘盈").size(),
+        assertEquals(1, findDiffMovesByRemark(findTake(takeId).getCode(), "gain").size(),
                 "失败隔离语义与告警门控解耦：移动单生成行为不变");
         assertEquals(0, findNotifications(NOTIFY_EVENT).size(),
                 "D4-b：config 默认 false 时静默跳过告警派发");

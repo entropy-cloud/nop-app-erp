@@ -78,27 +78,27 @@ public class SalaryPostingProvider implements IErpFinAcctDocProvider {
         switch (type) {
             case SALARY:
                 facts.add(fact(defaultIfBlank(debitCode, SUBJECT_EXPENSE_SALARY_DEFAULT),
-                        "管理费用-工资", DC_DEBIT, amount, event, memo, departmentId, costCenterId));
+                        null, DC_DEBIT, amount, event, memo, departmentId, costCenterId));
                 facts.add(fact(resolvePayrollCredit(creditCode),
-                        "应付职工薪酬", DC_CREDIT, amount, event, memo, departmentId, costCenterId));
+                        null, DC_CREDIT, amount, event, memo, departmentId, costCenterId));
                 break;
             case SALARY_PAYMENT:
                 facts.add(fact(resolvePayrollCredit(debitCode),
-                        "应付职工薪酬", DC_DEBIT, amount, event, memo, departmentId, costCenterId));
+                        null, DC_DEBIT, amount, event, memo, departmentId, costCenterId));
                 facts.add(fact(defaultIfBlank(creditCode, SUBJECT_BANK_DEFAULT),
-                        "银行存款", DC_CREDIT, amount, event, memo, departmentId, costCenterId));
+                        null, DC_CREDIT, amount, event, memo, departmentId, costCenterId));
                 break;
             case SOCIAL_INSURANCE_ER:
                 facts.add(fact(defaultIfBlank(debitCode, SUBJECT_EXPENSE_SOCIAL_DEFAULT),
-                        "管理费用-社保", DC_DEBIT, amount, event, memo, departmentId, costCenterId));
+                        null, DC_DEBIT, amount, event, memo, departmentId, costCenterId));
                 facts.add(fact(resolvePayrollCredit(creditCode),
-                        "应付职工薪酬-社保", DC_CREDIT, amount, event, memo, departmentId, costCenterId));
+                        null, DC_CREDIT, amount, event, memo, departmentId, costCenterId));
                 break;
             case HOUSING_FUND_ER:
                 facts.add(fact(defaultIfBlank(debitCode, SUBJECT_EXPENSE_FUND_DEFAULT),
-                        "管理费用-公积金", DC_DEBIT, amount, event, memo, departmentId, costCenterId));
+                        null, DC_DEBIT, amount, event, memo, departmentId, costCenterId));
                 facts.add(fact(resolvePayrollCredit(creditCode),
-                        "应付职工薪酬-公积金", DC_CREDIT, amount, event, memo, departmentId, costCenterId));
+                        null, DC_CREDIT, amount, event, memo, departmentId, costCenterId));
                 break;
             default:
                 return Collections.emptyList();
@@ -123,6 +123,7 @@ public class SalaryPostingProvider implements IErpFinAcctDocProvider {
                              PostingEvent event, String memo, String departmentId, String costCenterId) {
         VoucherFact f = new VoucherFact();
         f.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         f.setSubjectName(subjectName);
         f.setDcDirection(dcDirection);
         f.setAmount(amount);

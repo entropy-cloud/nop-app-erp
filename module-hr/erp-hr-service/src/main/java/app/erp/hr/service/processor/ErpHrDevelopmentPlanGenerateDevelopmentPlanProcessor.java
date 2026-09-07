@@ -26,7 +26,7 @@ public class ErpHrDevelopmentPlanGenerateDevelopmentPlanProcessor extends Abstra
 
         plan.setBusinessDate(CoreMetrics.today());
         plan.setEmployeeId(employeeId);
-        plan.setPlanName("发展计划-" + employeeId + "-" + CoreMetrics.currentDate());
+        plan.setPlanName("DevelopmentPlan-" + employeeId + "-" + CoreMetrics.currentDate());
         plan.setTargetDate(CoreMetrics.currentDate().plusMonths(3));
         plan.setStatus(ErpHrConstants.DEV_PLAN_STATUS_IN_PROGRESS);
         planDao().saveEntity(plan);

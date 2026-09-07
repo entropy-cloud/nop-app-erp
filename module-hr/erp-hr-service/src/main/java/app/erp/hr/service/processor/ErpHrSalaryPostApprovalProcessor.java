@@ -14,8 +14,9 @@ import jakarta.inject.Inject;
  * {@code posted} writer——三条全部成功（去重守卫命中计为成功）才 {@code posted=true}（「计提链完整」
  * 语义），任一失败保持 false；280 发放路径（markPaid）不受影响。
  *
- * <p>机制注记（对齐 M4.64 xbiz 机制注记 + Guard/StateMachine Bean 范式）：编排/失败隔离下沉 Java Bean
- * （XScript try/catch 在 XLang 引擎不可行），xbiz source 仅一行 inject 委托调用。wf 结束经 .xwf
+ * <p>机制注记（2026-09-07 勘误：XScript 现已支持 try/catch/finally，下沉 Java Bean 为架构偏好——事务/可测试性）：
+ * 编排/失败隔离下沉 Java Bean（对齐 M4.64 xbiz 机制注记 + Guard/StateMachine Bean 范式），xbiz source 仅一行
+ * inject 委托调用。wf 结束经 .xwf
  * listener 回调同一 approve action，本 Processor 同时覆盖直批与 wf 审批路径。posted 经 ORM dirty
  * flush 随 approve mutation 事务持久化（与 approveStatus/approvedBy/approvedAt 同机制）。
  *

@@ -91,7 +91,7 @@ public class TransportManager {
 
         long durationMs = (CoreMetrics.nanoTime() - startNanos) / 1_000_000;
         String errorCode = retryable ? "MFT_RETRY_EXHAUSTED" : "MFT_NON_RETRYABLE";
-        String errorMsg = (retryable ? "[传输重试耗尽] " : "[传输不可重试错误] ")
+        String errorMsg = (retryable ? "[transport retries exhausted] " : "[transport non-retryable error] ")
                 + (lastFailure != null ? lastFailure.getDescription() : "unknown");
 
         String status = config.getDeadLetterEnabled() != null && config.getDeadLetterEnabled()

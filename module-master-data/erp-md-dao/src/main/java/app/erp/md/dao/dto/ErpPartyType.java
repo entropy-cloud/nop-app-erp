@@ -11,13 +11,13 @@ package app.erp.md.dao.dto;
  * </ul>
  *
  * <p>每值携带 {@code entityName}（实体全限定名，用于 {@code IDaoProvider#daoFor(Class)} 反查）
- * 和 {@code displayName}（中文，picker 显示）。
+ * 和 {@code displayName}（picker 显示）。
  */
 public enum ErpPartyType {
 
-    PARTNER("app.erp.md.dao.entity.ErpMdPartner", "往来单位"),
-    EMPLOYEE("app.erp.md.dao.entity.ErpMdEmployee", "职员"),
-    ORGANIZATION("app.erp.md.dao.entity.ErpMdOrganization", "组织");
+    PARTNER("app.erp.md.dao.entity.ErpMdPartner", "Partner"),
+    EMPLOYEE("app.erp.md.dao.entity.ErpMdEmployee", "Employee"),
+    ORGANIZATION("app.erp.md.dao.entity.ErpMdOrganization", "Organization");
 
     private final String entityName;
     private final String displayName;

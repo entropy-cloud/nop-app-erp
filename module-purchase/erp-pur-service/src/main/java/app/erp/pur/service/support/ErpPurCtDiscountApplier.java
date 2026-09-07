@@ -97,7 +97,7 @@ public class ErpPurCtDiscountApplier {
         BigDecimal saved = base.multiply(line.getQuantity())
                 .subtract(result.getLineAmount() == null ? BigDecimal.ZERO : result.getLineAmount())
                 .setScale(2, RoundingMode.HALF_UP);
-        String tag = ErpPurConstants.CT_DISCOUNT_REMARK_TAG + "节省" + saved.stripTrailingZeros().toPlainString();
+        String tag = ErpPurConstants.CT_DISCOUNT_REMARK_TAG + "saved " + saved.stripTrailingZeros().toPlainString();
         line.setRemark(StringHelper.isBlank(stripped) ? tag : tag + " " + stripped);
     }
 }

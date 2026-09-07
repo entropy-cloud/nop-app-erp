@@ -246,11 +246,11 @@ public class ErpSalReturnGenerateExchangeDeliveryProcessor {
         }
         // delivery 为 deliveryBiz.save 返回的会话托管实体（SAVING），同事务内直接改字段，
         // @BizMutation 提交时 ORM 会话自动 flush（SAVING 实体不可再调 updateEntity——nop.err.orm.dao.update-entity-not-managed）
-        String direction = delta.signum() > 0 ? "补差价开票" : "退款";
+        String direction = delta.signum() > 0 ? "price-difference invoice" : "refund";
         String prefix = delivery.getRemark() == null || delivery.getRemark().trim().isEmpty()
                 ? "" : delivery.getRemark() + "；";
-        delivery.setRemark(prefix + "换货价差 " + delta.toPlainString() + "（" + direction
-                + "，退货单 " + returnOrder.getCode() + "）");
+        delivery.setRemark(prefix + "Exchange price diff " + delta.toPlainString() + " (" + direction
+                + ", return order " + returnOrder.getCode() + ")");
     }
 
     /**
@@ -276,8 +276,8 @@ public class ErpSalReturnGenerateExchangeDeliveryProcessor {
         header.put("approveStatus", ErpSalConstants.APPROVE_STATUS_UNSUBMITTED);
         header.put("receivedStatus", ErpSalConstants.RECEIVED_STATUS_UNRECEIVED);
         header.put("posted", false);
-        header.put("remark", "换货补差价（退货单 " + returnOrder.getCode()
-                + " → 换货出库单 " + delivery.getCode() + "）");
+        header.put("remark", "Exchange price difference (return order " + returnOrder.getCode()
+                + " -> exchange delivery " + delivery.getCode() + ")");
 
         ErpSalExchangeDeliveryLine firstLine = lines == null || lines.isEmpty() ? null : lines.get(0);
         Map<String, Object> line = new LinkedHashMap<>();

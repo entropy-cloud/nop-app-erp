@@ -178,7 +178,7 @@ public class ErpApsWorkOrderToOperationProcessor {
         op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
         op.setOrgId(wo.getOrgId());
         op.setBusinessDate(CoreMetrics.today());
-        op.setRemark("WorkOrder下达自动创建");
+        op.setRemark("Auto-created on work order release");
         // totalDuration = setupTime + runtimePerUnit × qty（与排产引擎同公式单一真相源，CEILING 整分钟）
         op.setTotalDuration(java.math.BigDecimal.valueOf(
                 new ErpApsSchedulingEngine(0, null, null).computeDuration(op)));

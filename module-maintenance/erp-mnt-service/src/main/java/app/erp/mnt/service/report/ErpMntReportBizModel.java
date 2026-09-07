@@ -264,7 +264,7 @@ public class ErpMntReportBizModel {
             Map<String, DowntimeAggregator> agg = new LinkedHashMap<>();
             for (ErpMntDowntimeEntry e : entries) {
                 String eqId = e.getEquipmentId();
-                String reason = e.getReason() != null ? e.getReason() : "(未指定)";
+                String reason = e.getReason() != null ? e.getReason() : "(unspecified)";
                 String key = eqId + "|" + reason;
                 DowntimeAggregator a = agg.computeIfAbsent(key, k -> new DowntimeAggregator(eqId, reason));
                 a.totalMinutes = a.totalMinutes.add(nz(e.getTotalMinutes()));

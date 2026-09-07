@@ -386,7 +386,7 @@ public class GatewayDispatcher {
 
     private void deadLetter(ErpLogShipment shipment, String actionType, Object request,
                             NopException failure, boolean retryable) {
-        String errMsg = (retryable ? "[网关重试耗尽] " : "[网关不可重试错误] ") + failure.getDescription();
+        String errMsg = (retryable ? "[gateway retries exhausted] " : "[gateway non-retryable error] ") + failure.getDescription();
         shipment.setRemark(errMsg);
         daoProvider.daoFor(ErpLogShipment.class).saveOrUpdateEntity(shipment);
         String code = retryable ? "GATEWAY_RETRY_EXHAUSTED" : "GATEWAY_NON_RETRYABLE";

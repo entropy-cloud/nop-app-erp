@@ -281,7 +281,7 @@ public class ErpQaReportBizModel {
             Map<String, Integer> completedActionCountByNcr = countActionsByNcr(ncrIds, ErpQaConstants.ACTION_STATUS_COMPLETED);
             Map<String, NcrAggregator> agg = new LinkedHashMap<>();
             for (ErpQaNonConformance n : ncrs) {
-                String severity = n.getSeverity() != null ? n.getSeverity() : "(未指定)";
+                String severity = n.getSeverity() != null ? n.getSeverity() : "(unspecified)";
                 NcrAggregator a = agg.computeIfAbsent(severity, NcrAggregator::new);
                 a.ncrCount++;
                 if (ErpQaConstants.NCR_STATUS_RESOLVED.equals(n.getStatus())

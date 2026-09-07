@@ -74,12 +74,12 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
 
         if (ErpPrjConstants.SETTLEMENT_TYPE_CLOSE.equals(settlementType) && transferToAsset) {
             // CLOSE 转固：借固定资产（资本化最终成本）/ 贷在建工程（项目成本结转）。借贷平衡（finalCost）。
-            VoucherFact debit = fact(SUBJECT_FIXED_ASSET, "固定资产", DC_DEBIT, finalCost, event, memo,
+            VoucherFact debit = fact(SUBJECT_FIXED_ASSET, null, DC_DEBIT, finalCost, event, memo,
                     ACCOUNT_KEY_FIXED_ASSET);
             debit.setProjectId(projectId);
             facts.add(debit);
 
-            VoucherFact credit = fact(SUBJECT_CIP, "在建工程", DC_CREDIT, finalCost, event, memo, ACCOUNT_KEY_CIP);
+            VoucherFact credit = fact(SUBJECT_CIP, null, DC_CREDIT, finalCost, event, memo, ACCOUNT_KEY_CIP);
             credit.setProjectId(projectId);
             facts.add(credit);
         } else if (!retentionReturn) {
@@ -87,14 +87,14 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
             // 平衡：finalCost + profitLoss = finalRevenue。
             // 返还凭证（RETENTION_RETURN=true）跳过主结算腿——仅生成质保金镜像对冲腿，避免重复结转。
             BigDecimal profitLoss = finalRevenue.subtract(finalCost);
-            VoucherFact debitCost = fact(SUBJECT_PROJECT_COST, "项目成本", DC_DEBIT, finalCost, event, memo,
+            VoucherFact debitCost = fact(SUBJECT_PROJECT_COST, null, DC_DEBIT, finalCost, event, memo,
                     ACCOUNT_KEY_PROJECT_COST);
             debitCost.setProjectId(projectId);
             facts.add(debitCost);
 
             if (profitLoss.signum() != 0) {
                 String plSubject = SUBJECT_PROFIT_LOSS;
-                String plName = "本年利润";
+                String plName = null;
                 String plDirection = profitLoss.signum() > 0 ? DC_DEBIT : DC_CREDIT;
                 BigDecimal plAmount = profitLoss.abs();
                 VoucherFact pl = fact(plSubject, plName, plDirection, plAmount, event, memo, ACCOUNT_KEY_PROFIT_LOSS);
@@ -102,7 +102,7 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
                 facts.add(pl);
             }
 
-            VoucherFact creditRevenue = fact(SUBJECT_PROJECT_REVENUE, "项目收入", DC_CREDIT, finalRevenue, event, memo,
+            VoucherFact creditRevenue = fact(SUBJECT_PROJECT_REVENUE, null, DC_CREDIT, finalRevenue, event, memo,
                     ACCOUNT_KEY_REVENUE);
             creditRevenue.setProjectId(projectId);
             facts.add(creditRevenue);
@@ -113,20 +113,20 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
         // 返还（billHeadCode=结算单号#RETURN 独立凭证）：镜像腿 借 2241 / 贷 1122 对冲清零。
         if (retentionAmount.signum() != 0) {
             if (retentionReturn) {
-                VoucherFact dr = fact(SUBJECT_RETENTION_PAYABLE, "其他应付款-质保金", DC_DEBIT, retentionAmount, event,
+                VoucherFact dr = fact(SUBJECT_RETENTION_PAYABLE, null, DC_DEBIT, retentionAmount, event,
                         memo, ACCOUNT_KEY_RETENTION_PAYABLE);
                 dr.setProjectId(projectId);
                 facts.add(dr);
-                VoucherFact cr = fact(SUBJECT_RETENTION_RECEIVABLE, "应收账款-质保金", DC_CREDIT, retentionAmount, event,
+                VoucherFact cr = fact(SUBJECT_RETENTION_RECEIVABLE, null, DC_CREDIT, retentionAmount, event,
                         memo, ACCOUNT_KEY_RETENTION_RECEIVABLE);
                 cr.setProjectId(projectId);
                 facts.add(cr);
             } else {
-                VoucherFact dr = fact(SUBJECT_RETENTION_RECEIVABLE, "应收账款-质保金", DC_DEBIT, retentionAmount, event,
+                VoucherFact dr = fact(SUBJECT_RETENTION_RECEIVABLE, null, DC_DEBIT, retentionAmount, event,
                         memo, ACCOUNT_KEY_RETENTION_RECEIVABLE);
                 dr.setProjectId(projectId);
                 facts.add(dr);
-                VoucherFact cr = fact(SUBJECT_RETENTION_PAYABLE, "其他应付款-质保金", DC_CREDIT, retentionAmount, event,
+                VoucherFact cr = fact(SUBJECT_RETENTION_PAYABLE, null, DC_CREDIT, retentionAmount, event,
                         memo, ACCOUNT_KEY_RETENTION_PAYABLE);
                 cr.setProjectId(projectId);
                 facts.add(cr);

@@ -43,7 +43,7 @@ public class ErpMntVisitReportAdditionalFaultProcessor extends AbstractErpMntVis
     protected void doAppendVisitRemark(ErpMntVisit visit, String description, String remark,
                                        IServiceContext context) {
         String faultText = !StringHelper.isBlank(description) ? description : remark;
-        String extra = "[额外故障] " + (faultText == null ? "" : faultText);
+        String extra = "[Additional fault] " + (faultText == null ? "" : faultText);
         String existing = visit.getRemark();
         String prefix = StringHelper.isEmpty(existing) ? "" : existing + "\n";
         String merged = prefix + extra;

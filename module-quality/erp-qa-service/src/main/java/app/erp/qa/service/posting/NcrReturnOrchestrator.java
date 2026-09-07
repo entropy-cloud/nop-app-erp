@@ -95,7 +95,7 @@ public class NcrReturnOrchestrator {
         data.put("businessDate", resolveBusinessDate(ncr));
         data.put("docStatus", ErpPurDocStatus.DOC_STATUS_DRAFT);
         data.put("approveStatus", ErpPurDocStatus.APPROVE_STATUS_UNSUBMITTED);
-        data.put("remark", "NCR退货:" + ncr.getCode());
+        data.put("remark", "NCR return: " + ncr.getCode());
         ErpPurReturn purReturn = purReturnBiz.save(data, context);
         return purReturn != null ? purReturn.getCode() : null;
     }
@@ -113,7 +113,7 @@ public class NcrReturnOrchestrator {
         data.put("businessDate", resolveBusinessDate(ncr));
         data.put("docStatus", ErpSalDocStatus.DOC_STATUS_DRAFT);
         data.put("approveStatus", ErpSalDocStatus.APPROVE_STATUS_UNSUBMITTED);
-        data.put("remark", "NCR退货:" + ncr.getCode());
+        data.put("remark", "NCR return: " + ncr.getCode());
         ErpSalReturn salReturn = salReturnBiz.save(data, context);
         return salReturn != null ? salReturn.getCode() : null;
     }

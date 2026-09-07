@@ -77,7 +77,7 @@ public class MockSignatureProvider implements IErpCtSignatureProvider {
         resp.setSignedSignerEmails(buildSignedEmails(providerRequestId, status));
         resp.setCertificateAvailable("COMPLETED".equals(status));
         if ("REJECTED".equals(status)) {
-            resp.setErrorMsg("mock 拒签测试");
+            resp.setErrorMsg("Mock rejection test");
         }
         return resp;
     }
