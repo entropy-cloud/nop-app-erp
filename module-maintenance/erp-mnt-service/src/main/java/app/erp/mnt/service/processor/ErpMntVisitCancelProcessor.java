@@ -25,7 +25,7 @@ public class ErpMntVisitCancelProcessor extends AbstractErpMntVisitProcessor {
         try {
             stateMachine.assertCanCancel(from);
         } catch (NopException e) {
-            throw illegalVisitTransition(visit, from, "非终态", e);
+            throw illegalVisitTransition(visit, from, "!COMPLETED / CANCELLED", e);
         }
         doCancel(visit, context);
         equipmentStatusLinker.restoreToRunning(visit.getEquipmentId(), context);

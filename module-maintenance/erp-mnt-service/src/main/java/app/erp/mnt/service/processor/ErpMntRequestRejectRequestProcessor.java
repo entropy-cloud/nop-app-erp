@@ -18,7 +18,7 @@ public class ErpMntRequestRejectRequestProcessor extends AbstractErpMntRequestPr
         try {
             stateMachine.assertCanRejectRequest(from);
         } catch (NopException e) {
-            throw illegalRequestTransition(request, from, "OPEN 或 ACCEPTED", e);
+            throw illegalRequestTransition(request, from, "OPEN / ACCEPTED", e);
         }
         doReject(request, context);
         return request;

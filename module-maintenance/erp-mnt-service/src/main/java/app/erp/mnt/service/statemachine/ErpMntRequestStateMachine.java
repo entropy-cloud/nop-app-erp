@@ -71,7 +71,7 @@ public class ErpMntRequestStateMachine {
     public void assertCanRejectRequest(String status) {
         if (!ErpMntDaoConstants.REQUEST_STATUS_OPEN.equals(status)
                 && !ErpMntDaoConstants.REQUEST_STATUS_ACCEPTED.equals(status)) {
-            throw illegal("rejectRequest", status, "OPEN 或 ACCEPTED");
+            throw illegal("rejectRequest", status, "OPEN / ACCEPTED");
         }
     }
 
@@ -85,7 +85,7 @@ public class ErpMntRequestStateMachine {
     public void assertCanCancel(String status) {
         if (!ErpMntDaoConstants.REQUEST_STATUS_OPEN.equals(status)
                 && !ErpMntDaoConstants.REQUEST_STATUS_ACCEPTED.equals(status)) {
-            throw illegal("cancel", status, "OPEN 或 ACCEPTED");
+            throw illegal("cancel", status, "OPEN / ACCEPTED");
         }
     }
 

@@ -38,7 +38,7 @@ public class ErpMntSparePartUsageApprovalStateMachine {
      */
     public void assertCanConfirmApprove(String approveStatus) {
         if (approveStatus != null && !ErpMntDaoConstants.APPROVE_STATUS_UNSUBMITTED.equals(approveStatus)) {
-            throw illegal("confirmApprove", approveStatus, "null 或 UNSUBMITTED");
+            throw illegal("confirmApprove", approveStatus, "null / UNSUBMITTED");
         }
     }
 

@@ -70,7 +70,7 @@ public class ErpMntVisitStateMachine {
         if (!ErpMntDaoConstants.VISIT_STATUS_DRAFT.equals(status)
                 && !ErpMntDaoConstants.VISIT_STATUS_SCHEDULED.equals(status)
                 && !ErpMntDaoConstants.VISIT_STATUS_IN_PROGRESS.equals(status)) {
-            throw illegal("cancel", status, "非终态");
+            throw illegal("cancel", status, "!COMPLETED / CANCELLED");
         }
     }
 

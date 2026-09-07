@@ -18,7 +18,7 @@ public class ErpMntRequestCancelProcessor extends AbstractErpMntRequestProcessor
         try {
             stateMachine.assertCanCancel(from);
         } catch (NopException e) {
-            throw illegalRequestTransition(request, from, "OPEN 或 ACCEPTED", e);
+            throw illegalRequestTransition(request, from, "OPEN / ACCEPTED", e);
         }
         doCancel(request, context);
         return request;
