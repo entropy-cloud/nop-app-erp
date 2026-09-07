@@ -67,7 +67,7 @@ public class ErpQaRecallBizModel extends AbstractErpCrudBizModel<ErpQaRecall> im
         try {
             statusStateMachine.assertCanCancel(current);
         } catch (NopException e) {
-            throw illegalRecallTransition(recall, current, "OPEN 或 APPROVED 或 IN_PROGRESS");
+            throw illegalRecallTransition(recall, current, "OPEN / APPROVED / IN_PROGRESS");
         }
         recall.setStatus(statusStateMachine.cancelTargetStatus());
         updateEntity(recall, null, context);

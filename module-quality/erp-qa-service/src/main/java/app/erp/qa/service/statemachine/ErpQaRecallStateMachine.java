@@ -62,8 +62,8 @@ public class ErpQaRecallStateMachine {
                 && !ErpQaConstants.RECALL_STATUS_APPROVED.equals(status)
                 && !ErpQaConstants.RECALL_STATUS_IN_PROGRESS.equals(status)) {
             throw illegal("cancel", status,
-                    ErpQaConstants.RECALL_STATUS_OPEN + " 或 " + ErpQaConstants.RECALL_STATUS_APPROVED
-                            + " 或 " + ErpQaConstants.RECALL_STATUS_IN_PROGRESS);
+                    ErpQaConstants.RECALL_STATUS_OPEN + " / " + ErpQaConstants.RECALL_STATUS_APPROVED
+                            + " / " + ErpQaConstants.RECALL_STATUS_IN_PROGRESS);
         }
     }
 

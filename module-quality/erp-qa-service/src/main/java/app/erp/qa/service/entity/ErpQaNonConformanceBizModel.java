@@ -114,7 +114,7 @@ public class ErpQaNonConformanceBizModel extends AbstractErpCrudBizModel<ErpQaNo
         try {
             ncrStateMachine.assertCanCancel(current);
         } catch (NopException e) {
-            throw illegalNcrTransition(ncr, current, "OPEN 或 IN_REVIEW");
+            throw illegalNcrTransition(ncr, current, "OPEN / IN_REVIEW");
         }
         ncr.setStatus(ncrStateMachine.cancelTargetStatus());
         updateEntity(ncr, null, context);

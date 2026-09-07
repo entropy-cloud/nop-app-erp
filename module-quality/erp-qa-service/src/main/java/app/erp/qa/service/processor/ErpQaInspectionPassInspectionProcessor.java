@@ -20,7 +20,7 @@ public class ErpQaInspectionPassInspectionProcessor extends AbstractErpQaInspect
         try {
             resultStateMachine.assertCanPassInspection(current);
         } catch (NopException e) {
-            throw illegalInspectionTransition(inspection, current, "PENDING（终态不可恢复，复检请新建质检单）");
+            throw illegalInspectionTransition(inspection, current, "PENDING");
         }
         inspection.setResult(resultStateMachine.passInspectionTargetStatus());
         markPosted(inspection, context);

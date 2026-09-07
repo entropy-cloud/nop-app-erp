@@ -58,7 +58,7 @@ public class ErpQaNonConformanceStateMachine {
     public void assertCanCancel(String status) {
         if (!ErpQaConstants.NCR_STATUS_OPEN.equals(status)
                 && !ErpQaConstants.NCR_STATUS_IN_REVIEW.equals(status)) {
-            throw illegal("cancel", status, ErpQaConstants.NCR_STATUS_OPEN + " 或 " + ErpQaConstants.NCR_STATUS_IN_REVIEW);
+            throw illegal("cancel", status, ErpQaConstants.NCR_STATUS_OPEN + " / " + ErpQaConstants.NCR_STATUS_IN_REVIEW);
         }
     }
 

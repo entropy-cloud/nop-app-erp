@@ -47,7 +47,7 @@ public class ErpQaInspectionResultStateMachine {
     public void assertCanRecordResult(String result) {
         String status = normalize(result);
         if (!ErpQaConstants.INSPECTION_RESULT_PENDING.equals(status)) {
-            throw illegal("recordResult", status, "PENDING（终态不可恢复，复检请新建质检单）");
+            throw illegal("recordResult", status, "PENDING");
         }
     }
 
@@ -55,7 +55,7 @@ public class ErpQaInspectionResultStateMachine {
     public void assertCanPassInspection(String result) {
         String status = normalize(result);
         if (!ErpQaConstants.INSPECTION_RESULT_PENDING.equals(status)) {
-            throw illegal("passInspection", status, "PENDING（终态不可恢复，复检请新建质检单）");
+            throw illegal("passInspection", status, "PENDING");
         }
     }
 
@@ -63,7 +63,7 @@ public class ErpQaInspectionResultStateMachine {
     public void assertCanFailInspection(String result) {
         String status = normalize(result);
         if (!ErpQaConstants.INSPECTION_RESULT_PENDING.equals(status)) {
-            throw illegal("failInspection", status, "PENDING（终态不可恢复，复检请新建质检单）");
+            throw illegal("failInspection", status, "PENDING");
         }
     }
 

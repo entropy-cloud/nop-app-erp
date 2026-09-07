@@ -78,7 +78,7 @@ public class ErpQaRecallProcessor {
         try {
             approvalStateMachine.assertCanSubmit(aStatus);
         } catch (NopException e) {
-            throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_UNSUBMITTED + " 或 " + ErpQaConstants.APPROVE_STATUS_REJECTED);
+            throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_UNSUBMITTED + " / " + ErpQaConstants.APPROVE_STATUS_REJECTED);
         }
     }
 

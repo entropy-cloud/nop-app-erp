@@ -46,7 +46,7 @@ public class ErpQaInspectionRecordResultProcessor extends AbstractErpQaInspectio
         try {
             resultStateMachine.assertCanRecordResult(current);
         } catch (NopException e) {
-            throw illegalInspectionTransition(inspection, current, "PENDING（终态不可恢复）");
+            throw illegalInspectionTransition(inspection, current, "PENDING");
         }
 
         List<ErpQaInspectionLine> lines = loadLines(inspectionId);
