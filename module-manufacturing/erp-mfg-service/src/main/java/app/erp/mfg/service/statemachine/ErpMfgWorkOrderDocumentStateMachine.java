@@ -1,7 +1,7 @@
 package app.erp.mfg.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.ErpMfgErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -20,9 +20,9 @@ import java.util.List;
  *
  * <p>命名带 {@code Document} 后缀（契约 §1 双轴约定，与 {@code ErpMfgWorkOrderApprovalStateMachine} approveStatus 轴分离）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
- * WorkOrder 领域码为泛型 {@code ERR_INVALID_STATUS_TRANSITION}（路线图 Non-Goal「不借迁移改变既有错误码」）。
+ * <p>非法边直抛领域码 {@link ErpMfgErrors#ERR_INVALID_STATUS_TRANSITION}（泛型码，路线图 Non-Goal
+ * 「不借迁移改变既有错误码」；参数 {@code action}/{@code currentStatus}/{@code expectedStatus}；
+ * plan 2026-09-07-2200-1 直抛领域码，实体元数据 {@code workOrderCode} 经调用点同码补参补齐）。
  *
  * <p><b>单轴建模约定（plan Phase 1 Decision）</b>：本 Bean 仅承载 docStatus 轴；submit/approve 动作的
  * docStatus 目标写入（{@code doSubmit}→SUBMITTED、{@code doApprove}→NOT_STARTED）与审批轴联动写入保留在
@@ -204,9 +204,9 @@ public class ErpMfgWorkOrderDocumentStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION)
+                .param(ErpMfgErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

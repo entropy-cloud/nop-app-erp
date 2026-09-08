@@ -1,7 +1,7 @@
 package app.erp.mfg.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.ErpMfgErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -86,20 +86,20 @@ public class TestErpMfgForecastStateMachineMatrix {
         NopException fromTerminal = assertThrows(NopException.class,
                 () -> sm.assertCanCancel(ErpMfgConstants.FORECAST_STATUS_CANCELLED),
                 "cancel 对终态 CANCELLED 应非法");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), fromTerminal.getErrorCode(),
-                "Bean 报告 common 层非法迁移码");
+        assertEquals(ErpMfgErrors.ERR_FORECAST_ILLEGAL_STATUS_TRANSITION.getErrorCode(), fromTerminal.getErrorCode(),
+                "Bean 直抛领域非法迁移码");
         assertEquals("cancel", fromTerminal.getParam(ErpMfgForecastStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
         assertEquals(ErpMfgConstants.FORECAST_STATUS_CANCELLED,
-                fromTerminal.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
+                fromTerminal.getParam(ErpMfgErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
 
         // 非法来源：CONSUMED 预留死状态（refuse-dead-state）
         NopException fromDead = assertThrows(NopException.class,
                 () -> sm.assertCanCancel(ErpMfgConstants.FORECAST_STATUS_CONSUMED),
                 "cancel 对预留死状态 CONSUMED 应非法");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), fromDead.getErrorCode(),
-                "CONSUMED 拒绝同样报告 common 层非法迁移码（Bean 经正向 allow-list 拒绝）");
+        assertEquals(ErpMfgErrors.ERR_FORECAST_ILLEGAL_STATUS_TRANSITION.getErrorCode(), fromDead.getErrorCode(),
+                "CONSUMED 拒绝同样直抛领域非法迁移码（Bean 经正向 allow-list 拒绝）");
         assertEquals(ErpMfgConstants.FORECAST_STATUS_CONSUMED,
-                fromDead.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态 CONSUMED");
+                fromDead.getParam(ErpMfgErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态 CONSUMED");
     }
 
     // ---------- (d) approve 仅 DRAFT 合法、对 APPROVED/CANCELLED/CONSUMED 非法 ----------
@@ -117,11 +117,11 @@ public class TestErpMfgForecastStateMachineMatrix {
                 ErpMfgConstants.FORECAST_STATUS_CONSUMED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanApprove(s),
                     "approve 对非 DRAFT 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                    "Bean 报告 common 层非法迁移码: status=" + s);
+            assertEquals(ErpMfgErrors.ERR_FORECAST_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                    "Bean 直抛领域非法迁移码: status=" + s);
             assertEquals("approve", ex.getParam(ErpMfgForecastStateMachine.ARG_ACTION),
                     "拒绝元数据携带动作名");
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+            assertEquals(s, ex.getParam(ErpMfgErrors.ARG_CURRENT_STATUS),
                     "拒绝元数据携带当前态: status=" + s);
         }
     }

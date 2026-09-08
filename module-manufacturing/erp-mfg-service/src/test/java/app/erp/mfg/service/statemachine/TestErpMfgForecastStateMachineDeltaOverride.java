@@ -1,7 +1,7 @@
 package app.erp.mfg.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.ErpMfgErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.autotest.NopTestProperty;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -79,8 +79,8 @@ public class TestErpMfgForecastStateMachineDeltaOverride extends JunitAutoTestCa
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanCancel(ErpMfgConstants.FORECAST_STATUS_APPROVED),
                 "Delta cancel(APPROVED) 应非法（Delta 收紧为仅 DRAFT）");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Delta cancel(APPROVED) 报告 common 层非法迁移码");
+        assertEquals(ErpMfgErrors.ERR_FORECAST_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Delta cancel(APPROVED) 直抛领域非法迁移码");
 
         // Delta 仍允许 DRAFT（基线 + Delta 均允许）
         stateMachine.assertCanCancel(ErpMfgConstants.FORECAST_STATUS_DRAFT);

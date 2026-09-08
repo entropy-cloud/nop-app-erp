@@ -47,6 +47,19 @@ public class ErpMfgWorkOrderApproveProcessor extends AbstractApproveProcessor<Er
                 .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, id);
     }
 
+    /**
+     * 骨架守卫裸奔通道修正（plan 2026-09-07-2200-1 form-3，有意契约修正）：非法迁移错误由 common 码
+     * 改为直抛领域码 {@link ErpMfgErrors#ERR_INVALID_STATUS_TRANSITION}
+     * （参数形态与 facade 同码补参后的端到端消息一致）。
+     */
+    @Override
+    protected NopException illegalStatusException(ErpMfgWorkOrder entity, String current, String... expected) {
+        return new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION)
+                .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, entity.getCode())
+                .param(ErpMfgErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpMfgErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
+    }
+
     @Override
     protected String getApproveStatus(ErpMfgWorkOrder entity) {
         return entity.getApproveStatus();

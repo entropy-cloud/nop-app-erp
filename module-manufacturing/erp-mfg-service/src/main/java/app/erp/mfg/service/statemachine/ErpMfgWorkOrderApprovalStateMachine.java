@@ -1,7 +1,7 @@
 package app.erp.mfg.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.ErpMfgErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -20,9 +20,9 @@ import java.util.List;
  *
  * <p>命名带 {@code Approval} 后缀（契约 §1 双轴约定，与 {@code ErpMfgWorkOrderDocumentStateMachine} docStatus 轴分离）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
- * WorkOrder 领域码为泛型 {@code ERR_INVALID_STATUS_TRANSITION}（路线图 Non-Goal「不借迁移改变既有错误码」）。
+ * <p>非法边直抛领域码 {@link ErpMfgErrors#ERR_INVALID_STATUS_TRANSITION}（泛型码，路线图 Non-Goal
+ * 「不借迁移改变既有错误码」；参数 {@code action}/{@code currentStatus}/{@code expectedStatus}；
+ * plan 2026-09-07-2200-1 直抛领域码，实体元数据 {@code workOrderCode} 经调用点同码补参补齐）。
  *
  * <p><b>reverseApprove 目标态裁定（plan Phase 1 Decision）</b>：实仓核实 {@code ErpMfgWorkOrderProcessor.doReverseApprove}
  * 覆写写入 REJECTED（非共享骨架 {@code AbstractReverseApproveProcessor} 默认 SUBMITTED，其 §16.4 不合规为经覆写
@@ -38,8 +38,8 @@ public class ErpMfgWorkOrderApprovalStateMachine {
     /**
      * submit 守卫：来源态为 {@code UNSUBMITTED}/{@code null}/{@code REJECTED} 合法（初始提交或驳回后重新提交）。
      *
-     * <p>非法来源态报告 common 层非法边（携带 {@code action=submit}/{@code fromStatus}）。
-     * 接线方 {@code ErpMfgWorkOrderProcessor.validateTransitionForSubmit} 映射为领域码 {@code ERR_INVALID_STATUS_TRANSITION}。
+     * <p>非法来源态直抛领域码非法边（携带 {@code action=submit}/{@code fromStatus}）。
+     * 接线方 {@code ErpMfgWorkOrderProcessor.validateTransitionForSubmit} 仅同码补参 {@code workOrderCode}。
      */
     public void assertCanSubmit(String approveStatus) {
         String status = normalize(approveStatus);
@@ -149,9 +149,9 @@ public class ErpMfgWorkOrderApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION)
+                .param(ErpMfgErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

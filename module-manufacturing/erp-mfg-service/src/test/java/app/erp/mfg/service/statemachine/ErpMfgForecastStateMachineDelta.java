@@ -1,7 +1,7 @@
 package app.erp.mfg.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.ErpMfgErrors;
 import io.nop.api.core.exceptions.NopException;
 
 /**
@@ -19,9 +19,9 @@ public class ErpMfgForecastStateMachineDelta extends ErpMfgForecastStateMachine 
     @Override
     public void assertCanCancel(String status) {
         if (!ErpMfgConstants.FORECAST_STATUS_DRAFT.equals(status)) {
-            throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpCommonErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpCommonErrors.ARG_EXPECTED_STATUS, ErpMfgConstants.FORECAST_STATUS_DRAFT)
+            throw new NopException(ErpMfgErrors.ERR_FORECAST_ILLEGAL_STATUS_TRANSITION)
+                    .param(ErpMfgErrors.ARG_CURRENT_STATUS, status)
+                    .param(ErpMfgErrors.ARG_EXPECTED_STATUS, ErpMfgConstants.FORECAST_STATUS_DRAFT)
                     .param(ARG_ACTION, "cancel");
         }
     }

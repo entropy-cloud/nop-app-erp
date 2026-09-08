@@ -79,8 +79,8 @@ public class AbstractErpMfgMaterialIssueProcessor {
 
     /**
      * confirm 路径固定来源态守卫（plan 2026-08-14-0930-1 M4.39）：委托
-     * {@link ErpMfgMaterialIssueStateMachine#assertCanConfirm(String)}，非法边由 Bean 抛 common 层码，
-     * 此处映射领域码 {@code ERR_INVALID_STATUS_TRANSITION}（misnamed 复用，common 码作 cause）。
+     * {@link ErpMfgMaterialIssueStateMachine#assertCanConfirm(String)}；Bean 自 plan 2026-09-07-2200-1 起
+     * 直抛领域码 {@code ERR_INVALID_STATUS_TRANSITION}（misnamed 复用），此处仅同码补参 {@code workOrderCode}。
      *
      * <p>已 DONE 的幂等短路（重复确认空操作）为动态幂等守卫，保留在 {@code ErpMfgMaterialIssueConfirmProcessor} 原位。
      */
@@ -89,15 +89,8 @@ public class AbstractErpMfgMaterialIssueProcessor {
         try {
             stateMachine.assertCanConfirm(status);
         } catch (NopException e) {
-            throw illegalTransition(issue, status, "DRAFT");
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, issue.getCode());
         }
-    }
-
-    protected NopException illegalTransition(ErpMfgMaterialIssue issue, String current, String expected) {
-        return new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION)
-                .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, issue.getCode())
-                .param(ErpMfgErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     // ---------- 同聚合子表/关联查询（protected） ----------

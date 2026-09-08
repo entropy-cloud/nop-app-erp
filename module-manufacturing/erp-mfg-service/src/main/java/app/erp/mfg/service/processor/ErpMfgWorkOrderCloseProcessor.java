@@ -1,6 +1,7 @@
 package app.erp.mfg.service.processor;
 
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
+import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.statemachine.ErpMfgWorkOrderDocumentStateMachine;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -31,7 +32,8 @@ public class ErpMfgWorkOrderCloseProcessor {
         try {
             documentStateMachine.assertCanClose(status);
         } catch (io.nop.api.core.exceptions.NopException e) {
-            throw facade.illegalTransition(wo, status, "STOPPED / IN_PROCESS");
+            // Bean 直抛领域码 ERR_INVALID_STATUS_TRANSITION（plan 2026-09-07-2200-1），本处仅同码补参 workOrderCode
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
     }
 

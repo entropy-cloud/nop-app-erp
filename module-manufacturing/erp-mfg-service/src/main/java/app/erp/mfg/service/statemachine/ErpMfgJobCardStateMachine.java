@@ -1,7 +1,7 @@
 package app.erp.mfg.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.ErpMfgErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -18,8 +18,10 @@ import java.util.List;
  * （6 个状态变更动作 + recordWork 来源态校验）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。
  * 可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpMfgErrors#ERR_INVALID_STATUS_TRANSITION}（既有 misnamed 码
+ * {@code erp.err.mfg.work-order.illegal-status-transition}，路线图 Non-Goal「不借迁移改变既有错误码」，保持不变；
+ * 参数 {@code action}/{@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1 直抛领域码，
+ * 实体元数据 {@code jobCardId} 经调用点同码补参补齐）。
  *
  * <p>迁移矩阵（9 条边）：startJob(OPEN→WORK_IN_PROGRESS)、submitJob(WORK_IN_PROGRESS→SUBMITTED)、
  * submitJob(ON_HOLD→SUBMITTED)、completeJob(SUBMITTED→COMPLETED)、holdJob(WORK_IN_PROGRESS→ON_HOLD)、
@@ -44,8 +46,8 @@ public class ErpMfgJobCardStateMachine {
     /**
      * startJob 守卫：仅 OPEN 合法。
      *
-     * <p>接线方 {@code ErpMfgJobCardStartJobProcessor} 经 {@code ErpMfgJobCardProcessor.illegalTransition}
-     * 映射为领域码 {@code ERR_INVALID_STATUS_TRANSITION}（既有码，保持误命名）。
+     * <p>接线方 {@code ErpMfgJobCardStartJobProcessor} 经 {@code ErpMfgJobCardProcessor} 同码补参
+     * {@code jobCardId}（Bean 直抛领域码 {@code ERR_INVALID_STATUS_TRANSITION}，既有码保持误命名）。
      */
     public void assertCanStartJob(String status) {
         if (!ErpMfgConstants.JOB_CARD_STATUS_OPEN.equals(status)) {
@@ -188,9 +190,9 @@ public class ErpMfgJobCardStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION)
+                .param(ErpMfgErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

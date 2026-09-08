@@ -1,7 +1,7 @@
 package app.erp.mfg.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.ErpMfgErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -277,10 +277,10 @@ public class TestErpMfgWorkOrderDocumentStateMachineMatrix {
     }
 
     private void assertCommonTransitionMetadata(NopException ex, String action, String status) {
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + status);
+        assertEquals(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域非法迁移码: action=" + action + ", status=" + status);
         assertEquals(action, ex.getParam(ErpMfgWorkOrderDocumentStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-        assertEquals(status, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
+        assertEquals(status, ex.getParam(ErpMfgErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
     }
 
     private List<String> illegalFor(List<String> all, String... legal) {

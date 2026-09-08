@@ -30,7 +30,6 @@ import app.erp.mfg.service.genealogy.BatchGenealogyWriter;
 import app.erp.mfg.service.posting.ProductionVarianceDispatcher;
 import app.erp.mfg.service.workorder.KitAvailabilityChecker;
 import app.erp.mfg.service.workorder.KitAvailabilityResult;
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
@@ -214,7 +213,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             approvalStateMachine.assertCanSubmit(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, "UNSUBMITTED / REJECTED");
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
     }
 
@@ -223,7 +222,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             approvalStateMachine.assertCanWithdraw(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
     }
 
@@ -232,7 +231,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             approvalStateMachine.assertCanApprove(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
     }
 
@@ -241,7 +240,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             approvalStateMachine.assertCanReject(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
     }
 
@@ -250,7 +249,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             approvalStateMachine.assertCanReverseApprove(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, ErpMfgConstants.APPROVE_STATUS_APPROVED);
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
     }
 
@@ -314,7 +313,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             documentStateMachine.assertCanStart(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, "STOCK_RESERVED / STOCK_PARTIAL");
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
         // 动态业务守卫（config-gated 部分齐套开工许可）保留原位
         if (ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL.equals(status) && !isAllowPartialKitStart()) {
@@ -329,7 +328,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             documentStateMachine.assertCanStop(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, "IN_PROCESS");
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
     }
 
@@ -339,7 +338,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             documentStateMachine.assertCanResume(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, "STOPPED");
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
     }
 
@@ -349,7 +348,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             documentStateMachine.assertCanReportCompletion(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, "IN_PROCESS");
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
     }
 
@@ -359,7 +358,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             documentStateMachine.assertCanCheckAvailability(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, "NOT_STARTED");
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
     }
 
@@ -369,7 +368,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             documentStateMachine.assertCanCancel(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, "DRAFT / SUBMITTED / NOT_STARTED");
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
     }
 
@@ -552,12 +551,14 @@ public class ErpMfgWorkOrderProcessor {
                 // approve（docStatus 侧）固定守卫：仅 SUBMITTED
                 documentStateMachine.assertCanApprove(current);
             } else {
-                throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                        .param(ErpCommonErrors.ARG_CURRENT_STATUS, current)
-                        .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedLabel);
+                // 防御性兜底（当前调用方仅传 DRAFT/SUBMITTED）：直抛实体终码（plan 2026-09-07-2200-1），
+                // workOrderCode 由下方 catch 同码补参
+                throw new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION)
+                        .param(ErpMfgErrors.ARG_CURRENT_STATUS, current)
+                        .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expectedLabel);
             }
         } catch (NopException e) {
-            throw illegalTransition(wo, current, expectedLabel);
+            throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
     }
 
@@ -832,12 +833,5 @@ public class ErpMfgWorkOrderProcessor {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    protected NopException illegalTransition(ErpMfgWorkOrder wo, String current, String expected) {
-        return new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION)
-                .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode())
-                .param(ErpMfgErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expected);
     }
 }

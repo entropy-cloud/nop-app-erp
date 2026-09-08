@@ -3,6 +3,7 @@ package app.erp.mfg.service.processor;
 import app.erp.mfg.biz.JobCardWorkRecord;
 import app.erp.mfg.dao.entity.ErpMfgJobCard;
 import app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog;
+import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.statemachine.ErpMfgJobCardStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -35,7 +36,7 @@ public class ErpMfgJobCardRecordWorkProcessor {
         try {
             stateMachine.assertCanRecordWork(from);
         } catch (NopException e) {
-            throw facade.illegalTransition(jc, from, "WORK_IN_PROGRESS / SUBMITTED", e);
+            throw e.param(ErpMfgErrors.ARG_JOB_CARD_ID, jc.getId());
         }
         BigDecimal laborCost = computeLaborCost(record);
 

@@ -78,23 +78,4 @@ public class ErpMfgJobCardProcessor {
     static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
-
-    protected NopException illegalTransition(ErpMfgJobCard jc, String current, String expected) {
-        return new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION)
-                .param(ErpMfgErrors.ARG_JOB_CARD_ID, jc.getId())
-                .param(ErpMfgErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expected);
-    }
-
-    /**
-     * 经 StateMachine Bean 断言来源态合法；非法边（Bean 报告 common 层码）映射为领域
-     * {@code ERR_INVALID_STATUS_TRANSITION}（既有码，保持误命名「work-order」）+ 实体编号/上下文，
-     * common 码作 cause 保留（契约 §7）。重命名该码归独立 Fix plan successor（属行为变更，本计划 Non-Goal）。
-     */
-    protected NopException illegalTransition(ErpMfgJobCard jc, String current, String expected, Throwable cause) {
-        return new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION, cause)
-                .param(ErpMfgErrors.ARG_JOB_CARD_ID, jc.getId())
-                .param(ErpMfgErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expected);
-    }
 }

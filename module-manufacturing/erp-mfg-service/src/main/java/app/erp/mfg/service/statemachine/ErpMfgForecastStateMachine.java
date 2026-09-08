@@ -1,7 +1,7 @@
 package app.erp.mfg.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.ErpMfgErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -18,8 +18,9 @@ import java.util.List;
  * （DRAFT/APPROVED/CONSUMED/CANCELLED）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。
  * 可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpMfgErrors#ERR_FORECAST_ILLEGAL_STATUS_TRANSITION}（参数 {@code action}/
+ * {@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1 直抛领域码，实体元数据
+ * {@code forecastCode} 经调用点同码补参补齐）。
  *
  * <p>迁移矩阵（3 条边）：approve(DRAFT→APPROVED)、cancel(DRAFT→CANCELLED)、cancel(APPROVED→CANCELLED，多来源)。
  *
@@ -38,9 +39,8 @@ public class ErpMfgForecastStateMachine {
     /**
      * approve 守卫：仅 DRAFT 合法。
      *
-     * <p>对 APPROVED/CANCELLED/CONSUMED 及其它值报告 common 层非法边（携带 {@code action=approve}/
-     * {@code fromStatus}）。接线方 {@code ErpMfgForecastBizModel} 映射为领域码
-     * {@code ERR_FORECAST_ILLEGAL_STATUS_TRANSITION}。
+     * <p>对 APPROVED/CANCELLED/CONSUMED 及其它值直抛领域码非法边（携带 {@code action=approve}/
+     * {@code fromStatus}），接线方 {@code ErpMfgForecastBizModel} 仅同码补参 {@code forecastCode}。
      */
     public void assertCanApprove(String status) {
         if (!ErpMfgConstants.FORECAST_STATUS_DRAFT.equals(status)) {
@@ -55,9 +55,8 @@ public class ErpMfgForecastStateMachine {
     /**
      * cancel 守卫：正向 allow-list {DRAFT, APPROVED}（多来源）。
      *
-     * <p>对 CANCELLED 终态与 CONSUMED 预留死状态均报告 common 层非法边（携带 {@code action=cancel}/
-     * {@code fromStatus}）。接线方 {@code ErpMfgForecastBizModel} 映射为领域码
-     * {@code ERR_FORECAST_ILLEGAL_STATUS_TRANSITION}（保持 refuse-terminal + refuse-dead-state 语义）。
+     * <p>对 CANCELLED 终态与 CONSUMED 预留死状态均直抛领域码非法边（携带 {@code action=cancel}/
+     * {@code fromStatus}；保持 refuse-terminal + refuse-dead-state 语义）。
      */
     public void assertCanCancel(String status) {
         if (!ErpMfgConstants.FORECAST_STATUS_DRAFT.equals(status)
@@ -106,9 +105,9 @@ public class ErpMfgForecastStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpMfgErrors.ERR_FORECAST_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpMfgErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

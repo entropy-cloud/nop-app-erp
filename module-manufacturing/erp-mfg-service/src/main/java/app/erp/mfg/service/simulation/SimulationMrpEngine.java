@@ -138,9 +138,8 @@ public class SimulationMrpEngine {
         try {
             stateMachine.assertCanRun(computed.getStatus());
         } catch (NopException e) {
-            throw new NopException(ErpMfgErrors.ERR_MRP_INVALID_PLAN_STATUS, e)
-                    .param(ErpMfgErrors.ARG_PLAN_CODE, computed.getCode())
-                    .param(ErpMfgErrors.ARG_CURRENT_STATUS, computed.getStatus());
+            // Bean 直抛领域码 ERR_MRP_INVALID_PLAN_STATUS（plan 2026-09-07-2200-1），本处仅同码补参 planCode
+            throw e.param(ErpMfgErrors.ARG_PLAN_CODE, computed.getCode());
         }
         computed.setStatus(stateMachine.runTargetStatus());
         daoProvider.daoFor(ErpMfgMrpPlan.class).saveOrUpdateEntity(computed);
@@ -166,9 +165,8 @@ public class SimulationMrpEngine {
         try {
             stateMachine.assertCanComplete(computed.getStatus());
         } catch (NopException e) {
-            throw new NopException(ErpMfgErrors.ERR_MRP_INVALID_PLAN_STATUS, e)
-                    .param(ErpMfgErrors.ARG_PLAN_CODE, computed.getCode())
-                    .param(ErpMfgErrors.ARG_CURRENT_STATUS, computed.getStatus());
+            // Bean 直抛领域码 ERR_MRP_INVALID_PLAN_STATUS（plan 2026-09-07-2200-1），本处仅同码补参 planCode
+            throw e.param(ErpMfgErrors.ARG_PLAN_CODE, computed.getCode());
         }
         computed.setStatus(stateMachine.completeTargetStatus());
         daoProvider.daoFor(ErpMfgMrpPlan.class).saveOrUpdateEntity(computed);

@@ -241,9 +241,8 @@ public class MrpReleaseService {
             try {
                 stateMachine.assertCanFirm(plan.getStatus());
             } catch (NopException e) {
-                throw new NopException(ErpMfgErrors.ERR_MRP_INVALID_PLAN_STATUS, e)
-                        .param(ErpMfgErrors.ARG_PLAN_CODE, plan.getCode())
-                        .param(ErpMfgErrors.ARG_CURRENT_STATUS, plan.getStatus());
+                // Bean 直抛领域码 ERR_MRP_INVALID_PLAN_STATUS（plan 2026-09-07-2200-1），本处仅同码补参 planCode
+                throw e.param(ErpMfgErrors.ARG_PLAN_CODE, plan.getCode());
             }
             plan.setStatus(stateMachine.firmTargetStatus());
             daoProvider.daoFor(ErpMfgMrpPlan.class).updateEntity(plan);

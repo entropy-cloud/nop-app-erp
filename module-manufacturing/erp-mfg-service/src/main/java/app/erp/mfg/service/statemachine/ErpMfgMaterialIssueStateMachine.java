@@ -1,7 +1,7 @@
 package app.erp.mfg.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.ErpMfgErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -20,10 +20,12 @@ import java.util.List;
  *
  * <p>实体无 approveStatus 轴，单轴 Bean 不带 {@code Document}/{@code Approval} 后缀（契约 §1 单轴省略约定）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
- * MaterialIssue 领域码复用泛型 {@code ERR_INVALID_STATUS_TRANSITION}（码 {@code erp.err.mfg.work-order.illegal-status-transition}，
- * misnamed——路线图 Non-Goal「不借迁移改变既有错误码」，保持不变，归 watch-only successor）。
+ * <p>非法边直抛领域码 {@link ErpMfgErrors#ERR_INVALID_STATUS_TRANSITION}（复用泛型码，码
+ * {@code erp.err.mfg.work-order.illegal-status-transition}，misnamed——路线图 Non-Goal「不借迁移改变既有错误码」，
+ * 保持不变，归 watch-only successor；参数 {@code action}/{@code currentStatus}/{@code expectedStatus}；
+ * plan 2026-09-07-2200-1 直抛领域码，实体元数据 {@code workOrderCode} 经调用点同码补参补齐；
+ * reverseConfirm 边的 {@code ERR_MATERIAL_ISSUE_NOT_POSTED} 语义收敛仍保留在
+ * {@code ErpMfgMaterialIssueReverseConfirmProcessor} 原位）。
  *
  * <p><b>confirm 两步迁移建模（plan Phase 3 Decision）</b>：confirm 为单命名动作，入口守卫仅 DRAFT，
  * 动作内部两步写 DRAFT→CONFIRMED→DONE（{@code ErpMfgMaterialIssueConfirmProcessor} 先置 CONFIRMED 生成出库移动单，
@@ -111,9 +113,9 @@ public class ErpMfgMaterialIssueStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION)
+                .param(ErpMfgErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

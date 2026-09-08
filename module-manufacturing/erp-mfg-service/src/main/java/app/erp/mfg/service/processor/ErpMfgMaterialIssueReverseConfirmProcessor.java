@@ -72,7 +72,9 @@ public class ErpMfgMaterialIssueReverseConfirmProcessor extends AbstractErpMfgMa
      *
      * <p>posted 判定为动态业务守卫保留原位（未过账抛 {@code ERR_MATERIAL_ISSUE_NOT_POSTED}）；
      * 固定状态边守卫（仅 DONE）委托 {@code ErpMfgMaterialIssueStateMachine.assertCanReverseConfirm}
-     * （M4.39；posted=true 时 docStatus 必为 DONE，状态守卫为矩阵防御，映射同码保持行为一致）。
+     * （M4.39；Bean 自 plan 2026-09-07-2200-1 起直抛领域码 {@code ERR_INVALID_STATUS_TRANSITION}）。
+     * posted=true 时 docStatus 必为 DONE，状态守卫为矩阵防御——两路有意收敛为业务码
+     * {@code ERR_MATERIAL_ISSUE_NOT_POSTED} 保持端到端行为一致，非 common 转码残留。
      */
     protected void validateCanReverse(ErpMfgMaterialIssue issue, IServiceContext context) {
         String status = issue.getDocStatus();

@@ -16,7 +16,6 @@ import app.erp.mfg.service.posting.MfgPostingExecutor;
 import app.erp.mfg.service.posting.SubcontractPostingDispatcher;
 import app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderApprovalStateMachine;
 import app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderDocumentStateMachine;
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
@@ -258,7 +257,7 @@ public class ErpMfgSubcontractOrderProcessor {
         try {
             approvalStateMachine.assertCanSubmit(status);
         } catch (NopException e) {
-            throw illegalTransition(order, status, "UNSUBMITTED / REJECTED");
+            throw e.param(ErpMfgErrors.ARG_SUBCONTRACT_ORDER_CODE, order.getCode());
         }
     }
 
@@ -267,7 +266,7 @@ public class ErpMfgSubcontractOrderProcessor {
         try {
             approvalStateMachine.assertCanWithdraw(status);
         } catch (NopException e) {
-            throw illegalTransition(order, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpMfgErrors.ARG_SUBCONTRACT_ORDER_CODE, order.getCode());
         }
     }
 
@@ -277,7 +276,7 @@ public class ErpMfgSubcontractOrderProcessor {
         try {
             approvalStateMachine.assertCanApprove(status);
         } catch (NopException e) {
-            throw illegalTransition(order, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpMfgErrors.ARG_SUBCONTRACT_ORDER_CODE, order.getCode());
         }
     }
 
@@ -287,7 +286,7 @@ public class ErpMfgSubcontractOrderProcessor {
         try {
             approvalStateMachine.assertCanReject(status);
         } catch (NopException e) {
-            throw illegalTransition(order, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpMfgErrors.ARG_SUBCONTRACT_ORDER_CODE, order.getCode());
         }
     }
 
@@ -306,7 +305,7 @@ public class ErpMfgSubcontractOrderProcessor {
         try {
             approvalStateMachine.assertCanReverseApprove(status);
         } catch (NopException e) {
-            throw illegalTransition(order, status, ErpMfgConstants.APPROVE_STATUS_APPROVED);
+            throw e.param(ErpMfgErrors.ARG_SUBCONTRACT_ORDER_CODE, order.getCode());
         }
     }
 
@@ -316,7 +315,7 @@ public class ErpMfgSubcontractOrderProcessor {
         try {
             documentStateMachine.assertCanCancel(status);
         } catch (NopException e) {
-            throw illegalTransition(order, status, "DRAFT / SUBMITTED / APPROVED");
+            throw e.param(ErpMfgErrors.ARG_SUBCONTRACT_ORDER_CODE, order.getCode());
         }
     }
 
@@ -485,12 +484,14 @@ public class ErpMfgSubcontractOrderProcessor {
                 // postProcessingFee 固定守卫：仅 RECEIVED
                 documentStateMachine.assertCanPostProcessingFee(current);
             } else {
-                throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                        .param(ErpCommonErrors.ARG_CURRENT_STATUS, current)
-                        .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedLabel);
+                // 防御性兜底（当前调用方仅传 APPROVED/ISSUED/RECEIVED）：直抛实体终码
+                // （plan 2026-09-07-2200-1），subcontractOrderCode 由下方 catch 同码补参
+                throw new NopException(ErpMfgErrors.ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION)
+                        .param(ErpMfgErrors.ARG_CURRENT_STATUS, current)
+                        .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expectedLabel);
             }
         } catch (NopException e) {
-            throw illegalTransition(order, current, expectedLabel);
+            throw e.param(ErpMfgErrors.ARG_SUBCONTRACT_ORDER_CODE, order.getCode());
         }
     }
 
@@ -555,12 +556,5 @@ public class ErpMfgSubcontractOrderProcessor {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    protected NopException illegalTransition(ErpMfgSubcontractOrder order, String current, String expected) {
-        return new NopException(ErpMfgErrors.ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpMfgErrors.ARG_SUBCONTRACT_ORDER_CODE, order.getCode())
-                .param(ErpMfgErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expected);
     }
 }

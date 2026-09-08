@@ -1,7 +1,7 @@
 package app.erp.mfg.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.ErpMfgErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.exceptions.NopException;
@@ -53,8 +53,8 @@ public class TestErpMfgForecastStateMachineBaselineIoC extends JunitAutoTestCase
         NopException fromDead = assertThrows(NopException.class,
                 () -> stateMachine.assertCanCancel(ErpMfgConstants.FORECAST_STATUS_CONSUMED),
                 "基线 cancel(CONSUMED) 非法（refuse-dead-state）");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), fromDead.getErrorCode(),
-                "基线 cancel(CONSUMED) 报告 common 层非法迁移码");
+        assertEquals(ErpMfgErrors.ERR_FORECAST_ILLEGAL_STATUS_TRANSITION.getErrorCode(), fromDead.getErrorCode(),
+                "基线 cancel(CONSUMED) 直抛领域非法迁移码");
     }
 
     @Test

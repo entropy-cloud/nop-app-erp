@@ -1,7 +1,7 @@
 package app.erp.mfg.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.ErpMfgErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -18,8 +18,9 @@ import java.util.List;
  * （3 个状态变更动作，双引擎 writer 形态——formal + simulation 各一条 run/complete 链 + firm 释放副作用）+
  * 终态/初始态分类 + 只读 {@link #transitions()} 元数据。可经 Delta 同名 Bean 覆盖（契约 §6）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归引擎/释放服务（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpMfgErrors#ERR_MRP_INVALID_PLAN_STATUS}（参数 {@code action}/
+ * {@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1 直抛领域码，实体元数据
+ * {@code planCode} 经调用点同码补参补齐；码模板仅渲染 planCode/currentStatus）。
  *
  * <p>迁移矩阵（3 条边）：run(DRAFT→RUNNING)、complete(RUNNING→COMPLETED)、firm(COMPLETED→FIRMED)。
  *
@@ -43,8 +44,8 @@ public class ErpMfgMrpPlanStateMachine {
     /**
      * run 守卫：null 或 DRAFT 合法（新建实体未初始化 status 视为初始态）。
      *
-     * <p>接线方 {@code MrpEngine.runMrp} / {@code SimulationMrpEngine} 映射为领域码
-     * {@code ERR_MRP_INVALID_PLAN_STATUS}（common 码作 cause）。
+     * <p>接线方 {@code MrpEngine.runMrp} / {@code SimulationMrpEngine} 同码补参 {@code planCode}
+     * （Bean 直抛领域码 {@code ERR_MRP_INVALID_PLAN_STATUS}）。
      */
     public void assertCanRun(String status) {
         if (status != null && !ErpMfgConstants.MRP_STATUS_DRAFT.equals(status)) {
@@ -71,7 +72,8 @@ public class ErpMfgMrpPlanStateMachine {
      * firm 守卫：仅 COMPLETED 合法。
      *
      * <p>「全部 line 已释放」动态前置由 {@code MrpReleaseService.advancePlanToFirmedIfComplete} 保留原位判断；
-     * Bean 仅承载固定来源态判断。接线方映射为领域码 {@code ERR_MRP_INVALID_PLAN_STATUS}（common 码作 cause）。
+     * Bean 仅承载固定来源态判断。接线方同码补参 {@code planCode}（Bean 直抛领域码
+     * {@code ERR_MRP_INVALID_PLAN_STATUS}）。
      */
     public void assertCanFirm(String status) {
         if (!ErpMfgConstants.MRP_STATUS_COMPLETED.equals(status)) {
@@ -117,9 +119,9 @@ public class ErpMfgMrpPlanStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpMfgErrors.ERR_MRP_INVALID_PLAN_STATUS)
+                .param(ErpMfgErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 
