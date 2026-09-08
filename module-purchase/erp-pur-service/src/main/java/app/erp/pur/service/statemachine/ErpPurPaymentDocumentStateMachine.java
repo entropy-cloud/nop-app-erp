@@ -1,7 +1,7 @@
 package app.erp.pur.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.pur.dao.constants.ErpPurDocStatus;
+import app.erp.pur.service.ErpPurErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -21,8 +21,9 @@ import java.util.List;
  * <p>命名带 {@code Document} 后缀（契约 §1 双轴约定，为 approveStatus Bean
  * {@code ErpPurPaymentApprovalStateMachine} 预留命名空间）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpPurErrors#ERR_PAYMENT_ILLEGAL_DOC_STATUS_TRANSITION}（参数 {@code currentDocStatus}/
+ * {@code expectedDocStatus}，附 {@code action} 补充诊断参数；plan 2026-09-07-2200-1）；
+ * 实体元数据（{@code paymentCode}）经调用点同码补参补齐。
  *
  * <p>迁移矩阵（1 条边）：cancel(DRAFT→CANCELLED)。cancel 守卫保留既有骨架行为——仅 CANCELLED 终态非法，
  * 其余非终态（DRAFT 及 dict 中其它非终态值）放行，与 {@code AbstractCancelProcessor.validateTransitionForCancel}
@@ -30,8 +31,7 @@ import java.util.List;
  * 不编码入边）。
  *
  * <p>接线方 {@code ErpPurPaymentProcessor.validateTransitionForCancel}（经
- * {@code ErpPurPaymentCancelProcessor} 编排链调用）将 common 码映射为领域码
- * {@code ERR_PAYMENT_ILLEGAL_DOC_STATUS_TRANSITION}。
+ * {@code ErpPurPaymentCancelProcessor} 编排链调用）同码补参补齐 {@code paymentCode} 元数据。
  */
 public class ErpPurPaymentDocumentStateMachine {
 
@@ -43,9 +43,8 @@ public class ErpPurPaymentDocumentStateMachine {
     /**
      * cancel 守卫：非 CANCELLED 终态合法。
      *
-     * <p>对 CANCELLED 报告 common 层非法边（携带 {@code action=cancel}/{@code fromStatus=CANCELLED}）。
-     * 接线方 {@code ErpPurPaymentProcessor.validateTransitionForCancel} 映射为领域码
-     * {@code ERR_PAYMENT_ILLEGAL_DOC_STATUS_TRANSITION}。
+     * <p>对 CANCELLED 直抛领域码 {@code ERR_PAYMENT_ILLEGAL_DOC_STATUS_TRANSITION}
+     * （携带 {@code action=cancel}/{@code currentDocStatus=CANCELLED}；plan 2026-09-07-2200-1）。
      */
     public void assertCanCancel(String docStatus) {
         if (isTerminal(docStatus)) {
@@ -81,10 +80,10 @@ public class ErpPurPaymentDocumentStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpPurErrors.ERR_PAYMENT_ILLEGAL_DOC_STATUS_TRANSITION)
+                .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, currentStatus)
+                .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, expectedStatus)
+                .param(ErpPurErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

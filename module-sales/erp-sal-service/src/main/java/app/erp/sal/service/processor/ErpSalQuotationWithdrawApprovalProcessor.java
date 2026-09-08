@@ -55,7 +55,7 @@ public class ErpSalQuotationWithdrawApprovalProcessor extends AbstractWithdrawAp
         try {
             stateMachine.assertCanWithdraw(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity), ErpSalConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpSalErrors.ARG_QUOTATION_CODE, entity.getCode());
         }
     }
 

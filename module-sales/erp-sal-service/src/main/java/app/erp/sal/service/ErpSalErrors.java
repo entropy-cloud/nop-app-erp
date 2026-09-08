@@ -16,6 +16,7 @@ public interface ErpSalErrors {
     String ARG_ORDER_CODE = "orderCode";
     String ARG_QUOTATION_ID = "quotationId";
     String ARG_QUOTATION_CODE = "quotationCode";
+    String ARG_ACTION = "action";
     String ARG_CURRENT_STATUS = "currentStatus";
     String ARG_EXPECTED_STATUS = "expectedStatus";
     String ARG_CURRENT_DOC_STATUS = "currentDocStatus";

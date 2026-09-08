@@ -1,7 +1,7 @@
 package app.erp.inv.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.inv.service.ErpInvConstants;
+import app.erp.inv.service.ErpInvErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -28,8 +28,8 @@ import java.util.List;
  * （confirm/done/cancel）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。
  * 可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpInvErrors#ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1）；实体元数据（transferCode）经调用点同码补参。
  *
  * <p>迁移矩阵（4 条边）：confirm(DRAFT→CONFIRMED)、done(CONFIRMED→DONE)、
  * cancel 多源 {DRAFT, CONFIRMED}→CANCELLED = 2 边。分类 initial={DRAFT}、terminal={DONE, CANCELLED}。
@@ -49,8 +49,8 @@ public class ErpInvOwnershipTransferStateMachine {
     /**
      * confirm 守卫：来源态为 {@code DRAFT} 合法。
      *
-     * <p>接线方 {@code ErpInvOwnershipTransferProcessor.assertStatus} 映射为领域码
-     * {@code ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS}（保持既有 expected=DRAFT 文案）。
+     * <p>非法来源态直抛领域码 {@code ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS}；接线方
+     * {@code ErpInvOwnershipTransferProcessor.assertStatus} 同码补参 transferCode。
      */
     public void assertCanConfirm(String docStatus) {
         if (!ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_DRAFT.equals(docStatus)) {
@@ -61,8 +61,8 @@ public class ErpInvOwnershipTransferStateMachine {
     /**
      * done 守卫：来源态为 {@code CONFIRMED} 合法。
      *
-     * <p>接线方 {@code ErpInvOwnershipTransferProcessor.assertStatus} 映射为领域码
-     * {@code ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS}（保持既有 expected=CONFIRMED 文案）。
+     * <p>非法来源态直抛领域码 {@code ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS}；接线方
+     * {@code ErpInvOwnershipTransferProcessor.assertStatus} 同码补参 transferCode。
      */
     public void assertCanDone(String docStatus) {
         if (!ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_CONFIRMED.equals(docStatus)) {
@@ -73,8 +73,8 @@ public class ErpInvOwnershipTransferStateMachine {
     /**
      * cancel 守卫：来源态为 {@code DRAFT} 或 {@code CONFIRMED} 合法。
      *
-     * <p>接线方 {@code ErpInvOwnershipTransferProcessor.cancel} 映射为领域码
-     * {@code ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS}（保持既有 expected="DRAFT或CONFIRMED" 文案）。
+     * <p>非法来源态直抛领域码 {@code ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS}；接线方
+     * {@code ErpInvOwnershipTransferProcessor.cancel} 同码补参 transferCode。
      */
     public void assertCanCancel(String docStatus) {
         if (!ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_DRAFT.equals(docStatus)
@@ -127,10 +127,10 @@ public class ErpInvOwnershipTransferStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS)
+                .param(ErpInvErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpInvErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpInvErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

@@ -38,16 +38,13 @@ public class ErpInvTransferOrderConfirmProcessor {
 
     protected void validateDraft(ErpInvTransferOrder order, String transferOrderId) {
         String status = order.getDocStatus();
-        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
+        // 固定来源态守卫委托 StateMachine Bean（Bean 直抛领域码 ERR_ILLEGAL_STATUS_TRANSITION，本处同码补参 moveCode）。
+        // 映射冲突修正（plan 2026-09-07-2200-1）：原 remap 误用 StockTake 码 ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION
+        // + ARG_TAKE_ID（copy-paste 缺陷，原 Deferred successor fix），随 StateMachine 直抛领域码一并纠正为域通用码。
         try {
             stateMachine.assertCanConfirm(status);
         } catch (NopException e) {
-            // 行为保持：既有错误码缺陷（copy-paste 抛 StockTake 的 ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION +
-            // ARG_TAKE_ID）按路线图 Non-Goal「不借迁移改变既有错误码」原样保留，successor Fix 见计划
-            // Deferred But Adjudicated「TransferOrder 错误码缺陷修正」。
-            throw new NopException(ErpInvErrors.ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION, e)
-                    .param(ErpInvErrors.ARG_TAKE_ID, transferOrderId)
-                    .param(ErpInvErrors.ARG_CURRENT_STATUS, status);
+            throw e.param(ErpInvErrors.ARG_MOVE_CODE, order.getCode());
         }
     }
 

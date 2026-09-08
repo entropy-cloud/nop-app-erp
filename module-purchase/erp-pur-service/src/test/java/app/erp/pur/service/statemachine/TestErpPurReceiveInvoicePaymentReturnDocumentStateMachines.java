@@ -1,7 +1,8 @@
 package app.erp.pur.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.pur.dao.constants.ErpPurDocStatus;
+import app.erp.pur.service.ErpPurErrors;
+import io.nop.api.core.exceptions.ErrorCode;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <ul>
  *   <li>(a) 无重复/冲突边；</li>
  *   <li>(b) 从 DRAFT 可达 CANCELLED、CANCELLED 终态无出边；</li>
- *   <li>(c) cancel 对 DRAFT 合法、对 CANCELLED 非法（抛 common 码携带 {@code action=cancel}/{@code currentStatus}）；
- *       ACTIVE 死状态非终态放行（不编码入边）；</li>
+ *   <li>(c) cancel 对 DRAFT 合法、对 CANCELLED 非法（直抛各实体领域 docStatus 码，携带 {@code action=cancel}/
+ *       {@code currentDocStatus}）；ACTIVE 死状态非终态放行（不编码入边）；</li>
  *   <li>(d) {@code transitions()} 元数据与显式方法语义一致；</li>
  *   <li>(e) 初始/终态集合正确。</li>
  * </ul>
@@ -50,13 +51,16 @@ public class TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines {
         final java.util.function.Supplier<List<String>> terminalStatuses;
         final java.util.function.Supplier<List<String>> initialStatuses;
         final java.util.function.Supplier<String> argAction;
+        /** 该 Bean 非法边直抛的领域 docStatus 码（plan 2026-09-07-2200-1 后各实体专属）。 */
+        final java.util.function.Supplier<ErrorCode> illegalCode;
 
         Subject(String name, Runnable assertCancelDraft, java.util.function.Consumer<String> assertCancel,
                 java.util.function.Supplier<String> cancelTarget, java.util.function.Function<String, Boolean> isTerminal,
                 java.util.function.Supplier<List<? extends TransitionEdge>> transitions,
                 java.util.function.Supplier<List<String>> terminalStatuses,
                 java.util.function.Supplier<List<String>> initialStatuses,
-                java.util.function.Supplier<String> argAction) {
+                java.util.function.Supplier<String> argAction,
+                java.util.function.Supplier<ErrorCode> illegalCode) {
             this.name = name;
             this.assertCancelDraft = assertCancelDraft;
             this.assertCancel = assertCancel;
@@ -66,6 +70,7 @@ public class TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines {
             this.terminalStatuses = terminalStatuses;
             this.initialStatuses = initialStatuses;
             this.argAction = argAction;
+            this.illegalCode = illegalCode;
         }
     }
 
@@ -94,7 +99,8 @@ public class TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines {
                         .map(TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines::edge)
                         .collect(java.util.stream.Collectors.toList()),
                 sm::terminalStatuses, sm::initialStatuses,
-                () -> ErpPurReceiveDocumentStateMachine.ARG_ACTION);
+                () -> ErpPurReceiveDocumentStateMachine.ARG_ACTION,
+                () -> ErpPurErrors.ERR_ILLEGAL_DOC_STATUS_TRANSITION);
     }
 
     private static Subject wrap(String name, ErpPurInvoiceDocumentStateMachine sm) {
@@ -104,7 +110,8 @@ public class TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines {
                 () -> sm.transitions().stream().map(TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines::edge)
                         .collect(java.util.stream.Collectors.toList()),
                 sm::terminalStatuses, sm::initialStatuses,
-                () -> ErpPurInvoiceDocumentStateMachine.ARG_ACTION);
+                () -> ErpPurInvoiceDocumentStateMachine.ARG_ACTION,
+                () -> ErpPurErrors.ERR_INVOICE_ILLEGAL_DOC_STATUS_TRANSITION);
     }
 
     private static Subject wrap(String name, ErpPurPaymentDocumentStateMachine sm) {
@@ -114,7 +121,8 @@ public class TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines {
                 () -> sm.transitions().stream().map(TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines::edge)
                         .collect(java.util.stream.Collectors.toList()),
                 sm::terminalStatuses, sm::initialStatuses,
-                () -> ErpPurPaymentDocumentStateMachine.ARG_ACTION);
+                () -> ErpPurPaymentDocumentStateMachine.ARG_ACTION,
+                () -> ErpPurErrors.ERR_PAYMENT_ILLEGAL_DOC_STATUS_TRANSITION);
     }
 
     private static Subject wrap(String name, ErpPurReturnDocumentStateMachine sm) {
@@ -124,7 +132,8 @@ public class TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines {
                 () -> sm.transitions().stream().map(TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines::edge)
                         .collect(java.util.stream.Collectors.toList()),
                 sm::terminalStatuses, sm::initialStatuses,
-                () -> ErpPurReturnDocumentStateMachine.ARG_ACTION);
+                () -> ErpPurReturnDocumentStateMachine.ARG_ACTION,
+                () -> ErpPurErrors.ERR_RETURN_ILLEGAL_DOC_STATUS_TRANSITION);
     }
 
     private static TransitionEdge edge(Object o) {
@@ -192,14 +201,14 @@ public class TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines {
         // ACTIVE 死状态：非终态放行（不抛，不编码入边）
         s.assertCancel.accept(ErpPurDocStatus.DOC_STATUS_ACTIVE);
 
-        // CANCELLED 非法 → 抛 common 层码 + action/currentStatus 元数据
+        // CANCELLED 非法 → 直抛各实体领域 docStatus 码 + action/currentDocStatus 元数据
         NopException ex = assertThrows(NopException.class,
                 () -> s.assertCancel.accept(ErpPurDocStatus.DOC_STATUS_CANCELLED),
                 "[" + s.name + "] cancel 对 CANCELLED 应非法");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "[" + s.name + "] Bean 报告 common 层非法迁移码");
+        assertEquals(s.illegalCode.get().getErrorCode(), ex.getErrorCode(),
+                "[" + s.name + "] Bean 直抛领域非法迁移码");
         assertEquals("cancel", ex.getParam(s.argAction.get()), "[" + s.name + "] 拒绝元数据携带动作名");
-        assertEquals(ErpPurDocStatus.DOC_STATUS_CANCELLED, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(ErpPurDocStatus.DOC_STATUS_CANCELLED, ex.getParam(ErpPurErrors.ARG_CURRENT_DOC_STATUS),
                 "[" + s.name + "] 拒绝元数据携带当前态");
     }
 

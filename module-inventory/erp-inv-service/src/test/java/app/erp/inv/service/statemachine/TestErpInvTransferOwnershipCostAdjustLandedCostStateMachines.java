@@ -1,8 +1,9 @@
 package app.erp.inv.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.inv.dao.constants.ErpInvDocStatus;
 import app.erp.inv.service.ErpInvConstants;
+import app.erp.inv.service.ErpInvErrors;
+import io.nop.api.core.exceptions.ErrorCode;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -75,7 +76,7 @@ public class TestErpInvTransferOwnershipCostAdjustLandedCostStateMachines {
             if (ErpInvDocStatus.DOC_STATUS_DRAFT.equals(s)) {
                 transferOrderSm.assertCanConfirm(s); // 合法不抛
             } else {
-                assertIllegalCommon(transferOrderSm, "confirm", s);
+                assertIllegalCommon(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, transferOrderSm, "confirm", s);
             }
         }
     }
@@ -145,7 +146,7 @@ public class TestErpInvTransferOwnershipCostAdjustLandedCostStateMachines {
             if (ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_DRAFT.equals(s)) {
                 ownershipTransferSm.assertCanConfirm(s);
             } else {
-                assertIllegalCommon(ownershipTransferSm, "confirm", s);
+                assertIllegalCommon(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS, ownershipTransferSm, "confirm", s);
             }
         }
     }
@@ -156,7 +157,7 @@ public class TestErpInvTransferOwnershipCostAdjustLandedCostStateMachines {
             if (ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_CONFIRMED.equals(s)) {
                 ownershipTransferSm.assertCanDone(s);
             } else {
-                assertIllegalCommon(ownershipTransferSm, "done", s);
+                assertIllegalCommon(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS, ownershipTransferSm, "done", s);
             }
         }
     }
@@ -168,7 +169,7 @@ public class TestErpInvTransferOwnershipCostAdjustLandedCostStateMachines {
                     || ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_CONFIRMED.equals(s)) {
                 ownershipTransferSm.assertCanCancel(s); // 合法不抛
             } else {
-                assertIllegalCommon(ownershipTransferSm, "cancel", s);
+                assertIllegalCommon(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS, ownershipTransferSm, "cancel", s);
             }
         }
     }
@@ -259,7 +260,7 @@ public class TestErpInvTransferOwnershipCostAdjustLandedCostStateMachines {
             if (ErpInvDocStatus.DOC_STATUS_DRAFT.equals(s) || ErpInvDocStatus.DOC_STATUS_CONFIRMED.equals(s)) {
                 costAdjustSm.assertCanApplyCostAdjust(s); // 合法不抛
             } else {
-                assertIllegalCommon(costAdjustSm, "applyCostAdjust", s);
+                assertIllegalCommon(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, costAdjustSm, "applyCostAdjust", s);
             }
         }
     }
@@ -270,7 +271,7 @@ public class TestErpInvTransferOwnershipCostAdjustLandedCostStateMachines {
             if (ErpInvDocStatus.DOC_STATUS_DONE.equals(s)) {
                 costAdjustSm.assertCanReverseCostAdjust(s);
             } else {
-                assertIllegalCommon(costAdjustSm, "reverseCostAdjust", s);
+                assertIllegalCommon(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, costAdjustSm, "reverseCostAdjust", s);
             }
         }
     }
@@ -369,7 +370,7 @@ public class TestErpInvTransferOwnershipCostAdjustLandedCostStateMachines {
             if (ErpInvDocStatus.DOC_STATUS_DRAFT.equals(s)) {
                 landedCostSm.assertCanApprove(s); // 合法不抛（无 CONFIRMED 写，DRAFT→DONE 直达）
             } else {
-                assertIllegalCommon(landedCostSm, "approve", s);
+                assertIllegalCommon(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, landedCostSm, "approve", s);
             }
         }
     }
@@ -380,7 +381,7 @@ public class TestErpInvTransferOwnershipCostAdjustLandedCostStateMachines {
             if (ErpInvDocStatus.DOC_STATUS_DONE.equals(s)) {
                 landedCostSm.assertCanReverseApprove(s);
             } else {
-                assertIllegalCommon(landedCostSm, "reverseApprove", s);
+                assertIllegalCommon(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, landedCostSm, "reverseApprove", s);
             }
         }
     }
@@ -481,13 +482,13 @@ public class TestErpInvTransferOwnershipCostAdjustLandedCostStateMachines {
         }
     }
 
-    private static void assertIllegalCommon(Object bean, String action, String status) {
+    private static void assertIllegalCommon(ErrorCode expectedCode, Object bean, String action, String status) {
         NopException ex = assertThrows(NopException.class, () -> invokeAssert(bean, action, status),
                 action + " 对非允许来源态应非法: " + status);
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + status);
+        assertEquals(expectedCode.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域非法迁移码: action=" + action + ", status=" + status);
         assertEquals(action, ex.getParam(ErpInvTransferOrderStateMachine.ARG_ACTION));
-        assertEquals(status, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+        assertEquals(status, ex.getParam(ErpInvErrors.ARG_CURRENT_STATUS));
     }
 
     private static void invokeAssert(Object bean, String action, String status) {

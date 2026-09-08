@@ -132,7 +132,7 @@ public class ErpPurPaymentProcessor {
         try {
             stateMachine.assertCanApprove(payment.getApproveStatus());
         } catch (NopException e) {
-            throw illegalTransition(payment, payment.getApproveStatus(), ErpPurConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpPurErrors.ARG_PAYMENT_CODE, payment.getCode());
         }
     }
 
@@ -147,7 +147,7 @@ public class ErpPurPaymentProcessor {
         try {
             stateMachine.assertCanReverseApprove(payment.getApproveStatus());
         } catch (NopException e) {
-            throw illegalTransition(payment, payment.getApproveStatus(), ErpPurConstants.APPROVE_STATUS_APPROVED);
+            throw e.param(ErpPurErrors.ARG_PAYMENT_CODE, payment.getCode());
         }
     }
 
@@ -155,7 +155,7 @@ public class ErpPurPaymentProcessor {
         try {
             documentStateMachine.assertCanCancel(payment.getDocStatus());
         } catch (NopException e) {
-            throw illegalDocTransition(payment, payment.getDocStatus(), "!CANCELLED");
+            throw e.param(ErpPurErrors.ARG_PAYMENT_CODE, payment.getCode());
         }
     }
 

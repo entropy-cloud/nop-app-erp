@@ -83,7 +83,7 @@ public class ErpSalReturnApproveProcessor extends AbstractApproveProcessor<ErpSa
         try {
             stateMachine.assertCanApprove(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity), ErpSalConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpSalErrors.ARG_RETURN_CODE, entity.getCode());
         }
     }
 

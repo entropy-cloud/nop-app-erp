@@ -97,7 +97,7 @@ public class ErpPurReturnApproveProcessor extends AbstractApproveProcessor<ErpPu
         try {
             stateMachine.assertCanApprove(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity), ErpPurConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpPurErrors.ARG_RETURN_CODE, entity.getCode());
         }
     }
 

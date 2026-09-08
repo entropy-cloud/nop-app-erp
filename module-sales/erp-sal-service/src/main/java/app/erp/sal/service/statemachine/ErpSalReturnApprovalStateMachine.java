@@ -1,7 +1,7 @@
 package app.erp.sal.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.sal.dao.constants.ErpSalDocStatus;
+import app.erp.sal.service.ErpSalErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -25,8 +25,9 @@ import java.util.List;
  * 原位（副作用不入轴，契约 §11.2 M4 (ii)/(iv)）。{@code SalReversalListener} 跨域红冲回写（SALES_RETURN→posted=false +
  * APPROVED→REJECTED）保留原位不改（§11.2 M4 (v)）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpSalErrors#ERR_RETURN_ILLEGAL_STATUS_TRANSITION}（参数 {@code action}/
+ * {@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1）；实体元数据（{@code returnCode}）
+ * 经调用点 Processor 同码补参补齐。
  *
  * <p><b>reverseApprove 目标态</b>：实仓核实 {@code ErpSalReturnReverseApproveProcessor.reverseApprove} 已设
  * REJECTED（已合规 {@code domain-design-guidelines.md §16.4}）。故本 Bean {@code reverseApproveTargetStatus()}=REJECTED。
@@ -118,10 +119,10 @@ public class ErpSalReturnApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpSalErrors.ERR_RETURN_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpSalErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpSalErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpSalErrors.ARG_ACTION, action);
     }
 
     public static final class TransitionDefinition {

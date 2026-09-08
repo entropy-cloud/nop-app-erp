@@ -63,8 +63,7 @@ public class ErpSalQuotationSubmitForApprovalProcessor extends AbstractSubmitFor
         try {
             stateMachine.assertCanSubmit(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity),
-                    ErpSalConstants.APPROVE_STATUS_UNSUBMITTED + " / " + ErpSalConstants.APPROVE_STATUS_REJECTED);
+            throw e.param(ErpSalErrors.ARG_QUOTATION_CODE, entity.getCode());
         }
     }
 

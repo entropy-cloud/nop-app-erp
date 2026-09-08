@@ -1,7 +1,7 @@
 package app.erp.pur.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.pur.dao.constants.ErpPurDocStatus;
+import app.erp.pur.service.ErpPurErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -20,10 +20,9 @@ import java.util.List;
  *
  * <p>命名带 {@code Approval} 后缀（契约 §1 双轴约定，与 {@code ErpPurInvoiceDocumentStateMachine} docStatus 轴分离）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/facade（契约 §7）。
- * Invoice 领域码为 {@code ERR_INVOICE_ILLEGAL_STATUS_TRANSITION}（approve/reverseApprove 经 facade 映射；
- * submit/reject/withdraw 经 per-mutation Processor 映射）。
+ * <p>非法边直抛领域码 {@link ErpPurErrors#ERR_INVOICE_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}，附 {@code action} 补充诊断参数；plan 2026-09-07-2200-1）；
+ * 实体元数据（{@code invoiceCode}）经调用点同码补参补齐。
  *
  * <p><b>接线路径（plan Phase 1 Decision 双路径分化）</b>：submit/reject/withdraw 经 per-mutation Processor 覆写
  * {@code validateTransitionForXxx} 委托 Bean（skeleton 路径）；approve/reverseApprove 经 facade
@@ -132,10 +131,10 @@ public class ErpPurInvoiceApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpPurErrors.ERR_INVOICE_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPurErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpPurErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpPurErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

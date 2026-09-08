@@ -54,7 +54,7 @@ public class ErpSalInvoiceRejectProcessor extends AbstractRejectProcessor<ErpSal
         try {
             stateMachine.assertCanReject(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity), ErpSalConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpSalErrors.ARG_INVOICE_CODE, entity.getCode());
         }
     }
 

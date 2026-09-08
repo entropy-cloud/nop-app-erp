@@ -53,7 +53,7 @@ public class ErpPurInvoiceWithdrawApprovalProcessor extends AbstractWithdrawAppr
         try {
             stateMachine.assertCanWithdraw(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity), ErpPurConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpPurErrors.ARG_INVOICE_CODE, entity.getCode());
         }
     }
 

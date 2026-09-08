@@ -53,14 +53,11 @@ public class ErpInvOwnershipTransferProcessor {
     public ErpInvOwnershipTransfer cancel(String transferId, IServiceContext context) {
         ErpInvOwnershipTransfer transfer = requireTransfer(transferId, context);
         String status = transfer.getDocStatus();
-        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
+        // 固定来源态守卫委托 StateMachine Bean（Bean 直抛领域码 ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS，本处同码补参 transferCode）
         try {
             stateMachine.assertCanCancel(status);
         } catch (NopException e) {
-            throw new NopException(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS, e)
-                    .param(ErpInvErrors.ARG_TRANSFER_CODE, transfer.getCode())
-                    .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, "DRAFT / CONFIRMED");
+            throw e.param(ErpInvErrors.ARG_TRANSFER_CODE, transfer.getCode());
         }
         transfer.setDocStatus(stateMachine.cancelTargetStatus());
         transferDao().saveOrUpdateEntity(transfer);
@@ -259,8 +256,10 @@ public class ErpInvOwnershipTransferProcessor {
 
     /**
      * 固定来源态守卫（Confirm/Done 共用，按 {@code actionTarget} 分派对应 Bean 动作）：
-     * 委托 {@link ErpInvOwnershipTransferStateMachine}，非法边 Bean 抛 common 层码，映射为领域码
-     * {@code ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS} + common 作 cause（保持既有 expected 文案）。
+     * 委托 {@link ErpInvOwnershipTransferStateMachine}，非法边 Bean 直抛领域码
+     * {@code ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS}（自带 currentStatus/expectedStatus/action，plan
+     * 2026-09-07-2200-1），本处同码补参 transferCode。{@code expected} 参数保留签名兼容，不再参与组错
+     * （Bean 直抛已携带准确 expectedStatus）。
      */
     protected void assertStatus(ErpInvOwnershipTransfer transfer, String expected, String actionTarget) {
         String status = transfer.getDocStatus();
@@ -273,10 +272,7 @@ public class ErpInvOwnershipTransferProcessor {
                 stateMachine.assertCanCancel(status);
             }
         } catch (NopException e) {
-            throw new NopException(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS, e)
-                    .param(ErpInvErrors.ARG_TRANSFER_CODE, transfer.getCode())
-                    .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, expected + " (target: " + actionTarget + ")");
+            throw e.param(ErpInvErrors.ARG_TRANSFER_CODE, transfer.getCode());
         }
     }
 

@@ -1,6 +1,5 @@
 package app.erp.inv.service.processor;
 
-import app.erp.inv.dao.constants.ErpInvDocStatus;
 import app.erp.inv.dao.entity.ErpInvCostAdjust;
 import app.erp.inv.dao.entity.ErpInvCostAdjustLine;
 import app.erp.inv.service.ErpInvErrors;
@@ -51,16 +50,12 @@ public class ErpInvCostAdjustReverseCostAdjustProcessor {
             throw new NopException(ErpInvErrors.ERR_COST_ADJUST_NOT_APPLIED)
                     .param(ErpInvErrors.ARG_ADJUST_CODE, adjust.getCode());
         }
-        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause；
-        // docStatus 无专属 illegal-transition 码，映射到既有 generic ERR_ILLEGAL_STATUS_TRANSITION，
-        // 见计划 Phase 3 Decision）。置于 posted 检查之后——保持既有 posted=false → NOT_APPLIED 行为。
+        // 固定来源态守卫委托 StateMachine Bean（Bean 直抛领域码 ERR_ILLEGAL_STATUS_TRANSITION，本处同码补参
+        // moveCode）。置于 posted 检查之后——保持既有 posted=false → NOT_APPLIED 行为。
         try {
             stateMachine.assertCanReverseCostAdjust(adjust.getDocStatus());
         } catch (NopException e) {
-            throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, e)
-                    .param(ErpInvErrors.ARG_MOVE_CODE, adjust.getCode())
-                    .param(ErpInvErrors.ARG_CURRENT_STATUS, adjust.getDocStatus())
-                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, ErpInvDocStatus.DOC_STATUS_DONE);
+            throw e.param(ErpInvErrors.ARG_MOVE_CODE, adjust.getCode());
         }
         return adjust;
     }

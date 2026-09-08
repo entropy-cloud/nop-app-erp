@@ -1,6 +1,6 @@
 package app.erp.sal.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.sal.service.ErpSalErrors;
 import app.erp.sal.dao.constants.ErpSalDocStatus;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
@@ -68,9 +68,9 @@ public class TestErpSalQuotationApprovalStateMachineMatrix {
         assertEquals(ErpSalDocStatus.APPROVE_STATUS_SUBMITTED, sm.submitTargetStatus());
         for (String illegal : Arrays.asList(ErpSalDocStatus.APPROVE_STATUS_SUBMITTED, ErpSalDocStatus.APPROVE_STATUS_APPROVED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanSubmit(illegal));
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpSalErrors.ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("submit", ex.getParam(ErpSalQuotationApprovalStateMachine.ARG_ACTION));
-            assertEquals(illegal, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(illegal, ex.getParam(ErpSalErrors.ARG_CURRENT_STATUS));
         }
     }
 
@@ -82,7 +82,7 @@ public class TestErpSalQuotationApprovalStateMachineMatrix {
                 ErpSalDocStatus.APPROVE_STATUS_APPROVED, ErpSalDocStatus.APPROVE_STATUS_REJECTED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanApprove(illegal));
             assertEquals("approve", ex.getParam(ErpSalQuotationApprovalStateMachine.ARG_ACTION));
-            assertEquals(illegal, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(illegal, ex.getParam(ErpSalErrors.ARG_CURRENT_STATUS));
         }
     }
 

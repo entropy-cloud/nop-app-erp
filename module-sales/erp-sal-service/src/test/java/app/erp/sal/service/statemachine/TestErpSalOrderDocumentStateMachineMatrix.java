@@ -1,6 +1,6 @@
 package app.erp.sal.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.sal.service.ErpSalErrors;
 import app.erp.sal.dao.constants.ErpSalDocStatus;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <ul>
  *   <li>(a) 无重复/冲突边；</li>
  *   <li>(b) 从 DRAFT 可达 CANCELLED、CANCELLED 终态无出边；</li>
- *   <li>(c) cancel 对 DRAFT 合法、对 CANCELLED 抛 common 码携带 {@code action=cancel}/{@code fromStatus=CANCELLED}；</li>
+ *   <li>(c) cancel 对 DRAFT 合法、对 CANCELLED 直抛领域码携带 {@code action=cancel}/{@code fromStatus=CANCELLED}；</li>
  *   <li>(d) {@code transitions()} 元数据与显式方法语义一致；</li>
  *   <li>(e) 初始/终态集合正确。</li>
  * </ul>
@@ -79,14 +79,14 @@ public class TestErpSalOrderDocumentStateMachineMatrix {
         sm.assertCanCancel(ErpSalDocStatus.DOC_STATUS_DRAFT);
         assertEquals(ErpSalDocStatus.DOC_STATUS_CANCELLED, sm.cancelTargetStatus());
 
-        // CANCELLED 非法 → 抛 common 层码 + action/fromStatus 元数据
+        // CANCELLED 非法 → 直抛领域码 + action/currentDocStatus 元数据
         NopException ex = assertThrows(NopException.class,
                 () -> sm.assertCanCancel(ErpSalDocStatus.DOC_STATUS_CANCELLED),
                 "cancel 对 CANCELLED 应非法");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码");
+        assertEquals(ErpSalErrors.ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域非法迁移码");
         assertEquals("cancel", ex.getParam(ErpSalOrderDocumentStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-        assertEquals(ErpSalDocStatus.DOC_STATUS_CANCELLED, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(ErpSalDocStatus.DOC_STATUS_CANCELLED, ex.getParam(ErpSalErrors.ARG_CURRENT_DOC_STATUS),
                 "拒绝元数据携带当前态");
     }
 

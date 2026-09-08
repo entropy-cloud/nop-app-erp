@@ -1,6 +1,5 @@
 package app.erp.pur.service.processor;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.statemachine.ErpPurOrderDocumentStateMachine;
@@ -18,9 +17,8 @@ import jakarta.inject.Inject;
  * 动态业务守卫/副作用（commitment-release/intercompany-reverse）保留在 {@link ErpPurOrderProcessor} 经
  * {@link #beforeCancel} 钩子执行。
  *
- * <p>非法边映射：Bean 抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（含 {@code action=cancel}/
- * {@code fromStatus} 元数据）作 cause，{@link #validateTransitionForCancel} 捕获后映射领域码
- * {@link ErpPurErrors#ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION}（+ {@code orderCode} 实体编号/上下文）。
+ * <p>非法边：Bean 直抛领域码 {@link ErpPurErrors#ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION}
+ * （plan 2026-09-07-2200-1），{@link #validateTransitionForCancel} 同码补参补齐 {@code orderCode} 实体元数据。
  */
 public class ErpPurOrderCancelProcessor extends AbstractCancelProcessor<ErpPurOrder> {
 
@@ -54,7 +52,7 @@ public class ErpPurOrderCancelProcessor extends AbstractCancelProcessor<ErpPurOr
         try {
             stateMachine.assertCanCancel(entity.getDocStatus());
         } catch (NopException e) {
-            throw illegalStatusException(entity, entity.getDocStatus(), "!CANCELLED");
+            throw e.param(ErpPurErrors.ARG_ORDER_CODE, entity.getCode());
         }
     }
 

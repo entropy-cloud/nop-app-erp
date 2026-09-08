@@ -49,10 +49,7 @@ public class ErpPurRfqBizModel extends AbstractErpCrudBizModel<ErpPurRfq> implem
         try {
             stateMachine.assertCanCancel(rfq.getDocStatus());
         } catch (NopException e) {
-            throw new NopException(ErpPurErrors.ERR_RFQ_ILLEGAL_DOC_STATUS_TRANSITION)
-                    .param(ErpPurErrors.ARG_RFQ_CODE, rfq.getCode())
-                    .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, rfq.getDocStatus())
-                    .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "!" + ErpPurDocStatus.DOC_STATUS_CANCELLED);
+            throw e.param(ErpPurErrors.ARG_RFQ_CODE, rfq.getCode());
         }
         rfq.setDocStatus(stateMachine.cancelTargetStatus());
         updateEntity(rfq, null, context);
@@ -69,7 +66,7 @@ public class ErpPurRfqBizModel extends AbstractErpCrudBizModel<ErpPurRfq> implem
         try {
             approvalStateMachine.assertCanSubmit(approveStatus);
         } catch (NopException e) {
-            throw illegalStatus(code, approveStatus, "UNSUBMITTED / REJECTED");
+            throw e.param(ErpPurErrors.ARG_RFQ_CODE, code);
         }
         return approvalStateMachine.submitTargetStatus();
     }
@@ -82,7 +79,7 @@ public class ErpPurRfqBizModel extends AbstractErpCrudBizModel<ErpPurRfq> implem
         try {
             approvalStateMachine.assertCanApprove(approveStatus);
         } catch (NopException e) {
-            throw illegalStatus(code, approveStatus, ErpPurDocStatus.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpPurErrors.ARG_RFQ_CODE, code);
         }
         return approvalStateMachine.approveTargetStatus();
     }
@@ -95,7 +92,7 @@ public class ErpPurRfqBizModel extends AbstractErpCrudBizModel<ErpPurRfq> implem
         try {
             approvalStateMachine.assertCanReject(approveStatus);
         } catch (NopException e) {
-            throw illegalStatus(code, approveStatus, ErpPurDocStatus.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpPurErrors.ARG_RFQ_CODE, code);
         }
         return approvalStateMachine.rejectTargetStatus();
     }
@@ -108,7 +105,7 @@ public class ErpPurRfqBizModel extends AbstractErpCrudBizModel<ErpPurRfq> implem
         try {
             approvalStateMachine.assertCanReverseApprove(approveStatus);
         } catch (NopException e) {
-            throw illegalStatus(code, approveStatus, ErpPurDocStatus.APPROVE_STATUS_APPROVED);
+            throw e.param(ErpPurErrors.ARG_RFQ_CODE, code);
         }
         return approvalStateMachine.reverseApproveTargetStatus();
     }
@@ -121,7 +118,7 @@ public class ErpPurRfqBizModel extends AbstractErpCrudBizModel<ErpPurRfq> implem
         try {
             approvalStateMachine.assertCanWithdraw(approveStatus);
         } catch (NopException e) {
-            throw illegalStatus(code, approveStatus, ErpPurDocStatus.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpPurErrors.ARG_RFQ_CODE, code);
         }
         return approvalStateMachine.withdrawTargetStatus();
     }
@@ -133,12 +130,5 @@ public class ErpPurRfqBizModel extends AbstractErpCrudBizModel<ErpPurRfq> implem
                     .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, docStatus)
                     .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "!" + ErpPurDocStatus.DOC_STATUS_CANCELLED);
         }
-    }
-
-    private NopException illegalStatus(String code, String currentStatus, String expectedStatus) {
-        return new NopException(ErpPurErrors.ERR_RFQ_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpPurErrors.ARG_RFQ_CODE, code)
-                .param(ErpPurErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpPurErrors.ARG_EXPECTED_STATUS, expectedStatus);
     }
 }

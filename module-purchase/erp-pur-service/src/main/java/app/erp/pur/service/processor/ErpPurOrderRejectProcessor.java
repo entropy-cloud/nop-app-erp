@@ -53,7 +53,7 @@ public class ErpPurOrderRejectProcessor extends AbstractRejectProcessor<ErpPurOr
         try {
             stateMachine.assertCanReject(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity), ErpPurConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpPurErrors.ARG_ORDER_CODE, entity.getCode());
         }
     }
 

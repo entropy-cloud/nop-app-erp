@@ -18,9 +18,8 @@ import jakarta.inject.Inject;
  * 动态业务守卫/副作用（requireSupplierActive/requireLinesNonEmpty）保留在 {@link ErpPurOrderProcessor} 经
  * {@link #validateBusinessRules} 钩子执行。
  *
- * <p>非法边映射：Bean 抛 common 层 {@code ERR_ILLEGAL_STATUS_TRANSITION}（含 {@code action=submit}/
- * {@code fromStatus} 元数据）作 cause，{@link #validateTransitionForSubmit} 捕获后映射领域码
- * {@link ErpPurErrors#ERR_ORDER_ILLEGAL_STATUS_TRANSITION}（+ {@code orderCode} 实体编号/上下文）。
+ * <p>非法边：Bean 直抛领域码 {@link ErpPurErrors#ERR_ORDER_ILLEGAL_STATUS_TRANSITION}
+ * （plan 2026-09-07-2200-1），{@link #validateTransitionForSubmit} 同码补参补齐 {@code orderCode} 元数据。
  */
 public class ErpPurOrderSubmitForApprovalProcessor extends AbstractSubmitForApprovalProcessor<ErpPurOrder> {
 
@@ -69,8 +68,7 @@ public class ErpPurOrderSubmitForApprovalProcessor extends AbstractSubmitForAppr
         try {
             stateMachine.assertCanSubmit(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity),
-                    ErpPurConstants.APPROVE_STATUS_UNSUBMITTED + " / " + ErpPurConstants.APPROVE_STATUS_REJECTED);
+            throw e.param(ErpPurErrors.ARG_ORDER_CODE, entity.getCode());
         }
     }
 

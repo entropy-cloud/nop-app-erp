@@ -16,8 +16,8 @@ import jakarta.inject.Inject;
  * {@link ErpPurRequisitionDocumentStateMachine}（docStatus 业务生命周期轴 Bean，契约 §4/§7）。
  * Requisition 无 beforeCancel 业务 hook（保持）。
  *
- * <p>非法边映射：Bean 抛 common 层码作 cause，{@link #validateTransitionForCancel} 捕获后映射领域码
- * {@link ErpPurErrors#ERR_REQ_ILLEGAL_DOC_STATUS_TRANSITION}（+ {@code requisitionCode} 实体编号/上下文）。
+ * <p>非法边：Bean 直抛领域码 {@link ErpPurErrors#ERR_REQ_ILLEGAL_DOC_STATUS_TRANSITION}
+ * （plan 2026-09-07-2200-1），{@link #validateTransitionForCancel} 同码补参补齐 {@code requisitionCode} 元数据。
  */
 public class ErpPurRequisitionCancelProcessor extends AbstractCancelProcessor<ErpPurRequisition> {
 
@@ -51,7 +51,7 @@ public class ErpPurRequisitionCancelProcessor extends AbstractCancelProcessor<Er
         try {
             stateMachine.assertCanCancel(entity.getDocStatus());
         } catch (NopException e) {
-            throw illegalStatusException(entity, entity.getDocStatus(), "!CANCELLED");
+            throw e.param(ErpPurErrors.ARG_REQUISITION_CODE, entity.getCode());
         }
     }
 

@@ -1,7 +1,7 @@
 package app.erp.inv.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.inv.dao.constants.ErpInvDocStatus;
+import app.erp.inv.service.ErpInvErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -30,8 +30,8 @@ import java.util.List;
  * （applyCostAdjust/reverseCostAdjust）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。
  * 可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpInvErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1）；实体元数据（moveCode）经调用点同码补参。
  *
  * <p>迁移矩阵（3 条边）：applyCostAdjust 多源 {DRAFT, CONFIRMED}→DONE = 2 边、
  * reverseCostAdjust(DONE→CONFIRMED) = 1 边。分类 initial={DRAFT}、terminal={DONE}
@@ -61,8 +61,9 @@ public class ErpInvCostAdjustStateMachine {
      * 本 Bean 对 DONE 源态拒绝属合理收紧（从 DONE 重 apply 语义错误，正常流程重 apply 必经
      * reverse→CONFIRMED），Phase 3 四方对照 (c) 已核实无既有测试覆盖此边缘且裁定收紧不违反 Non-Goal。
      *
-     * <p>接线方 {@code ErpInvCostAdjustApplyCostAdjustProcessor.requireAndValidate} 映射为领域码
-     * {@code ERR_ILLEGAL_STATUS_TRANSITION}（docStatus 无专属 illegal-transition 码，见计划 Phase 3 Decision）。
+     * <p>非法来源态直抛领域码 {@code ERR_ILLEGAL_STATUS_TRANSITION}（docStatus 无实体专属 illegal-transition 码，
+     * 落域通用码，见计划 Phase 3 Decision）；接线方
+     * {@code ErpInvCostAdjustApplyCostAdjustProcessor.requireAndValidate} 同码补参 moveCode。
      */
     public void assertCanApplyCostAdjust(String docStatus) {
         if (!ErpInvDocStatus.DOC_STATUS_DRAFT.equals(docStatus)
@@ -74,8 +75,9 @@ public class ErpInvCostAdjustStateMachine {
     /**
      * reverseCostAdjust 守卫：来源态为 {@code DONE} 合法。
      *
-     * <p>接线方 {@code ErpInvCostAdjustReverseCostAdjustProcessor.requirePosted} 映射为领域码
-     * {@code ERR_ILLEGAL_STATUS_TRANSITION}（docStatus 无专属 illegal-transition 码，见计划 Phase 3 Decision）。
+     * <p>非法来源态直抛领域码 {@code ERR_ILLEGAL_STATUS_TRANSITION}（docStatus 无实体专属 illegal-transition 码，
+     * 落域通用码，见计划 Phase 3 Decision）；接线方
+     * {@code ErpInvCostAdjustReverseCostAdjustProcessor.requirePosted} 同码补参 moveCode。
      */
     public void assertCanReverseCostAdjust(String docStatus) {
         if (!ErpInvDocStatus.DOC_STATUS_DONE.equals(docStatus)) {
@@ -124,10 +126,10 @@ public class ErpInvCostAdjustStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpInvErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpInvErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpInvErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

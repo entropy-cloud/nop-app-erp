@@ -70,8 +70,7 @@ public class ErpPurPaymentSubmitForApprovalProcessor extends AbstractSubmitForAp
         try {
             stateMachine.assertCanSubmit(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity),
-                    ErpPurConstants.APPROVE_STATUS_UNSUBMITTED + " / " + ErpPurConstants.APPROVE_STATUS_REJECTED);
+            throw e.param(ErpPurErrors.ARG_PAYMENT_CODE, entity.getCode());
         }
     }
 

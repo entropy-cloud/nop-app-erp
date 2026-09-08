@@ -1,7 +1,7 @@
 package app.erp.sal.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.sal.dao.constants.ErpSalDocStatus;
+import app.erp.sal.service.ErpSalErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -25,9 +25,9 @@ import java.util.List;
  * 保留在 {@code ErpSalDeliveryApproveProcessor} 原位（副作用不入轴，契约 §11.2 M4 (ii)/(iv)）。
  * {@code SalReversalListener} 跨域红冲回写（SALES_OUTPUT 仅 posted）保留原位不改（§11.2 M4 (v)）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
- * Delivery 领域码为泛型 {@code ERR_ILLEGAL_STATUS_TRANSITION}（无 DELIVERY_ 前缀，沿用既有）。
+ * <p>非法边直抛领域码 {@link ErpSalErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code action}/
+ * {@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1）；实体元数据（{@code deliveryCode}）
+ * 经调用点 Processor 同码补参补齐。Delivery 领域码为泛型命名（无 DELIVERY_ 前缀，沿用既有）。
  *
  * <p><b>reverseApprove 目标态</b>：实仓核实 {@code ErpSalDeliveryReverseApproveProcessor.reverseApprove} 已设
  * REJECTED（已合规 {@code domain-design-guidelines.md §16.4}）。故本 Bean {@code reverseApproveTargetStatus()}=REJECTED。
@@ -43,8 +43,8 @@ public class ErpSalDeliveryApprovalStateMachine {
     /**
      * submit 守卫：来源态为 {@code UNSUBMITTED}/{@code null}/{@code REJECTED} 合法（初始提交或驳回后重新提交）。
      *
-     * <p>非法来源态报告 common 层非法边（携带 {@code action=submit}/{@code fromStatus}）。
-     * 接线方 {@code ErpSalDeliverySubmitForApprovalProcessor} 映射为领域码 {@code ERR_ILLEGAL_STATUS_TRANSITION}。
+     * <p>非法来源态直抛领域码 {@code ERR_ILLEGAL_STATUS_TRANSITION}
+     * （携带 {@code action=submit}/{@code currentStatus}；实体元数据经调用点同码补参补齐）。
      */
     public void assertCanSubmit(String approveStatus) {
         String status = normalize(approveStatus);
@@ -137,10 +137,10 @@ public class ErpSalDeliveryApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpSalErrors.ERR_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpSalErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpSalErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpSalErrors.ARG_ACTION, action);
     }
 
     public static final class TransitionDefinition {

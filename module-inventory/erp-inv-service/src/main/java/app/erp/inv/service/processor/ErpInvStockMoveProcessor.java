@@ -100,14 +100,11 @@ public class ErpInvStockMoveProcessor {
 
     protected void doConfirm(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, IServiceContext context) {
         String status = move.getDocStatus();
-        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
+        // 固定来源态守卫委托 StateMachine Bean（Bean 直抛领域码 ERR_ILLEGAL_STATUS_TRANSITION，本处同码补参 moveCode）
         try {
             stateMachine.assertCanConfirm(status);
         } catch (NopException e) {
-            throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, e)
-                    .param(ErpInvErrors.ARG_MOVE_CODE, move.getCode())
-                    .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, ErpInvConstants.DOC_STATUS_DRAFT);
+            throw e.param(ErpInvErrors.ARG_MOVE_CODE, move.getCode());
         }
         validateAvailable(move, lines, context);
         applyReservation(move, lines, true, context);
@@ -118,14 +115,11 @@ public class ErpInvStockMoveProcessor {
     protected void doComplete(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, String acctSchemaId,
                               IServiceContext context) {
         String status = move.getDocStatus();
-        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
+        // 固定来源态守卫委托 StateMachine Bean（Bean 直抛领域码 ERR_ILLEGAL_STATUS_TRANSITION，本处同码补参 moveCode）
         try {
             stateMachine.assertCanComplete(status);
         } catch (NopException e) {
-            throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, e)
-                    .param(ErpInvErrors.ARG_MOVE_CODE, move.getCode())
-                    .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, "CONFIRMED");
+            throw e.param(ErpInvErrors.ARG_MOVE_CODE, move.getCode());
         }
         releaseReservation(move, lines, context);
         bookkeeper.bookCompletion(move, lines, acctSchemaId);

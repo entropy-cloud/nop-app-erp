@@ -43,16 +43,13 @@ public class ErpInvLandedCostApproveProcessor extends AbstractApproveProcessor<E
             throw new NopException(ErpInvErrors.ERR_LANDED_COST_ALREADY_APPROVED)
                     .param(ErpInvErrors.ARG_LANDED_COST_CODE, landedCost.getCode());
         }
-        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause；
-        // docStatus 无专属 illegal-transition 码，映射到既有 generic ERR_ILLEGAL_STATUS_TRANSITION，
-        // 见计划 Phase 3 Decision）。置于幂等守卫之后——保持既有 approveStatus==APPROVED → ALREADY_APPROVED 行为。
+        // 固定来源态守卫委托 StateMachine Bean（Bean 直抛领域码 ERR_ILLEGAL_STATUS_TRANSITION，本处同码补参
+        // moveCode；docStatus 无实体专属 illegal-transition 码，见计划 Phase 3 Decision）。
+        // 置于幂等守卫之后——保持既有 approveStatus==APPROVED → ALREADY_APPROVED 行为。
         try {
             stateMachine.assertCanApprove(landedCost.getDocStatus());
         } catch (NopException e) {
-            throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, e)
-                    .param(ErpInvErrors.ARG_MOVE_CODE, landedCost.getCode())
-                    .param(ErpInvErrors.ARG_CURRENT_STATUS, landedCost.getDocStatus())
-                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, ErpInvConstants.DOC_STATUS_DRAFT);
+            throw e.param(ErpInvErrors.ARG_MOVE_CODE, landedCost.getCode());
         }
 
         List<ErpInvLandedCostLine> costLines = processor.loadCostLines(landedCost.getId());
@@ -85,6 +82,18 @@ public class ErpInvLandedCostApproveProcessor extends AbstractApproveProcessor<E
     @Override
     protected NopException notFoundException(String id) {
         return defaultNotFoundException(id);
+    }
+
+    /**
+     * 骨架守卫裸奔通道修正（plan 2026-09-07-2200-1 form-3）：非法迁移错误由 common 码改为直抛领域码
+     * ERR_ILLEGAL_STATUS_TRANSITION（docStatus 无实体专属 illegal-transition 码，参数形态与既有 remap 一致）。
+     */
+    @Override
+    protected NopException illegalStatusException(ErpInvLandedCost entity, String current, String... expected) {
+        return new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpInvErrors.ARG_MOVE_CODE, entity.getCode())
+                .param(ErpInvErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpInvErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
     }
 
     @Override

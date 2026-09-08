@@ -1,7 +1,7 @@
 package app.erp.pur.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.pur.dao.constants.ErpPurDocStatus;
+import app.erp.pur.service.ErpPurErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +50,7 @@ public class TestErpPurRfqApprovalStateMachineMatrix {
         sm.assertCanSubmit(ErpPurDocStatus.APPROVE_STATUS_REJECTED);
         assertEquals(ErpPurDocStatus.APPROVE_STATUS_SUBMITTED, sm.submitTargetStatus());
         NopException ex = assertThrows(NopException.class, () -> sm.assertCanSubmit(ErpPurDocStatus.APPROVE_STATUS_SUBMITTED));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+        assertEquals(ErpPurErrors.ERR_RFQ_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
         assertEquals("submit", ex.getParam(ErpPurRfqApprovalStateMachine.ARG_ACTION));
     }
 

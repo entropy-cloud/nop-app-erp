@@ -1,7 +1,7 @@
 package app.erp.inv.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.inv.dao.constants.ErpInvDocStatus;
+import app.erp.inv.service.ErpInvErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -86,9 +86,9 @@ public class TestErpInvStockMoveAndStockTakeStateMachines {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> moveSm.assertCanCancel(s),
                         "cancel 对 DONE/CANCELLED 应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+                assertEquals(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
                 assertEquals("cancel", ex.getParam(ErpInvStockMoveStateMachine.ARG_ACTION));
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+                assertEquals(s, ex.getParam(ErpInvErrors.ARG_CURRENT_STATUS));
             }
         }
     }
@@ -182,9 +182,9 @@ public class TestErpInvStockMoveAndStockTakeStateMachines {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> takeSm.assertCanCancel(s),
                         "cancel 对 DONE/CANCELLED 应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+                assertEquals(ErpInvErrors.ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode());
                 assertEquals("cancel", ex.getParam(ErpInvStockTakeStateMachine.ARG_ACTION));
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+                assertEquals(s, ex.getParam(ErpInvErrors.ARG_CURRENT_STATUS));
             }
         }
     }
@@ -248,10 +248,10 @@ public class TestErpInvStockMoveAndStockTakeStateMachines {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeMoveAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                        "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
+                assertEquals(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                        "Bean 直抛领域非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpInvStockMoveStateMachine.ARG_ACTION));
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+                assertEquals(s, ex.getParam(ErpInvErrors.ARG_CURRENT_STATUS));
             }
         }
     }
@@ -263,10 +263,10 @@ public class TestErpInvStockMoveAndStockTakeStateMachines {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeTakeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                        "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
+                assertEquals(ErpInvErrors.ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                        "Bean 直抛领域非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpInvStockTakeStateMachine.ARG_ACTION));
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+                assertEquals(s, ex.getParam(ErpInvErrors.ARG_CURRENT_STATUS));
             }
         }
     }

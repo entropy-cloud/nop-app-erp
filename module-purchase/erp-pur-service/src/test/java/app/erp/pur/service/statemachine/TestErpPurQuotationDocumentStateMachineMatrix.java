@@ -1,7 +1,7 @@
 package app.erp.pur.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.pur.dao.constants.ErpPurDocStatus;
+import app.erp.pur.service.ErpPurErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * <p>针对 {@link ErpPurQuotationDocumentStateMachine} Bean 的纯矩阵完备性遍历。覆盖：
  * (a) 无重复/冲突边；(b) 从 DRAFT 可达 CANCELLED、终态无出边；
- * (c) cancel 对 DRAFT 合法、对 CANCELLED 抛 common 码（分支 a Fix 守卫，断言 CANCELLED 抛 common 码）；
+ * (c) cancel 对 DRAFT 合法、对 CANCELLED 直抛领域 docStatus 码（分支 a Fix 守卫，断言 CANCELLED 直抛领域码）；
  * (d) transitions() 与显式方法一致；(e) 初始/终态集合正确。
  *
  * <p>Bean 严格无状态，直接 {@code new} 实例化测试，无需 IoC 容器。
@@ -62,14 +62,14 @@ public class TestErpPurQuotationDocumentStateMachineMatrix {
         sm.assertCanCancel(ErpPurDocStatus.DOC_STATUS_DRAFT);
         assertEquals(ErpPurDocStatus.DOC_STATUS_CANCELLED, sm.cancelTargetStatus());
 
-        // 分支 a Fix：CANCELLED 抛 common 码（非幂等合法）
+        // 分支 a Fix：CANCELLED 直抛领域 docStatus 码（非幂等合法）
         NopException ex = assertThrows(NopException.class,
                 () -> sm.assertCanCancel(ErpPurDocStatus.DOC_STATUS_CANCELLED),
                 "cancel 对 CANCELLED 应非法（分支 a Fix 守卫）");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码");
+        assertEquals(ErpPurErrors.ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域非法迁移码");
         assertEquals("cancel", ex.getParam(ErpPurQuotationDocumentStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-        assertEquals(ErpPurDocStatus.DOC_STATUS_CANCELLED, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(ErpPurDocStatus.DOC_STATUS_CANCELLED, ex.getParam(ErpPurErrors.ARG_CURRENT_DOC_STATUS),
                 "拒绝元数据携带当前态");
     }
 

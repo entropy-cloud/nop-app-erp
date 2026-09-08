@@ -1,6 +1,6 @@
 package app.erp.sal.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.sal.service.ErpSalErrors;
 import app.erp.sal.dao.constants.ErpSalDocStatus;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <ul>
  *   <li>(a) 无重复/冲突边；</li>
  *   <li>(b) 从 UNSUBMITTED 可达 SUBMITTED/APPROVED/REJECTED，REJECTED 经 submit 重提可达 SUBMITTED；</li>
- *   <li>(c) 各 {@code assertCanXxx} 合法来源态通过、非法来源态抛 common 码携带 {@code action}/{@code fromStatus}；</li>
+ *   <li>(c) 各 {@code assertCanXxx} 合法来源态通过、非法来源态直抛领域码携带 {@code action}/{@code fromStatus}；</li>
  *   <li>(d) {@code transitions()} 与显式方法语义一致；</li>
  *   <li>(e) 初始/终态集合正确（APPROVED 为可逆业务终态，经 reverseApprove 有出边）。</li>
  * </ul>
@@ -79,9 +79,9 @@ public class TestErpSalDeliveryApprovalStateMachineMatrix {
         assertEquals(ErpSalDocStatus.APPROVE_STATUS_SUBMITTED, sm.submitTargetStatus());
         for (String illegal : Arrays.asList(ErpSalDocStatus.APPROVE_STATUS_SUBMITTED, ErpSalDocStatus.APPROVE_STATUS_APPROVED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanSubmit(illegal));
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpSalErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("submit", ex.getParam(ErpSalDeliveryApprovalStateMachine.ARG_ACTION));
-            assertEquals(illegal, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(illegal, ex.getParam(ErpSalErrors.ARG_CURRENT_STATUS));
         }
     }
 
@@ -93,7 +93,7 @@ public class TestErpSalDeliveryApprovalStateMachineMatrix {
                 ErpSalDocStatus.APPROVE_STATUS_APPROVED, ErpSalDocStatus.APPROVE_STATUS_REJECTED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanApprove(illegal));
             assertEquals("approve", ex.getParam(ErpSalDeliveryApprovalStateMachine.ARG_ACTION));
-            assertEquals(illegal, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(illegal, ex.getParam(ErpSalErrors.ARG_CURRENT_STATUS));
         }
     }
 

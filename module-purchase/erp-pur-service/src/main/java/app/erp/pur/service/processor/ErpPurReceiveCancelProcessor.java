@@ -20,10 +20,9 @@ import org.slf4j.LoggerFactory;
  * calling facade helper methods for each step. Downstream can override via Delta beans.xml with same bean id.
  *
  * <p>固定来源态/目标态判断委托 {@link ErpPurReceiveDocumentStateMachine}（docStatus 业务生命周期轴 Bean，契约 §4/§7）。
- * 非法边映射：Bean 抛 common 层 {@code ERR_ILLEGAL_STATUS_TRANSITION}（含 {@code action=cancel}/
- * {@code fromStatus} 元数据）作 cause，{@link #validateTransitionForCancel} 捕获后映射领域码
- * {@link ErpPurErrors#ERR_ILLEGAL_DOC_STATUS_TRANSITION}（泛型命名漂移，路线图 Non-Goal 不重命名；
- * {@code receiveCode}/{@code currentDocStatus}/{@code expectedDocStatus} 参数对外不变）。
+ * 非法边：Bean 直抛领域码 {@link ErpPurErrors#ERR_ILLEGAL_DOC_STATUS_TRANSITION}（plan 2026-09-07-2200-1），
+ * {@link #validateTransitionForCancel} 同码补参补齐 {@code receiveCode} 元数据
+ * （泛型命名漂移，路线图 Non-Goal 不重命名）。
  */
 public class ErpPurReceiveCancelProcessor extends AbstractCancelProcessor<ErpPurReceive> {
 
@@ -93,7 +92,7 @@ public class ErpPurReceiveCancelProcessor extends AbstractCancelProcessor<ErpPur
         try {
             stateMachine.assertCanCancel(entity.getDocStatus());
         } catch (NopException e) {
-            throw illegalStatusException(entity, entity.getDocStatus(), "!CANCELLED");
+            throw e.param(ErpPurErrors.ARG_RECEIVE_CODE, entity.getCode());
         }
     }
 

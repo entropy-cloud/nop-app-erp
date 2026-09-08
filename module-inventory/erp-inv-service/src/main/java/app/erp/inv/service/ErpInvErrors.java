@@ -13,6 +13,7 @@ public interface ErpInvErrors {
     String ARG_MOVE_CODE = "moveCode";
     String ARG_CURRENT_STATUS = "currentStatus";
     String ARG_EXPECTED_STATUS = "expectedStatus";
+    String ARG_ACTION = "action";
     String ARG_MATERIAL_ID = "materialId";
     String ARG_WAREHOUSE_ID = "warehouseId";
     String ARG_AVAILABLE = "available";

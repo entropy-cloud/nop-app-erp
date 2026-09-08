@@ -1,7 +1,7 @@
 package app.erp.pur.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.pur.dao.constants.ErpPurDocStatus;
+import app.erp.pur.service.ErpPurErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -20,9 +20,10 @@ import java.util.List;
  *
  * <p>命名带 {@code Approval} 后缀（契约 §1 双轴约定，与 {@code ErpPurReceiveDocumentStateMachine} docStatus 轴分离）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
- * Receive 领域码为泛型 {@code ERR_ILLEGAL_STATUS_TRANSITION}（路线图 Non-Goal「不借迁移改变既有错误码」）。
+ * <p>非法边直抛领域码 {@link ErpPurErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}，附 {@code action} 补充诊断参数；plan 2026-09-07-2200-1）。
+ * Receive 领域码为泛型命名 {@code ERR_ILLEGAL_STATUS_TRANSITION}（路线图 Non-Goal「不借迁移改变既有错误码」）；
+ * 实体元数据（{@code receiveCode}）经调用点同码补参补齐。
  *
  * <p><b>reverseApprove 目标态裁定（plan Phase 1 Decision）</b>：权威 {@code domain-design-guidelines.md §16.4}
  * 要求 reverseApprove→REJECTED。实仓核实 {@code ErpPurReceiveReverseApproveProcessor.reverseApprove} **已整体覆写**
@@ -40,8 +41,8 @@ public class ErpPurReceiveApprovalStateMachine {
     /**
      * submit 守卫：来源态为 {@code UNSUBMITTED}/{@code null}/{@code REJECTED} 合法（初始提交或驳回后重新提交）。
      *
-     * <p>非法来源态报告 common 层非法边（携带 {@code action=submit}/{@code fromStatus}）。
-     * 接线方 {@code ErpPurReceiveSubmitForApprovalProcessor} 映射为领域码 {@code ERR_ILLEGAL_STATUS_TRANSITION}。
+     * <p>非法来源态直抛领域码 {@code ERR_ILLEGAL_STATUS_TRANSITION}
+     * （携带 {@code action=submit}/{@code currentStatus}；plan 2026-09-07-2200-1）。
      */
     public void assertCanSubmit(String approveStatus) {
         String status = normalize(approveStatus);
@@ -144,10 +145,10 @@ public class ErpPurReceiveApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpPurErrors.ERR_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPurErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpPurErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpPurErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

@@ -13,6 +13,7 @@ public interface ErpPurErrors {
     String ARG_RECEIVE_CODE = "receiveCode";
     String ARG_ORDER_CODE = "orderCode";
     String ARG_REQUISITION_CODE = "requisitionCode";
+    String ARG_ACTION = "action";
     String ARG_CURRENT_STATUS = "currentStatus";
     String ARG_EXPECTED_STATUS = "expectedStatus";
     String ARG_CURRENT_DOC_STATUS = "currentDocStatus";
@@ -281,7 +282,8 @@ public interface ErpPurErrors {
 
     // --- 报价单/询价单 approveStatus 守卫（plan 2026-08-13-0945-1 Phase 3，INLINE 错误码 Decision 分支 b：对齐领域码模式） ---
     // 迁移前 xbiz 内联守卫抛平台码 nop.err.wf.approve.invalid-status / nop.err.wf.approve.doc-cancelled；
-    // 迁移后经 BizModel helper → Bean 抛 common 码，映射为本域 approveStatus 轴领域码（与 Order/Req 模式一致）。
+    // 迁移后经 BizModel helper 委托 Bean 直抛本域 approveStatus 轴领域码（plan 2026-09-07-2200-1 起 StateMachine
+    // 直抛领域码，调用点同码补参补齐单据码元数据）。
     // isCancelled 守卫复用既有 ERR_*_ILLEGAL_DOC_STATUS_TRANSITION（同 sales 2026-07-30-1433-2 precedent：doc-cancelled→域 docStatus 码）。
     ErrorCode ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.pur.quotation-illegal-status-transition",
             "报价单 {quotationCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",

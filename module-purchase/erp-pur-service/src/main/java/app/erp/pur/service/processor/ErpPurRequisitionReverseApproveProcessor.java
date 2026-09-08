@@ -50,7 +50,7 @@ public class ErpPurRequisitionReverseApproveProcessor extends AbstractReverseApp
         try {
             stateMachine.assertCanReverseApprove(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity), ErpPurConstants.APPROVE_STATUS_APPROVED);
+            throw e.param(ErpPurErrors.ARG_REQUISITION_CODE, entity.getCode());
         }
     }
 

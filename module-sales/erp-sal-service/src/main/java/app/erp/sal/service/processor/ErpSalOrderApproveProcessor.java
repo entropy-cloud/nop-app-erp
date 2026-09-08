@@ -62,7 +62,7 @@ public class ErpSalOrderApproveProcessor extends AbstractApproveProcessor<ErpSal
         try {
             stateMachine.assertCanApprove(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity), ErpSalConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpSalErrors.ARG_ORDER_CODE, entity.getCode());
         }
     }
 

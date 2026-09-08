@@ -90,13 +90,11 @@ public class ErpInvStockTakeCompleteTakeProcessor {
 
     protected void validateTransition(ErpInvStockTake take, IServiceContext context) {
         String status = take.getDocStatus();
-        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
+        // 固定来源态守卫委托 StateMachine Bean（Bean 直抛领域码 ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION，本处同码补参 takeId）
         try {
             stateMachine.assertCanCompleteTake(status);
         } catch (NopException e) {
-            throw new NopException(ErpInvErrors.ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION, e)
-                    .param(ErpInvErrors.ARG_TAKE_ID, take.getId())
-                    .param(ErpInvErrors.ARG_CURRENT_STATUS, status);
+            throw e.param(ErpInvErrors.ARG_TAKE_ID, take.getId());
         }
     }
 

@@ -65,8 +65,7 @@ public class ErpSalDeliverySubmitForApprovalProcessor extends AbstractSubmitForA
         try {
             stateMachine.assertCanSubmit(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity),
-                    ErpSalConstants.APPROVE_STATUS_UNSUBMITTED + " / " + ErpSalConstants.APPROVE_STATUS_REJECTED);
+            throw e.param(ErpSalErrors.ARG_DELIVERY_CODE, entity.getCode());
         }
     }
 

@@ -1,7 +1,7 @@
 package app.erp.inv.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.inv.dao.constants.ErpInvDocStatus;
+import app.erp.inv.service.ErpInvErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -24,8 +24,10 @@ import java.util.List;
  * （confirm）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。
  * 可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpInvErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1 映射冲突修正：原调用方 remap 误用
+ * StockTake 码 {@code ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION} + takeId（copy-paste 缺陷，Deferred 修正项），
+ * 本 Bean 无实体专属 illegal-transition 码，落域通用码）；实体元数据（moveCode）经调用点同码补参。
  *
  * <p>迁移矩阵（1 条边）：confirm(DRAFT→CONFIRMED)。分类 initial={DRAFT}、terminal={CONFIRMED}。
  * <b>仅 confirm 边</b>——TransferOrder 无 DONE/CANCELLED writer：后续物理移动是独立
@@ -45,9 +47,9 @@ public class ErpInvTransferOrderStateMachine {
     /**
      * confirm 守卫：来源态为 {@code DRAFT} 合法。
      *
-     * <p>接线方 {@code ErpInvTransferOrderConfirmProcessor.validateDraft} 映射为领域码
-     * {@code ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION}（行为保持——既有错误码缺陷按路线图 Non-Goal 不修正，
-     * 见计划 Phase 3 Decision；保持既有 expected=DRAFT 文案）。
+     * <p>非法来源态直抛领域码 {@code ERR_ILLEGAL_STATUS_TRANSITION}（映射冲突修正，见类 javadoc；原 remap
+     * 误用 {@code ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION} 的既有错误码缺陷随本轮一并纠正）；
+     * 接线方 {@code ErpInvTransferOrderConfirmProcessor.validateDraft} 同码补参 moveCode。
      */
     public void assertCanConfirm(String docStatus) {
         if (!ErpInvDocStatus.DOC_STATUS_DRAFT.equals(docStatus)) {
@@ -89,10 +91,10 @@ public class ErpInvTransferOrderStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpInvErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpInvErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpInvErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

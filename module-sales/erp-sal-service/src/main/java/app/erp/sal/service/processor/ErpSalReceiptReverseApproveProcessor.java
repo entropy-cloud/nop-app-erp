@@ -75,7 +75,7 @@ public class ErpSalReceiptReverseApproveProcessor extends AbstractReverseApprove
         try {
             stateMachine.assertCanReverseApprove(getApproveStatus(entity));
         } catch (NopException e) {
-            throw illegalStatusException(entity, getApproveStatus(entity), ErpSalConstants.APPROVE_STATUS_APPROVED);
+            throw e.param(ErpSalErrors.ARG_RECEIPT_CODE, entity.getCode());
         }
     }
 

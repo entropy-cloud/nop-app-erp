@@ -1,7 +1,7 @@
 package app.erp.sal.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.sal.dao.constants.ErpSalDocStatus;
+import app.erp.sal.service.ErpSalErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -21,8 +21,9 @@ import java.util.List;
  * <p>命名带 {@code Approval} 后缀（契约 §1 双轴约定，与 {@code ErpSalQuotationDocumentStateMachine} docStatus 轴分离）。
  * 矩阵结构与 {@code ErpSalOrderApprovalStateMachine} 一致（同 dict {@code wf/approve-status}，两实体审批轴同构）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpSalErrors#ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION}（参数 {@code action}/
+ * {@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1）；实体元数据（{@code quotationCode}）
+ * 经调用点 Processor 同码补参补齐。
  *
  * <p><b>reverseApprove 目标态=REJECTED</b>（据实保持 Quotation 当前行为）：实仓核实
  * {@code ErpSalQuotationReverseApproveProcessor.doReverseApprove} **已覆写**为 REJECTED（非骨架默认 SUBMITTED），
@@ -38,8 +39,8 @@ public class ErpSalQuotationApprovalStateMachine {
     /**
      * submit 守卫：来源态为 {@code UNSUBMITTED}/{@code null}/{@code REJECTED} 合法（初始提交或驳回后重新提交）。
      *
-     * <p>非法来源态报告 common 层非法边（携带 {@code action=submit}/{@code fromStatus}）。
-     * 接线方 {@code ErpSalQuotationSubmitForApprovalProcessor} 映射为领域码 {@code ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION}。
+     * <p>非法来源态直抛领域码 {@code ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION}
+     * （携带 {@code action=submit}/{@code currentStatus}；实体元数据经调用点同码补参补齐）。
      */
     public void assertCanSubmit(String approveStatus) {
         String status = normalize(approveStatus);
@@ -142,10 +143,10 @@ public class ErpSalQuotationApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpSalErrors.ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpSalErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpSalErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpSalErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

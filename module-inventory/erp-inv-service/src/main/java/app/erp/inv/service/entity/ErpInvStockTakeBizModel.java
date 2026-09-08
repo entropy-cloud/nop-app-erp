@@ -42,13 +42,11 @@ public class ErpInvStockTakeBizModel extends AbstractErpCrudBizModel<ErpInvStock
     public ErpInvStockTake startTake(@Name("takeId") String takeId, IServiceContext context) {
         ErpInvStockTake take = requireEntity(takeId, null, context);
         String status = take.getDocStatus();
-        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
+        // 固定来源态守卫委托 StateMachine Bean（Bean 直抛领域码 ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION，本处同码补参 takeId）
         try {
             stateMachine.assertCanStartTake(status);
         } catch (NopException e) {
-            throw new NopException(ErpInvErrors.ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION, e)
-                    .param(ErpInvErrors.ARG_TAKE_ID, takeId)
-                    .param(ErpInvErrors.ARG_CURRENT_STATUS, status);
+            throw e.param(ErpInvErrors.ARG_TAKE_ID, takeId);
         }
         // 目标态 CONFIRMED 对应 owner doc 标签「盘点中 (COUNTING)」——dict erp-inv/move-status 无 COUNTING（标签漂移，行为一致）
         take.setDocStatus(stateMachine.startTakeTargetStatus());
@@ -71,13 +69,12 @@ public class ErpInvStockTakeBizModel extends AbstractErpCrudBizModel<ErpInvStock
     public ErpInvStockTake cancelTake(@Name("takeId") String takeId, IServiceContext context) {
         ErpInvStockTake take = requireEntity(takeId, null, context);
         String status = take.getDocStatus();
-        // 固定来源态守卫委托 StateMachine Bean（守卫非终态 {DONE,CANCELLED}；非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
+        // 固定来源态守卫委托 StateMachine Bean（守卫非终态 {DONE,CANCELLED}；Bean 直抛领域码
+        // ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION，本处同码补参 takeId）
         try {
             stateMachine.assertCanCancel(status);
         } catch (NopException e) {
-            throw new NopException(ErpInvErrors.ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION, e)
-                    .param(ErpInvErrors.ARG_TAKE_ID, takeId)
-                    .param(ErpInvErrors.ARG_CURRENT_STATUS, status);
+            throw e.param(ErpInvErrors.ARG_TAKE_ID, takeId);
         }
         take.setDocStatus(stateMachine.cancelTargetStatus());
         updateEntity(take, null, context);

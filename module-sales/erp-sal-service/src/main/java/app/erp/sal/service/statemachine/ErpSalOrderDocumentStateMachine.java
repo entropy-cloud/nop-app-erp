@@ -1,7 +1,7 @@
 package app.erp.sal.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.sal.dao.constants.ErpSalDocStatus;
+import app.erp.sal.service.ErpSalErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -21,8 +21,9 @@ import java.util.List;
  * <p>命名带 {@code Document} 后缀（契约 §1 双轴约定，为 M3.7 approveStatus Bean
  * {@code ErpSalOrderApprovalStateMachine} 预留命名空间）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpSalErrors#ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION}（参数 {@code action}/
+ * {@code currentDocStatus}/{@code expectedDocStatus}；plan 2026-09-07-2200-1）；实体元数据（{@code orderCode}）
+ * 经调用点 Processor 同码补参补齐。
  *
  * <p>迁移矩阵（1 条边）：cancel(DRAFT→CANCELLED)。cancel 守卫保留既有骨架行为——仅 CANCELLED 终态非法，
  * 其余非终态（DRAFT 及 dict 中其它非终态值）放行，与 {@code AbstractCancelProcessor.validateTransitionForCancel}
@@ -38,8 +39,8 @@ public class ErpSalOrderDocumentStateMachine {
     /**
      * cancel 守卫：非 CANCELLED 终态合法。
      *
-     * <p>对 CANCELLED 报告 common 层非法边（携带 {@code action=cancel}/{@code fromStatus=CANCELLED}）。
-     * 接线方 {@code ErpSalOrderCancelProcessor} 映射为领域码 {@code ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION}。
+     * <p>对 CANCELLED 直抛领域码 {@code ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION}
+     * （携带 {@code action=cancel}/{@code currentDocStatus=CANCELLED}；实体元数据经调用点同码补参补齐）。
      */
     public void assertCanCancel(String docStatus) {
         if (isTerminal(docStatus)) {
@@ -74,11 +75,11 @@ public class ErpSalOrderDocumentStateMachine {
 
     // ---------- 内部 ----------
 
-    private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+    private static NopException illegal(String action, String currentDocStatus, String expectedDocStatus) {
+        return new NopException(ErpSalErrors.ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION)
+                .param(ErpSalErrors.ARG_CURRENT_DOC_STATUS, currentDocStatus)
+                .param(ErpSalErrors.ARG_EXPECTED_DOC_STATUS, expectedDocStatus)
+                .param(ErpSalErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

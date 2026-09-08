@@ -1,6 +1,5 @@
 package app.erp.sal.service.processor;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.service.ErpSalErrors;
 import app.erp.sal.service.statemachine.ErpSalOrderDocumentStateMachine;
@@ -18,9 +17,9 @@ import jakarta.inject.Inject;
  * 动态业务守卫/副作用（commitment-release/intercompany-reverse）保留在 {@link ErpSalOrderProcessor} 经
  * {@link #beforeCancel} 钩子执行。
  *
- * <p>非法边映射：Bean 抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（含 {@code action=cancel}/
- * {@code fromStatus} 元数据）作 cause，{@link #validateTransitionForCancel} 捕获后映射领域码
- * {@link ErpSalErrors#ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION}（+ {@code orderCode} 实体编号/上下文）。
+ * <p>非法边直抛领域码：{@link ErpSalOrderDocumentStateMachine} 直接抛
+ * {@link ErpSalErrors#ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION}（plan 2026-09-07-2200-1），
+ * {@link #validateTransitionForCancel} 同码补参 {@code orderCode} 实体编号。
  */
 public class ErpSalOrderCancelProcessor extends AbstractCancelProcessor<ErpSalOrder> {
 
@@ -54,7 +53,7 @@ public class ErpSalOrderCancelProcessor extends AbstractCancelProcessor<ErpSalOr
         try {
             stateMachine.assertCanCancel(entity.getDocStatus());
         } catch (NopException e) {
-            throw illegalStatusException(entity, entity.getDocStatus(), "!CANCELLED");
+            throw e.param(ErpSalErrors.ARG_ORDER_CODE, entity.getCode());
         }
     }
 

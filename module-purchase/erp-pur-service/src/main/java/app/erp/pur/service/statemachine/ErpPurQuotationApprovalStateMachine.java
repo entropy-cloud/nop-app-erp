@@ -1,7 +1,7 @@
 package app.erp.pur.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.pur.dao.constants.ErpPurDocStatus;
+import app.erp.pur.service.ErpPurErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -22,6 +22,10 @@ import java.util.List;
  *
  * <p>矩阵与 {@code ErpPurOrderApprovalStateMachine} 同构。reverseApprove 目标态=REJECTED（据实保持 xbiz 当前行为，
  * 已合规 §16.4）。
+ *
+ * <p>非法边直抛领域码 {@link ErpPurErrors#ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION}（附 {@code action}/
+ * {@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1）；
+ * 实体元数据（{@code quotationCode}）经调用点同码补参补齐。
  */
 public class ErpPurQuotationApprovalStateMachine {
 
@@ -110,10 +114,10 @@ public class ErpPurQuotationApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpPurErrors.ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPurErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpPurErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpPurErrors.ARG_ACTION, action);
     }
 
     public static final class TransitionDefinition {

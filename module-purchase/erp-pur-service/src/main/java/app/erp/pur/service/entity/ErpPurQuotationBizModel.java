@@ -85,10 +85,7 @@ public class ErpPurQuotationBizModel extends AbstractErpCrudBizModel<ErpPurQuota
         try {
             stateMachine.assertCanCancel(quotation.getDocStatus());
         } catch (NopException e) {
-            throw new NopException(ErpPurErrors.ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION)
-                    .param(ErpPurErrors.ARG_QUOTATION_CODE, quotation.getCode())
-                    .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, quotation.getDocStatus())
-                    .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "!" + ErpPurDocStatus.DOC_STATUS_CANCELLED);
+            throw e.param(ErpPurErrors.ARG_QUOTATION_CODE, quotation.getCode());
         }
         quotation.setDocStatus(stateMachine.cancelTargetStatus());
         updateEntity(quotation, null, context);
@@ -105,7 +102,7 @@ public class ErpPurQuotationBizModel extends AbstractErpCrudBizModel<ErpPurQuota
         try {
             approvalStateMachine.assertCanSubmit(approveStatus);
         } catch (NopException e) {
-            throw illegalStatus(code, approveStatus, "UNSUBMITTED / REJECTED");
+            throw e.param(ErpPurErrors.ARG_QUOTATION_CODE, code);
         }
         return approvalStateMachine.submitTargetStatus();
     }
@@ -118,7 +115,7 @@ public class ErpPurQuotationBizModel extends AbstractErpCrudBizModel<ErpPurQuota
         try {
             approvalStateMachine.assertCanApprove(approveStatus);
         } catch (NopException e) {
-            throw illegalStatus(code, approveStatus, ErpPurDocStatus.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpPurErrors.ARG_QUOTATION_CODE, code);
         }
         return approvalStateMachine.approveTargetStatus();
     }
@@ -131,7 +128,7 @@ public class ErpPurQuotationBizModel extends AbstractErpCrudBizModel<ErpPurQuota
         try {
             approvalStateMachine.assertCanReject(approveStatus);
         } catch (NopException e) {
-            throw illegalStatus(code, approveStatus, ErpPurDocStatus.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpPurErrors.ARG_QUOTATION_CODE, code);
         }
         return approvalStateMachine.rejectTargetStatus();
     }
@@ -144,7 +141,7 @@ public class ErpPurQuotationBizModel extends AbstractErpCrudBizModel<ErpPurQuota
         try {
             approvalStateMachine.assertCanReverseApprove(approveStatus);
         } catch (NopException e) {
-            throw illegalStatus(code, approveStatus, ErpPurDocStatus.APPROVE_STATUS_APPROVED);
+            throw e.param(ErpPurErrors.ARG_QUOTATION_CODE, code);
         }
         return approvalStateMachine.reverseApproveTargetStatus();
     }
@@ -157,7 +154,7 @@ public class ErpPurQuotationBizModel extends AbstractErpCrudBizModel<ErpPurQuota
         try {
             approvalStateMachine.assertCanWithdraw(approveStatus);
         } catch (NopException e) {
-            throw illegalStatus(code, approveStatus, ErpPurDocStatus.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpPurErrors.ARG_QUOTATION_CODE, code);
         }
         return approvalStateMachine.withdrawTargetStatus();
     }
@@ -169,13 +166,6 @@ public class ErpPurQuotationBizModel extends AbstractErpCrudBizModel<ErpPurQuota
                     .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, docStatus)
                     .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "!" + ErpPurDocStatus.DOC_STATUS_CANCELLED);
         }
-    }
-
-    private NopException illegalStatus(String code, String currentStatus, String expectedStatus) {
-        return new NopException(ErpPurErrors.ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpPurErrors.ARG_QUOTATION_CODE, code)
-                .param(ErpPurErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpPurErrors.ARG_EXPECTED_STATUS, expectedStatus);
     }
 }
 

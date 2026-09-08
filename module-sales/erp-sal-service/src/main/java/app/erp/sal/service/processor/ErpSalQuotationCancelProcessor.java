@@ -1,6 +1,5 @@
 package app.erp.sal.service.processor;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.sal.dao.entity.ErpSalQuotation;
 import app.erp.sal.service.ErpSalErrors;
 import app.erp.sal.service.statemachine.ErpSalQuotationDocumentStateMachine;
@@ -17,9 +16,9 @@ import jakarta.inject.Inject;
  * {@link ErpSalQuotationDocumentStateMachine}（docStatus 业务生命周期轴 Bean，契约 §4/§7）。
  * 报价单 cancel 无域特有 hook（facade cancel 仅 setDocStatus）。
  *
- * <p>非法边映射：Bean 抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（含 {@code action=cancel}/
- * {@code fromStatus} 元数据）作 cause，{@link #validateTransitionForCancel} 捕获后映射领域码
- * {@link ErpSalErrors#ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION}（+ {@code quotationCode} 实体编号/上下文）。
+ * <p>非法边直抛领域码：{@link ErpSalQuotationDocumentStateMachine} 直接抛
+ * {@link ErpSalErrors#ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION}（plan 2026-09-07-2200-1），
+ * {@link #validateTransitionForCancel} 同码补参 {@code quotationCode} 实体编号。
  */
 public class ErpSalQuotationCancelProcessor extends AbstractCancelProcessor<ErpSalQuotation> {
 
@@ -53,7 +52,7 @@ public class ErpSalQuotationCancelProcessor extends AbstractCancelProcessor<ErpS
         try {
             stateMachine.assertCanCancel(entity.getDocStatus());
         } catch (NopException e) {
-            throw illegalStatusException(entity, entity.getDocStatus(), "!CANCELLED");
+            throw e.param(ErpSalErrors.ARG_QUOTATION_CODE, entity.getCode());
         }
     }
 
