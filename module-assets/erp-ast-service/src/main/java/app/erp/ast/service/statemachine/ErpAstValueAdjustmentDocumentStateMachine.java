@@ -1,7 +1,7 @@
 package app.erp.ast.service.statemachine;
 
 import app.erp.ast.service.ErpAstConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.ast.service.ErpAstErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -28,8 +28,8 @@ import java.util.List;
  * {@code DRAFT}（CRUD 创建写入）。
  *
  * <p><strong>守卫接线</strong>：{@code ErpAstValueAdjustmentProcessor.validateTransitionForCancel} 的固定状态守卫
- * （ACTIVE 禁 cancel「非已生效」/CANCELLED 禁 cancel「非已作废」）改调 {@link #assertCanCancel(String)}（common 码作
- * cause → 领域码 {@code ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION}，expected 按当前态区分）；<b>posted 动态守卫保留原位</b>
+ * （ACTIVE 禁 cancel「非已生效」/CANCELLED 禁 cancel「非已作废」）改调 {@link #assertCanCancel(String)}（Bean 直抛领域码
+ * {@code ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION}，expected 按当前态区分，plan 2026-09-07-2200-1）；<b>posted 动态守卫保留原位</b>
  * （posted=true 拒绝 cancel「非已过账」——posted 不入轴，契约 §3）；{@code validateNotCancelled} 改调
  * {@link #isCancelled(String)} 只读守卫；{@code executeApprove}/{@code doAutoApprove} docStatus 写回改调
  * {@link #approveTargetStatus()}。
@@ -44,9 +44,8 @@ public class ErpAstValueAdjustmentDocumentStateMachine {
     /**
      * approve 守卫（docStatus 轴）：来源态非 {@code CANCELLED} 合法（已作废单据禁止 approve）。
      *
-     * <p>非法来源态（CANCELLED）报告 common 层非法边（携带 {@code action=approve}/{@code fromStatus}）。
-     * 接线方 {@code ErpAstValueAdjustmentProcessor.validateNotCancelled}→{@code validateTransitionForCancel}
-     * 映射为领域码 {@code ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION}（common 码作 cause 保留）。
+     * <p>非法来源态（CANCELLED）直抛领域码 {@code ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION}（携带 {@code action=approve}/{@code currentDocStatus}；
+     * 实体元数据经调用点同码补参补齐，plan 2026-09-07-2200-1）。
      */
     public void assertCanApprove(String docStatus) {
         if (isCancelled(docStatus)) {
@@ -57,10 +56,9 @@ public class ErpAstValueAdjustmentDocumentStateMachine {
     /**
      * cancel 守卫（docStatus 轴）：仅 {@code DRAFT}/{@code null} 来源态合法（唯一有独立 cancel mutation 的实体）。
      *
-     * <p>{@code ACTIVE}（「非已生效」）与 {@code CANCELLED}（「非已作废」）均为非法来源态，报告 common 层非法边
-     * （携带 {@code action=cancel}/{@code fromStatus}）。接线方 {@code ErpAstValueAdjustmentProcessor.
-     * validateTransitionForCancel} 捕获后按当前态映射领域码 {@code ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION}，
-     * expected 参数区分「非已生效」/「非已作废」（错误码值/参数对外不变）。
+     * <p>{@code ACTIVE}（「非已生效」）与 {@code CANCELLED}（「非已作废」）均为非法来源态，直抛领域码
+     * {@code ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION}（携带 {@code action=cancel}/{@code currentDocStatus}，
+     * expected 参数区分「非已生效」/「非已作废」；实体元数据经调用点同码补参补齐，plan 2026-09-07-2200-1）。
      *
      * <p><b>posted 动态守卫不在本 Bean</b>：posted=true 拒绝 cancel（「非已过账」）由接线方原位保留
      * （posted 不入轴，契约 §3）。
@@ -156,9 +154,9 @@ public class ErpAstValueAdjustmentDocumentStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpAstErrors.ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION)
+                .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, currentStatus)
+                .param(ErpAstErrors.ARG_EXPECTED_DOC_STATUS, expectedStatus)
+                .param(ErpAstErrors.ARG_ACTION, action);
     }
 }

@@ -35,6 +35,18 @@ public class ErpAstSplitReverseApproveProcessor extends AbstractReverseApprovePr
         return defaultNotFoundException(id);
     }
 
+    /**
+     * 骨架守卫裸奔通道修正（plan 2026-09-07-2200-1 form-3）：非法迁移错误由 common 码改为直抛领域码
+     * ERR_AST_SPLIT_ILLEGAL_STATUS_TRANSITION（参数形态与 facade 组装一致）。
+     */
+    @Override
+    protected NopException illegalStatusException(ErpAstSplit entity, String current, String... expected) {
+        return new NopException(ErpAstErrors.ERR_AST_SPLIT_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpAstErrors.ARG_SPLIT_CODE, entity.getCode())
+                .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpAstErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
+    }
+
     @Override
     protected String getApproveStatus(ErpAstSplit entity) {
         return entity.getApproveStatus();

@@ -39,11 +39,11 @@ public class ErpAstMaintenancePostProcessor {
 
     public ErpAstMaintenance post(String id, IServiceContext context) {
         ErpAstMaintenance m = facade.requireMaintenance(id, context);
-        // 固定来源态守卫委托 StateMachine Bean（M4.53，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
+        // 固定来源态守卫委托 StateMachine Bean（M4.53，契约 §4；Bean 直抛领域码 + 调用点同码补参，plan 2026-09-07-2200-1）
         try {
             stateMachine.assertCanPost(m.getStatus());
         } catch (NopException e) {
-            throw facade.mapIllegalTransition(e, m, ErpAstConstants.MAINTENANCE_STATUS_COMPLETED);
+            throw e.param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode());
         }
         if (Boolean.TRUE.equals(m.getPosted())) {
             throw new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_ALREADY_POSTED)

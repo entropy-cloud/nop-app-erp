@@ -88,11 +88,11 @@ public class ErpAstInventoryProcessor {
     public ErpAstInventory cancel(String id, IServiceContext context) {
         ErpAstInventory inv = requireInventory(id, context);
         String status = inv.getStatus();
-        // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
+        // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4；Bean 直抛领域码 + 调用点同码补参，plan 2026-09-07-2200-1）
         try {
             stateMachine.assertCanCancel(status);
         } catch (NopException e) {
-            throw mapIllegalTransition(e, inv, "DRAFT / COUNTING");
+            throw e.param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode());
         }
         inv.setStatus(stateMachine.cancelTargetStatus());
         inventoryDao().updateEntity(inv);
@@ -289,8 +289,13 @@ public class ErpAstInventoryProcessor {
                 || Objects.equals(assetStatus, ErpAstConstants.ASSET_STATUS_DISPOSED)) {
             return;
         }
-        // 固定来源/目标态判断委托 Phase 1 Asset StateMachine Bean（M4.40 跨阶段接线，契约 §4）
-        assetStateMachine.assertCanShortageDispose(assetStatus);
+        // 固定来源/目标态判断委托 Phase 1 Asset StateMachine Bean（M4.40 跨阶段接线，契约 §4；
+        // Bean 直抛领域码 + 调用点同码补参，plan 2026-09-07-2200-1）
+        try {
+            assetStateMachine.assertCanShortageDispose(assetStatus);
+        } catch (NopException e) {
+            throw e.param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
+        }
         asset.setStatus(assetStateMachine.shortageDisposeTargetStatus());
         assetDao().saveOrUpdateEntity(asset);
     }
@@ -420,17 +425,6 @@ public class ErpAstInventoryProcessor {
         return new NopException(ErpAstErrors.ERR_AST_INVENTORY_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
-    }
-
-    /**
-     * Bean 非法边（common 层码）→ 领域码 cause-chain 映射（契约 §7；M4.52）。
-     * 保持错误码值/参数形状与 {@link #illegalTransition} 一致。
-     */
-    protected NopException mapIllegalTransition(NopException beanException, ErpAstInventory inv, String expected) {
-        return new NopException(ErpAstErrors.ERR_AST_INVENTORY_ILLEGAL_STATUS_TRANSITION, beanException)
-                .param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode())
-                .param(ErpAstErrors.ARG_CURRENT_STATUS, inv.getStatus())
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 

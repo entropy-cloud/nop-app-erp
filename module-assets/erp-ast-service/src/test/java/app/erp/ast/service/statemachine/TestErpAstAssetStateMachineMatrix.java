@@ -1,7 +1,7 @@
 package app.erp.ast.service.statemachine;
 
 import app.erp.ast.service.ErpAstConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.ast.service.ErpAstErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *   <li>(a) 无重复/冲突边（11 条边，8 命名动作——disposeScrap/disposeSell/reverseDisposal 双源）；</li>
  *   <li>(b) 从 DRAFT 可达 IN_SERVICE/SCRAPPED/SOLD；IDLE 经 suspend 从 IN_SERVICE 可达（RC-R1.54 实装），
  *       但无任何边进入 IDLE 之外的其他非 DRAFT 初始态——从 DRAFT 出发不经 suspend 不可达 IDLE（DRAFT 无直接出边到 IDLE）；</li>
- *   <li>(c) 各动作合法来源态通过、非法来源态抛 common 层码（携带 action/currentStatus）；
+ *   <li>(c) 各动作合法来源态通过、非法来源态直抛领域码（携带 action/currentStatus）；
  *       capitalize null 归一化 DRAFT 合法；suspend 仅 IN_SERVICE；resume 仅 IDLE；dispose 接受 IN_SERVICE/IDLE；
  *       inventoryShortageDisposal 运行时守卫接受 IN_SERVICE/IDLE；</li>
  *   <li>(d) {@code transitions()} 元数据与显式方法语义一致；</li>
@@ -225,11 +225,11 @@ public class TestErpAstAssetStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                        "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
+                assertEquals(ErpAstErrors.ERR_AST_ASSET_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                        "Bean 直抛领域非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(reportedAction, ex.getParam(ErpAstAssetStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + reportedAction);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpAstErrors.ARG_CURRENT_STATUS),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }
@@ -238,11 +238,11 @@ public class TestErpAstAssetStateMachineMatrix {
     private void assertIllegal(String action, String status) {
         NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, status),
                 action + " 对非允许来源态应非法: " + status);
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + status);
+        assertEquals(ErpAstErrors.ERR_AST_ASSET_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域非法迁移码: action=" + action + ", status=" + status);
         assertEquals(action, ex.getParam(ErpAstAssetStateMachine.ARG_ACTION),
                 "拒绝元数据携带动作名: action=" + action);
-        assertEquals(status, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(status, ex.getParam(ErpAstErrors.ARG_CURRENT_STATUS),
                 "拒绝元数据携带当前态: action=" + action + ", status=" + status);
     }
 

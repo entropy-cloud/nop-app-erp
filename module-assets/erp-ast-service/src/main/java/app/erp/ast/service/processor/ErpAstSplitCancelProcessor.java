@@ -2,6 +2,7 @@ package app.erp.ast.service.processor;
 
 import app.erp.ast.dao.entity.ErpAstSplit;
 import app.erp.ast.service.ErpAstConstants;
+import app.erp.ast.service.ErpAstErrors;
 import app.erp.common.service.AbstractCancelProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -36,6 +37,18 @@ public class ErpAstSplitCancelProcessor extends AbstractCancelProcessor<ErpAstSp
     @Override
     protected NopException notFoundException(String id) {
         return defaultNotFoundException(id);
+    }
+
+    /**
+     * 骨架守卫裸奔通道修正（plan 2026-09-07-2200-1 form-3）：非法迁移错误由 common 码改为直抛领域码
+     * ERR_AST_SPLIT_ILLEGAL_STATUS_TRANSITION（参数形态与 facade 组装一致）。
+     */
+    @Override
+    protected NopException illegalStatusException(ErpAstSplit entity, String current, String... expected) {
+        return new NopException(ErpAstErrors.ERR_AST_SPLIT_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpAstErrors.ARG_SPLIT_CODE, entity.getCode())
+                .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpAstErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
     }
 
     @Override

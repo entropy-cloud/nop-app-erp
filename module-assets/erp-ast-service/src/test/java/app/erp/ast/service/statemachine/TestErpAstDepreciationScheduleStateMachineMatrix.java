@@ -1,7 +1,7 @@
 package app.erp.ast.service.statemachine;
 
 import app.erp.ast.service.ErpAstConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.ast.service.ErpAstErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *   <li>(a) 无重复/冲突边（4 条边，4 命名动作）；</li>
  *   <li>(b) 从 PENDING 可达 EXECUTED/REVERSED/CANCELLED，且 CANCELLED 经 restore 回到 PENDING
  *       （CANCELLED 非终态——业务恢复路径，对齐 Movement REJECTED 非终态先例）；</li>
- *   <li>(c) 各动作合法来源态通过、非法来源态抛 common 层码（携带 action/currentStatus）；
+ *   <li>(c) 各动作合法来源态通过、非法来源态直抛领域码（携带 action/currentStatus）；
  *       execute null 归一化 PENDING 合法（新建条目创建种子语义）；</li>
  *   <li>(d) {@code transitions()} 元数据与显式方法语义一致；</li>
  *   <li>(e) 终态/初始态集合正确（terminal={EXECUTED（可逆终态）, REVERSED}，initial={PENDING}）。</li>
@@ -168,11 +168,11 @@ public class TestErpAstDepreciationScheduleStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                        "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
+                assertEquals(ErpAstErrors.ERR_SCHEDULE_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                        "Bean 直抛领域非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpAstDepreciationScheduleStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + action);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpAstErrors.ARG_CURRENT_STATUS),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }

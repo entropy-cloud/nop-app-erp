@@ -137,61 +137,54 @@ public class ErpAstValueAdjustmentProcessor {
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpAstValueAdjustment adjustment, IServiceContext context) {
-        String status = currentApproveStatus(adjustment);
         try {
-            approvalStateMachine.assertCanSubmitForApproval(status);
+            approvalStateMachine.assertCanSubmitForApproval(currentApproveStatus(adjustment));
         } catch (NopException e) {
-            throw illegalTransition(adjustment, status, "UNSUBMITTED / REJECTED", e);
+            throw e.param(ErpAstErrors.ARG_ADJUSTMENT_CODE, adjustment.getCode());
         }
     }
 
     protected void validateTransitionForWithdraw(ErpAstValueAdjustment adjustment, IServiceContext context) {
-        String status = currentApproveStatus(adjustment);
         try {
-            approvalStateMachine.assertCanWithdrawApproval(status);
+            approvalStateMachine.assertCanWithdrawApproval(currentApproveStatus(adjustment));
         } catch (NopException e) {
-            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
+            throw e.param(ErpAstErrors.ARG_ADJUSTMENT_CODE, adjustment.getCode());
         }
     }
 
     protected void validateTransitionForApprove(ErpAstValueAdjustment adjustment, IServiceContext context) {
-        String status = currentApproveStatus(adjustment);
         try {
-            approvalStateMachine.assertCanApprove(status);
+            approvalStateMachine.assertCanApprove(currentApproveStatus(adjustment));
         } catch (NopException e) {
-            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
+            throw e.param(ErpAstErrors.ARG_ADJUSTMENT_CODE, adjustment.getCode());
         }
     }
 
     protected void validateTransitionForReject(ErpAstValueAdjustment adjustment, IServiceContext context) {
-        String status = currentApproveStatus(adjustment);
         try {
-            approvalStateMachine.assertCanReject(status);
+            approvalStateMachine.assertCanReject(currentApproveStatus(adjustment));
         } catch (NopException e) {
-            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
+            throw e.param(ErpAstErrors.ARG_ADJUSTMENT_CODE, adjustment.getCode());
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpAstValueAdjustment adjustment, IServiceContext context) {
-        String status = currentApproveStatus(adjustment);
         try {
-            approvalStateMachine.assertCanReverseApprove(status);
+            approvalStateMachine.assertCanReverseApprove(currentApproveStatus(adjustment));
         } catch (NopException e) {
-            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_APPROVED, e);
+            throw e.param(ErpAstErrors.ARG_ADJUSTMENT_CODE, adjustment.getCode());
         }
     }
 
     protected void validateTransitionForCancel(ErpAstValueAdjustment adjustment, IServiceContext context) {
-        String docStatus = adjustment.getDocStatus();
         try {
-            documentStateMachine.assertCanCancel(docStatus);
+            documentStateMachine.assertCanCancel(adjustment.getDocStatus());
         } catch (NopException e) {
-            boolean active = ErpAstConstants.DOC_STATUS_ACTIVE.equals(docStatus);
-            throw illegalDocTransition(adjustment, docStatus, active ? "!" + ErpAstConstants.DOC_STATUS_ACTIVE : "!" + ErpAstConstants.DOC_STATUS_CANCELLED, e);
+            throw e.param(ErpAstErrors.ARG_ADJUSTMENT_CODE, adjustment.getCode());
         }
         // posted 动态守卫保留原位（posted 不入轴，契约 §3）
         if (Boolean.TRUE.equals(adjustment.getPosted())) {
-            throw illegalDocTransition(adjustment, docStatus, "!POSTED");
+            throw illegalDocTransition(adjustment, adjustment.getDocStatus(), "!POSTED");
         }
     }
 
@@ -404,29 +397,11 @@ public class ErpAstValueAdjustmentProcessor {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    protected NopException illegalTransition(ErpAstValueAdjustment adjustment, String current, String expected) {
-        return illegalTransition(adjustment, current, expected, null);
-    }
-
     /**
-     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     * docStatus 轴非法迁移直抛领域码构造（if-throw 直抛守卫复用；SM 非法边已直抛领域码，plan 2026-09-07-2200-1）。
      */
-    protected NopException illegalTransition(ErpAstValueAdjustment adjustment, String current, String expected, NopException cause) {
-        return new NopException(ErpAstErrors.ERR_ADJUSTMENT_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpAstErrors.ARG_ADJUSTMENT_CODE, adjustment.getCode())
-                .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
-    }
-
     protected NopException illegalDocTransition(ErpAstValueAdjustment adjustment, String current, String expected) {
-        return illegalDocTransition(adjustment, current, expected, null);
-    }
-
-    /**
-     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
-     */
-    protected NopException illegalDocTransition(ErpAstValueAdjustment adjustment, String current, String expected, NopException cause) {
-        return new NopException(ErpAstErrors.ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION, cause)
+        return new NopException(ErpAstErrors.ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION)
                 .param(ErpAstErrors.ARG_ADJUSTMENT_CODE, adjustment.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_DOC_STATUS, expected);

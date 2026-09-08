@@ -1,7 +1,7 @@
 package app.erp.ast.service.processor;
 
 import app.erp.ast.dao.entity.ErpAstInventory;
-import app.erp.ast.service.ErpAstConstants;
+import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.statemachine.ErpAstInventoryStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -26,7 +26,7 @@ public class ErpAstInventoryCreateInventoryProcessor {
         try {
             stateMachine.assertCanCreate(inv.getStatus());
         } catch (NopException e) {
-            throw facade.mapIllegalTransition(e, inv, ErpAstConstants.INVENTORY_STATUS_DRAFT);
+            throw e.param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode());
         }
         facade.expandAssetsToLines(inv, context);
         inv.setStatus(stateMachine.createTargetStatus());

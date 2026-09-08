@@ -1,7 +1,7 @@
 package app.erp.ast.service.statemachine;
 
 import app.erp.ast.service.ErpAstConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.ast.service.ErpAstErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -42,9 +42,8 @@ public class ErpAstDisposalDocumentStateMachine {
     /**
      * approve 守卫（docStatus 轴）：来源态非 {@code CANCELLED} 合法（已作废单据禁止 approve）。
      *
-     * <p>非法来源态（CANCELLED）报告 common 层非法边（携带 {@code action=approve}/{@code fromStatus}）。
-     * 接线方 {@code ErpAstDisposalProcessor.validateNotCancelled}→{@code validateTransitionForCancel} 映射为领域码
-     * {@code ERR_DISPOSAL_ILLEGAL_DOC_TRANSITION}（common 码作 cause 保留）。
+     * <p>非法来源态（CANCELLED）直抛领域码 {@code ERR_DISPOSAL_ILLEGAL_DOC_TRANSITION}（携带 {@code action=approve}/{@code currentDocStatus}；
+     * 实体元数据经调用点同码补参补齐，plan 2026-09-07-2200-1）。
      */
     public void assertCanApprove(String docStatus) {
         if (isCancelled(docStatus)) {
@@ -128,9 +127,9 @@ public class ErpAstDisposalDocumentStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpAstErrors.ERR_DISPOSAL_ILLEGAL_DOC_TRANSITION)
+                .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, currentStatus)
+                .param(ErpAstErrors.ARG_EXPECTED_DOC_STATUS, expectedStatus)
+                .param(ErpAstErrors.ARG_ACTION, action);
     }
 }

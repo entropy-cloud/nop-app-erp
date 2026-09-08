@@ -114,8 +114,13 @@ public class ErpAstDisposalProcessor {
         BigDecimal disposalAmount = nz(disposal.getDisposalAmount());
         BigDecimal gainLoss = disposalAmount.subtract(nbv);
 
-        // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4/§7；按 disposalType 选 scrap/sell 目标态）
-        assetStateMachine.assertCanDispose(asset.getStatus());
+        // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4；Bean 直抛领域码 + 调用点同码补参，plan 2026-09-07-2200-1；
+        // 按 disposalType 选 scrap/sell 目标态）
+        try {
+            assetStateMachine.assertCanDispose(asset.getStatus());
+        } catch (NopException e) {
+            throw e.param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
+        }
         String fromStatus = asset.getStatus();
         String terminalStatus = disposal.getDisposalType() != null
                 && Objects.equals(disposal.getDisposalType(), ErpAstConstants.DISPOSAL_TYPE_SOLD)
@@ -180,8 +185,12 @@ public class ErpAstDisposalProcessor {
             postingDispatcher.reverse(disposal);
             ErpAstAsset asset = disposal.getAsset();
             if (asset != null) {
-                // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4/§7）
-                assetStateMachine.assertCanReverseDispose(asset.getStatus());
+                // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4；Bean 直抛领域码 + 调用点同码补参，plan 2026-09-07-2200-1）
+                try {
+                    assetStateMachine.assertCanReverseDispose(asset.getStatus());
+                } catch (NopException e) {
+                    throw e.param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
+                }
                 String fromStatus = asset.getStatus();
                 asset.setStatus(assetStateMachine.reverseDisposalTargetStatus());
                 daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
@@ -207,47 +216,42 @@ public class ErpAstDisposalProcessor {
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpAstDisposal disposal, IServiceContext context) {
-        String status = currentApproveStatus(disposal);
         try {
-            approvalStateMachine.assertCanSubmitForApproval(status);
+            approvalStateMachine.assertCanSubmitForApproval(currentApproveStatus(disposal));
         } catch (NopException e) {
-            throw illegalTransition(disposal, status, "UNSUBMITTED / REJECTED", e);
+            throw e.param(ErpAstErrors.ARG_DISPOSAL_CODE, disposal.getCode());
         }
     }
 
     protected void validateTransitionForWithdraw(ErpAstDisposal disposal, IServiceContext context) {
-        String status = currentApproveStatus(disposal);
         try {
-            approvalStateMachine.assertCanWithdrawApproval(status);
+            approvalStateMachine.assertCanWithdrawApproval(currentApproveStatus(disposal));
         } catch (NopException e) {
-            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
+            throw e.param(ErpAstErrors.ARG_DISPOSAL_CODE, disposal.getCode());
         }
     }
 
     protected void validateTransitionForApprove(ErpAstDisposal disposal, IServiceContext context) {
-        String status = currentApproveStatus(disposal);
         try {
-            approvalStateMachine.assertCanApprove(status);
+            approvalStateMachine.assertCanApprove(currentApproveStatus(disposal));
         } catch (NopException e) {
-            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
+            throw e.param(ErpAstErrors.ARG_DISPOSAL_CODE, disposal.getCode());
         }
     }
 
     protected void validateTransitionForReject(ErpAstDisposal disposal, IServiceContext context) {
-        String status = currentApproveStatus(disposal);
         try {
-            approvalStateMachine.assertCanReject(status);
+            approvalStateMachine.assertCanReject(currentApproveStatus(disposal));
         } catch (NopException e) {
-            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
+            throw e.param(ErpAstErrors.ARG_DISPOSAL_CODE, disposal.getCode());
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpAstDisposal disposal, IServiceContext context) {
-        String status = currentApproveStatus(disposal);
         try {
-            approvalStateMachine.assertCanReverseApprove(status);
+            approvalStateMachine.assertCanReverseApprove(currentApproveStatus(disposal));
         } catch (NopException e) {
-            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_APPROVED, e);
+            throw e.param(ErpAstErrors.ARG_DISPOSAL_CODE, disposal.getCode());
         }
     }
 
@@ -413,29 +417,11 @@ public class ErpAstDisposalProcessor {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    protected NopException illegalTransition(ErpAstDisposal disposal, String current, String expected) {
-        return illegalTransition(disposal, current, expected, null);
-    }
-
     /**
-     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     * docStatus 轴非法迁移直抛领域码构造（if-throw 直抛守卫复用；SM 非法边已直抛领域码，plan 2026-09-07-2200-1）。
      */
-    protected NopException illegalTransition(ErpAstDisposal disposal, String current, String expected, NopException cause) {
-        return new NopException(ErpAstErrors.ERR_DISPOSAL_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpAstErrors.ARG_DISPOSAL_CODE, disposal.getCode())
-                .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
-    }
-
     protected NopException illegalDocTransition(ErpAstDisposal disposal, String current, String expected) {
-        return illegalDocTransition(disposal, current, expected, null);
-    }
-
-    /**
-     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
-     */
-    protected NopException illegalDocTransition(ErpAstDisposal disposal, String current, String expected, NopException cause) {
-        return new NopException(ErpAstErrors.ERR_DISPOSAL_ILLEGAL_DOC_TRANSITION, cause)
+        return new NopException(ErpAstErrors.ERR_DISPOSAL_ILLEGAL_DOC_TRANSITION)
                 .param(ErpAstErrors.ARG_DISPOSAL_CODE, disposal.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_DOC_STATUS, expected);

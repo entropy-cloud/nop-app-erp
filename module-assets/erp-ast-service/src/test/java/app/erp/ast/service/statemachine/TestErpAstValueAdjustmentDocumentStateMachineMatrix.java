@@ -1,7 +1,7 @@
 package app.erp.ast.service.statemachine;
 
 import app.erp.ast.service.ErpAstConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.ast.service.ErpAstErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -87,11 +87,11 @@ public class TestErpAstValueAdjustmentDocumentStateMachineMatrix {
         NopException ex = assertThrows(NopException.class,
                 () -> documentSm.assertCanApprove(ErpAstConstants.DOC_STATUS_CANCELLED),
                 "approve 对 CANCELLED 应非法（已作废单据禁止审批）");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码");
+        assertEquals(ErpAstErrors.ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域非法迁移码");
         assertEquals("approve", ex.getParam(ErpAstValueAdjustmentDocumentStateMachine.ARG_ACTION),
                 "拒绝元数据携带动作名");
-        assertEquals(ErpAstConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(ErpAstConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpAstErrors.ARG_CURRENT_DOC_STATUS),
                 "拒绝元数据携带当前态");
     }
 
@@ -106,13 +106,13 @@ public class TestErpAstValueAdjustmentDocumentStateMachineMatrix {
         NopException ex = assertThrows(NopException.class,
                 () -> documentSm.assertCanCancel(ErpAstConstants.DOC_STATUS_ACTIVE),
                 "cancel 对 ACTIVE 应非法（已生效单据禁止作废）");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码");
+        assertEquals(ErpAstErrors.ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域非法迁移码");
         assertEquals("cancel", ex.getParam(ErpAstValueAdjustmentDocumentStateMachine.ARG_ACTION),
                 "拒绝元数据携带动作名");
-        assertEquals(ErpAstConstants.DOC_STATUS_ACTIVE, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(ErpAstConstants.DOC_STATUS_ACTIVE, ex.getParam(ErpAstErrors.ARG_CURRENT_DOC_STATUS),
                 "拒绝元数据携带当前态");
-        assertEquals("!" + ErpAstConstants.DOC_STATUS_ACTIVE, ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
+        assertEquals("!" + ErpAstConstants.DOC_STATUS_ACTIVE, ex.getParam(ErpAstErrors.ARG_EXPECTED_DOC_STATUS),
                 "拒绝元数据携带期望态诊断（否定语义 = ! 前缀 + 被禁状态码，plan 2026-09-07-0043-2 Decision）");
     }
 
@@ -121,11 +121,11 @@ public class TestErpAstValueAdjustmentDocumentStateMachineMatrix {
         NopException ex = assertThrows(NopException.class,
                 () -> documentSm.assertCanCancel(ErpAstConstants.DOC_STATUS_CANCELLED),
                 "cancel 对 CANCELLED 应非法（已作废单据禁止重复作废）");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码");
-        assertEquals(ErpAstConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(ErpAstErrors.ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域非法迁移码");
+        assertEquals(ErpAstConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpAstErrors.ARG_CURRENT_DOC_STATUS),
                 "拒绝元数据携带当前态");
-        assertEquals("!" + ErpAstConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
+        assertEquals("!" + ErpAstConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpAstErrors.ARG_EXPECTED_DOC_STATUS),
                 "拒绝元数据携带期望态诊断（否定语义 = ! 前缀 + 被禁状态码，plan 2026-09-07-0043-2 Decision）");
     }
 

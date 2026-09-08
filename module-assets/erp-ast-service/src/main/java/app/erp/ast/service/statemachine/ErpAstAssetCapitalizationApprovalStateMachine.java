@@ -1,7 +1,7 @@
 package app.erp.ast.service.statemachine;
 
 import app.erp.ast.service.ErpAstConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.ast.service.ErpAstErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -21,8 +21,8 @@ import java.util.List;
  * <p>命名带 {@code Approval} 后缀（契约 §1 双轴约定，与 {@link ErpAstAssetCapitalizationDocumentStateMachine} docStatus 轴分离）。
  *
  * <p>接线方（plan 2026-08-14-1931-2，M4.47 facade 范式，镜像 Phase 1 Disposal）：{@code ErpAstAssetCapitalizationProcessor}
- * 注入 2 Bean（非 private）；{@code validateTransitionForXxx} 各改调 {@code assertCanXxx}（try/catch common 码作 cause →
- * 领域码 {@code ERR_CAPITALIZATION_ILLEGAL_STATUS_TRANSITION}，契约 §7）；{@code executeApprove}/{@code executeReverseApprove}
+ * 注入 2 Bean（非 private）；{@code validateTransitionForXxx} 各改调 {@code assertCanXxx}（Bean 直抛领域码 {@code ERR_CAPITALIZATION_ILLEGAL_STATUS_TRANSITION}（plan 2026-09-07-2200-1），
+ * 调用点同码补参）；{@code executeApprove}/{@code executeReverseApprove}
  * 目标态改调 {@code *TargetStatus()}。per-mutation 5 Processor 经 facade 透传自动生效。
  * 折旧计划生成、库存转固 stock move、Asset.status side-effect（→IN_SERVICE/→DRAFT，计划 1 M4.40 AssetStateMachine 守卫）、
  * 过账、posted 置位全部保留原位。
@@ -46,9 +46,8 @@ public class ErpAstAssetCapitalizationApprovalStateMachine {
     /**
      * submitForApproval 守卫：来源态为 {@code UNSUBMITTED}/{@code null}/{@code REJECTED} 合法（初始提交或驳回后重新提交）。
      *
-     * <p>非法来源态报告 common 层非法边（携带 {@code action=submitForApproval}/{@code fromStatus}）。
-     * 接线方 {@code ErpAstAssetCapitalizationProcessor.validateTransitionForSubmit} 映射为领域码
-     * {@code ERR_CAPITALIZATION_ILLEGAL_STATUS_TRANSITION}（common 码作 cause 保留）。
+     * <p>非法来源态直抛领域码 {@code ERR_CAPITALIZATION_ILLEGAL_STATUS_TRANSITION}（携带 {@code action=submitForApproval}/{@code currentStatus}；
+     * 实体元数据经调用点同码补参补齐，plan 2026-09-07-2200-1）。
      */
     public void assertCanSubmitForApproval(String approveStatus) {
         String status = normalize(approveStatus);
@@ -152,10 +151,10 @@ public class ErpAstAssetCapitalizationApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpAstErrors.ERR_CAPITALIZATION_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpAstErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpAstErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpAstErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

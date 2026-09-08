@@ -1,7 +1,7 @@
 package app.erp.ast.service.processor;
 
 import app.erp.ast.dao.entity.ErpAstInventory;
-import app.erp.ast.service.ErpAstConstants;
+import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.statemachine.ErpAstInventoryStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -22,11 +22,11 @@ public class ErpAstInventoryReconcileProcessor {
 
     public ErpAstInventory reconcile(String id, IServiceContext context) {
         ErpAstInventory inv = facade.requireInventory(id, context);
-        // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
+        // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4；Bean 直抛领域码 + 调用点同码补参，plan 2026-09-07-2200-1）
         try {
             stateMachine.assertCanReconcile(inv.getStatus());
         } catch (NopException e) {
-            throw facade.mapIllegalTransition(e, inv, ErpAstConstants.INVENTORY_STATUS_COUNTING);
+            throw e.param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode());
         }
         facade.calculateVariance(inv, context);
         inv.setStatus(stateMachine.reconcileTargetStatus());

@@ -1,7 +1,7 @@
 package app.erp.ast.service.statemachine;
 
 import app.erp.ast.service.ErpAstConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.ast.service.ErpAstErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -85,11 +85,11 @@ public class TestErpAstSplitApprovalStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> approvalSm.assertCanSubmitForApproval(s),
                         "submitForApproval 对非双源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                        "Bean 报告 common 层非法迁移码");
+                assertEquals(ErpAstErrors.ERR_AST_SPLIT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                        "Bean 直抛领域非法迁移码");
                 assertEquals("submitForApproval", ex.getParam(ErpAstSplitApprovalStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名");
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
+                assertEquals(s, ex.getParam(ErpAstErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
             }
         }
     }
@@ -196,11 +196,11 @@ public class TestErpAstSplitApprovalStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                        "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
+                assertEquals(ErpAstErrors.ERR_AST_SPLIT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                        "Bean 直抛领域非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpAstSplitApprovalStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + action);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpAstErrors.ARG_CURRENT_STATUS),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }

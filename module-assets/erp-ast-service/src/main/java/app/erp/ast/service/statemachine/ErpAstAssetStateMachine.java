@@ -1,7 +1,7 @@
 package app.erp.ast.service.statemachine;
 
 import app.erp.ast.service.ErpAstConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.ast.service.ErpAstErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -32,9 +32,9 @@ import java.util.List;
  * 经 resume/dispose 出边——不再为死状态。折旧引擎 IN_SERVICE-only 查询 + {@code validateAssetInService} 守卫
  * 自然满足「IDLE 期间不计提」语义（owner doc §1/UC-AST-03 ③）。
  *
- * <p>分类：initial={DRAFT}，terminal={SCRAPPED, SOLD}。非法边抛 common 层
- * {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/{@code expectedStatus} +
- * {@code action} 补充诊断参数）；领域 ErrorCode 映射归调用方 Processor（契约 §7）。
+ * <p>分类：initial={DRAFT}，terminal={SCRAPPED, SOLD}。非法边直抛领域码 {@link ErpAstErrors#ERR_AST_ASSET_ILLEGAL_STATUS_TRANSITION}（参数 {@code action}/
+ * {@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1）；实体元数据（{@code assetCode}）
+ * 经调用点同码补参补齐。
  */
 public class ErpAstAssetStateMachine {
 
@@ -209,10 +209,10 @@ public class ErpAstAssetStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpAstErrors.ERR_AST_ASSET_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpAstErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpAstErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpAstErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

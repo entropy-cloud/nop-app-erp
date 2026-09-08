@@ -158,38 +158,34 @@ public class ErpAstMergeProcessor {
     // ---------- step：迁移校验 ----------
 
     protected void validateTransitionForSubmit(ErpAstMerge merge, IServiceContext context) {
-        String status = currentApproveStatus(merge);
         try {
-            approvalStateMachine.assertCanSubmitForApproval(status);
+            approvalStateMachine.assertCanSubmitForApproval(currentApproveStatus(merge));
         } catch (NopException e) {
-            throw illegalTransition(merge, status, "UNSUBMITTED / REJECTED", e);
+            throw e.param(ErpAstErrors.ARG_MERGE_CODE, merge.getCode());
         }
     }
 
     protected void validateTransitionForWithdraw(ErpAstMerge merge, IServiceContext context) {
-        String status = currentApproveStatus(merge);
         try {
-            approvalStateMachine.assertCanWithdrawApproval(status);
+            approvalStateMachine.assertCanWithdrawApproval(currentApproveStatus(merge));
         } catch (NopException e) {
-            throw illegalTransition(merge, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
+            throw e.param(ErpAstErrors.ARG_MERGE_CODE, merge.getCode());
         }
     }
 
     protected void validateTransitionForApprove(ErpAstMerge merge, IServiceContext context) {
-        String status = currentApproveStatus(merge);
         try {
-            approvalStateMachine.assertCanApprove(status);
+            approvalStateMachine.assertCanApprove(currentApproveStatus(merge));
         } catch (NopException e) {
-            throw illegalTransition(merge, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
+            throw e.param(ErpAstErrors.ARG_MERGE_CODE, merge.getCode());
         }
     }
 
     protected void validateTransitionForReject(ErpAstMerge merge, IServiceContext context) {
-        String status = currentApproveStatus(merge);
         try {
-            approvalStateMachine.assertCanReject(status);
+            approvalStateMachine.assertCanReject(currentApproveStatus(merge));
         } catch (NopException e) {
-            throw illegalTransition(merge, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
+            throw e.param(ErpAstErrors.ARG_MERGE_CODE, merge.getCode());
         }
     }
 
@@ -538,29 +534,11 @@ public class ErpAstMergeProcessor {
         return total;
     }
 
-    protected NopException illegalTransition(ErpAstMerge merge, String current, String expected) {
-        return illegalTransition(merge, current, expected, null);
-    }
-
     /**
-     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     * docStatus 轴非法迁移直抛领域码构造（if-throw 直抛守卫复用；SM 非法边已直抛领域码，plan 2026-09-07-2200-1）。
      */
-    protected NopException illegalTransition(ErpAstMerge merge, String current, String expected, NopException cause) {
-        return new NopException(ErpAstErrors.ERR_AST_MERGE_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpAstErrors.ARG_MERGE_CODE, merge.getCode())
-                .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
-    }
-
     protected NopException illegalDocTransition(ErpAstMerge merge, String current, String expected) {
-        return illegalDocTransition(merge, current, expected, null);
-    }
-
-    /**
-     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
-     */
-    protected NopException illegalDocTransition(ErpAstMerge merge, String current, String expected, NopException cause) {
-        return new NopException(ErpAstErrors.ERR_AST_MERGE_ILLEGAL_DOC_TRANSITION, cause)
+        return new NopException(ErpAstErrors.ERR_AST_MERGE_ILLEGAL_DOC_TRANSITION)
                 .param(ErpAstErrors.ARG_MERGE_CODE, merge.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_DOC_STATUS, expected);

@@ -1,7 +1,7 @@
 package app.erp.ast.service.statemachine;
 
 import app.erp.ast.service.ErpAstConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.ast.service.ErpAstErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -27,9 +27,8 @@ import java.util.List;
  * 强可达性断言，对齐 Movement APPROVED 先例）, REVERSED}。CANCELLED 为<strong>非终态</strong>——经
  * restore 可恢复回 PENDING（对齐 Movement REJECTED 非终态先例：业务恢复路径）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus} + {@code action} 补充诊断参数）；调用方 Processor 捕获后 cause-chain 映射为领域码
- * {@code ERR_SCHEDULE_ILLEGAL_STATUS_TRANSITION}（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpAstErrors#ERR_SCHEDULE_ILLEGAL_STATUS_TRANSITION}（参数 {@code action}/{@code currentStatus}/
+ * {@code expectedStatus}；plan 2026-09-07-2200-1；模板无实体编号参数，调用方无需补参）。
  */
 public class ErpAstDepreciationScheduleStateMachine {
 
@@ -135,10 +134,10 @@ public class ErpAstDepreciationScheduleStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpAstErrors.ERR_SCHEDULE_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpAstErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpAstErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpAstErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

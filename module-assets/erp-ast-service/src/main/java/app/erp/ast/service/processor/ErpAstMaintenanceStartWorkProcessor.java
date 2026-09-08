@@ -1,7 +1,7 @@
 package app.erp.ast.service.processor;
 
 import app.erp.ast.dao.entity.ErpAstMaintenance;
-import app.erp.ast.service.ErpAstConstants;
+import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.statemachine.ErpAstMaintenanceStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -22,11 +22,11 @@ public class ErpAstMaintenanceStartWorkProcessor {
 
     public ErpAstMaintenance startWork(String id, IServiceContext context) {
         ErpAstMaintenance m = facade.requireMaintenance(id, context);
-        // 固定来源态守卫委托 StateMachine Bean（M4.53，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
+        // 固定来源态守卫委托 StateMachine Bean（M4.53，契约 §4；Bean 直抛领域码 + 调用点同码补参，plan 2026-09-07-2200-1）
         try {
             stateMachine.assertCanStartWork(m.getStatus());
         } catch (NopException e) {
-            throw facade.mapIllegalTransition(e, m, ErpAstConstants.MAINTENANCE_STATUS_SUBMITTED);
+            throw e.param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode());
         }
         m.setStatus(stateMachine.startWorkTargetStatus());
         facade.maintenanceDao().updateEntity(m);

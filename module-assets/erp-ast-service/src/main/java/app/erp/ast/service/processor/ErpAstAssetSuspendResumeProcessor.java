@@ -2,7 +2,6 @@ package app.erp.ast.service.processor;
 
 import app.erp.ast.dao.ErpAstDaoConstants;
 import app.erp.ast.dao.entity.ErpAstAsset;
-import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.audit.ErpAstAssetAuditRecorder;
 import app.erp.ast.service.statemachine.ErpAstAssetStateMachine;
@@ -17,7 +16,7 @@ import jakarta.inject.Inject;
  * ErpAstAsset suspend/resume per-mutation Processor（RC-R1.54，R6.3 {@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 资产闲置状态机（L1 UC-AST-03）：suspend（IN_SERVICE→IDLE，暂停时点经 remark「闲置自 {date}」强制记录——
  * 闲置时长派生的时间基准）+ resume（IDLE→IN_SERVICE，恢复计提）。固定来源/目标态判断委托
- * {@link ErpAstAssetStateMachine} Bean（契约 §4/§7，common 码作 cause → 领域码映射）。
+ * {@link ErpAstAssetStateMachine} Bean（契约 §4；Bean 直抛领域码 + 调用点同码补参 assetCode，plan 2026-09-07-2200-1）。
  * 折旧行为语义由引擎侧天然满足：批量仅查 IN_SERVICE + validateAssetInService 拒绝 IDLE（闲置期间不计提）。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
@@ -40,7 +39,7 @@ public class ErpAstAssetSuspendResumeProcessor {
         try {
             assetStateMachine.assertCanSuspend(asset.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(asset, e);
+            throw e.param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
         }
         String fromStatus = asset.getStatus();
         asset.setStatus(assetStateMachine.suspendTargetStatus());
@@ -60,7 +59,7 @@ public class ErpAstAssetSuspendResumeProcessor {
         try {
             assetStateMachine.assertCanResume(asset.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(asset, e);
+            throw e.param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
         }
         String fromStatus = asset.getStatus();
         asset.setStatus(assetStateMachine.resumeTargetStatus());
@@ -84,16 +83,5 @@ public class ErpAstAssetSuspendResumeProcessor {
 
     protected IEntityDao<ErpAstAsset> assetDao() {
         return daoProvider.daoFor(ErpAstAsset.class);
-    }
-
-    /**
-     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
-     */
-    protected NopException illegalTransition(ErpAstAsset asset, NopException cause) {
-        return new NopException(ErpAstErrors.ERR_AST_ASSET_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode())
-                .param(ErpAstErrors.ARG_CURRENT_STATUS, asset.getStatus())
-                .param(ErpAstErrors.ARG_EXPECTED_STATUS,
-                        ErpAstConstants.ASSET_STATUS_IN_SERVICE + " /" + ErpAstConstants.ASSET_STATUS_IDLE);
     }
 }

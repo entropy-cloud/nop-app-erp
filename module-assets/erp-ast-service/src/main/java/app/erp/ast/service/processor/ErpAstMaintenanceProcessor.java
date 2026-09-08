@@ -73,11 +73,11 @@ public class ErpAstMaintenanceProcessor {
     public ErpAstMaintenance cancel(String id, IServiceContext context) {
         ErpAstMaintenance m = requireMaintenance(id, context);
         String status = m.getStatus();
-        // 固定来源态守卫委托 StateMachine Bean（M4.53，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
+        // 固定来源态守卫委托 StateMachine Bean（M4.53，契约 §4；Bean 直抛领域码 + 调用点同码补参，plan 2026-09-07-2200-1）
         try {
             stateMachine.assertCanCancel(status);
         } catch (NopException e) {
-            throw mapIllegalTransition(e, m, "DRAFT / SUBMITTED");
+            throw e.param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode());
         }
         m.setStatus(stateMachine.cancelTargetStatus());
         maintenanceDao().updateEntity(m);
@@ -224,17 +224,6 @@ public class ErpAstMaintenanceProcessor {
         return new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
-    }
-
-    /**
-     * Bean 非法边（common 层码）→ 领域码 cause-chain 映射（契约 §7；M4.53）。
-     * 保持错误码值/参数形状与 {@link #illegalTransition} 一致。
-     */
-    protected NopException mapIllegalTransition(NopException beanException, ErpAstMaintenance m, String expected) {
-        return new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_ILLEGAL_STATUS_TRANSITION, beanException)
-                .param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode())
-                .param(ErpAstErrors.ARG_CURRENT_STATUS, m.getStatus())
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 

@@ -125,8 +125,12 @@ public class ErpAstAssetCapitalizationProcessor {
             }
             postingDispatcher.reverse(cap);
             if (asset != null) {
-                // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4/§7）
-                assetStateMachine.assertCanReverseCapitalize(asset.getStatus());
+                // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4；Bean 直抛领域码 + 调用点同码补参，plan 2026-09-07-2200-1）
+                try {
+                    assetStateMachine.assertCanReverseCapitalize(asset.getStatus());
+                } catch (NopException e) {
+                    throw e.param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
+                }
                 asset.setStatus(assetStateMachine.reverseCapitalizeTargetStatus());
                 asset.setAccumulatedDepreciation(BigDecimal.ZERO);
                 asset.setNetBookValue(asset.getOriginalValue());
@@ -154,47 +158,42 @@ public class ErpAstAssetCapitalizationProcessor {
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpAstAssetCapitalization cap, IServiceContext context) {
-        String status = currentApproveStatus(cap);
         try {
-            approvalStateMachine.assertCanSubmitForApproval(status);
+            approvalStateMachine.assertCanSubmitForApproval(currentApproveStatus(cap));
         } catch (NopException e) {
-            throw illegalTransition(cap, status, "UNSUBMITTED / REJECTED", e);
+            throw e.param(ErpAstErrors.ARG_CAPITALIZATION_CODE, cap.getCode());
         }
     }
 
     protected void validateTransitionForWithdraw(ErpAstAssetCapitalization cap, IServiceContext context) {
-        String status = currentApproveStatus(cap);
         try {
-            approvalStateMachine.assertCanWithdrawApproval(status);
+            approvalStateMachine.assertCanWithdrawApproval(currentApproveStatus(cap));
         } catch (NopException e) {
-            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
+            throw e.param(ErpAstErrors.ARG_CAPITALIZATION_CODE, cap.getCode());
         }
     }
 
     protected void validateTransitionForApprove(ErpAstAssetCapitalization cap, IServiceContext context) {
-        String status = currentApproveStatus(cap);
         try {
-            approvalStateMachine.assertCanApprove(status);
+            approvalStateMachine.assertCanApprove(currentApproveStatus(cap));
         } catch (NopException e) {
-            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
+            throw e.param(ErpAstErrors.ARG_CAPITALIZATION_CODE, cap.getCode());
         }
     }
 
     protected void validateTransitionForReject(ErpAstAssetCapitalization cap, IServiceContext context) {
-        String status = currentApproveStatus(cap);
         try {
-            approvalStateMachine.assertCanReject(status);
+            approvalStateMachine.assertCanReject(currentApproveStatus(cap));
         } catch (NopException e) {
-            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
+            throw e.param(ErpAstErrors.ARG_CAPITALIZATION_CODE, cap.getCode());
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpAstAssetCapitalization cap, IServiceContext context) {
-        String status = currentApproveStatus(cap);
         try {
-            approvalStateMachine.assertCanReverseApprove(status);
+            approvalStateMachine.assertCanReverseApprove(currentApproveStatus(cap));
         } catch (NopException e) {
-            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_APPROVED, e);
+            throw e.param(ErpAstErrors.ARG_CAPITALIZATION_CODE, cap.getCode());
         }
     }
 
@@ -244,8 +243,13 @@ public class ErpAstAssetCapitalizationProcessor {
         asset.setUsefulLifeMonths(category.getUsefulLifeMonths());
         asset.setAccumulatedDepreciation(BigDecimal.ZERO);
         asset.setNetBookValue(cap.getOriginalValue());
-        // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4/§7；新建资产 status=null 归一化 DRAFT 通过守卫）
-        assetStateMachine.assertCanCapitalize(asset.getStatus());
+        // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4；Bean 直抛领域码 + 调用点同码补参，plan 2026-09-07-2200-1；
+        // 新建资产 status=null 归一化 DRAFT 通过守卫）
+        try {
+            assetStateMachine.assertCanCapitalize(asset.getStatus());
+        } catch (NopException e) {
+            throw e.param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
+        }
         asset.setStatus(assetStateMachine.capitalizeTargetStatus());
         dao.saveEntity(asset);
         return asset;
@@ -390,29 +394,11 @@ public class ErpAstAssetCapitalizationProcessor {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    protected NopException illegalTransition(ErpAstAssetCapitalization cap, String current, String expected) {
-        return illegalTransition(cap, current, expected, null);
-    }
-
     /**
-     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     * docStatus 轴非法迁移直抛领域码构造（if-throw 直抛守卫复用；SM 非法边已直抛领域码，plan 2026-09-07-2200-1）。
      */
-    protected NopException illegalTransition(ErpAstAssetCapitalization cap, String current, String expected, NopException cause) {
-        return new NopException(ErpAstErrors.ERR_CAPITALIZATION_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpAstErrors.ARG_CAPITALIZATION_CODE, cap.getCode())
-                .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
-    }
-
     protected NopException illegalDocTransition(ErpAstAssetCapitalization cap, String current, String expected) {
-        return illegalDocTransition(cap, current, expected, null);
-    }
-
-    /**
-     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
-     */
-    protected NopException illegalDocTransition(ErpAstAssetCapitalization cap, String current, String expected, NopException cause) {
-        return new NopException(ErpAstErrors.ERR_CAPITALIZATION_ILLEGAL_DOC_TRANSITION, cause)
+        return new NopException(ErpAstErrors.ERR_CAPITALIZATION_ILLEGAL_DOC_TRANSITION)
                 .param(ErpAstErrors.ARG_CAPITALIZATION_CODE, cap.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_DOC_STATUS, expected);

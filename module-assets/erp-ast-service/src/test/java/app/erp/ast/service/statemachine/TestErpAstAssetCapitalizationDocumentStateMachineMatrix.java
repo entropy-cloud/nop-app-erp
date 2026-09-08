@@ -1,7 +1,7 @@
 package app.erp.ast.service.statemachine;
 
 import app.erp.ast.service.ErpAstConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.ast.service.ErpAstErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <ul>
  *   <li>(a) 无重复/冲突边（2 条边：approve DRAFT→ACTIVE + <b>reverseApprove ACTIVE→CANCELLED 特例边</b>）；</li>
  *   <li>(b) 从 DRAFT 可达 ACTIVE → CANCELLED（reverseApprove 特例边是 CANCELLED 的命名动作可达路径）；</li>
- *   <li>(c) approve/reverseApprove 守卫：非 CANCELLED 合法，CANCELLED 非法（common 码 + action/fromStatus 元数据）；</li>
+ *   <li>(c) approve/reverseApprove 守卫：非 CANCELLED 合法，CANCELLED 非法（领域码 + action/currentDocStatus 元数据）；</li>
  *   <li>(d) {@code transitions()} 元数据与显式方法语义一致（含 reverseApproveTargetStatus()=CANCELLED）；</li>
  *   <li>(e) 终态/初始态集合正确（terminal={CANCELLED}——ACTIVE 为可逆中间态不纳入；initial={DRAFT}）；</li>
  *   <li>(f) ACTIVE 为「可逆中间态」——经 reverseApprove 有出边（与 Disposal ACTIVE 无出边区分）；</li>
@@ -84,11 +84,11 @@ public class TestErpAstAssetCapitalizationDocumentStateMachineMatrix {
         NopException ex = assertThrows(NopException.class,
                 () -> documentSm.assertCanApprove(ErpAstConstants.DOC_STATUS_CANCELLED),
                 "approve 对 CANCELLED 应非法（已作废单据禁止审批）");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码");
+        assertEquals(ErpAstErrors.ERR_CAPITALIZATION_ILLEGAL_DOC_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域非法迁移码");
         assertEquals("approve", ex.getParam(ErpAstAssetCapitalizationDocumentStateMachine.ARG_ACTION),
                 "拒绝元数据携带动作名");
-        assertEquals(ErpAstConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(ErpAstConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpAstErrors.ARG_CURRENT_DOC_STATUS),
                 "拒绝元数据携带当前态");
     }
 
@@ -104,8 +104,8 @@ public class TestErpAstAssetCapitalizationDocumentStateMachineMatrix {
         NopException ex = assertThrows(NopException.class,
                 () -> documentSm.assertCanReverseApprove(ErpAstConstants.DOC_STATUS_CANCELLED),
                 "reverseApprove 对 CANCELLED 应非法（已作废单据禁止红冲审批）");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码");
+        assertEquals(ErpAstErrors.ERR_CAPITALIZATION_ILLEGAL_DOC_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域非法迁移码");
         assertEquals("reverseApprove", ex.getParam(ErpAstAssetCapitalizationDocumentStateMachine.ARG_ACTION),
                 "拒绝元数据携带动作名");
     }

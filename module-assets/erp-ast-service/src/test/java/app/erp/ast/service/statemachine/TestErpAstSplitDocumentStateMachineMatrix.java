@@ -1,7 +1,7 @@
 package app.erp.ast.service.statemachine;
 
 import app.erp.ast.service.ErpAstConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.ast.service.ErpAstErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *   <li>(a) 无重复/冲突边（1 条边：approve DRAFT→ACTIVE）；</li>
  *   <li>(b) 从 DRAFT 可达 ACTIVE；CANCELLED 经 cancel mutation / useLogicalDelete 可达（cancel 守卫
  *       ACTIVE/posted 动态条件保留原位，非纯命名边，不编码入 transitions()）；</li>
- *   <li>(c) approve 守卫：非 CANCELLED 合法（DRAFT/ACTIVE/null 放行），CANCELLED 非法（common 码 + action/fromStatus 元数据）；</li>
+ *   <li>(c) approve 守卫：非 CANCELLED 合法（DRAFT/ACTIVE/null 放行），CANCELLED 非法（领域码 + action/currentDocStatus 元数据）；</li>
  *   <li>(d) {@code transitions()} 元数据与显式方法语义一致；</li>
  *   <li>(e) 终态/初始态集合正确（terminal={ACTIVE, CANCELLED}，initial={DRAFT}）；</li>
  *   <li>(f) ACTIVE 无出边（reverseApprove 不写 docStatus）；</li>
@@ -84,11 +84,11 @@ public class TestErpAstSplitDocumentStateMachineMatrix {
         NopException ex = assertThrows(NopException.class,
                 () -> documentSm.assertCanApprove(ErpAstConstants.DOC_STATUS_CANCELLED),
                 "approve 对 CANCELLED 应非法（已作废单据禁止审批）");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码");
+        assertEquals(ErpAstErrors.ERR_AST_SPLIT_ILLEGAL_DOC_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域非法迁移码");
         assertEquals("approve", ex.getParam(ErpAstSplitDocumentStateMachine.ARG_ACTION),
                 "拒绝元数据携带动作名");
-        assertEquals(ErpAstConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(ErpAstConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpAstErrors.ARG_CURRENT_DOC_STATUS),
                 "拒绝元数据携带当前态");
     }
 
