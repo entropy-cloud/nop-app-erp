@@ -1,7 +1,7 @@
 package app.erp.drp.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.drp.service.ErpDrpConstants;
+import app.erp.drp.service.ErpDrpErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -103,10 +103,10 @@ public class TestErpDrpPlanStateMachineMatrix {
         for (String s : Arrays.asList(ErpDrpConstants.DRP_PLAN_STATUS_DRAFT, ErpDrpConstants.DRP_PLAN_STATUS_EXECUTED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanResetToDraft(s),
                     "resetToDraft 对非 COMPUTED/APPROVED 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                    "Bean 报告 common 层非法迁移码");
+            assertEquals(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                    "Bean 直抛领域非法迁移码");
             assertEquals("resetToDraft", ex.getParam(ErpDrpPlanStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
+            assertEquals(s, ex.getParam(ErpDrpErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
         }
     }
 
@@ -192,11 +192,11 @@ public class TestErpDrpPlanStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                        "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
+                assertEquals(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                        "Bean 直抛领域非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpDrpPlanStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + action);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpDrpErrors.ARG_CURRENT_STATUS),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }

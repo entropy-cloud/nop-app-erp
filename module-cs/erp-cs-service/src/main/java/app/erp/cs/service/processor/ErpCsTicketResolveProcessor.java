@@ -55,7 +55,8 @@ public class ErpCsTicketResolveProcessor {
         try {
             stateMachine.assertCanResolve(from);
         } catch (NopException e) {
-            throw illegalTransition(ticket, from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS, e);
+            // Bean 直抛领域码（plan 2026-09-07-2200-1）；本处同码补参 ticketCode。
+            throw e.param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode());
         }
         LocalDateTime now = CoreMetrics.currentDateTime();
         // 停 SLA 计时算 duration（分钟）；startDateTime 为空时 duration 留空
@@ -129,13 +130,6 @@ public class ErpCsTicketResolveProcessor {
             throw new NopException(ErpCsErrors.ERR_TICKET_NOT_FOUND).param(ErpCsErrors.ARG_TICKET_ID, ticketId);
         }
         return ticket;
-    }
-
-    private NopException illegalTransition(ErpCsTicket ticket, String current, String expected, Throwable cause) {
-        return new NopException(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION, cause)
-                .param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode())
-                .param(ErpCsErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpCsErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     private void writeAction(ErpCsTicket ticket, String actionType, String fromStatus, String toStatus,

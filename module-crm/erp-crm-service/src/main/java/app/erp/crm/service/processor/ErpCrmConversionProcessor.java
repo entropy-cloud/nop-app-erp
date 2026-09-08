@@ -128,7 +128,7 @@ public class ErpCrmConversionProcessor {
             stateMachine.assertCanConvert(lead.getDocStatus());
         } catch (NopException e) {
             // convert 幂等拒绝（CONVERTED→CONVERTED）保持专属领域码 ERR_LEAD_ALREADY_CONVERTED，
-            // 不复用通用迁移码；common 层码作 cause 保留（plan Decision C）。
+            // 不复用通用迁移码；Bean 直抛领域码作 cause（plan 2026-09-07-2200-1 + plan Decision C）。
             throw new NopException(ErpCrmErrors.ERR_LEAD_ALREADY_CONVERTED, e)
                     .param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode());
         }

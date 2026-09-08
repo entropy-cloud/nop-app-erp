@@ -1,7 +1,7 @@
 package app.erp.cs.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.cs.service.ErpCsConstants;
+import app.erp.cs.service.ErpCsErrors;
 import io.nop.api.core.exceptions.NopException;
 
 /**
@@ -19,9 +19,9 @@ public class ErpCsTicketStateMachineDelta extends ErpCsTicketStateMachine {
     public void assertCanAssign(String status) {
         if (!ErpCsConstants.TICKET_STATUS_NEW.equals(status)
                 && !ErpCsConstants.TICKET_STATUS_RESOLVED.equals(status)) {
-            throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpCommonErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpCommonErrors.ARG_EXPECTED_STATUS, "NEW/RESOLVED")
+            throw new NopException(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION)
+                    .param(ErpCsErrors.ARG_CURRENT_STATUS, status)
+                    .param(ErpCsErrors.ARG_EXPECTED_STATUS, "NEW/RESOLVED")
                     .param(ARG_ACTION, "assign");
         }
     }

@@ -53,31 +53,27 @@ public class ErpCrmLeadProcessor {
     // ---------- step：迁移校验 ----------
 
     protected void validateTransitionForQualify(ErpCrmLead lead, IServiceContext context) {
-        String status = currentStatus(lead);
         try {
-            stateMachine.assertCanQualify(status);
+            stateMachine.assertCanQualify(currentStatus(lead));
         } catch (NopException e) {
-            throw illegalTransition(lead, status, ErpCrmConstants.DOC_STATUS_NEW, e);
+            // Bean 直抛领域码（plan 2026-09-07-2200-1）；本处同码补参 leadCode。
+            throw e.param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode());
         }
     }
 
     protected void validateTransitionForLose(ErpCrmLead lead, IServiceContext context) {
-        String status = currentStatus(lead);
         try {
-            stateMachine.assertCanLose(status);
+            stateMachine.assertCanLose(currentStatus(lead));
         } catch (NopException e) {
-            throw illegalTransition(lead, status,
-                    ErpCrmConstants.DOC_STATUS_NEW + "/" + ErpCrmConstants.DOC_STATUS_QUALIFIED, e);
+            throw e.param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode());
         }
     }
 
     protected void validateTransitionForCancel(ErpCrmLead lead, IServiceContext context) {
-        String status = currentStatus(lead);
         try {
-            stateMachine.assertCanCancel(status);
+            stateMachine.assertCanCancel(currentStatus(lead));
         } catch (NopException e) {
-            throw illegalTransition(lead, status,
-                    ErpCrmConstants.DOC_STATUS_NEW + "/" + ErpCrmConstants.DOC_STATUS_QUALIFIED, e);
+            throw e.param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode());
         }
     }
 
@@ -226,14 +222,6 @@ public class ErpCrmLeadProcessor {
 
     protected NopException illegalTransition(ErpCrmLead lead, String current, String expected) {
         return new NopException(ErpCrmErrors.ERR_LEAD_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode())
-                .param(ErpCrmErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpCrmErrors.ARG_EXPECTED_STATUS, expected);
-    }
-
-    /** 领域非法迁移异常构造；{@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7）。 */
-    protected NopException illegalTransition(ErpCrmLead lead, String current, String expected, Throwable cause) {
-        return new NopException(ErpCrmErrors.ERR_LEAD_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode())
                 .param(ErpCrmErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpCrmErrors.ARG_EXPECTED_STATUS, expected);

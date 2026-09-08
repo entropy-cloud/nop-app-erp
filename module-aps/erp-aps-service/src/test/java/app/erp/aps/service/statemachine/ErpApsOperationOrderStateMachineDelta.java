@@ -1,7 +1,7 @@
 package app.erp.aps.service.statemachine;
 
 import app.erp.aps.service.ErpApsConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.aps.service.ErpApsErrors;
 import io.nop.api.core.exceptions.NopException;
 
 /**
@@ -21,9 +21,9 @@ public class ErpApsOperationOrderStateMachineDelta extends ErpApsOperationOrderS
     public void assertCanCancel(String status) {
         if (!ErpApsConstants.OP_STATUS_DRAFT.equals(status)
                 && !ErpApsConstants.OP_STATUS_PLANNED.equals(status)) {
-            throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpCommonErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpCommonErrors.ARG_EXPECTED_STATUS,
+            throw new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION)
+                    .param(ErpApsErrors.ARG_CURRENT_STATUS, status)
+                    .param(ErpApsErrors.ARG_EXPECTED_STATUS,
                             ErpApsConstants.OP_STATUS_DRAFT + "/" + ErpApsConstants.OP_STATUS_PLANNED)
                     .param(ARG_ACTION, "cancel");
         }

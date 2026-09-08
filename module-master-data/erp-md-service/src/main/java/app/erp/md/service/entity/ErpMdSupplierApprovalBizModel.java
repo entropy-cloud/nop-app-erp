@@ -36,8 +36,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>每个动作 = 单步状态推进（校验迁移 + 校验业务规则 + 执行），不构成多步编排，
  * 故不拆 Processor（对齐 {@code nop-backend-dev} 反模式表「不要为单步操作强行拆 Processor」）。
  * 固定来源态/目标态判断下沉 {@link ErpMdSupplierApprovalStateMachine} Bean（plan 2026-08-12-2142-1 M2.1，
- * 契约 {@code docs/architecture/entity-state-machine-bean.md}），非法迁移 Bean 抛 common 层码，
- * 本类映射为领域 {@link ErpMdErrors#ERR_INVALID_APPROVAL_STATUS_TRANSITION}（common 码作 cause 保留）。
+ * 契约 {@code docs/architecture/entity-state-machine-bean.md}），非法迁移 Bean 直抛领域
+ * {@link ErpMdErrors#ERR_INVALID_APPROVAL_STATUS_TRANSITION}（plan 2026-09-07-2200-1），本类同码补参 approvalId。
  *
  * <p>{@link #suspendByPartner} 为评分 standing=RED 跨域联动入口（purchase→master-data I*Biz，单事务）。
  * DAO 访问走 {@link CrudBizModel#dao()} / {@link #findFirst} 管道（对齐 service-layer 跨实体访问规则）。
@@ -108,7 +108,8 @@ public class ErpMdSupplierApprovalBizModel extends AbstractErpCrudBizModel<ErpMd
         try {
             stateMachine.assertCanApply(status);
         } catch (NopException e) {
-            throw illegalTransition(approval, "null / REJECTED", e);
+            // Bean 直抛领域码（plan 2026-09-07-2200-1）；本处同码补参 approvalId。
+            throw e.param(ErpMdErrors.ARG_APPROVAL_ID, approval.getId());
         }
         approval.setStatus(stateMachine.applyTargetStatus());
         updateEntity(approval, null, context);
@@ -123,7 +124,7 @@ public class ErpMdSupplierApprovalBizModel extends AbstractErpCrudBizModel<ErpMd
         try {
             stateMachine.assertCanApprove(status);
         } catch (NopException e) {
-            throw illegalTransition(approval, "APPLIED / PROBATION", e);
+            throw e.param(ErpMdErrors.ARG_APPROVAL_ID, approval.getId());
         }
         requireQualificationValid(approval);
         approval.setStatus(stateMachine.approveTargetStatus());
@@ -141,7 +142,7 @@ public class ErpMdSupplierApprovalBizModel extends AbstractErpCrudBizModel<ErpMd
         try {
             stateMachine.assertCanProbate(status);
         } catch (NopException e) {
-            throw illegalTransition(approval, "APPROVED", e);
+            throw e.param(ErpMdErrors.ARG_APPROVAL_ID, approval.getId());
         }
         approval.setStatus(stateMachine.probateTargetStatus());
         updateEntity(approval, null, context);
@@ -169,7 +170,7 @@ public class ErpMdSupplierApprovalBizModel extends AbstractErpCrudBizModel<ErpMd
         try {
             stateMachine.assertCanReinstate(status);
         } catch (NopException e) {
-            throw illegalTransition(approval, "SUSPENDED", e);
+            throw e.param(ErpMdErrors.ARG_APPROVAL_ID, approval.getId());
         }
         approval.setStatus(stateMachine.reinstateTargetStatus());
         approval.setApprovedBy(currentUserId());
@@ -186,7 +187,7 @@ public class ErpMdSupplierApprovalBizModel extends AbstractErpCrudBizModel<ErpMd
         try {
             stateMachine.assertCanReject(status);
         } catch (NopException e) {
-            throw illegalTransition(approval, "APPLIED", e);
+            throw e.param(ErpMdErrors.ARG_APPROVAL_ID, approval.getId());
         }
         approval.setStatus(stateMachine.rejectTargetStatus());
         updateEntity(approval, null, context);
@@ -223,7 +224,7 @@ public class ErpMdSupplierApprovalBizModel extends AbstractErpCrudBizModel<ErpMd
         try {
             stateMachine.assertCanSuspend(status);
         } catch (NopException e) {
-            throw illegalTransition(approval, "APPLIED/APPROVED/PROBATION", e);
+            throw e.param(ErpMdErrors.ARG_APPROVAL_ID, approval.getId());
         }
         approval.setStatus(stateMachine.suspendTargetStatus());
         updateEntity(approval, null, context);
@@ -274,16 +275,5 @@ public class ErpMdSupplierApprovalBizModel extends AbstractErpCrudBizModel<ErpMd
         } catch (Exception e) {
             return null;
         }
-    }
-
-    /**
-     * 领域非法迁移异常构造。可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7：
-     * Bean 报 common 码 + action/fromStatus 元数据，BizModel/Processor 映射领域码 + 实体编号/上下文，common 码作 cause 保留）。
-     */
-    protected NopException illegalTransition(ErpMdSupplierApproval approval, String expected, Throwable cause) {
-        return new NopException(ErpMdErrors.ERR_INVALID_APPROVAL_STATUS_TRANSITION, cause)
-                .param(ErpMdErrors.ARG_APPROVAL_ID, approval.getId())
-                .param(ErpMdErrors.ARG_CURRENT_STATUS, currentStatus(approval))
-                .param(ErpMdErrors.ARG_EXPECTED_STATUS, expected);
     }
 }

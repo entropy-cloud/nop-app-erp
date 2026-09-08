@@ -1,7 +1,7 @@
 package app.erp.drp.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.drp.service.ErpDrpConstants;
+import app.erp.drp.service.ErpDrpErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.autotest.NopTestProperty;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -54,8 +54,8 @@ public class TestErpDrpPlanStateMachineDeltaOverride extends JunitAutoTestCase {
         // Delta 覆盖语义：resetToDraft(APPROVED) 抛异常（基线放行 → Delta 收紧，可区分差异）
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanResetToDraft(ErpDrpConstants.DRP_PLAN_STATUS_APPROVED));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Delta resetToDraft(APPROVED) 报告 common 层非法迁移码");
+        assertEquals(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Delta resetToDraft(APPROVED) 直抛领域非法迁移码");
 
         // Delta 仍允许 COMPUTED（基线 + Delta 均允许）
         stateMachine.assertCanResetToDraft(ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED);

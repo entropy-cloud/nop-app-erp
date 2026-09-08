@@ -1,7 +1,7 @@
 package app.erp.md.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.md.service.ErpMdConstants;
+import app.erp.md.service.ErpMdErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.exceptions.NopException;
@@ -49,7 +49,7 @@ public class TestErpMdSupplierApprovalStateMachineBaselineIoC extends JunitAutoT
         // 其余态非法
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanApprove(ErpMdConstants.APPROVAL_STATUS_APPROVED));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpMdErrors.ERR_INVALID_APPROVAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "基线 approve(APPROVED) 报告 common 层非法迁移码");
     }
 

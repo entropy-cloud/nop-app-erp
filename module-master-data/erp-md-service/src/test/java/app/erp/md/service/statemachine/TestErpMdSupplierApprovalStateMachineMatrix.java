@@ -1,7 +1,7 @@
 package app.erp.md.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.md.service.ErpMdConstants;
+import app.erp.md.service.ErpMdErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -121,10 +121,10 @@ public class TestErpMdSupplierApprovalStateMachineMatrix {
             }
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanApply(s),
                     "apply 对非 {null, REJECTED} 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+            assertEquals(ErpMdErrors.ERR_INVALID_APPROVAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                     "Bean 报告 common 层非法迁移码");
             assertEquals("apply", ex.getParam(ErpMdSupplierApprovalStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
+            assertEquals(s, ex.getParam(ErpMdErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
         }
     }
 
@@ -141,7 +141,7 @@ public class TestErpMdSupplierApprovalStateMachineMatrix {
             }
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanApprove(s),
                     "approve 对非 {APPLIED, PROBATION} 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpMdErrors.ERR_INVALID_APPROVAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("approve", ex.getParam(ErpMdSupplierApprovalStateMachine.ARG_ACTION));
         }
     }
@@ -162,7 +162,7 @@ public class TestErpMdSupplierApprovalStateMachineMatrix {
             }
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanSuspend(s),
                     "suspend 对非 {APPLIED, APPROVED, PROBATION} 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpMdErrors.ERR_INVALID_APPROVAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("suspend", ex.getParam(ErpMdSupplierApprovalStateMachine.ARG_ACTION));
         }
     }
@@ -226,11 +226,11 @@ public class TestErpMdSupplierApprovalStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                assertEquals(ErpMdErrors.ERR_INVALID_APPROVAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                         "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpMdSupplierApprovalStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + action);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpMdErrors.ARG_CURRENT_STATUS),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }

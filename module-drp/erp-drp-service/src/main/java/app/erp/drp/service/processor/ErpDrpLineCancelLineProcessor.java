@@ -32,14 +32,12 @@ public class ErpDrpLineCancelLineProcessor {
 
     protected ErpDrpLine doCancel(String lineId) {
         ErpDrpLine line = requireLine(lineId);
-        // 固定来源态守卫经 Line StateMachine Bean（cancel 多源 SUGGESTED/APPROVED，对终态 ORDERED/CANCELLED 抛 common 码）；
-        // 映射为既有 ERR_DRP_LINE_ILLEGAL_TRANSITION（参数 drpLineId/currentStatus 不变，common 层码作 cause）。
+        // 固定来源态守卫经 Line StateMachine Bean（cancel 多源 SUGGESTED/APPROVED，对终态 ORDERED/CANCELLED 非法，
+        // Bean 直抛领域码，plan 2026-09-07-2200-1）；本处同码补参 drpLineId。
         try {
             lineStateMachine.assertCanCancel(line.getStatus());
         } catch (NopException e) {
-            throw new NopException(ErpDrpErrors.ERR_DRP_LINE_ILLEGAL_TRANSITION, e)
-                    .param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId)
-                    .param(ErpDrpErrors.ARG_CURRENT_STATUS, line.getStatus());
+            throw e.param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId);
         }
         line.setStatus(lineStateMachine.cancelTargetStatus());
         dao().updateEntity(line);

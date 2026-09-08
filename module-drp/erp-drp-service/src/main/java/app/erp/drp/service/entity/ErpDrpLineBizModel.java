@@ -69,13 +69,11 @@ public class ErpDrpLineBizModel extends AbstractErpCrudBizModel<ErpDrpLine> impl
     public ErpDrpLine approveLine(@Name("lineId") String lineId, IServiceContext context) {
         ErpDrpLine line = requireEntity(lineId, null, context);
         // 固定来源态守卫经 Line StateMachine Bean（保持 INLINE，不提取 Processor，参照 purchase Quotation/Rfq INLINE 先例）；
-        // 非 SUGGESTED 映射为既有 ERR_DRP_LINE_ILLEGAL_TRANSITION（参数 drpLineId/currentStatus 不变，common 层码作 cause）。
+        // 非 SUGGESTED 时 Bean 直抛领域码 ERR_DRP_LINE_ILLEGAL_TRANSITION（plan 2026-09-07-2200-1），本处同码补参 drpLineId。
         try {
             lineStateMachine.assertCanApproveLine(line.getStatus());
         } catch (NopException e) {
-            throw new NopException(ErpDrpErrors.ERR_DRP_LINE_ILLEGAL_TRANSITION, e)
-                    .param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId)
-                    .param(ErpDrpErrors.ARG_CURRENT_STATUS, line.getStatus());
+            throw e.param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId);
         }
         line.setStatus(lineStateMachine.approveLineTargetStatus());
         updateEntity(line, null, context);

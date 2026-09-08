@@ -225,11 +225,11 @@ public class ErpApsOperationOrderBizModel extends AbstractErpCrudBizModel<ErpAps
     @BizMutation
     public ErpApsOperationOrder start(@Name("operationOrderId") String operationOrderId, IServiceContext context) {
         ErpApsOperationOrder order = requireEntity(operationOrderId, null, context);
-        // 矩阵守卫下沉 Bean（PLANNED→IN_PROGRESS），非法边 Bean 抛 common 码，此处映射领域码。
+        // 矩阵守卫下沉 Bean（PLANNED→IN_PROGRESS），非法边 Bean 直抛领域码（plan 2026-09-07-2200-1），本处同码补参 operationOrderCode。
         try {
             stateMachine.assertCanStart(order.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(order, ErpApsConstants.OP_STATUS_PLANNED, e);
+            throw e.param(ErpApsErrors.ARG_OP_CODE, order.getCode());
         }
         order.setStatus(stateMachine.startTargetStatus());
         updateEntity(order, null, context);
@@ -240,11 +240,11 @@ public class ErpApsOperationOrderBizModel extends AbstractErpCrudBizModel<ErpAps
     @BizMutation
     public ErpApsOperationOrder complete(@Name("operationOrderId") String operationOrderId, IServiceContext context) {
         ErpApsOperationOrder order = requireEntity(operationOrderId, null, context);
-        // 矩阵守卫下沉 Bean（IN_PROGRESS→FINISHED），非法边 Bean 抛 common 码，此处映射领域码。
+        // 矩阵守卫下沉 Bean（IN_PROGRESS→FINISHED），非法边 Bean 直抛领域码（plan 2026-09-07-2200-1），本处同码补参 operationOrderCode。
         try {
             stateMachine.assertCanComplete(order.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(order, ErpApsConstants.OP_STATUS_IN_PROGRESS, e);
+            throw e.param(ErpApsErrors.ARG_OP_CODE, order.getCode());
         }
         order.setStatus(stateMachine.completeTargetStatus());
         updateEntity(order, null, context);
@@ -255,15 +255,13 @@ public class ErpApsOperationOrderBizModel extends AbstractErpCrudBizModel<ErpAps
     @BizMutation
     public ErpApsOperationOrder cancel(@Name("operationOrderId") String operationOrderId, IServiceContext context) {
         ErpApsOperationOrder order = requireEntity(operationOrderId, null, context);
-        // 矩阵守卫下沉 Bean（cancel 三源 {DRAFT,PLANNED,IN_PROGRESS}→CANCELLED），非法边 Bean 抛 common 码，
-        // 此处映射领域码。cancel 三源经 Bean 正向枚举合法来源（对齐 owner doc §2 :24/:29/:33 + §3 终态不可恢复）。
+        // 矩阵守卫下沉 Bean（cancel 三源 {DRAFT,PLANNED,IN_PROGRESS}→CANCELLED），非法边 Bean 直抛领域码，
+        // 本处同码补参 operationOrderCode（plan 2026-09-07-2200-1）。cancel 三源经 Bean 正向枚举合法来源
+        // （对齐 owner doc §2 :24/:29/:33 + §3 终态不可恢复）。
         try {
             stateMachine.assertCanCancel(order.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(order,
-                    ErpApsConstants.OP_STATUS_DRAFT + "/"
-                            + ErpApsConstants.OP_STATUS_PLANNED + "/"
-                            + ErpApsConstants.OP_STATUS_IN_PROGRESS, e);
+            throw e.param(ErpApsErrors.ARG_OP_CODE, order.getCode());
         }
         order.setStatus(stateMachine.cancelTargetStatus());
         updateEntity(order, null, context);
@@ -271,20 +269,6 @@ public class ErpApsOperationOrderBizModel extends AbstractErpCrudBizModel<ErpAps
     }
 
     // ---------- helpers ----------
-
-    /**
-     * 领域非法迁移异常构造。可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7：
-     * Bean 报 common 码 + action/fromStatus 元数据，BizModel 映射领域码 + 实体编号/上下文，common 码作 cause 保留）。
-     *
-     * <p>保留对外契约不变：错误码 {@code ERR_APS_OP_ILLEGAL_TRANSITION} + 参数
-     * {@code operationOrderCode}/{@code currentStatus}/{@code expectedStatus}（层 3 断言证实）。
-     */
-    protected NopException illegalTransition(ErpApsOperationOrder order, String expected, Throwable cause) {
-        return new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION, cause)
-                .param(ErpApsErrors.ARG_OP_CODE, order.getCode())
-                .param(ErpApsErrors.ARG_CURRENT_STATUS, order.getStatus())
-                .param(ErpApsErrors.ARG_EXPECTED_STATUS, expected);
-    }
 
     @Override
     @BizQuery

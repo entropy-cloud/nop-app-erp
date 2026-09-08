@@ -1,7 +1,7 @@
 package app.erp.crm.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.crm.service.ErpCrmConstants;
+import app.erp.crm.service.ErpCrmErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -18,8 +18,10 @@ import java.util.List;
  * （NEW/QUALIFIED/CONVERTED/LOST/CANCELLED 5 态）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。
  * 可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpCrmErrors#ERR_LEAD_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1 直抛领域码）；实体元数据（leadCode）
+ * 经调用点同码补参补齐。例外：convert 幂等拒绝由 {@code ErpCrmConversionProcessor} 语义映射为专属码
+ * {@code ERR_LEAD_ALREADY_CONVERTED}（plan Decision C，保留）。
  *
  * <p>迁移矩阵（7 条意图边）：
  * <ul>
@@ -134,9 +136,9 @@ public class ErpCrmLeadStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpCrmErrors.ERR_LEAD_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpCrmErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpCrmErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

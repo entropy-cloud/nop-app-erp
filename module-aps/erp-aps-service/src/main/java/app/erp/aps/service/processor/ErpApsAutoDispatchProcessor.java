@@ -435,7 +435,7 @@ public class ErpApsAutoDispatchProcessor {
         try {
             stateMachine.assertCanHold(op.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(op, ErpApsConstants.OP_STATUS_PLANNED, e);
+            throw e.param(ErpApsErrors.ARG_OP_CODE, op.getCode());
         }
         String previous = op.getStatus();
         op.setStatus(stateMachine.holdTargetStatus());
@@ -451,8 +451,7 @@ public class ErpApsAutoDispatchProcessor {
         try {
             stateMachine.assertCanUnhold(op.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(op,
-                    ErpApsConstants.OP_STATUS_HOLD + "/" + ErpApsConstants.OP_STATUS_ON_HOLD, e);
+            throw e.param(ErpApsErrors.ARG_OP_CODE, op.getCode());
         }
         String previous = op.getStatus();
         op.setStatus(stateMachine.unholdTargetStatus());
@@ -495,13 +494,6 @@ public class ErpApsAutoDispatchProcessor {
                     .param(ErpApsErrors.ARG_OP_ORDER_ID, operationOrderId);
         }
         return op;
-    }
-
-    protected NopException illegalTransition(ErpApsOperationOrder op, String expected, Throwable cause) {
-        return new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION, cause)
-                .param(ErpApsErrors.ARG_OP_CODE, op.getCode())
-                .param(ErpApsErrors.ARG_CURRENT_STATUS, op.getStatus())
-                .param(ErpApsErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     protected IEntityDao<ErpApsOperationOrder> opOrderDao() {

@@ -1,7 +1,7 @@
 package app.erp.log.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.log.service.ErpLogConstants;
+import app.erp.log.service.ErpLogErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -102,9 +102,9 @@ public class TestErpLogShipmentStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> sm.assertCanAdvanceToDelivered(s),
                         "advanceToDelivered 对 DRAFT/DELIVERED/CANCELLED 应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+                assertEquals(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode());
                 assertEquals("advanceToDelivered", ex.getParam(ErpLogShipmentStateMachine.ARG_ACTION));
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+                assertEquals(s, ex.getParam(ErpLogErrors.ARG_CURRENT_STATUS));
             }
         }
     }
@@ -120,9 +120,9 @@ public class TestErpLogShipmentStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> sm.assertCanCancelShipment(s),
                         "cancelShipment 对 DELIVERED/CANCELLED 应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+                assertEquals(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode());
                 assertEquals("cancelShipment", ex.getParam(ErpLogShipmentStateMachine.ARG_ACTION));
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+                assertEquals(s, ex.getParam(ErpLogErrors.ARG_CURRENT_STATUS));
             }
         }
     }
@@ -191,10 +191,10 @@ public class TestErpLogShipmentStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                assertEquals(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
                         "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpLogShipmentStateMachine.ARG_ACTION));
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+                assertEquals(s, ex.getParam(ErpLogErrors.ARG_CURRENT_STATUS));
             }
         }
     }

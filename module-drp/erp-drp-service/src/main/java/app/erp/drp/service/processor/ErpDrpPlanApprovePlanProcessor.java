@@ -36,15 +36,11 @@ public class ErpDrpPlanApprovePlanProcessor {
 
     public ErpDrpPlan approvePlan(String planId, IServiceContext context) {
         ErpDrpPlan plan = requirePlan(planId);
-        // 固定来源态守卫经 Plan StateMachine Bean；非法边映射为 ERR_DRP_PLAN_ILLEGAL_TRANSITION（参数不变，common 码作 cause）。
-        // ARG_EXPECTED_STATUS 保留原值 COMPUTED（来源态描述，pre-existing 形状不变）。
+        // 固定来源态守卫经 Plan StateMachine Bean（非法边 Bean 直抛领域码，plan 2026-09-07-2200-1）；本处同码补参 planCode。
         try {
             planStateMachine.assertCanApprovePlan(plan.getStatus());
         } catch (NopException e) {
-            throw new NopException(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION, e)
-                    .param(ErpDrpErrors.ARG_PLAN_CODE, plan.getCode())
-                    .param(ErpDrpErrors.ARG_CURRENT_STATUS, plan.getStatus())
-                    .param(ErpDrpErrors.ARG_EXPECTED_STATUS, ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED);
+            throw e.param(ErpDrpErrors.ARG_PLAN_CODE, plan.getCode());
         }
         // 该计划下所有 SUGGESTED 行 → APPROVED（行级联是 approvePlan 的副作用，行的状态迁移也经 Line Bean 治理）
         for (ErpDrpLine line : suggestedLinesOf(planId)) {
@@ -52,10 +48,8 @@ public class ErpDrpPlanApprovePlanProcessor {
                 lineStateMachine.assertCanApproveLine(line.getStatus());
             } catch (NopException e) {
                 // suggestedLinesOf 已 filter status=SUGGESTED，此处为防御性守卫；若数据漂移导致非 SUGGESTED 行入选，
-                // 抛 ERR_DRP_LINE_ILLEGAL_TRANSITION（参数仅 drpLineId/currentStatus，common 码作 cause）。
-                throw new NopException(ErpDrpErrors.ERR_DRP_LINE_ILLEGAL_TRANSITION, e)
-                        .param(ErpDrpErrors.ARG_DRP_LINE_ID, line.getId())
-                        .param(ErpDrpErrors.ARG_CURRENT_STATUS, line.getStatus());
+                // Bean 直抛领域码 ERR_DRP_LINE_ILLEGAL_TRANSITION，本处同码补参 drpLineId。
+                throw e.param(ErpDrpErrors.ARG_DRP_LINE_ID, line.getId());
             }
             line.setStatus(lineStateMachine.approveLineTargetStatus());
             if (line.getApprovedQty() == null || line.getApprovedQty().signum() <= 0) {

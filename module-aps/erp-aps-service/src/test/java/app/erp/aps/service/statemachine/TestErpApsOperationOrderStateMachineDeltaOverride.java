@@ -1,7 +1,7 @@
 package app.erp.aps.service.statemachine;
 
 import app.erp.aps.service.ErpApsConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.aps.service.ErpApsErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.autotest.NopTestProperty;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -80,7 +80,7 @@ public class TestErpApsOperationOrderStateMachineDeltaOverride extends JunitAuto
         // Delta 覆盖语义：cancel(IN_PROGRESS) 抛异常（基线放行 → Delta 收紧，可区分差异）
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanCancel(ErpApsConstants.OP_STATUS_IN_PROGRESS));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "Delta cancel(IN_PROGRESS) 报告 common 层非法迁移码（Delta 收紧为仅 DRAFT/PLANNED）");
 
         // Delta 仍允许 DRAFT + PLANNED（基线 + Delta 均允许）

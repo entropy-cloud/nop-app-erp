@@ -1,7 +1,7 @@
 package app.erp.md.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.md.service.ErpMdConstants;
+import app.erp.md.service.ErpMdErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.autotest.NopTestProperty;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -53,7 +53,7 @@ public class TestErpMdSupplierApprovalStateMachineDeltaOverride extends JunitAut
         // Delta 覆盖语义：approve(PROBATION) 抛异常（基线放行 → Delta 收紧，可区分差异）
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanApprove(ErpMdConstants.APPROVAL_STATUS_PROBATION));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpMdErrors.ERR_INVALID_APPROVAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "Delta approve(PROBATION) 报告 common 层非法迁移码（Delta 收紧为仅 APPLIED）");
 
         // Delta 仍允许 APPLIED（基线 + Delta 均允许）

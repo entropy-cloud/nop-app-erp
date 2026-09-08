@@ -1,7 +1,7 @@
 package app.erp.crm.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.crm.service.ErpCrmConstants;
+import app.erp.crm.service.ErpCrmErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.autotest.NopTestProperty;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -84,8 +84,8 @@ public class TestErpCrmEventStateMachineDeltaOverride extends JunitAutoTestCase 
         // Delta 未放开 CANCELLED 源（终态取消仍非法）
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanCancel(ErpCrmConstants.EVENT_STATUS_CANCELLED));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Delta cancel(CANCELLED) 仍报告 common 层非法迁移码（Delta 未放开 CANCELLED 源）");
+        assertEquals(ErpCrmErrors.ERR_EVENT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Delta cancel(CANCELLED) 仍直抛领域非法迁移码（Delta 未放开 CANCELLED 源）");
     }
 
     @Test

@@ -615,8 +615,8 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
     }
 
     /**
-     * 经 StateMachine Bean 断言来源态合法；非法边（Bean 报告 common 层码）映射为领域
-     * {@code ERR_INVALID_TICKET_STATUS_TRANSITION} + 实体编号/上下文，common 码作 cause 保留（契约 §7）。
+     * 经 StateMachine Bean 断言来源态合法；非法边由 Bean 直抛领域
+     * {@code ERR_INVALID_TICKET_STATUS_TRANSITION}（plan 2026-09-07-2200-1），本处同码补参 ticketCode。
      */
     private void assertCan(String action, ErpCsTicket ticket, String from, String expected) {
         try {
@@ -634,20 +634,8 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
                     throw new IllegalArgumentException("unexpected action: " + action);
             }
         } catch (NopException e) {
-            throw illegalTransition(ticket, from, expected, e);
+            throw e.param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode());
         }
-    }
-
-    private NopException illegalTransition(ErpCsTicket ticket, String current, String expected) {
-        return illegalTransition(ticket, current, expected, null);
-    }
-
-    private NopException illegalTransition(ErpCsTicket ticket, String current, String expected, Throwable cause) {
-        NopException ex = new NopException(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION, cause)
-                .param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode())
-                .param(ErpCsErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpCsErrors.ARG_EXPECTED_STATUS, expected);
-        return ex;
     }
 
     private void writeAction(ErpCsTicket ticket, String actionType, String fromStatus, String toStatus,

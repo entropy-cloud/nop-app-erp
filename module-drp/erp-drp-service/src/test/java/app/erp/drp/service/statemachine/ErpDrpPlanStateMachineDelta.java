@@ -1,7 +1,7 @@
 package app.erp.drp.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.drp.service.ErpDrpConstants;
+import app.erp.drp.service.ErpDrpErrors;
 import io.nop.api.core.exceptions.NopException;
 
 /**
@@ -20,9 +20,9 @@ public class ErpDrpPlanStateMachineDelta extends ErpDrpPlanStateMachine {
     @Override
     public void assertCanResetToDraft(String status) {
         if (!ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED.equals(status)) {
-            throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpCommonErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpCommonErrors.ARG_EXPECTED_STATUS, ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED)
+            throw new NopException(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION)
+                    .param(ErpDrpErrors.ARG_CURRENT_STATUS, status)
+                    .param(ErpDrpErrors.ARG_EXPECTED_STATUS, ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED)
                     .param(ARG_ACTION, "resetToDraft");
         }
     }

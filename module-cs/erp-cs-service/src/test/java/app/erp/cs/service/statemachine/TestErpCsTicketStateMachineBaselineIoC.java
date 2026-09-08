@@ -1,7 +1,7 @@
 package app.erp.cs.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.cs.service.ErpCsConstants;
+import app.erp.cs.service.ErpCsErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.exceptions.NopException;
@@ -48,7 +48,7 @@ public class TestErpCsTicketStateMachineBaselineIoC extends JunitAutoTestCase {
         // 关键差异点：assign(RESOLVED) 在基线非法（Delta 将放开）
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanAssign(ErpCsConstants.TICKET_STATUS_RESOLVED));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "基线 assign(RESOLVED) 报告 common 层非法迁移码");
     }
 

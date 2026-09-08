@@ -1,7 +1,7 @@
 package app.erp.drp.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.drp.service.ErpDrpConstants;
+import app.erp.drp.service.ErpDrpErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.exceptions.NopException;
@@ -53,13 +53,13 @@ public class TestErpDrpPlanStateMachineBaselineIoC extends JunitAutoTestCase {
         // EXECUTED 终态 + DRAFT 初始态 均非法
         NopException ex1 = assertThrows(NopException.class,
                 () -> stateMachine.assertCanResetToDraft(ErpDrpConstants.DRP_PLAN_STATUS_EXECUTED));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex1.getErrorCode(),
-                "基线 resetToDraft(EXECUTED) 报告 common 层非法迁移码");
+        assertEquals(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION.getErrorCode(), ex1.getErrorCode(),
+                "基线 resetToDraft(EXECUTED) 直抛领域非法迁移码");
 
         NopException ex2 = assertThrows(NopException.class,
                 () -> stateMachine.assertCanResetToDraft(ErpDrpConstants.DRP_PLAN_STATUS_DRAFT));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex2.getErrorCode(),
-                "基线 resetToDraft(DRAFT) 报告 common 层非法迁移码");
+        assertEquals(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION.getErrorCode(), ex2.getErrorCode(),
+                "基线 resetToDraft(DRAFT) 直抛领域非法迁移码");
     }
 
     @Test

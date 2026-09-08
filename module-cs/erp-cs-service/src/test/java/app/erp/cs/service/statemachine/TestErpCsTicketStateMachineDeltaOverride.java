@@ -1,7 +1,7 @@
 package app.erp.cs.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.cs.service.ErpCsConstants;
+import app.erp.cs.service.ErpCsErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.autotest.NopTestProperty;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -61,7 +61,7 @@ public class TestErpCsTicketStateMachineDeltaOverride extends JunitAutoTestCase 
         // Delta 收紧的来源态仍非法（如 IN_PROGRESS 不在 NEW/RESOLVED 中）
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanAssign(ErpCsConstants.TICKET_STATUS_IN_PROGRESS));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "Delta assign(IN_PROGRESS) 仍报告 common 层非法迁移码");
     }
 

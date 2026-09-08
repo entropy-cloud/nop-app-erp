@@ -1,7 +1,7 @@
 package app.erp.md.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.md.service.ErpMdConstants;
+import app.erp.md.service.ErpMdErrors;
 import io.nop.api.core.exceptions.NopException;
 
 /**
@@ -20,9 +20,9 @@ public class ErpMdSupplierApprovalStateMachineDelta extends ErpMdSupplierApprova
     @Override
     public void assertCanApprove(String status) {
         if (!ErpMdConstants.APPROVAL_STATUS_APPLIED.equals(status)) {
-            throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpCommonErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpCommonErrors.ARG_EXPECTED_STATUS, ErpMdConstants.APPROVAL_STATUS_APPLIED)
+            throw new NopException(ErpMdErrors.ERR_INVALID_APPROVAL_STATUS_TRANSITION)
+                    .param(ErpMdErrors.ARG_CURRENT_STATUS, status)
+                    .param(ErpMdErrors.ARG_EXPECTED_STATUS, ErpMdConstants.APPROVAL_STATUS_APPLIED)
                     .param(ARG_ACTION, "approve");
         }
     }

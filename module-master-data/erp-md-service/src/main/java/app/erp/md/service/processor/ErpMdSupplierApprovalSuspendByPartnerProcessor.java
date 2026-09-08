@@ -25,9 +25,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * （与 R6.7 批量操作拆 Processor 先例一致：HrSalarySimulation.applyBatchAdjustment / HrShiftAssignment.assignBatch 等）。
  *
  * <p>固定来源态/目标态判断委托 {@link ErpMdSupplierApprovalStateMachine}（status 轴 Bean，契约 §4/§7）；
- * 非法边 Bean 抛 common 层码（含 {@code action}/fromStatus 元数据），本 Processor 捕获后映射领域码
- * {@link ErpMdErrors#ERR_INVALID_APPROVAL_STATUS_TRANSITION}（+ approvalId/currentStatus/expectedStatus 实体编号/上下文，
- * common 码作 cause 保留——对齐契约 §7 + M1.1 Option A 范式）。幂等「已 SUSPENDED」短路保留在 Bean 调用前。
+ * 非法边 Bean 直抛领域码 {@link ErpMdErrors#ERR_INVALID_APPROVAL_STATUS_TRANSITION}
+ * （plan 2026-09-07-2200-1 直抛领域码），本 Processor 同码补参 approvalId。幂等「已 SUSPENDED」短路保留在 Bean 调用前。
  *
  * <p>注：单步 {@code suspend} 入口保留在 {@code ErpMdSupplierApprovalBizModel}；本 Processor 的
  * {@code doSuspend} step 与 BizModel 的 {@code doSuspend} 为同语义的批量 vs 单步副本（per-mutation 自包含要求，
@@ -75,17 +74,9 @@ public class ErpMdSupplierApprovalSuspendByPartnerProcessor {
         try {
             stateMachine.assertCanSuspend(status);
         } catch (NopException e) {
-            throw illegalTransition(approval, "APPLIED/APPROVED/PROBATION", e);
+            throw e.param(ErpMdErrors.ARG_APPROVAL_ID, approval.getId());
         }
         approval.setStatus(stateMachine.suspendTargetStatus());
         daoProvider.daoFor(ErpMdSupplierApproval.class).updateEntity(approval);
-    }
-
-    /** 领域非法迁移异常构造；可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7）。 */
-    protected NopException illegalTransition(ErpMdSupplierApproval approval, String expected, Throwable cause) {
-        return new NopException(ErpMdErrors.ERR_INVALID_APPROVAL_STATUS_TRANSITION, cause)
-                .param(ErpMdErrors.ARG_APPROVAL_ID, approval.getId())
-                .param(ErpMdErrors.ARG_CURRENT_STATUS, approval.getStatus())
-                .param(ErpMdErrors.ARG_EXPECTED_STATUS, expected);
     }
 }

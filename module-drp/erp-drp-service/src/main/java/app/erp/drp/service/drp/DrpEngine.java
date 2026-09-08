@@ -71,8 +71,7 @@ public class DrpEngine {
         // 原代码 `status != null && !Objects.equals(status, DRAFT)` 对 null 放行（视为 DRAFT 等价，未初始化）；
         // 为保留既有外部行为，null 归一化为 DRAFT 再交 Bean 判定。
         String fromStatus = plan.getStatus() != null ? plan.getStatus() : ErpDrpConstants.DRP_PLAN_STATUS_DRAFT;
-        assertCanPlan("runDrp", plan, fromStatus, ErpDrpConstants.DRP_PLAN_STATUS_DRAFT,
-                () -> planStateMachine.assertCanRunDrp(fromStatus));
+        assertCanPlan(plan, () -> planStateMachine.assertCanRunDrp(fromStatus));
 
         IEntityDao<ErpDrpLine> lineDao = daoProvider.daoFor(ErpDrpLine.class);
         clearSuggestedLines(lineDao, planId);
@@ -130,9 +129,7 @@ public class DrpEngine {
         ErpDrpPlan plan = requirePlan(planId);
         String status = plan.getStatus();
         // 固定来源态守卫经 StateMachine Bean（plan 2026-08-12-1841-1 Phase 2）：合法来源 {COMPUTED, APPROVED}。
-        assertCanPlan("resetToDraft", plan, status,
-                ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED + "/" + ErpDrpConstants.DRP_PLAN_STATUS_APPROVED,
-                () -> planStateMachine.assertCanResetToDraft(status));
+        assertCanPlan(plan, () -> planStateMachine.assertCanResetToDraft(status));
         IEntityDao<ErpDrpLine> lineDao = daoProvider.daoFor(ErpDrpLine.class);
         clearSuggestedLines(lineDao, planId);
         plan.setStatus(planStateMachine.resetToDraftTargetStatus());
@@ -190,24 +187,17 @@ public class DrpEngine {
     }
 
     /**
-     * 经 Plan StateMachine Bean 断言来源态合法；非法边（Bean 报告 common 层码）映射为领域
-     * {@code ERR_DRP_PLAN_ILLEGAL_TRANSITION} + planCode/currentStatus/expectedStatus 上下文，common 码作 cause（契约 §7）。
+     * 经 Plan StateMachine Bean 断言来源态合法；非法边由 Bean 直抛领域码
+     * {@code ERR_DRP_PLAN_ILLEGAL_TRANSITION}（plan 2026-09-07-2200-1），本处同码补参 planCode。
      *
-     * @param action         动作名（诊断用，与 Bean 的 action 元数据一致）
-     * @param plan           被操作的计划（提供 planCode 与原始 currentStatus 上下文）
-     * @param currentStatus  传入 Bean 的来源态（可能已归一化，如 null→DRAFT）
-     * @param expectedStatus 期望来源态描述（领域错误码参数，对外形状不变）
-     * @param beanCall       实际触发 Bean {@code assertCan<Action>} 的调用
+     * @param plan     被操作的计划（提供 planCode 实体元数据）
+     * @param beanCall 实际触发 Bean {@code assertCan<Action>} 的调用
      */
-    private void assertCanPlan(String action, ErpDrpPlan plan, String currentStatus, String expectedStatus,
-                               Runnable beanCall) {
+    private void assertCanPlan(ErpDrpPlan plan, Runnable beanCall) {
         try {
             beanCall.run();
         } catch (NopException e) {
-            throw new NopException(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION, e)
-                    .param(ErpDrpErrors.ARG_PLAN_CODE, plan.getCode())
-                    .param(ErpDrpErrors.ARG_CURRENT_STATUS, plan.getStatus())
-                    .param(ErpDrpErrors.ARG_EXPECTED_STATUS, expectedStatus);
+            throw e.param(ErpDrpErrors.ARG_PLAN_CODE, plan.getCode());
         }
     }
 }

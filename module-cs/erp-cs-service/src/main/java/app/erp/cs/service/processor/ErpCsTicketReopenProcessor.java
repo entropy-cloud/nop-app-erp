@@ -41,7 +41,8 @@ public class ErpCsTicketReopenProcessor {
         try {
             stateMachine.assertCanReopen(from);
         } catch (NopException e) {
-            throw illegalTransition(ticket, from, ErpCsConstants.TICKET_STATUS_RESOLVED, e);
+            // Bean 直抛领域码（plan 2026-09-07-2200-1）；本处同码补参 ticketCode。
+            throw e.param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode());
         }
         ticket.setStatus(stateMachine.reopenTargetStatus());
         // 恢复计时：保留原 startDateTime（duration 在下次 resolve 时累加重算，因 startDateTime 不变）
@@ -76,13 +77,6 @@ public class ErpCsTicketReopenProcessor {
             throw new NopException(ErpCsErrors.ERR_TICKET_NOT_FOUND).param(ErpCsErrors.ARG_TICKET_ID, ticketId);
         }
         return ticket;
-    }
-
-    private NopException illegalTransition(ErpCsTicket ticket, String current, String expected, Throwable cause) {
-        return new NopException(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION, cause)
-                .param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode())
-                .param(ErpCsErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpCsErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     private void writeAction(ErpCsTicket ticket, String actionType, String fromStatus, String toStatus,

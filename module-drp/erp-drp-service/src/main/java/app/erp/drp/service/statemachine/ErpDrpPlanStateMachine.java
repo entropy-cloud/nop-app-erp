@@ -1,7 +1,7 @@
 package app.erp.drp.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.drp.service.ErpDrpConstants;
+import app.erp.drp.service.ErpDrpErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -18,8 +18,9 @@ import java.util.List;
  * （DRAFT/COMPUTED/APPROVED/EXECUTED）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。
  * 可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 BizModel/Processor（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpDrpErrors#ERR_DRP_PLAN_ILLEGAL_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1 直抛领域码）；实体元数据（planCode）
+ * 经调用点同码补参补齐。
  *
  * <p>迁移矩阵（5 条边，按 per-(action, fromStatus, toStatus) 三元组）：
  * <ul>
@@ -131,9 +132,9 @@ public class ErpDrpPlanStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION)
+                .param(ErpDrpErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpDrpErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

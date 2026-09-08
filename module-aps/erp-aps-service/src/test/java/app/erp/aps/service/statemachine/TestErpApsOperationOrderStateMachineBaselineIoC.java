@@ -1,7 +1,7 @@
 package app.erp.aps.service.statemachine;
 
 import app.erp.aps.service.ErpApsConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.aps.service.ErpApsErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.exceptions.NopException;
@@ -50,7 +50,7 @@ public class TestErpApsOperationOrderStateMachineBaselineIoC extends JunitAutoTe
         // 终态非法
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanCancel(ErpApsConstants.OP_STATUS_FINISHED));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "基线 cancel(FINISHED) 报告 common 层非法迁移码");
     }
 

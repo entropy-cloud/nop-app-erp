@@ -137,7 +137,7 @@ public class DrpReleaseService {
             }
         }
         // 防御性不变量加强（plan 2026-08-12-1841-1 Phase 2）：全行终态时 plan 必为 APPROVED（业务不变量），
-        // 经 Plan Bean 断言为 no-op；若数据漂移使 plan 非 APPROVED（如人工直改），Bean 抛 common 层码。
+        // 经 Plan Bean 断言为 no-op；若数据漂移使 plan 非 APPROVED（如人工直改），Bean 直抛领域码。
         planStateMachine.assertCanAdvanceToExecuted(plan.getStatus());
         plan.setStatus(planStateMachine.advanceToExecutedTargetStatus());
         daoProvider.daoFor(ErpDrpPlan.class).updateEntity(plan);
@@ -156,8 +156,8 @@ public class DrpReleaseService {
             throw new NopException(ErpDrpErrors.ERR_DRP_LINE_ALREADY_ORDERED).param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId);
         }
         // 固定来源态守卫经 Line StateMachine Bean（仅 APPROVED 合法）；
-        // 非 APPROVED 映射为既有 ERR_DRP_LINE_NOT_SUGGESTED（误名，pre-existing，本重构不重命名），
-        // common 层码作 cause（契约 §7）。类型守卫（TRANSFER sourceWh / PURCHASE supplier）保留在 releaseLine 主体。
+        // 非 APPROVED 语义映射为既有 ERR_DRP_LINE_NOT_SUGGESTED（误名，pre-existing，本重构不重命名，
+        // Bean 直抛领域码作 cause，plan 2026-09-07-2200-1）。类型守卫（TRANSFER sourceWh / PURCHASE supplier）保留在 releaseLine 主体。
         try {
             lineStateMachine.assertCanRelease(line.getStatus());
         } catch (NopException e) {

@@ -79,15 +79,13 @@ public class ErpApsSchedulingInsertRushOrderProcessor {
             // 与 planned 字段是否已清空无关。释放先于 saveOrUpdateEntity 落库，确保回退原子可见。
             facade.releaseReservationsByOrder(op.getId());
             // PLANNED→DRAFT 回退矩阵权威下沉 Bean（plan 2026-08-12-2142-3 M2.13）：所选 op 本为 PLANNED
-            // （经上方优先级选择 + IN_PROGRESS 硬守卫过滤），调用确认矩阵合法性。非法边 Bean 抛 common 码，
-            // 此处映射领域码。IN_PROGRESS 不可重排硬守卫已在选择之前保留（动态业务守卫，非纯状态迁移守卫）。
+            // （经上方优先级选择 + IN_PROGRESS 硬守卫过滤），调用确认矩阵合法性。非法边 Bean 直抛领域码，
+            // 本处同码补参 operationOrderCode（plan 2026-09-07-2200-1）。IN_PROGRESS 不可重排硬守卫已在
+            // 选择之前保留（动态业务守卫，非纯状态迁移守卫）。
             try {
                 stateMachine.assertCanRevertToDraft(op.getStatus());
             } catch (NopException e) {
-                throw new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION, e)
-                        .param(ErpApsErrors.ARG_OP_CODE, op.getCode())
-                        .param(ErpApsErrors.ARG_CURRENT_STATUS, op.getStatus())
-                        .param(ErpApsErrors.ARG_EXPECTED_STATUS, ErpApsConstants.OP_STATUS_PLANNED);
+                throw e.param(ErpApsErrors.ARG_OP_CODE, op.getCode());
             }
             op.setStatus(stateMachine.revertToDraftTargetStatus());
             op.setPlannedStartDateT(null);

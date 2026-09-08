@@ -1,7 +1,7 @@
 package app.erp.cs.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.cs.service.ErpCsConstants;
+import app.erp.cs.service.ErpCsErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -18,8 +18,9 @@ import java.util.List;
  * （NEW/ASSIGNED/IN_PROGRESS/RESOLVED/CLOSED/CANCELLED）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。
  * 可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpCsErrors#ERR_INVALID_TICKET_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1 直抛领域码）；实体元数据（ticketCode）
+ * 经调用点同码补参补齐。例外：终态 cancel 由 BizModel 抛专属码 {@code ERR_TICKET_ALREADY_TERMINAL}（终态优先路径，保留）。
  *
  * <p>迁移矩阵（9 条边）：assign(NEW→ASSIGNED)、start(ASSIGNED→IN_PROGRESS)、resolve(IN_PROGRESS→RESOLVED)、
  * close(RESOLVED→CLOSED)、reopen(RESOLVED→IN_PROGRESS)、cancel(NEW/ASSIGNED/IN_PROGRESS/RESOLVED→CANCELLED)。
@@ -85,7 +86,7 @@ public class ErpCsTicketStateMachine {
      * cancel 守卫：非终态（NEW/ASSIGNED/IN_PROGRESS/RESOLVED）均合法。
      *
      * <p>注意：终态（CLOSED/CANCELLED）的 cancel 由 BizModel 抛领域码 {@code ERR_TICKET_ALREADY_TERMINAL}
-     * （保持既有外部错误码）。本方法对终态同样报告 common 非法边，接线时 BizModel 须令终态优先走领域码路径
+     * （保持既有外部错误码）。本方法对终态同样直抛领域非法边码，接线时 BizModel 须令终态优先走专属码路径
      * （见 plan Phase 2 cancel 防冲突说明）。
      */
     public void assertCanCancel(String status) {
@@ -132,9 +133,9 @@ public class ErpCsTicketStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION)
+                .param(ErpCsErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpCsErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

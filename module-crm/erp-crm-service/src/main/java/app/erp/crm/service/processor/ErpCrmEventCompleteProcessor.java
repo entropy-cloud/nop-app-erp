@@ -1,7 +1,6 @@
 package app.erp.crm.service.processor;
 
 import app.erp.crm.dao.entity.ErpCrmEvent;
-import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.ErpCrmErrors;
 import app.erp.crm.service.statemachine.ErpCrmEventStateMachine;
 import app.erp.crm.service.support.LeadActivityDerivationHelper;
@@ -17,9 +16,8 @@ import jakarta.inject.Inject;
  * 自包含活动/事件完成编排（PLANNED→COMPLETED + flush 后派生回写关联 Lead 字段）。
  *
  * <p>固定来源态/目标态判断委托 {@link ErpCrmEventStateMachine}（Event status 轴 Bean，契约 §4/§7）；
- * 动态业务守卫（requireEvent not-found、Lead 派生、relatedLeadId==null 跳过、乐观锁）保留原位。非法边 Bean 抛 common 层码
- * （含 {@code action}/fromStatus 元数据），本 Processor 捕获后映射领域码 {@link ErpCrmErrors#ERR_EVENT_ILLEGAL_STATUS_TRANSITION}
- * （+ eventCode/currentStatus/expectedStatus 实体编号/上下文，common 码作 cause 保留）。
+ * 动态业务守卫（requireEvent not-found、Lead 派生、relatedLeadId==null 跳过、乐观锁）保留原位。非法边 Bean 直抛领域码
+ * {@link ErpCrmErrors#ERR_EVENT_ILLEGAL_STATUS_TRANSITION}（plan 2026-09-07-2200-1），本处同码补参 eventCode。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
 public class ErpCrmEventCompleteProcessor {
@@ -41,7 +39,7 @@ public class ErpCrmEventCompleteProcessor {
         try {
             stateMachine.assertCanComplete(event.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(event, ErpCrmConstants.EVENT_STATUS_PLANNED, e);
+            throw e.param(ErpCrmErrors.ARG_EVENT_CODE, event.getCode());
         }
         event.setStatus(stateMachine.completeTargetStatus());
         dao().updateEntity(event);
@@ -60,14 +58,6 @@ public class ErpCrmEventCompleteProcessor {
                     .param(ErpCrmErrors.ARG_EVENT_ID, eventId);
         }
         return event;
-    }
-
-    /** 领域非法迁移异常构造；可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7）。 */
-    protected NopException illegalTransition(ErpCrmEvent event, String expected, Throwable cause) {
-        return new NopException(ErpCrmErrors.ERR_EVENT_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpCrmErrors.ARG_EVENT_CODE, event.getCode())
-                .param(ErpCrmErrors.ARG_CURRENT_STATUS, event.getStatus())
-                .param(ErpCrmErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     /**

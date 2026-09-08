@@ -1,7 +1,7 @@
 package app.erp.log.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.log.service.ErpLogConstants;
+import app.erp.log.service.ErpLogErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -25,9 +25,9 @@ import java.util.List;
  * （advise/completeShipment/advanceToInTransit/advanceToDelivered/cancelShipment）+ 终态/初始态分类 + 只读
  * {@link #transitions()} 元数据。可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归接线方
- * {@code GatewayDispatcher}（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpLogErrors#ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1 直抛领域码）；实体元数据（shipmentCode）
+ * 经调用点 {@code GatewayDispatcher} 同码补参补齐。
  *
  * <p>迁移矩阵（10 条边）：advise(DRAFT→ADVISED)、completeShipment(ADVISED→DISPATCHED)、
  * advanceToInTransit(DISPATCHED→IN_TRANSIT)、advanceToDelivered {ADVISED,DISPATCHED,IN_TRANSIT}→DELIVERED = 3 边
@@ -48,9 +48,8 @@ public class ErpLogShipmentStateMachine {
     /**
      * advise 守卫：来源态为 {@code DRAFT} 合法（DRAFT→ADVISED）。
      *
-     * <p>非法来源态报告 common 层非法边（携带 {@code action=advise}/{@code fromStatus}）。
-     * 接线方 {@code GatewayDispatcher.advise} 映射为领域码 {@code ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION}
-     * （保持既有 expected=DRAFT 文案）。
+     * <p>非法来源态直抛领域码 {@code ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION}；接线方
+     * {@code GatewayDispatcher.advise} 同码补参 shipmentCode。
      */
     public void assertCanAdvise(String status) {
         if (!ErpLogConstants.SHIPMENT_STATUS_DRAFT.equals(status)) {
@@ -61,7 +60,7 @@ public class ErpLogShipmentStateMachine {
     /**
      * completeShipment 守卫：来源态为 {@code ADVISED} 合法（ADVISED→DISPATCHED）。
      *
-     * <p>接线方 {@code GatewayDispatcher.completeShipment} 映射为领域码（保持既有 expected=ADVISED 文案）。
+     * <p>非法来源态直抛领域码；接线方 {@code GatewayDispatcher.completeShipment} 同码补参 shipmentCode。
      */
     public void assertCanCompleteShipment(String status) {
         if (!ErpLogConstants.SHIPMENT_STATUS_ADVISED.equals(status)) {
@@ -73,7 +72,7 @@ public class ErpLogShipmentStateMachine {
      * advanceToInTransit 守卫：来源态为 {@code DISPATCHED} 合法（DISPATCHED→IN_TRANSIT，
      * TRACKING_EVENT_IN_TRANSIT/PICKED_UP）。
      *
-     * <p>接线方 {@code GatewayDispatcher.advanceTracking} 映射为领域码。
+     * <p>非法来源态直抛领域码；接线方 {@code GatewayDispatcher.advanceTracking} 同码补参 shipmentCode。
      */
     public void assertCanAdvanceToInTransit(String status) {
         if (!ErpLogConstants.SHIPMENT_STATUS_DISPATCHED.equals(status)) {
@@ -88,7 +87,7 @@ public class ErpLogShipmentStateMachine {
      * <p><b>刻意收紧（Decision (C)）</b>：code 原写入无来源态守卫（任何非 DELIVERED 状态含 DRAFT/CANCELLED
      * 均可被推进到 DELIVERED），本 Bean 排除 DRAFT/CANCELLED 来源——DRAFT 无 trackingNo 不可达（advanceTracking
      * 按 trackingNo 定位运单）、CANCELLED 是终态不应可逆到 DELIVERED。行为收紧（安全改善），四方对照登记
-     * {@code intentional narrowing}。接线方映射为领域码。
+     * {@code intentional narrowing}。非法来源态直抛领域码，接线方同码补参 shipmentCode。
      */
     public void assertCanAdvanceToDelivered(String status) {
         if (!ErpLogConstants.SHIPMENT_STATUS_ADVISED.equals(status)
@@ -102,7 +101,7 @@ public class ErpLogShipmentStateMachine {
      * cancelShipment 守卫：来源态为 {@code DRAFT}/{@code ADVISED}/{@code DISPATCHED}/{@code IN_TRANSIT} 合法
      * （多源→CANCELLED）。
      *
-     * <p>接线方 {@code GatewayDispatcher.cancelShipment} 映射为领域码（保持既有 expected=ADVISED 文案）。
+     * <p>非法来源态直抛领域码；接线方 {@code GatewayDispatcher.cancelShipment} 同码补参 shipmentCode。
      */
     public void assertCanCancelShipment(String status) {
         if (!ErpLogConstants.SHIPMENT_STATUS_DRAFT.equals(status)
@@ -174,9 +173,9 @@ public class ErpLogShipmentStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION)
+                .param(ErpLogErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpLogErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

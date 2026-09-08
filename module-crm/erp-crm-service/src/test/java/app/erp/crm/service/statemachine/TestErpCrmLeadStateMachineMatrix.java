@@ -1,7 +1,7 @@
 package app.erp.crm.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.crm.service.ErpCrmConstants;
+import app.erp.crm.service.ErpCrmErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -90,10 +90,10 @@ public class TestErpCrmLeadStateMachineMatrix {
         NopException ex = assertThrows(NopException.class,
                 () -> sm.assertCanQualify(ErpCrmConstants.DOC_STATUS_QUALIFIED),
                 "QUALIFIED 不可再次 qualify（不可回 NEW）");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpCrmErrors.ERR_LEAD_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "assertCanQualify(QUALIFIED) 报告 common 层非法迁移码");
         assertEquals("qualify", ex.getParam(ErpCrmLeadStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-        assertEquals(ErpCrmConstants.DOC_STATUS_QUALIFIED, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(ErpCrmConstants.DOC_STATUS_QUALIFIED, ex.getParam(ErpCrmErrors.ARG_CURRENT_STATUS),
                 "拒绝元数据携带当前态");
     }
 
@@ -105,7 +105,7 @@ public class TestErpCrmLeadStateMachineMatrix {
         NopException ex = assertThrows(NopException.class,
                 () -> sm.assertCanConvert(ErpCrmConstants.DOC_STATUS_CONVERTED),
                 "CONVERTED 不可重复转化");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpCrmErrors.ERR_LEAD_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "assertCanConvert(CONVERTED) 报告 common 层非法迁移码");
         assertEquals("convert", ex.getParam(ErpCrmLeadStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
 
@@ -197,11 +197,11 @@ public class TestErpCrmLeadStateMachineMatrix {
     private void assertActionRejectedOn(String action, String terminal) {
         NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, terminal),
                 action + " 对终态应非法: " + terminal);
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpCrmErrors.ERR_LEAD_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 action + "(terminal) 报告 common 层非法迁移码");
         assertEquals(action, ex.getParam(ErpCrmLeadStateMachine.ARG_ACTION),
                 action + " 拒绝元数据携带动作名");
-        assertEquals(terminal, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(terminal, ex.getParam(ErpCrmErrors.ARG_CURRENT_STATUS),
                 action + " 拒绝元数据携带当前态");
     }
 
@@ -216,11 +216,11 @@ public class TestErpCrmLeadStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                assertEquals(ErpCrmErrors.ERR_LEAD_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                         "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpCrmLeadStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + action);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpCrmErrors.ARG_CURRENT_STATUS),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }
