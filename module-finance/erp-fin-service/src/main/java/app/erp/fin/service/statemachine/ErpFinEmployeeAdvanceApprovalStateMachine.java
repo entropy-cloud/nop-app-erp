@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -43,8 +43,8 @@ import java.util.List;
  * <p><b>终态</b>：{@code APPROVED}/{@code REJECTED}（均为可逆终态——APPROVED 经 reverseApprove 有出边、
  * REJECTED 经 submitForApproval 有出边，不适用「终态无出边」强可达性断言，见矩阵测试）。initial：{@code UNSUBMITTED}。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpFinErrors#ERR_EMPLOYEE_ADVANCE_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1）；实体元数据（advanceCode）经调用点同码补参。
  */
 public class ErpFinEmployeeAdvanceApprovalStateMachine {
 
@@ -56,9 +56,8 @@ public class ErpFinEmployeeAdvanceApprovalStateMachine {
     /**
      * submitForApproval 入口守卫：来源态为 {@code UNSUBMITTED}/{@code null}/{@code REJECTED} 合法（初始提交或驳回后重新提交）。
      *
-     * <p>非法来源态报告 common 层非法边（携带 {@code action=submit}/{@code fromStatus}）。
-     * 接线方 {@code ErpFinEmployeeAdvanceProcessor.validateTransitionForSubmit} 映射为领域码
-     * {@code ERR_EMPLOYEE_ADVANCE_ILLEGAL_STATUS_TRANSITION}（common 码作 cause 保留）。
+     * <p>非法来源态直抛领域码 {@code ERR_EMPLOYEE_ADVANCE_ILLEGAL_STATUS_TRANSITION}（携带 {@code action=submit}）。
+     * 接线方 {@code ErpFinEmployeeAdvanceProcessor.validateTransitionForSubmit} 同码补参 advanceCode。
      */
     public void assertCanSubmit(String approveStatus) {
         String status = normalize(approveStatus);
@@ -174,9 +173,9 @@ public class ErpFinEmployeeAdvanceApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpFinErrors.ERR_EMPLOYEE_ADVANCE_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpFinErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpFinErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

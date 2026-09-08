@@ -1,6 +1,5 @@
 package app.erp.fin.service.processor;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinReconciliation;
 import app.erp.fin.dao.entity.ErpFinReconciliationLine;
@@ -59,15 +58,12 @@ public class ErpFinReconciliationPostProcessor extends AbstractErpFinReconciliat
         return head;
     }
 
-    /** post 迁移守卫：固定来源态矩阵判断委托状态机 Bean（common 码作 cause，领域码 {@code ERR_RECONCILIATION_STATUS_INVALID}）。 */
+    /** post 迁移守卫：固定来源态矩阵判断委托状态机 Bean（直抛领域码，本处同码补参 reconciliationId）。 */
     private void assertCanPost(ErpFinReconciliation head) {
         try {
             stateMachine.assertCanPost(head.getDocStatus());
         } catch (NopException e) {
-            if (ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode().equals(e.getErrorCode())) {
-                throw statusError(head, e);
-            }
-            throw e;
+            throw e.param(ErpFinErrors.ARG_RECONCILIATION_ID, head.getId());
         }
     }
 

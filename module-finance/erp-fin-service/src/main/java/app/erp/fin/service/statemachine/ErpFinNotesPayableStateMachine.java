@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -40,8 +40,8 @@ import java.util.List;
  * <p><b>writer 放置</b>：Payable 4 动作 writer 全部在 facade {@code do*}（无 per-mutation 不对称，
  * 区别于 Receivable 的 collect/dishonor per-mutation writer）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7），
+ * <p>非法边直抛领域码 {@link ErpFinErrors#ERR_NOTES_PAYABLE_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1）；实体元数据（notesCode）经调用点同码补参，
  * expectedStatus 码文案（如「ISSUED」「! 终态码列表」）由本 Bean 承载（CAT-2 传码，plan 2026-09-07-0043-2）。
  */
 public class ErpFinNotesPayableStateMachine {
@@ -55,7 +55,7 @@ public class ErpFinNotesPayableStateMachine {
      * issue 入口守卫：来源态为 {@code null}（initial 写入）或 {@code ISSUED}（幂等）合法。
      *
      * <p>接线方 {@code ErpFinNotesPayableIssueProcessor}（经 facade {@code validateTransitionForIssue}）
-     * 映射为领域码 {@code ERR_NOTES_PAYABLE_ILLEGAL_STATUS_TRANSITION}（common 码作 cause 保留）。
+     * 同码补参 notesCode。
      */
     public void assertCanIssue(String status) {
         if (status != null && !ErpFinConstants.NOTES_PAY_ISSUED.equals(status)) {
@@ -162,9 +162,9 @@ public class ErpFinNotesPayableStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpFinErrors.ERR_NOTES_PAYABLE_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpFinErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpFinErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

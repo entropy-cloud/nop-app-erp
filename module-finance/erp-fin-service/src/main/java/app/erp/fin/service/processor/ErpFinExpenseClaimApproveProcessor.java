@@ -2,6 +2,7 @@ package app.erp.fin.service.processor;
 
 import app.erp.fin.dao.entity.ErpFinExpenseClaim;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import app.erp.common.service.AbstractApproveProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -39,6 +40,18 @@ public class ErpFinExpenseClaimApproveProcessor extends AbstractApproveProcessor
     @Override
     protected NopException notFoundException(String id) {
         return defaultNotFoundException(id);
+    }
+
+    /**
+     * 骨架守卫裸奔通道修正（plan 2026-09-07-2200-1 form-3）：非法迁移错误由 common 码改为直抛领域码
+     * ERR_EXPENSE_CLAIM_ILLEGAL_STATUS_TRANSITION（模板参数 claimCode/currentStatus/expectedStatus）。
+     */
+    @Override
+    protected NopException illegalStatusException(ErpFinExpenseClaim entity, String current, String... expected) {
+        return new NopException(ErpFinErrors.ERR_EXPENSE_CLAIM_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpFinErrors.ARG_CLAIM_CODE, entity.getCode())
+                .param(ErpFinErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpFinErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
     }
 
     @Override

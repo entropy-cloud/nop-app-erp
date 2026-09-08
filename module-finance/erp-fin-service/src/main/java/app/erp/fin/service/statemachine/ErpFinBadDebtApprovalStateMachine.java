@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -45,9 +45,8 @@ import java.util.List;
  * {@code ErpFinBadDebtWriteOffProcessor}/{@code ErpFinBadDebtRecoverProcessor} 在 config
  * {@code erp-fin.bad-debt-write-off-require-approval=false} 时直接写 APPROVED（与 Voucher 生成路径先例一致）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 facade（契约 §7，
- * {@code ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION}，common 码作 cause 保留）。
+ * <p>非法边直抛领域码 {@link ErpFinErrors#ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1）；实体元数据（badDebtCode）经调用点同码补参。
  */
 public class ErpFinBadDebtApprovalStateMachine {
 
@@ -152,9 +151,9 @@ public class ErpFinBadDebtApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpFinErrors.ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION)
+                .param(ErpFinErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpFinErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

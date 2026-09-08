@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.ArrayList;
@@ -30,8 +30,9 @@ import java.util.List;
  *   <li>reject：SUBMITTED → REJECTED</li>
  * </ul>
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数。
+ * <p>非法边直抛领域码 {@link ErpFinErrors#ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION}（参数 {@code currentDocStatus}/
+ * {@code expectedDocStatus}/{@code action}；plan 2026-09-07-2200-1）。本 Bean 无生产接线（approveStatus 轴镜像推进，
+ * 守卫只读 docStatus 轴）——裸奔通道 common→实体既有专属码为有意契约修正；调用点（如有）同码补参 scenarioCode。
  */
 public class ErpFinBudgetScenarioApprovalStateMachine {
 
@@ -110,9 +111,9 @@ public class ErpFinBudgetScenarioApprovalStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION)
+                .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, currentStatus)
+                .param(ErpFinErrors.ARG_EXPECTED_DOC_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

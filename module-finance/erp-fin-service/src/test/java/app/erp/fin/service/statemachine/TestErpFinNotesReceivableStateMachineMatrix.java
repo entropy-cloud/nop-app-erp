@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -84,9 +84,9 @@ public class TestErpFinNotesReceivableStateMachineMatrix {
                 ErpFinConstants.NOTES_RECV_WRITE_OFF)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanReceive(s),
                     "receive 对非 initial 来源态应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpFinErrors.ERR_NOTES_RECEIVABLE_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("receive", ex.getParam(ErpFinNotesReceivableStateMachine.ARG_ACTION));
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(s, ex.getParam(ErpFinErrors.ARG_CURRENT_STATUS));
         }
     }
 
@@ -111,10 +111,10 @@ public class TestErpFinNotesReceivableStateMachineMatrix {
                 ErpFinConstants.NOTES_RECV_WRITE_OFF)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanCollect(s),
                     "collect 对 ENDORSED/COLLECTION_PENDING/终态应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpFinErrors.ERR_NOTES_RECEIVABLE_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("collect", ex.getParam(ErpFinNotesReceivableStateMachine.ARG_ACTION));
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
-            assertEquals("RECEIVED / DISCOUNTED", ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
+            assertEquals(s, ex.getParam(ErpFinErrors.ARG_CURRENT_STATUS));
+            assertEquals("RECEIVED / DISCOUNTED", ex.getParam(ErpFinErrors.ARG_EXPECTED_STATUS),
                     "collect expected 为码列表（plan 2026-09-07-0043-2 CAT-2 传码收敛）");
         }
     }
@@ -144,10 +144,10 @@ public class TestErpFinNotesReceivableStateMachineMatrix {
                 ErpFinConstants.NOTES_RECV_WRITE_OFF)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanWriteOff(s),
                     "writeOff 对终态应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpFinErrors.ERR_NOTES_RECEIVABLE_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("writeOff", ex.getParam(ErpFinNotesReceivableStateMachine.ARG_ACTION));
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
-            assertEquals("!" + String.join(" / ", sm.terminalStatuses()), ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
+            assertEquals(s, ex.getParam(ErpFinErrors.ARG_CURRENT_STATUS));
+            assertEquals("!" + String.join(" / ", sm.terminalStatuses()), ex.getParam(ErpFinErrors.ARG_EXPECTED_STATUS),
                     "writeOff expected 为否定码列表（plan 2026-09-07-0043-2 CAT-2 传码收敛）");
         }
     }
@@ -230,10 +230,10 @@ public class TestErpFinNotesReceivableStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                        "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
+                assertEquals(ErpFinErrors.ERR_NOTES_RECEIVABLE_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                        "Bean 直抛领域码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpFinNotesReceivableStateMachine.ARG_ACTION));
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+                assertEquals(s, ex.getParam(ErpFinErrors.ARG_CURRENT_STATUS));
             }
         }
     }

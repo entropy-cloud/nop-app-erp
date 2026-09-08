@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -69,9 +69,9 @@ public class TestErpFinBudgetScenarioStateMachines {
                 ErpFinConstants.BUDGET_STATUS_CLOSED)) {
             NopException ex = assertThrows(NopException.class, () -> docSm.assertCanSubmit(s),
                     "submit 对非 DRAFT/REJECTED 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpFinErrors.ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("submit", ex.getParam(ErpFinBudgetScenarioDocumentStateMachine.ARG_ACTION));
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(s, ex.getParam(ErpFinErrors.ARG_CURRENT_DOC_STATUS));
         }
     }
 
@@ -242,9 +242,9 @@ public class TestErpFinBudgetScenarioStateMachines {
                 ErpFinConstants.APPROVE_STATUS_APPROVED)) {
             NopException ex = assertThrows(NopException.class, () -> appSm.assertCanSubmit(s),
                     "submit 对非 UNSUBMITTED/REJECTED 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpFinErrors.ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("submit", ex.getParam(ErpFinBudgetScenarioApprovalStateMachine.ARG_ACTION));
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(s, ex.getParam(ErpFinErrors.ARG_CURRENT_DOC_STATUS));
         }
     }
 

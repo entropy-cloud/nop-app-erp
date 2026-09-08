@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -35,8 +35,8 @@ import java.util.List;
  * CANCELLED 不纳入 {@link #initialStatuses()}/{@link #terminalStatuses()}/{@link #transitions()} 任一集合，
  * 为 {@code intentional reserved} 死状态（dict 值保留为未来显式作废工作流的语义入口，successor）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpFinErrors#ERR_FIN_VOUCHER_ILLEGAL_TRANSITION}（参数 {@code currentStatus}/
+ * {@code action}；plan 2026-09-07-2200-1）；实体元数据（voucherId）经调用点同码补参。
  *
  * <p><b>7 生成路径不接线 Bean</b>（契约 §9.2 选项 c 初始态/生成写入，不调 {@code assertCan*}）：
  * {@code ErpFinPostingProcessor}（引擎 persistVoucher 生成即 POSTED）、{@code CloseVoucherWriter}（期末结转）、
@@ -55,9 +55,8 @@ public class ErpFinVoucherDocumentStateMachine {
     /**
      * postVoucher 目标态守卫：来源态为 {@code DRAFT} 合法（唯一迁移边的来源态）。
      *
-     * <p>对非法来源态（POSTED/CANCELLED）报告 common 层非法边（携带 {@code action=postVoucher}/
-     * {@code fromStatus}）；接线方 {@code ErpFinVoucherBizModel.postVoucher} 映射为领域码
-     * {@code ERR_FIN_VOUCHER_ILLEGAL_TRANSITION}（common 码作 cause 保留）。
+     * <p>对非法来源态（POSTED/CANCELLED）直抛领域码 {@code ERR_FIN_VOUCHER_ILLEGAL_TRANSITION}（携带
+     * {@code action=postVoucher}）；接线方 {@code ErpFinVoucherBizModel.postVoucher} 同码补参 voucherId。
      */
     public void assertCanPost(String docStatus) {
         if (!ErpFinConstants.VOUCHER_STATUS_DRAFT.equals(docStatus)) {
@@ -113,9 +112,9 @@ public class ErpFinVoucherDocumentStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpFinErrors.ERR_FIN_VOUCHER_ILLEGAL_TRANSITION)
+                .param(ErpFinErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpFinErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

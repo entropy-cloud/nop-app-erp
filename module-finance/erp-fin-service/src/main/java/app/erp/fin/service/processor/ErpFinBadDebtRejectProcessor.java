@@ -2,6 +2,7 @@ package app.erp.fin.service.processor;
 
 import app.erp.fin.dao.entity.ErpFinBadDebt;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import app.erp.common.service.AbstractRejectProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -34,6 +35,18 @@ public class ErpFinBadDebtRejectProcessor extends AbstractRejectProcessor<ErpFin
     @Override
     protected NopException notFoundException(String id) {
         return defaultNotFoundException(id);
+    }
+
+    /**
+     * 骨架守卫裸奔通道修正（plan 2026-09-07-2200-1 form-3）：非法迁移错误由 common 码改为直抛领域码
+     * ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION（模板参数 badDebtCode/currentStatus/expectedStatus）。
+     */
+    @Override
+    protected NopException illegalStatusException(ErpFinBadDebt entity, String current, String... expected) {
+        return new NopException(ErpFinErrors.ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION)
+                .param(ErpFinErrors.ARG_BAD_DEBT_CODE, entity.getCode())
+                .param(ErpFinErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpFinErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
     }
 
     @Override

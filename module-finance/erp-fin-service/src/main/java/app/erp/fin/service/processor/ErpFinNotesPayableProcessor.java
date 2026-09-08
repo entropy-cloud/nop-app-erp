@@ -1,6 +1,5 @@
 package app.erp.fin.service.processor;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.biz.IErpFinCreditFacilityBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinNotesPayable;
@@ -46,7 +45,7 @@ public class ErpFinNotesPayableProcessor {
     ErpFinNotesPayableStateMachine stateMachine;
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖；固定来源态矩阵判断已迁移至
-    //           ErpFinNotesPayableStateMachine Bean，本层仅作 common→领域码映射 wrapper） ----------
+    //           ErpFinNotesPayableStateMachine Bean（直抛领域码），本层仅同码补参 notesCode） ----------
 
     protected void validateTransitionForHonor(ErpFinNotesPayable note, IServiceContext context) {
         assertTransition(note, () -> stateMachine.assertCanHonor(note.getStatus()));
@@ -195,22 +194,13 @@ public class ErpFinNotesPayableProcessor {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    /**
-     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。
-     * 参数从 Bean 异常提取（currentStatus/expectedStatus 单真相源在 Bean），notesCode 由本层组装。
-     */
-    protected NopException illegalTransition(ErpFinNotesPayable note, NopException common) {
-        return new NopException(ErpFinErrors.ERR_NOTES_PAYABLE_ILLEGAL_STATUS_TRANSITION, common)
-                .param(ErpFinErrors.ARG_NOTES_CODE, note.getCode())
-                .param(ErpFinErrors.ARG_CURRENT_STATUS, common.getParam(ErpCommonErrors.ARG_CURRENT_STATUS))
-                .param(ErpFinErrors.ARG_EXPECTED_STATUS, common.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
-    }
-
     private void assertTransition(ErpFinNotesPayable note, Runnable assertion) {
         try {
             assertion.run();
         } catch (NopException e) {
-            throw illegalTransition(note, e);
+            // Bean 直抛领域码 ERR_NOTES_PAYABLE_ILLEGAL_STATUS_TRANSITION（plan 2026-09-07-2200-1），
+            // 本处同码补参 notesCode。
+            throw e.param(ErpFinErrors.ARG_NOTES_CODE, note.getCode());
         }
     }
 }

@@ -1,6 +1,5 @@
 package app.erp.fin.service.budget;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.dao.entity.ErpFinBudgetLine;
 import app.erp.fin.dao.entity.ErpFinBudgetScenario;
 import app.erp.fin.service.ErpFinConstants;
@@ -116,20 +115,16 @@ public class ErpFinBudgetScenarioProcessor {
             } else if (ErpFinConstants.BUDGET_STATUS_CANCELLED.equals(target)) {
                 documentStateMachine.assertCanCancel(current);
             } else {
+                // 非 Bean 命名动作的目标态：不经状态机，直接抛领域码（ Bean 直抛同码，plan 2026-09-07-2200-1）。
                 throw new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION)
                         .param(ErpFinErrors.ARG_SCENARIO_CODE, scenario.getCode())
                         .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, current)
                         .param(ErpFinErrors.ARG_EXPECTED_DOC_STATUS, target);
             }
         } catch (NopException e) {
-            if (ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode().equals(e.getErrorCode())) {
-                throw new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION, e)
-                        .param(ErpFinErrors.ARG_SCENARIO_CODE, scenario.getCode())
-                        .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, current)
-                        .param(ErpFinErrors.ARG_EXPECTED_DOC_STATUS,
-                                e.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
-            }
-            throw e;
+            // Bean 直抛领域码 ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION（plan 2026-09-07-2200-1），
+            // 本处同码补参 scenarioCode。
+            throw e.param(ErpFinErrors.ARG_SCENARIO_CODE, scenario.getCode());
         }
     }
 

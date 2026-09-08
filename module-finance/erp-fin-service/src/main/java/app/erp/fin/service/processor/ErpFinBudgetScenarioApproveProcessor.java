@@ -2,6 +2,7 @@ package app.erp.fin.service.processor;
 
 import app.erp.fin.dao.entity.ErpFinBudgetScenario;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import app.erp.common.service.AbstractApproveProcessor;
 import app.erp.fin.service.budget.ErpFinBudgetScenarioProcessor;
 import io.nop.api.core.exceptions.NopException;
@@ -39,6 +40,18 @@ public class ErpFinBudgetScenarioApproveProcessor extends AbstractApproveProcess
     @Override
     protected NopException notFoundException(String id) {
         return defaultNotFoundException(id);
+    }
+
+    /**
+     * 骨架守卫裸奔通道修正（plan 2026-09-07-2200-1 form-3）：非法迁移错误由 common 码改为直抛领域码
+     * ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION（模板参数 scenarioCode/currentDocStatus/expectedDocStatus）。
+     */
+    @Override
+    protected NopException illegalStatusException(ErpFinBudgetScenario entity, String current, String... expected) {
+        return new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION)
+                .param(ErpFinErrors.ARG_SCENARIO_CODE, entity.getCode())
+                .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, current)
+                .param(ErpFinErrors.ARG_EXPECTED_DOC_STATUS, String.join(" / ", expected));
     }
 
     @Override

@@ -13,7 +13,6 @@ import app.erp.fin.service.close.CloseVoucherWriter;
 import app.erp.fin.service.close.CloseVoucherWriter.Line;
 import app.erp.fin.service.posting.FinPostingExecutor;
 import app.erp.fin.service.statemachine.ErpFinBadDebtApprovalStateMachine;
-import app.erp.common.service.ErpCommonErrors;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -256,7 +255,7 @@ public class ErpFinBadDebtProcessor {
         try {
             approvalStateMachine.assertCanSubmit(status);
         } catch (NopException e) {
-            throw illegalTransition(debt, e);
+            throw e.param(ErpFinErrors.ARG_BAD_DEBT_CODE, debt.getCode());
         }
     }
 
@@ -265,7 +264,7 @@ public class ErpFinBadDebtProcessor {
         try {
             approvalStateMachine.assertCanApprove(status);
         } catch (NopException e) {
-            throw illegalTransition(debt, e);
+            throw e.param(ErpFinErrors.ARG_BAD_DEBT_CODE, debt.getCode());
         }
     }
 
@@ -274,7 +273,7 @@ public class ErpFinBadDebtProcessor {
         try {
             approvalStateMachine.assertCanReject(status);
         } catch (NopException e) {
-            throw illegalTransition(debt, e);
+            throw e.param(ErpFinErrors.ARG_BAD_DEBT_CODE, debt.getCode());
         }
     }
 
@@ -406,24 +405,13 @@ public class ErpFinBadDebtProcessor {
         return flag == null || flag;
     }
 
-    /**
-     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。
-     * 参数从 Bean 异常提取（currentStatus/expectedStatus 单真相源在 Bean），badDebtCode 由本层组装。
-     */
-    protected NopException illegalTransition(ErpFinBadDebt debt, NopException common) {
-        return new NopException(ErpFinErrors.ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION, common)
-                .param(ErpFinErrors.ARG_BAD_DEBT_CODE, debt.getCode())
-                .param(ErpFinErrors.ARG_CURRENT_STATUS, common.getParam(ErpCommonErrors.ARG_CURRENT_STATUS))
-                .param(ErpFinErrors.ARG_EXPECTED_STATUS, common.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
-    }
-
-    /** reverseApprove 迁移守卫：固定来源态矩阵判断委托状态机 Bean（common 码作 cause，领域码 {@code ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION}）。 */
+    /** reverseApprove 迁移守卫：固定来源态矩阵判断委托状态机 Bean（直抛领域码，本处同码补参 badDebtCode）。 */
     protected void assertCanReverseApprove(ErpFinBadDebt debt) {
         String status = currentApprovalStatus(debt);
         try {
             approvalStateMachine.assertCanReverseApprove(status);
         } catch (NopException e) {
-            throw illegalTransition(debt, e);
+            throw e.param(ErpFinErrors.ARG_BAD_DEBT_CODE, debt.getCode());
         }
     }
 

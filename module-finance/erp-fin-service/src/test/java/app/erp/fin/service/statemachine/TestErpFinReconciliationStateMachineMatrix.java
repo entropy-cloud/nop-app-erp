@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -67,15 +67,15 @@ public class TestErpFinReconciliationStateMachineMatrix {
         sm.assertCanPost(ErpFinConstants.RECON_STATUS_DRAFT); // 不抛
         assertEquals(ErpFinConstants.RECON_STATUS_POSTED, sm.postTargetStatus());
 
-        // POSTED / REVERSED 非法（抛 common 码 + action/currentStatus 元数据）
+        // POSTED / REVERSED 非法（直抛领域码 + action/docStatus 元数据）
         for (String s : Arrays.asList(ErpFinConstants.RECON_STATUS_POSTED, ErpFinConstants.RECON_STATUS_REVERSED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanPost(s),
                     "post 对非 DRAFT 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                    "Bean 报告 common 层非法迁移码: status=" + s);
+            assertEquals(ErpFinErrors.ERR_RECONCILIATION_STATUS_INVALID.getErrorCode(), ex.getErrorCode(),
+                    "Bean 直抛领域码: status=" + s);
             assertEquals("post", ex.getParam(ErpFinReconciliationDocumentStateMachine.ARG_ACTION),
                     "拒绝元数据携带动作名: status=" + s);
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+            assertEquals(s, ex.getParam(ErpFinErrors.ARG_DOC_STATUS),
                     "拒绝元数据携带当前态: status=" + s);
         }
     }
@@ -88,15 +88,15 @@ public class TestErpFinReconciliationStateMachineMatrix {
         sm.assertCanReverse(ErpFinConstants.RECON_STATUS_POSTED); // 不抛
         assertEquals(ErpFinConstants.RECON_STATUS_REVERSED, sm.reverseTargetStatus());
 
-        // DRAFT / REVERSED 非法（抛 common 码 + action/currentStatus 元数据）
+        // DRAFT / REVERSED 非法（直抛领域码 + action/docStatus 元数据）
         for (String s : Arrays.asList(ErpFinConstants.RECON_STATUS_DRAFT, ErpFinConstants.RECON_STATUS_REVERSED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanReverse(s),
                     "reverse 对非 POSTED 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                    "Bean 报告 common 层非法迁移码: status=" + s);
+            assertEquals(ErpFinErrors.ERR_RECONCILIATION_STATUS_INVALID.getErrorCode(), ex.getErrorCode(),
+                    "Bean 直抛领域码: status=" + s);
             assertEquals("reverse", ex.getParam(ErpFinReconciliationDocumentStateMachine.ARG_ACTION),
                     "拒绝元数据携带动作名: status=" + s);
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+            assertEquals(s, ex.getParam(ErpFinErrors.ARG_DOC_STATUS),
                     "拒绝元数据携带当前态: status=" + s);
         }
     }

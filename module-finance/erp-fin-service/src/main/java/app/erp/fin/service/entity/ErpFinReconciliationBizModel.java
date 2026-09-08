@@ -17,7 +17,6 @@ import app.erp.fin.service.processor.ErpFinReconciliationReverseProcessor;
 import app.erp.fin.service.processor.ErpFinReconciliationRunAutoReconciliationProcessor;
 import app.erp.fin.service.reconciliation.DualSideConsistencyChecker;
 import app.erp.fin.service.statemachine.ErpFinReconciliationDocumentStateMachine;
-import app.erp.common.service.ErpCommonErrors;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -103,10 +102,9 @@ public class ErpFinReconciliationBizModel extends AbstractErpCrudBizModel<ErpFin
         try {
             stateMachine.assertCanReverse(head.getDocStatus());
         } catch (NopException e) {
-            if (ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode().equals(e.getErrorCode())) {
-                throw statusError(head, e);
-            }
-            throw e;
+            // Bean 直抛领域码 ERR_RECONCILIATION_STATUS_INVALID（plan 2026-09-07-2200-1），
+            // 本处同码补参 reconciliationId。
+            throw e.param(ErpFinErrors.ARG_RECONCILIATION_ID, head.getId());
         }
         List<ErpFinReconciliationLine> lines = loadLines(reconciliationId);
 
@@ -201,20 +199,6 @@ public class ErpFinReconciliationBizModel extends AbstractErpCrudBizModel<ErpFin
                     .param(ErpFinErrors.ARG_ID, id);
         }
         return item;
-    }
-
-    protected NopException statusError(ErpFinReconciliation head) {
-        return statusError(head, null);
-    }
-
-    /**
-     * 领域码 {@code ERR_RECONCILIATION_STATUS_INVALID}（Bean common 码作 cause 保留，契约 §7）。
-     * 参数 reconciliationId/docStatus 由本层组装（唯一真相源在实体），cause 来自状态机 Bean 非法边。
-     */
-    protected NopException statusError(ErpFinReconciliation head, NopException cause) {
-        return new NopException(ErpFinErrors.ERR_RECONCILIATION_STATUS_INVALID, cause)
-                .param(ErpFinErrors.ARG_RECONCILIATION_ID, head.getId())
-                .param(ErpFinErrors.ARG_DOC_STATUS, head.getDocStatus());
     }
 
     private static BigDecimal nz(BigDecimal v) {

@@ -1,6 +1,7 @@
 package app.erp.fin.service.processor;
 
 import app.erp.fin.dao.entity.ErpFinNotesReceivable;
+import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.statemachine.ErpFinNotesReceivableStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -27,7 +28,9 @@ public class ErpFinNotesReceivableDishonorProcessor {
         try {
             stateMachine.assertCanDishonor(note.getStatus());
         } catch (NopException e) {
-            throw facade.illegalTransition(note, e);
+            // Bean 直抛领域码 ERR_NOTES_RECEIVABLE_ILLEGAL_STATUS_TRANSITION（plan 2026-09-07-2200-1），
+            // 本处同码补参 notesCode。
+            throw e.param(ErpFinErrors.ARG_NOTES_CODE, note.getCode());
         }
         // 拒付转应收（treasury.md §规则3）：仅标记终态，转挂应收账款科目；后续催收/坏账属信用管理面 Non-Goal。
         note.setStatus(stateMachine.dishonorTargetStatus());

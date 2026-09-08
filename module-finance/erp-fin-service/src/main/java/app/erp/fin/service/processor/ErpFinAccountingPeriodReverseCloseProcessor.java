@@ -3,7 +3,6 @@ package app.erp.fin.service.processor;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus;
-import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.statemachine.ErpFinAccountingPeriodStateMachine;
 import io.nop.api.core.exceptions.NopException;
@@ -45,7 +44,8 @@ public class ErpFinAccountingPeriodReverseCloseProcessor {
         try {
             stateMachine.assertCanReverseClose(period.getStatus());
         } catch (NopException e) {
-            throw facade.mapIllegalTransition(e, period, ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL);
+            // Bean 直抛领域码 ERR_PERIOD_ILLEGAL_TRANSITION（plan 2026-09-07-2200-1），本处同码补参 periodCode。
+            throw e.param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode());
         }
 
         if (facade.isReverseCloseApprovalRequired()) {

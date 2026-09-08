@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -44,8 +44,8 @@ import java.util.List;
  * 其唯一出边为 {@code reverseClose}（管理员反结账恢复路径，owner doc §对象二 §3/§5）。reverseClose 是显式
  * 恢复边，非前向推进——本 Bean 如实编码该边（{@link #transitions()} 含 CLOSED_FINAL→OPEN）。
  *
- * <p>非法来源态抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpFinErrors#ERR_PERIOD_ILLEGAL_TRANSITION}（参数 {@code currentPeriodStatus}/
+ * {@code expectedPeriodStatus}/{@code action}；plan 2026-09-07-2200-1）；实体元数据（periodCode）经调用点同码补参。
  *
  * <p><b>generateNextYearPeriods 生成路径不接线 Bean</b>（契约 §9.2 选项 c 初始态/生成写入，不调 {@code assertCan*}）：
  * {@code ErpFinAccountingPeriodGenerateNextYearPeriodsProcessor} 直接写 1 月 OPEN / 2-12 月 NEVER_OPENED
@@ -61,9 +61,8 @@ public class ErpFinAccountingPeriodStateMachine {
     /**
      * openPeriod 入口守卫：来源态为 {@code NEVER_OPENED} 合法。
      *
-     * <p>对非法来源态报告 common 层非法边（携带 {@code action=openPeriod}/{@code fromStatus}）；接线方
-     * {@code ErpFinAccountingPeriodOpenPeriodProcessor} 映射为领域码 {@code ERR_PERIOD_ILLEGAL_TRANSITION}
-     * （common 码作 cause 保留）。
+     * <p>对非法来源态直抛领域码 {@code ERR_PERIOD_ILLEGAL_TRANSITION}（携带 {@code action=openPeriod}）；
+     * 接线方 {@code ErpFinAccountingPeriodOpenPeriodProcessor} 同码补参 periodCode。
      */
     public void assertCanOpenPeriod(String status) {
         if (!ErpFinConstants.PERIOD_STATUS_NEVER_OPENED.equals(status)) {
@@ -176,9 +175,9 @@ public class ErpFinAccountingPeriodStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpFinErrors.ERR_PERIOD_ILLEGAL_TRANSITION)
+                .param(ErpFinErrors.ARG_CURRENT_PERIOD_STATUS, currentStatus)
+                .param(ErpFinErrors.ARG_EXPECTED_PERIOD_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

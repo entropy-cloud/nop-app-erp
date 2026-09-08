@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -72,11 +72,11 @@ public class TestErpFinBadDebtStateMachineMatrix {
                 ErpFinConstants.APPROVE_STATUS_APPROVED, ErpFinConstants.APPROVE_STATUS_REJECTED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanSubmit(illegal),
                     "submit 对非法来源态应抛异常: " + illegal);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                    "Bean 报告 common 层非法迁移码");
+            assertEquals(ErpFinErrors.ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                    "Bean 直抛领域码");
             assertEquals("submit", ex.getParam(ErpFinBadDebtApprovalStateMachine.ARG_ACTION),
                     "拒绝元数据携带动作名");
-            assertEquals(illegal, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+            assertEquals(illegal, ex.getParam(ErpFinErrors.ARG_CURRENT_STATUS),
                     "拒绝元数据携带当前态");
         }
     }
@@ -95,7 +95,7 @@ public class TestErpFinBadDebtStateMachineMatrix {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanApprove(illegal),
                     "approve 对非法来源态应抛异常: " + illegal);
             assertEquals("approve", ex.getParam(ErpFinBadDebtApprovalStateMachine.ARG_ACTION));
-            assertEquals(illegal, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(illegal, ex.getParam(ErpFinErrors.ARG_CURRENT_STATUS));
         }
     }
 
@@ -111,7 +111,7 @@ public class TestErpFinBadDebtStateMachineMatrix {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanReject(illegal),
                     "reject 对非法来源态应抛异常: " + illegal);
             assertEquals("reject", ex.getParam(ErpFinBadDebtApprovalStateMachine.ARG_ACTION));
-            assertEquals(illegal, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(illegal, ex.getParam(ErpFinErrors.ARG_CURRENT_STATUS));
         }
     }
 
@@ -128,7 +128,7 @@ public class TestErpFinBadDebtStateMachineMatrix {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanReverseApprove(illegal),
                     "reverseApprove 对非法来源态应抛异常: " + illegal);
             assertEquals("reverseApprove", ex.getParam(ErpFinBadDebtApprovalStateMachine.ARG_ACTION));
-            assertEquals(illegal, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(illegal, ex.getParam(ErpFinErrors.ARG_CURRENT_STATUS));
         }
     }
 
@@ -199,7 +199,7 @@ public class TestErpFinBadDebtStateMachineMatrix {
         // reverseApprove(null=UNSUBMITTED) 非法
         NopException ex = assertThrows(NopException.class, () -> sm.assertCanReverseApprove(null),
                 "null（=UNSUBMITTED）对 reverseApprove 应非法");
-        assertEquals(ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, ex.getParam(ErpFinErrors.ARG_CURRENT_STATUS),
                 "拒绝元数据携带归一化后的当前态");
     }
 

@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -213,13 +213,13 @@ public class TestErpFinAccountingPeriodStateMachineMatrix {
 
     private static void assertCommonIllegalMetadata(NopException ex, String action, String currentStatus,
                                                     String expectedStatus) {
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码: status=" + currentStatus);
+        assertEquals(ErpFinErrors.ERR_PERIOD_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域码: status=" + currentStatus);
         assertEquals(action, ex.getParam(ErpFinAccountingPeriodStateMachine.ARG_ACTION),
                 "拒绝元数据携带动作名: status=" + currentStatus);
-        assertEquals(currentStatus, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(currentStatus, ex.getParam(ErpFinErrors.ARG_CURRENT_PERIOD_STATUS),
                 "拒绝元数据携带当前态: status=" + currentStatus);
-        assertEquals(expectedStatus, ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
+        assertEquals(expectedStatus, ex.getParam(ErpFinErrors.ARG_EXPECTED_PERIOD_STATUS),
                 "拒绝元数据携带期望态: status=" + currentStatus);
     }
 

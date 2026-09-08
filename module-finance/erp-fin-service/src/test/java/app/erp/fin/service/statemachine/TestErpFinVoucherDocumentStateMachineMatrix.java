@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -64,15 +64,15 @@ public class TestErpFinVoucherDocumentStateMachineMatrix {
         // DRAFT 合法（唯一迁移边来源态）
         sm.assertCanPost(ErpFinConstants.VOUCHER_STATUS_DRAFT); // 不抛
 
-        // POSTED / CANCELLED 非法（抛 common 码 + action/fromStatus 元数据）
+        // POSTED / CANCELLED 非法（直抛领域码 + action/currentStatus 元数据）
         for (String s : Arrays.asList(ErpFinConstants.VOUCHER_STATUS_POSTED, ErpFinConstants.VOUCHER_STATUS_CANCELLED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanPost(s),
                     "postVoucher 对非 DRAFT 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                    "Bean 报告 common 层非法迁移码: status=" + s);
+            assertEquals(ErpFinErrors.ERR_FIN_VOUCHER_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                    "Bean 直抛领域码: status=" + s);
             assertEquals("postVoucher", ex.getParam(ErpFinVoucherDocumentStateMachine.ARG_ACTION),
                     "拒绝元数据携带动作名: status=" + s);
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+            assertEquals(s, ex.getParam(ErpFinErrors.ARG_CURRENT_STATUS),
                     "拒绝元数据携带当前态: status=" + s);
         }
     }

@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -30,9 +30,8 @@ import java.util.List;
  * <p><b>唯一 2 迁移边</b>：{@code post} {@code DRAFT→POSTED}、{@code reverse} {@code POSTED→REVERSED}。
  * 3 个 dict 值全部活跃（无死状态）：DRAFT=initial、POSTED=中间态（有出边）、REVERSED=终态。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7，
- * {@code ERR_RECONCILIATION_STATUS_INVALID}，common 码作 cause 保留）。
+ * <p>非法边直抛领域码 {@link ErpFinErrors#ERR_RECONCILIATION_STATUS_INVALID}（参数 {@code docStatus}/
+ * {@code action}；plan 2026-09-07-2200-1）；实体元数据（reconciliationId）经调用点同码补参。
  *
  * <p><b>生成路径不接线 Bean</b>（契约 §9.2 选项 c 初始态/生成写入，不调 {@code assertCan*}）：
  * {@code ErpFinReconciliationCreateProcessor} 创建时写 DRAFT（初始态直接落库）；auto-reconciliation
@@ -48,9 +47,8 @@ public class ErpFinReconciliationDocumentStateMachine {
     /**
      * post 入口守卫：来源态为 {@code DRAFT} 合法（唯一迁移边的来源态）。
      *
-     * <p>对非法来源态（POSTED/REVERSED）报告 common 层非法边（携带 {@code action=post}/{@code fromStatus}）；
-     * 接线方 {@code ErpFinReconciliationPostProcessor} 映射为领域码 {@code ERR_RECONCILIATION_STATUS_INVALID}
-     * （common 码作 cause 保留）。
+     * <p>对非法来源态（POSTED/REVERSED）直抛领域码 {@code ERR_RECONCILIATION_STATUS_INVALID}（携带
+     * {@code action=post}）；接线方 {@code ErpFinReconciliationPostProcessor} 同码补参 reconciliationId。
      */
     public void assertCanPost(String docStatus) {
         if (!ErpFinConstants.RECON_STATUS_DRAFT.equals(docStatus)) {
@@ -61,9 +59,9 @@ public class ErpFinReconciliationDocumentStateMachine {
     /**
      * reverse 入口守卫：来源态为 {@code POSTED} 合法（红冲侧唯一迁移边的来源态）。
      *
-     * <p>对非法来源态（DRAFT/REVERSED）报告 common 层非法边；接线方
+     * <p>对非法来源态（DRAFT/REVERSED）直抛领域码 {@code ERR_RECONCILIATION_STATUS_INVALID}；接线方
      * {@code ErpFinReconciliationReverseProcessor}（+ BizModel {@code previewReverse} 前置守卫一致性）
-     * 映射为领域码 {@code ERR_RECONCILIATION_STATUS_INVALID}（common 码作 cause 保留）。
+     * 同码补参 reconciliationId。
      */
     public void assertCanReverse(String docStatus) {
         if (!ErpFinConstants.RECON_STATUS_POSTED.equals(docStatus)) {
@@ -112,9 +110,9 @@ public class ErpFinReconciliationDocumentStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpFinErrors.ERR_RECONCILIATION_STATUS_INVALID)
+                .param(ErpFinErrors.ARG_DOC_STATUS, currentStatus)
+                .param(ErpFinErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

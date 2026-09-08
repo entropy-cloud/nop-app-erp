@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.ArrayList;
@@ -43,8 +43,8 @@ import java.util.List;
  * 非源 docStatus 转换。因此 <b>不纳入 {@code assertCan*} 矩阵</b>，仅在 {@link #transitions()} 中作
  * metadata-only 记录（{@link TransitionDefinition#isSpawn()} = true）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 facade（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpFinErrors#ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION}（参数 {@code currentDocStatus}/
+ * {@code expectedDocStatus}/{@code action}；plan 2026-09-07-2200-1）；实体元数据（scenarioCode）经调用点同码补参。
  *
  * <p><b>Bean 守卫执行范围</b>：仅 facade {@code validateTransition} 路由的 4 动作（submit/approve/reject/cancel）
  * 经 Bean {@code assertCanXxx} 守卫；carryForward/rollForward <b>绕过 facade validateTransition</b>，Bean 不接管其守卫
@@ -63,9 +63,8 @@ public class ErpFinBudgetScenarioDocumentStateMachine {
     /**
      * submit 目标态守卫：来源态为 {@code DRAFT} 或 {@code REJECTED}（重提）合法。
      *
-     * <p>对非法来源态报告 common 层非法边（携带 {@code action=submit}/{@code fromStatus}）；接线方
-     * {@code ErpFinBudgetScenarioProcessor.validateTransition} 映射为领域码
-     * {@code ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION}（common 码作 cause 保留）。
+     * <p>对非法来源态直抛领域码 {@code ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION}（携带 {@code action=submit}）；
+     * 接线方 {@code ErpFinBudgetScenarioProcessor.validateTransition} 同码补参 scenarioCode。
      */
     public void assertCanSubmit(String docStatus) {
         if (!ErpFinConstants.BUDGET_STATUS_DRAFT.equals(docStatus)
@@ -168,9 +167,9 @@ public class ErpFinBudgetScenarioDocumentStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION)
+                .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, currentStatus)
+                .param(ErpFinErrors.ARG_EXPECTED_DOC_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

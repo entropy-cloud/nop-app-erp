@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -33,8 +33,8 @@ import java.util.List;
  * docStatus 仅 DRAFT→CANCELLED）。残余值<b>不纳入</b> {@link #initialStatuses()}/{@link #terminalStatuses()}/
  * {@link #transitions()} 任一集合，dict 项保留不删（dict 治理归 successor）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpFinErrors#ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION}（参数 {@code currentDocStatus}/
+ * {@code expectedDocStatus}/{@code action}；plan 2026-09-07-2200-1）；实体元数据（claimCode）经调用点同码补参。
  */
 public class ErpFinExpenseClaimDocumentStateMachine {
 
@@ -46,9 +46,8 @@ public class ErpFinExpenseClaimDocumentStateMachine {
     /**
      * cancel 入口守卫：来源态为<b>任意非 CANCELLED</b>合法（{@code !isCancelled(from)}，loose 语义，expected「非已作废」）。
      *
-     * <p>非法来源态（CANCELLED）报告 common 层非法边（携带 {@code action=cancel}/{@code fromStatus}）。
-     * 接线方 {@code ErpFinExpenseClaimProcessor.validateTransitionForCancel} 映射为领域码
-     * {@code ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION}（common 码作 cause 保留）。
+     * <p>非法来源态（CANCELLED）直抛领域码 {@code ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION}（携带
+     * {@code action=cancel}）。接线方 {@code ErpFinExpenseClaimProcessor.validateTransitionForCancel} 同码补参 claimCode。
      */
     public void assertCanCancel(String docStatus) {
         if (isCancelled(docStatus)) {
@@ -101,9 +100,9 @@ public class ErpFinExpenseClaimDocumentStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpFinErrors.ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION)
+                .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, currentStatus)
+                .param(ErpFinErrors.ARG_EXPECTED_DOC_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

@@ -1,7 +1,7 @@
 package app.erp.fin.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -73,14 +73,14 @@ public class TestErpFinExpenseClaimDocumentStateMachineMatrix {
         }
         assertEquals(ErpFinConstants.DOC_STATUS_CANCELLED, sm.cancelTargetStatus());
 
-        // CANCELLED 非法（抛 common 码 + action/fromStatus 元数据）
+        // CANCELLED 非法（直抛领域码 + action/currentDocStatus 元数据）
         NopException ex = assertThrows(NopException.class, () -> sm.assertCanCancel(ErpFinConstants.DOC_STATUS_CANCELLED),
                 "cancel 对 CANCELLED 应非法");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Bean 报告 common 层非法迁移码");
+        assertEquals(ErpFinErrors.ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                "Bean 直抛领域码");
         assertEquals("cancel", ex.getParam(ErpFinExpenseClaimDocumentStateMachine.ARG_ACTION),
                 "拒绝元数据携带动作名");
-        assertEquals(ErpFinConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(ErpFinConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpFinErrors.ARG_CURRENT_DOC_STATUS),
                 "拒绝元数据携带当前态");
     }
 

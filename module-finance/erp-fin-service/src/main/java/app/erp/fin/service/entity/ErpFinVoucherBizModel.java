@@ -95,10 +95,8 @@ public class ErpFinVoucherBizModel extends AbstractErpCrudBizModel<ErpFinVoucher
         try {
             documentStateMachine.assertCanPost(voucher.getDocStatus());
         } catch (NopException e) {
-            // Bean 抛 common 层非法迁移码（作 cause），映射为领域码保持对外契约（契约 §7）。
-            throw new NopException(ErpFinErrors.ERR_FIN_VOUCHER_ILLEGAL_TRANSITION, e)
-                    .param(ErpFinErrors.ARG_VOUCHER_ID, voucherId)
-                    .param(ErpFinErrors.ARG_CURRENT_STATUS, voucher.getDocStatus());
+            // Bean 直抛领域码 ERR_FIN_VOUCHER_ILLEGAL_TRANSITION（plan 2026-09-07-2200-1），本处同码补参 voucherId。
+            throw e.param(ErpFinErrors.ARG_VOUCHER_ID, voucherId);
         }
         // F1.2→F2.1（P1-CK-fin-002）：借贷平衡校验——DRAFT→POSTED 迁移边守卫（state-machine.md L40）
         assertBalancedFromLines(voucher);
