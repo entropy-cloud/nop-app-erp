@@ -60,6 +60,7 @@
 | `ck-aps.md` | C8.1 | aps | 0 | 2 | 6 | 3 | done |
 | `ck-notify.md` | C8.1 | notify | 0 | 2 | 4 | 2 | done |
 | `ck-common-app.md` | C8.2 | common-service/test + app-erp-all | 0 | 0 | 1 | 9 | done |
+| `ck-finance-posting-r3.md`（r3 轮，目录 `2026-09-06-1645-ai-check-r3/`） | M1.1 | finance（过账与凭证 fin-1） | 0 | 0 | 0 | 0 | done（0 新立；复用 5 / 归并 15；五维矩阵 B=finding 归并态、F/S/T/I=pass） |
 
 ## Finding 追踪
 
@@ -599,7 +600,9 @@
 | P3-CK-common-007 | P3 | D10 | ck-common-app.md | StringMaskFormat 短值边界近全泄漏——len=6 证件号揭示 5/6 字符、len=8 手机号揭示 7/8 字符 | 新增 | open |  |
 | P3-CK-common-008 | P3 | D3 | ck-common-app.md | 9 个文件残留「共享骨架 reverseApprove→SUBMITTED 为已确认 live 缺陷」陈旧 javadoc——骨架已于 2026-08-14 修复为 REJECTED，注释反向误导修复阶段 | 新增 | open |  |
 | P3-CK-common-009 | P3 | D10 | ck-common-app.md | UniqueConstraintHelper 把 ERR_SQL_DATA_INTEGRITY_VIOLATION 一并判为唯一约束冲突——非 UK 完整性违例可被误译为「重复记录」友好错误 | 新增 | open |  |
-| P3-CK-common-010 | P3 | D1 | ck-common-app.md | ErpCommonErrors 错误码命名空间 `nop.err.erp.common.*` 偏离项目 `erp.err.<short>` 约定 | 新增 | open |  |
+ | P3-CK-common-010 | P3 | D1 | ck-common-app.md | ErpCommonErrors 错误码命名空间 `nop.err.erp.common.*` 偏离项目 `erp.err.<short>` 约定 | 新增 | open |  |
+
+> **r3 轮复核注记（2026-09-08，M1.1 fin-1，HEAD `8825a10e`，报告 `2026-09-06-1645-ai-check-r3/ck-finance-posting-r3.md`）**：fin 域 19 条逐一复核——P1-CK-fin-001..005 复用（fixed，HEAD 复核有效：F2.1/F1.1/F1.4 修复在位）；P2-CK-fin-006..015、P3-CK-fin-016..019 归并（open，现场逐一复核仍在，证据落 r3 报告 §2.2，原 ID 状态不动）；P3-CK-fin2-012 追加 fin-1 新站点（`ErpFinPostingExceptionRetryProcessor.currentUserId` 宽 catch，同族）；**新立 0 条**（无 `-r3` 后缀新 ID），历史 ID 零覆写。
 
 ## 阶段状态
 
