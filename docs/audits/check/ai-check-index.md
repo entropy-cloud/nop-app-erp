@@ -61,6 +61,7 @@
 | `ck-notify.md` | C8.1 | notify | 0 | 2 | 4 | 2 | done |
 | `ck-common-app.md` | C8.2 | common-service/test + app-erp-all | 0 | 0 | 1 | 9 | done |
 | `ck-finance-posting-r3.md`（r3 轮，目录 `2026-09-06-1645-ai-check-r3/`） | M1.1 | finance（过账与凭证 fin-1） | 0 | 0 | 0 | 0 | done（0 新立；复用 5 / 归并 15；五维矩阵 B=finding 归并态、F/S/T/I=pass） |
+| `ck-mfg-workorder-r3.md`（r3 轮，目录 `2026-09-06-1645-ai-check-r3/`） | M1.5 | manufacturing（工单与报工 mfg-1） | 1 | 1 | 0 | 0 | done（新立 2：P1-CK-mfg-022-r3 + P3-CK-mfg-023-r3；复用 5 / 归并 16；五维矩阵 B=finding、F=finding(minor)、S/T/I=pass） |
 
 ## Finding 追踪
 
@@ -241,6 +242,8 @@
 | P3-CK-mfg-019 | P3 | D8，复用注记 RC-R1.49 | ck-mfg-workorder.md | AUTO_UPGRADE 读侧 re-resolve 默认 BOM 忽略工单显式 bomId——显式指定非默认 BOM 的工单需求口径被默认 BOM 顶替 | 新增 | open |  |
 | P3-CK-mfg-020 | P3 | D5 | ck-mfg-workorder.md | applyLaborCostToWorkOrder 无工单状态守卫——终态/取消工单仍可被累计人工成本并触发单位成本重算 | 新增 | open |  |
 | P3-CK-mfg-021 | P3 | D6，同型 P2-CK-inv-010 族 | ck-mfg-workorder.md | mfg 两 PostingEvent 汇率硬编码 ONE + 领料贷方科目 1401 硬编码不可配置（与 WIP 科目可配置不对称） | 新增 | open |  |
+| P1-CK-mfg-022-r3 | P1 | D3/D8，归并 P2-CK-mfg-010 同型控制点升级 | ck-mfg-workorder-r3.md | reverseApprove 全链无 docStatus 守卫 × P1-CK-mfg-002 修复（doReverseApprove 无条件回写 docStatus=DRAFT）叠加——IN_PROCESS/COMPLETED/CLOSED 工单（approveStatus 恒 APPROVED）调 reverseApprove 即被复活为 DRAFT 可编辑可重提态，原「终态复活被 assertCanSubmit 挡住」缓解失效；历史 completedQuantity/成本/库存移动与 DRAFT 态脱钩 | 归并 P2-CK-mfg-010（open）追加新证据 + 后果实质升级按 §3.1 新立 -r3 ID，原 ID 状态不动 | open | 修复归 M2.x：validateTransitionForReverseApprove 增加 docStatus 白名单（NOT_STARTED，或至少排除终态+IN_PROCESS/STOPPED/STOCK_*），或 doReverseApprove 回写 DRAFT 前校验 docStatus∈{SUBMITTED,NOT_STARTED}；补终态/在制组合负路径测试 |
+| P3-CK-mfg-023-r3 | P3 | DIM-F | ck-mfg-workorder-r3.md | dashboard/main.page.yaml（回退遮蔽孪生文件）CRP 负荷图日期参数错配 `filterForm?.dateFrom/dateTo`（表单实际字段 startDate/endDate，恒 null）——运行时零影响（flux.yaml L58 优先且已正确绑定），遮蔽文件潜伏缺陷 + 孪生手写双文件漂移 | 新增（r1 明示未审 web 面；r2 无同型） | open | 修复归 M2.x 前端批：对齐参数名，或在 view-and-page-strategy 登记孪生文件「flux.yaml 唯一权威、page.yaml 冻结」维护裁决；同构面裁决归 U21/M1.16 |
 | P1-CK-mfg2-001 | P1 | D6 | ck-mfg-bom-mrp.md | SAFETY_STOCK 需求可用量双扣——聚合器已按「安全库存−可用量」求缺口作为需求量，引擎再减一次可用量，安全库存补货系统性低估（可用量 ≥ 安全库存一半时净需求恒 0，永不补货） | 主 agent 已实证（SimulationMrpEngine:285-289 净缺口 + MrpEngine:116-118 二次扣减） | fixed | F2.6：MrpEngine/SimulationMrpEngine top 需求拆分 SAFETY_STOCK（net 行跳过 available 扣减且不消耗）；TestErpMfgMrpEngine#testSafetyStockNetNotDoubleDeducted（safety=100/avail=99 → net=1 修复前 0；safety=100/avail=10 → net=90 修复前 80）红→绿 |
 | P1-CK-mfg2-002 | P1 | D6 | ck-mfg-bom-mrp.md | MRP 无低阶码净额归集——同一物料多次出现（多个父件共享子件 / 既是独立需求又是子件）时每次出现独立扣减全部可用量，净需求系统性低估 | 新增 | fixed | F2.6：两引擎 processMaterial run 内 per-material 已消耗可用量累计（availableConsumed map，跨分支可用量仅扣一次）；TestErpMfgMrpEngine#testSharedComponentAvailableConsumedOnce（A+B 共享 C、avail(C)=50 → ΣC planned=150 修复前 100）红→绿；mrp.md L92 低层码声明同步修正 |
 | P1-CK-mfg2-003 | P1 | D6 | ck-mfg-bom-mrp.md | SimulationMrpEngine.nextVersionNo 以 ASC 取最小 versionNo+1——同场景第 3 次仿真运行 versionNo 与既有 v2 冲突（UK (scenarioId,versionNo) 原始约束违例），设计声明的「粗调/细调/最终」多版本迭代循环第 3 次起必炸 | 新增 | fixed | F2.6：nextVersionNo 改 DESC 取最大 versionNo；TestErpMfgMrpSimulation#testThirdVersionRunSucceeds（v1→v2→v3 连续三次，第 3 次 versionNo=3）红→绿 |

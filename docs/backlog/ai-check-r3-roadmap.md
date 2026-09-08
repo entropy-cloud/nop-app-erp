@@ -83,7 +83,7 @@
 | M1.2 **finance 切片 2/4 — AR/AP 核销与坏账** | `todo` | `ar-ap-reconciliation.md` + `bad-debt.md` | M1.1 | 同上 |
 | M1.3 **finance 切片 3/4 — 预算与成本** | `todo` | `budget.md` + `costing-methods.md` | M1.1 | 同上 |
 | M1.4 **finance 切片 4/4 — 期间结账与银行对账 + 跨域凭证链路** | `todo` | `period-close.md` + `bank-reconciliation.md` | M1.1 | 同上 |
-| M1.5 **manufacturing 切片 1/3 — 工单与报工** | `todo` | `docs/design/manufacturing/state-machine.md` | M0.6 + MI.9 | 同上 |
+| M1.5 **manufacturing 切片 1/3 — 工单与报工** | `todo`（执行完成待收官翻转：plan `2026-09-08-1042-2` 五维全跑零跳维，`ck-mfg-workorder-r3.md` 覆盖矩阵 5/5（B=finding / F=finding(minor) / S=pass / T=pass / I=pass）；三态裁决 复用 5 / 归并 16 / 新立 2（P1-CK-mfg-022-r3 + P3-CK-mfg-023-r3），历史 ID 零覆写；零生产代码改动核证通过；mfg service 回归两次 308/0/0/0 全绿；依本 roadmap 规则「结束审计通过 ready→done」+ plan Non-Goal「不做 roadmap 状态翻转」+ M1.1 同批先例，done 翻转归 owner/engine 依独立结束审计处置） | `docs/design/manufacturing/state-machine.md` | M0.6 + MI.9 | 同上 |
 | M1.6 **manufacturing 切片 2/3 — BOM/MRP/CRP** | `todo` | `mrp.md` + `crp.md` | M1.5 | 同上 |
 | M1.7 **manufacturing 切片 3/3 — 委外/批次追溯/差异** | `todo` | `subcontracting.md` + `batch-genealogy.md` + `variance-analysis.md` | M1.5 | 同上 |
 | M1.8 **assets 切片 1/2 — 资产生命周期** | `todo` | `docs/design/assets/` | M0.6 + MI.9 | 同上 |
