@@ -72,4 +72,5 @@ Java 编排 Bean（app-service.beans.xml 注册）:
 - 机制注记原文：`module-hr/erp-hr-service/.../ErpHrSalary.xbiz`（:12-17 机制注记；2026-09-07 已勘误）
 - 案例计划：M4.64 手写 xbiz delta 族（plan `2026-08-14-0456-2`）+ RC-R1.89（`docs/plans/2026-08-20-0518-3-rc-mr1-r1-89-hr-payroll-posting-wiring.md` D2 裁决 + 否决替代记录）
 - 平台：nop-entropy plan 2258（XScript try/catch/finally 支持，master `c6d8f66a12`）；平台文档 `../nop-entropy/docs-for-ai/02-core-guides/xlang-and-xpl-basics.md`「XScript 的 try/catch/finally」
+- 全局直抛迁移：`docs/plans/2026-09-07-2200-1-statemachine-domain-error-code-direct-throw.md`（2026-09-08 落地——StateMachine 直抛领域码后，历史上因本课「转码断链」被迫落在 Java Guard/Processor 的 catch-and-remap 转码层全仓退役为同码补参，见 lesson 19）
 - 划界：与 lesson 06（codegen 产物编辑必被覆盖）同属平台机制课但对象不同；与 lesson 09（吞异常悬挂）衔接——无论 XScript 还是 Java，失败都要显式隔离 + 告警，不得复制吞异常反模式

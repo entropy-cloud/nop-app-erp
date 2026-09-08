@@ -26,8 +26,7 @@ import java.util.List;
  *
  * <p>非法边直抛领域码 {@link ErpAstErrors#ERR_AST_MOVEMENT_ILLEGAL_STATUS_TRANSITION}（参数
  * {@code action}/{@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1 裸奔通道修正：
- * 原 common 码 {@code nop.err.erp.common.illegal-status-transition} 直达调用方，改为领域码一步到位，
- * 无转码层）。
+ * 原 common 层非法迁移码直达调用方，改为领域码一步到位，无转码层）。
  *
  * <p>迁移矩阵（6 条边，对应 5 命名动作——submitForApproval 双源）：
  * submitForApproval(UNSUBMITTED→SUBMITTED)、submitForApproval(REJECTED→SUBMITTED)、

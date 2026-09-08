@@ -22,6 +22,13 @@ public interface ErpCommonErrors {
             ARG_BIZ_OBJ_NAME, ARG_BIZ_OBJ_ID
     );
 
+    /**
+     * @deprecated "先抛通用码再外层转码"为被迫转码反模式（lesson 19：全仓核实该码无与实体无关的通用消费方，
+     * 唯一消费方是转码层自己；未建转码层的实体则 common 码裸奔）。全仓 StateMachine/Processor 自
+     * plan {@code 2026-09-07-2200-1} 起直抛领域错误码，本码零生产引用；定义保留防外部断裂，
+     * 新代码禁用——领域组件应直抛 {@code erp.err.<domain>.illegal-status-transition} 或实体专属码。
+     */
+    @Deprecated
     ErrorCode ERR_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
             "nop.err.erp.common.illegal-status-transition",
             "非法状态转换：当前={currentStatus}，期望={expectedStatus}",

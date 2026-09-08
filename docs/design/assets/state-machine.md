@@ -216,7 +216,7 @@
 | 异常场景 | 处理 |
 |----------|------|
 | CANCELLED 单据执行审批动作 | `isCancelled` 防御守卫阻断（抛 `nop.err.wf.approve.doc-cancelled`） |
-| 非来源态执行审批动作 | Bean `assertCan<Action>` 报告 common 层非法迁移码（`nop.err.erp.common.illegal-status-transition`，契约 §7） |
+| 非来源态执行审批动作 | Bean `assertCan<Action>` 直抛领域码 `erp.err.ast.movement.illegal-status-transition`（action/currentStatus/expectedStatus；plan 2026-09-07-2200-1 直抛契约，原 common 码裸奔通道修正） |
 | 资产移动单无 posted 副作用 | 不过账、无凭证需 reverse；reverseApprove 仅清空 approvedBy/At + 置 REJECTED |
 
 ### 5. 可达性
@@ -241,7 +241,7 @@ Movement 审批状态逻辑原 100% 内联在 `ErpAstMovement.xbiz` 的 `<source
 - docStatus 防御守卫 → `documentStateMachine.isCancelled(entity.docStatus)`（boolean，xbiz 保留领域码 `nop.err.wf.approve.doc-cancelled` 抛出）。
 - **保留**：`<auth permissions>` 声明、approvedBy/approvedAt 置位与置空、`<x:extends>` 继承结构。
 
-> **错误码迁移说明（契约 §7）**：approveStatus 非法边由 Bean 抛 common 层码（`nop.err.erp.common.illegal-status-transition`，携带 action/currentStatus 元数据）；Movement 无 Processor 层做领域码映射（XScript 现已支持 try-catch（plan 2258），此处下沉 Bean 映射是架构偏好），故 common 码直接传播。doc-cancelled 守卫经 `isCancelled()` boolean helper 委托，xbiz 保留领域码 `nop.err.wf.approve.doc-cancelled`（错误码对外不变）。
+> **错误码契约（2026-09-08 修订，plan 2026-09-07-2200-1）**：approveStatus 非法边由 Bean **直抛领域码** `erp.err.ast.movement.illegal-status-transition`（携带 action/currentStatus/expectedStatus；原 common 码 `nop.err.erp.common.illegal-status-transition` 裸奔通道修正，全仓该 common 码已 `@Deprecated`）。doc-cancelled 守卫经 `isCancelled()` boolean helper 委托，xbiz 保留领域码 `nop.err.wf.approve.doc-cancelled`（错误码对外不变）。
 
 ## 适用对象三：资产价值调整文档双轴（Disposal / Capitalization / ValueAdjustment）
 
@@ -252,7 +252,7 @@ Movement 审批状态逻辑原 100% 内联在 `ErpAstMovement.xbiz` 的 `<source
 > - `ErpAstAssetCapitalizationApprovalStateMachine`（M4.47）+ `ErpAstAssetCapitalizationDocumentStateMachine`（M4.46）
 > - `ErpAstValueAdjustmentApprovalStateMachine`（M4.43）+ `ErpAstValueAdjustmentDocumentStateMachine`（M4.42）
 >
-> 接线范式 = 1950-1 采购 facade 先例（assets 版）：facade `validateTransitionForXxx` 改调 Bean `assertCanXxx`（try/catch common 码作 cause → 领域码 `ERR_*_ILLEGAL_{STATUS,DOC}_TRANSITION`，契约 §7）；`executeApprove`/`executeReverseApprove` 目标态改调 Bean `*TargetStatus()`；per-mutation Processor 经 facade 透传自动生效。**动态业务守卫与副作用保留原位**（Asset 来源态校验、gain/loss 计算、schedule cancel/restore、过账、posted 置位、折旧计划生成）。Asset.status side-effect（→IN_SERVICE/SCRAPPED/SOLD/DRAFT）由计划 1 M4.40 `ErpAstAssetStateMachine` 守卫——两计划在 `asset.setStatus(...)` 行交汇，接线互不冲突。
+> 接线范式 = 1950-1 采购 facade 先例（assets 版，2026-09-08 随 plan 2026-09-07-2200-1 修订为直抛契约）：facade `validateTransitionForXxx` 调 Bean `assertCanXxx`（Bean **直抛领域码** `ERR_*_ILLEGAL_{STATUS,DOC}_TRANSITION`，facade 仅同码补参补实体编号，码值/参数对外不变）；`executeApprove`/`executeReverseApprove` 目标态改调 Bean `*TargetStatus()`；per-mutation Processor 经 facade 透传自动生效。**动态业务守卫与副作用保留原位**（Asset 来源态校验、gain/loss 计算、schedule cancel/restore、过账、posted 置位、折旧计划生成）。Asset.status side-effect（→IN_SERVICE/SCRAPPED/SOLD/DRAFT）由计划 1 M4.40 `ErpAstAssetStateMachine` 守卫——两计划在 `asset.setStatus(...)` 行交汇，接线互不冲突。
 >
 > **注（层 2 四方对照漂移登记，plan 1931-2 结束审计 MINOR M1）**：「资本化库存转固 stock move」（owner doc §7 外部依赖行 `IErpInvStockMoveBiz`）在 `module-assets` 全仓代码中**零引用**（grep 实证，本计划未删任何代码）——为**继承性 owner-doc 漂移**（资本化 Processor 实际无库存出库调用），本计划不传播此声明。Successor：库存转固业务上线时补实现 + 补 owner doc 对齐。
 
@@ -301,7 +301,7 @@ dict 3 值（DRAFT/ACTIVE/CANCELLED）。三实体 docStatus writer 分化如下
 
 | 异常场景 | 处理 |
 |----------|------|
-| 非来源态执行审批动作 | Bean `assertCanXxx` 报告 common 层非法迁移码（契约 §7），facade 映射领域码 `ERR_*_ILLEGAL_STATUS_TRANSITION`（common 作 cause；错误码值/参数对外不变） |
+| 非来源态执行审批动作 | Bean `assertCanXxx` 直抛领域码 `ERR_*_ILLEGAL_STATUS_TRANSITION`（plan 2026-09-07-2200-1 直抛契约），facade 仅同码补参补实体编号（错误码值/参数对外不变） |
 | CANCELLED 单据执行审批动作 | doc-cancelled 守卫（facade `validateTransitionForCancel`/`validateNotCancelled` 委托 Document Bean `isCancelled()`）阻断，抛 `ERR_*_ILLEGAL_DOC_TRANSITION` |
 | **reverseApprove posted=false 不对称窗口** | 三实体 `executeReverseApprove` 仅 posted=true 时回滚资产行为 + 红冲凭证 + schedule cancel/restore；posted=false 窗口仅设 approveStatus=REJECTED（Capitalization 额外 docStatus=CANCELLED），资产保持终态。deliberate 不对称（owner doc §4 实现约定），悬挂经 `DeferredPostingSweepJob` 兜底重试 + `IErpSysNotificationBiz` 告警——本计划不改此行为 |
 | ValueAdjustment 已红冲二次红冲 / 强制审批配置 / 类型金额非法 | 动态守卫保留原位（§1 动态守卫登记） |
@@ -318,7 +318,7 @@ approve/reverseApprove 权限声明沿用各实体 xbiz 既有 `<auth permission
 > - `ErpAstSplitApprovalStateMachine`（M4.49）+ `ErpAstSplitDocumentStateMachine`（M4.48）
 > - `ErpAstMergeApprovalStateMachine`（M4.51）+ `ErpAstMergeDocumentStateMachine`（M4.50）
 >
-> 接线范式 = 1931-2 Disposal facade 先例（同域文档双轴直接范本）：facade `validateTransitionForXxx` 改调 Bean `assertCanXxx`（try/catch common 码作 cause → 领域码 `ERR_AST_{SPLIT,MERGE}_ILLEGAL_{STATUS,DOC}_TRANSITION`，契约 §7）；`executeApprove` 目标态改调 Bean `*TargetStatus()`；per-mutation 6 Processor 经 facade 透传自动生效。**动态业务守卫与副作用保留原位**（比例/金额平衡、跨类别/币种、源 IN_SERVICE、净值充足、目标编码唯一、已过账守卫、资产卡片结构性重组、`AssetSplit/MergePostingDispatcher.tryPost`、posted 置位）。
+> 接线范式 = 1931-2 Disposal facade 先例（同域文档双轴直接范本，2026-09-08 随 plan 2026-09-07-2200-1 修订为直抛契约）：facade `validateTransitionForXxx` 调 Bean `assertCanXxx`（Bean **直抛领域码** `ERR_AST_{SPLIT,MERGE}_ILLEGAL_{STATUS,DOC}_TRANSITION`，facade 仅同码补参补实体编号，码值/参数对外不变）；`executeApprove` 目标态改调 Bean `*TargetStatus()`；per-mutation 6 Processor 经 facade 透传自动生效。**动态业务守卫与副作用保留原位**（比例/金额平衡、跨类别/币种、源 IN_SERVICE、净值充足、目标编码唯一、已过账守卫、资产卡片结构性重组、`AssetSplit/MergePostingDispatcher.tryPost`、posted 置位）。
 >
 > **不可逆契约（关键差异 vs 适用对象三，owner doc `split-merge.md` §关键业务规则 5）**：Split/Merge approve 触发**资产卡片结构性重组**（不可物理回退），`AssetSplit/MergePostingDispatcher` **仅 post 路径、无 reverse**。reverseApprove Mutation 存在但**无条件抛错**——per-mutation `ErpAst{Split,Merge}ReverseApproveProcessor` 在 `requireXxx` 后直接 `throw ERR_AST_{SPLIT,MERGE}_REVERSE_NOT_SUPPORTED`（无 posted 判定、无 executeReverseApprove 方法体、短路在 facade validateTransition 之前）。与适用对象三（reverseApprove 有真实 posted=true 红冲 + posted=false 不对称窗口）形成对比——Split/Merge 的 reverseApprove 连 posted=false 窗口都没有。错误更正路径 = 资产处置 + 新建流程。**Bean reverseApprove(APPROVED→REJECTED) 边为名义边（nominal edge，运行时不可达）**——仅供矩阵完备性/可达性元数据（M5.1）+ §16.4 约定对齐消费，`assertCanReverseApprove` 存在但**不被接线**。
 
@@ -364,7 +364,7 @@ dict 3 值（DRAFT/ACTIVE/CANCELLED）。二实体 docStatus writer 分化如下
 
 | 异常场景 | 处理 |
 |----------|------|
-| 非来源态执行审批动作 | Bean `assertCanXxx` 报告 common 层非法迁移码（契约 §7），facade 映射领域码 `ERR_AST_{SPLIT,MERGE}_ILLEGAL_STATUS_TRANSITION`（common 作 cause；错误码值/参数对外不变） |
+| 非来源态执行审批动作 | Bean `assertCanXxx` 直抛领域码 `ERR_AST_{SPLIT,MERGE}_ILLEGAL_STATUS_TRANSITION`（plan 2026-09-07-2200-1 直抛契约），facade 仅同码补参补实体编号（错误码值/参数对外不变） |
 | CANCELLED 单据执行审批动作 | doc-cancelled 守卫（facade `validateTransitionForCancel` 委托 Document Bean `isCancelled()`，ACTIVE/posted 动态条件保留原位）阻断，抛 `ERR_AST_{SPLIT,MERGE}_ILLEGAL_DOC_TRANSITION` |
 | **reverseApprove（不可逆契约）** | per-mutation `ErpAst{Split,Merge}ReverseApproveProcessor` require 后**无条件抛 `ERR_AST_{SPLIT,MERGE}_REVERSE_NOT_SUPPORTED`**（无 posted 判定、无窗口期、短路在 facade validateTransition 之前）。错误更正走资产处置 + 新建流程（owner doc `split-merge.md` §关键业务规则 5） |
 | 比例/金额不平衡、跨类别/币种、源非 IN_SERVICE、净值不足、目标编码重复、无行/无源、已过账 | 动态业务守卫保留原位（`ERR_AST_{SPLIT,MERGE}_*`，非固定状态迁移边） |

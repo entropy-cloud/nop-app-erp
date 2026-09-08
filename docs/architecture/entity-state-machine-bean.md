@@ -148,22 +148,21 @@ public List<String> initialStatuses()           { /* 初始态集合 */ }
 
 ## 7. 错误/拒绝语义
 
-**职责分工**：
+**职责分工**（2026-09-08 修订，plan `2026-09-07-2200-1`：废弃「Bean 抛 common 码 + 外层转码」，lesson 19 反模式裁决）：
 
-- **StateMachine Bean 报告非法边**：`assertCan<Action>(status)` 遇到非法来源态时，抛一个**通用的非法迁移异常**（common 层错误码，如 `illegal-status-transition`），异常携带**拒绝元数据形状**：来源态、目标态（或期望动作名）。Bean 不组装领域 ErrorCode 的实体编号/上下文参数。
-- **Processor 保留领域 ErrorCode、实体编号与上下文参数**：Processor 捕获/感知非法边后，映射为**本域的领域 ErrorCode**（如 `ErpCsErrors.ERR_TICKET_INVALID_TRANSITION`），填入实体编号（`ticketCode`）、当前态、操作人等业务上下文，对外抛出 `NopException`。
+- **StateMachine Bean 直抛领域 ErrorCode**：`assertCan<Action>(status)` 遇到非法来源态时，**直接抛本域领域错误码**（各域 `ErpXxErrors` 既有实体专属码 / 域通用码 `erp.err.<domain>.illegal-status-transition`；码选择锚 = 该 Bean 非法边今天被调用方收敛到的终码，端到端码值不变），异常携带 `action` / `currentStatus` / `expectedStatus` 拒绝元数据。Bean 不组装实体编号/上下文参数（无状态性 §2 不变）。
+- **调用点（Processor / BizModel / Guard / xbiz）同码补参**：终码模板需要实体编号（如 `ticketCode`）等上下文时，调用点 `catch (NopException e) { throw e.param(<实体编号键>, ...); }` ——**码与 cause 不变，仅补实体元数据**；终码模板无实体参数则调用点零 try/catch 直接调 assert。
 
-**为什么不让 common 层错误码抹平领域语义**：领域 ErrorCode 的描述、i18n、错误码值、实体参数组装是各域对外契约的一部分（见 AGENTS.md「异常处理」）。若 Bean 直接抛领域 ErrorCode，会把「实体编号/上下文」这类需要持久化实体的参数下沉到无状态 Bean，破坏 §2 无状态约束；且不同域对同类「非法迁移」有不同错误码与 i18n。故 Bean 只报告「这是非法边 + 拒绝元数据」，领域映射归 Processor。
+**为什么直抛领域码**：领域 ErrorCode 的描述、i18n、错误码值是各域对外契约的一部分（见 AGENTS.md「异常处理」）。历史方案（Bean 抛 common 码 `nop.err.erp.common.illegal-status-transition` + Processor catch-and-remap）经全仓核实为被迫转码反模式：该 common 码无与实体无关的通用消费方（唯一消费方是转码层自己），每个实体多一层纯 boilerplate 转码，未建转码层的实体则 common 码裸奔。`ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION` 已标记 `@Deprecated`（定义保留防外部断裂，javadoc 指向 lesson 19）。无状态性理由保留但不再构成反直抛论据：实体编号这类需要持久化实体的参数仍由调用点同码补参补齐，不下沉 Bean。
 
 **拒绝元数据形状**（供 M5.2 守卫消费）：
 
 ```java
-// 通用非法迁移异常携带的拒绝元数据
-class IllegalStatusTransitionException extends NopException {
-    String getAction();      // 动作名（如 "resolve"）
-    String getFromStatus();  // 实际来源态
-    // getExpectedFromStatuses() 可选：该动作允许的来源态集合（用于诊断信息）
-}
+// StateMachine 直抛的领域 NopException 携带的拒绝元数据（params）
+// action         动作名（如 "resolve"）
+// currentStatus  实际来源态
+// expectedStatus 该动作允许的来源态（诊断用）
+// 实体编号等业务上下文由调用点同码补参追加（e.param(...)），不入 Bean
 ```
 
 ## 8. 分工边界表
@@ -251,7 +250,7 @@ class IllegalStatusTransitionException extends NopException {
 |----|------|----------|------|
 | 1 | **Bean 形状**：一实体一轴的 `Erp<Domain><Entity>[<Axis>]StateMachine`，显式动作方法（`assertCan<Action>` + `<action>TargetStatus`）+ 终态分类（`isTerminal`）+ 只读元数据（`transitions()` / `terminalStatuses()` / `initialStatuses()`）；严格无状态（不注入 DAO/IBiz/IServiceContext/事务）。 | §1 颗粒度命名、§2 无状态约束、§4 方法形状 | Bean 源文件 |
 | 2 | **Bean 注册**：在非生成 `_vfs/erp/{domain}/beans/app-service.beans.xml` 以 `<bean id="<FQN>" class="<FQN>"/>` 注册（沿用既有 Processor FQN-id 范式）。 | §5 Bean ID 与注册 | beans.xml 追加一行 |
-| 3 | **Processor/BizModel 接线**：按类型注入 `@Inject Erp<...>StateMachine`（字段非 `private`，§5 + 合规 R5），将**固定来源态/目标态判断**（内联 `Objects.equals(from, CONST)` 矩阵守卫）替换为 `stateMachine.assertCan<Action>(from)` + `stateMachine.<action>TargetStatus()` 写回；**动态业务守卫保留原位**（SLA 时序、close-breached、并发乐观锁、权限、审计字段、跨域副作用、data-deletion 等）。非法边由 Bean 抛 common 层码 + `action`/`fromStatus` 元数据，Processor 映射为领域 ErrorCode + 实体编号/上下文（common 码作 cause 保留）。 | §6 Delta 覆盖路径、§7 错误/拒绝语义、`processor-extension-pattern.md` 编排点 | Processor/BizModel diff（grep 证实相关方法体内不再有内联矩阵判断，动态守卫除外） |
+| 3 | **Processor/BizModel 接线**：按类型注入 `@Inject Erp<...>StateMachine`（字段非 `private`，§5 + 合规 R5），将**固定来源态/目标态判断**（内联 `Objects.equals(from, CONST)` 矩阵守卫）替换为 `stateMachine.assertCan<Action>(from)` + `stateMachine.<action>TargetStatus()` 写回；**动态业务守卫保留原位**（SLA 时序、close-breached、并发乐观锁、权限、审计字段、跨域副作用、data-deletion 等）。非法边由 Bean **直抛领域 ErrorCode**（§7，plan 2026-09-07-2200-1）；终码模板需实体编号/上下文时调用点同码补参（`catch (NopException e) { throw e.param(...); }`，码与 cause 不变），无实体参数则零 try/catch 直调。 | §6 Delta 覆盖路径、§7 错误/拒绝语义、`processor-extension-pattern.md` 编排点 | Processor/BizModel diff（grep 证实相关方法体内不再有内联矩阵判断，动态守卫除外） |
 | 4 | **层 1 矩阵完备性测试**（新增 greenfield 表驱动）：遍历每个动作的合法/非法来源态——(a) 无重复/冲突边；(b) 从初始态可达全部声明状态、终态无出边；(c) 多来源态动作（如 cancel）覆盖全集；(d) `transitions()` 元数据与显式方法语义一致；(e) 终态/初始态集合正确。**不经 BizModel 入口**（层 1 只测 Bean）。 | §10 层 1 | `TestErp<...>StateMachineMatrix` |
 | 5 | **层 2 四方对照**（新增）：dict ↔ owner-doc 迁移图 ↔ StateMachine 元数据 ↔ 全部 writer（含 CRUD 路径，§9.4）。检测 dict 死状态、owner-doc 迁移图与生产 writer 漂移、矩阵-owner-doc 不一致；发现项按路线图规则 5 Fix 登记 + successor（**禁止静默排除**），并在 owner doc §迁移表 与 Bean 对齐。 | §9.4、`state-machine-business-review-prompt.md` 10 维度 | 四方对照审计记录（写入迁移项 plan 的 Closure 段或 `docs/audits/`） |
 | 6 | **层 3 既有命名动作回归**（非 greenfield）：复用既有 `TestErp*StateMachine` 集成测试基线（M0.1 §10 末段登记的 8 个 + M1.1 新增 Ticket）+ 既有 BizModel 入口测试，证明 Processor 写回、审计 fromStatus/toStatus、错误码 + 参数、终态不可恢复、跨域副作用、SLA/CSAT 等均不变。 | §10 层 3 | `mvn test -pl module-<domain>/<domain>-service` 全绿 |
@@ -309,7 +308,7 @@ class IllegalStatusTransitionException extends NopException {
 
 - **owner-doc §迁移表 vs §实现约定 内部漂移**（M1.3 在客服试点发现）：各迁移项层 2 四方对照须显式核对 owner doc 内部 §迁移表 与 §实现约定 是否一致；若不一致按 doc drift Fix 登记 + 补 §迁移表缺失行（非静默折叠）。客服试点已就地补正 `customer-service/state-machine.md §2`（M1.3 Fix 登记）。
 - **SLA/计时类 intentional legacy behavior**：迁移项不得静默改变已裁决的 intentional legacy behavior（如客服 `startDateTime = 首次 IN_PROGRESS`）；owner doc §实现约定 + 清单 §4 已裁决项须在 Bean 中如实保持，迁移项 plan Non-Goals 显式声明。
-- **cancel 多来源态与终态领域异常重叠**：当动作（如 cancel）对终态报告 common 非法边、但领域对终态有专属错误码（如 `ERR_TICKET_ALREADY_TERMINAL`）时，接线须令终态走领域码、非终态非法走 Bean→领域映射（参见 `ErpCsTicketBizModel.cancel` 范式）；M2/M3 多来源态动作（如 M2.1 SuspendByPartner、M3.13 JobCard 多出口）须复核此模式。
+- **cancel 多来源态与终态领域异常重叠**：当动作（如 cancel）对终态的 Bean 非法边领域码与领域对终态的专属错误码（如 `ERR_TICKET_ALREADY_TERMINAL`）不同时，接线须令终态走专属码、非终态非法走 Bean 直抛的迁移领域码（参见 `ErpCsTicketBizModel.cancel` 范式；plan 2026-09-07-2200-1 后 Bean 直抛领域码，原「common 非法边 → 领域映射」措辞退役）；M2/M3 多来源态动作（如 M2.1 SuspendByPartner、M3.13 JobCard 多出口）须复核此模式。
 
 ---
 

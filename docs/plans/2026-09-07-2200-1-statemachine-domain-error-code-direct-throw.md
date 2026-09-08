@@ -142,53 +142,59 @@ Exit Criteria:
 
 ### Phase 4 - 其余域批次（ast 其余 + fin/mfg/prj/qa/mnt/log/crm/drp/b2b/ct/cs/md/aps）
 
-Status: planned
+Status: completed
 Targets: 各域 service 模块（批次序固定，见下）
 Skill: none
 Item Types: `Add | Fix`-heavy（新建域通用码 = Add；换码/退役/覆写 = Fix）
 Prereqs: Phase 2 配方（form-1/2/3）
 
-- [ ] **固定批次序**（按工作量降序，逐批"映射表 → 换码 → 转码退役 → 裸奔覆写 → 测试翻转 → 模块测试绿 → 独立 commit"）：ast(15 SM + 12 转码 + 30 裸奔) → fin(12 SM + 4 判别 + 20 裸奔) → mfg(8 SM + 13 转码 + 2 兜底 + 10 裸奔) → prj(5+6+4) → qa(5+5) → mnt(5+9) → ct(3+6) → b2b(3+2) → drp(2) → crm(2+4+1 裸奔) → 单实体域（cs 1+2 / md 1+2 / aps 1+3 / log 1+1）
+- [x] **固定批次序**（逐批"映射表 → 换码 → 转码退役 → 裸奔覆写 → 测试翻转 → 模块测试绿"），六批并行执行子代理完成，各批映射表+证据在执行报告：
+  - **ast 批**（14 SM + 33 form-2 + 30 裸奔覆写 + assetSM 5 个裸调点补参；339 tests green）：14 Bean 全部复用既有实体 STATUS/DOC 成对码；Movement 外全域收敛
+  - **fin 批**（12 SM + 判别 4 文件 + 纯转码 6 + 扩展同型 8 文件 + 20 裸奔覆写；533 tests green）：全部复用既有实体专属码零新建；过账/凭证业务语义零改动
+  - **mfg 批**（8 SM + 24 form-2 + else 兜底 2 + 10 裸奔覆写；308 tests green）：零新建码（JobCard 沿用既有 misnamed 码 `erp.err.mfg.work-order.illegal-status-transition` 保锚）；预告的 mfg 域通用码未新建（无裸奔 Bean 命中）
+  - **prj/qa 批**（10 SM + 22 form-2 + 9 裸奔覆写；prj 179 / qa 184 green）：零新建码（quality 既有 4 实体码复用；prj Project Bean 1:1 锚映射语义码 `ERR_PROJECT_NOT_CLOSABLE`）；prj Timesheet 遗留字典外值文案 "DRAFT"→"UNSUBMITTED"（有意修正）
+  - **mnt/ct/b2b 批**（10 SM + 28 form-2 + 1 新建码；mnt 157 / ct 168 / b2b 80 green）：新建 `erp.err.mnt.illegal-status-transition`（裸奔审批轴 Bean 用）；mnt 实仓 4 SM（计划 5 为计数漂移）；SparePartUsage doc 轴终码=`ERR_SPARE_PART_USAGE_NOT_POSTED`（调用方收敛锚）
+  - **六小域批**（drp/crm/cs/md/aps/log 8 SM + 13 form-2 + crm 1 裸奔覆写 + cs/aps/drp 3 直调裸奔点；drp 98 / md 160 / crm 188 / cs 185 / aps 82 / log 66 green）：零新建码
       - Skill: none
-- [ ] fin 批次按 G2 ②处理码值判别 4 文件（参数键 `reconciliationId`+`docStatus`）；mfg 批次按 G2 处理 else 兜底 2 文件
+- [x] fin 批次按 G2 ②处理码值判别 4 文件（判别 if 分支删除→同码补参，参数键 reconciliationId/docStatus、scenarioCode）；mfg 批次 else 兜底 2 文件换抛实体终码
       - Skill: none
-- [ ] crm 批次复核 `AbstractProcessor.validateDocStatus` 外部直调数（已复核 = 0，执行期再证）；如 0 维持删除计划
+- [x] `AbstractProcessor.validateDocStatus` 外部直调数复核 = 0（rg 全仓证实）
       - Skill: none
-- [ ] 每批次独立 commit（`refactor(<domain>): StateMachine 直抛领域码`）
+- [x] 每批次独立 commit（`refactor(<domain>): StateMachine 直抛领域码`，六批六个 commit）
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 每批次：该域生产文件对 common 常量引用归零 + 该模块测试绿 + 独立 commit 落库
+- [x] 每批次：该域生产文件对 common 常量引用归零（全局 rg 复核：仅剩 `AbstractProcessor` 基类默认通道 = Phase 5 目标）+ 该模块测试绿 + 独立 commit 落库
 
 ### Phase 5 - 收口
 
-Status: planned
+Status: in progress
 Targets: `module-common-service`、`ErpCommonErrors`、docs（architecture/design/lessons）、全仓验证
 Skill: none
 Item Types: `Fix | Proof`
 Prereqs: Phase 1-4 全部完成
 
-- [ ] `AbstractProcessor` common 通道退役：删除 `defaultIllegalStatusException` 与 `validateDocStatus`（外部直调 0 已证），`illegalStatusException` 改 abstract——149 具体 Processor 编译闭环（编译即门禁）
+- [x] `AbstractProcessor` common 通道退役：删除 `defaultIllegalStatusException`（common 引用）与孤儿方法 `validateDocStatus`/`readStatus`（全仓零调用方复核），`illegalStatusException` 改 abstract——**全 reactor `mvn compile` exit 0 编译门通过**（149/149 具体 Processor 闭环达成，裸奔扫描归零）
       - Skill: none
-- [ ] `ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION` 标记 `@Deprecated` + javadoc 指向 lesson 19（全仓零生产引用复核）
+- [x] `ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION` 标记 `@Deprecated` + javadoc 指向 lesson 19（全仓零生产引用复核：限定引用 rg 零命中；字符串字面量仅定义处）
       - Skill: none
-- [ ] G5 文档同步（三方逐节）：`entity-state-machine-bean.md` §7/§11.1/§11.4、`state-machine.md` §错误码迁移说明 + §适用对象二/三/四 异常路径行、lesson 15 关联行补计划回链
+- [x] G5 文档同步（三方逐节）：`entity-state-machine-bean.md` §7（职责分工重写为直抛+同码补参，无状态性理由保留）+ §11.1 步骤 3 + §11.4 cancel 警示条目；`state-machine.md` §错误码契约（Movement 裸奔修正声明）+ §适用对象二/三/四 异常路径行 + 两处 facade 接线范式前言；lesson 15 关联行补计划回链
       - Skill: none
-- [ ] 全仓 `mvn test` full-green verification（erp 权威口径：surefire XML 计数）
+- [x] 全仓 `mvn test` full-green verification：**BUILD SUCCESS（24:39 min，156/156 模块）；surefire XML 权威口径 suites=671 / tests=3991 / failures=0 / errors=0 / skipped=1**（与 MI.8 收官磁盘汇总 3991/0/0 一致，零测试计数漂移）
       - Skill: none
 - [ ] 独立 closure audit（fresh session 子代理，逐 Phase 核对 Evidence）
       - Skill: closure-audit-prompt
 
 Exit Criteria:
 
-- [ ] `rg -l "ERR_ILLEGAL_STATUS_TRANSITION" --glob "*.java" module-*` 仅剩 `ErpCommonErrors.java` 定义处；定义处带 `@Deprecated`
-- [ ] 全 reactor `mvn test` 0 失败（full-green，surefire XML 口径）
+- [x] `rg -l "ErpCommonErrors\.ERR_ILLEGAL_STATUS_TRANSITION" --glob "*.java" module-*` 零命中（域同名常量 `Erp<Domain>Errors.ERR_ILLEGAL_STATUS_TRANSITION` 为域码、不在判据内）；定义处带 `@Deprecated`
+- [x] 全 reactor `mvn test` 0 失败（full-green，surefire XML 口径：3991/0/0/1）
 
 ## Verification
 
 - 每 Phase：`mvn test -pl <module-service> -am` 通过 + 该域生产文件对 `ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION` 引用归零（rg 复核）
-- 最终：全 reactor `mvn test` 0 失败（full-green）；`rg -l "ERR_ILLEGAL_STATUS_TRANSITION" --glob "*.java" module-*` 仅剩 `ErpCommonErrors.java` 定义处；`rg -l "nop\.err\.erp\.common\.illegal-status-transition" --glob "!*.md" .` 仅剩定义处
+- 最终：全 reactor `mvn test` 0 失败（full-green）；限定引用门 `rg -ln "ErpCommonErrors\s*\.\s*ERR_ILLEGAL_STATUS_TRANSITION" --glob "*.java" module-*` 零命中（注：sal/pur/inv 域通用码 Java 常量与 common 同名 `ERR_ILLEGAL_STATUS_TRANSITION`、码值为领域码，属域内契约不在判据内）；字符串字面量门 `rg -l "nop\.err\.erp\.common\.illegal-status-transition" --glob "!*.md" .` 仅剩定义处
 
 ## Draft Review Record
 
@@ -199,13 +205,13 @@ Exit Criteria:
 
 > 仅在所有项目和每个阶段的退出标准都勾选 `[x]` 后关闭。完整仓库验证在此处运行一次。
 
-- [ ] 范围内行为完成（G1-G5 全勾且与 live repo 证据成对：文件路径 + 测试名）
-- [ ] 端到端码值不变性抽查：sal/pur/inv 各抽 1 实体的域集成测试零改动通过（今日已有领域终码实体）
-- [ ] 相关文档对齐：lesson 19 / state-machine.md / entity-state-machine-bean.md / 本 plan 四方口径一致
-- [ ] 已运行验证：全 reactor `mvn test` full-green（surefire XML 口径）+ 双 rg 门（java 常量引用仅定义处；字符串字面量仅定义处）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录（iteration 1 needs revision → 修订 → iteration 2 accept）
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 范围内行为完成（G1-G5 全勾且与 live repo 证据成对：103 StateMachine 换码 + 转码站点/裸奔通道归零 + 149 Processor 编译闭环，文件路径与测试名在各 Phase 条目与批次 commit）
+- [x] 端到端码值不变性抽查：sal/pur/inv 各抽实体域集成测试零改动通过（sal TestErpSalOrderApproval/Invoice/DeliveryApproval、pur TestErpPur*Approval 族、inv TestErpInvStockMoveBizModel/Bookkeeping——Phase 2 报告在案）
+- [x] 相关文档对齐：lesson 19 / state-machine.md / entity-state-machine-bean.md / 本 plan 四方口径一致（G5 逐节改写完成）
+- [x] 已运行验证：全 reactor `mvn test` full-green（surefire XML 3991/0/0/1，156/156 模块）+ 限定引用 rg 零命中 + 字符串字面量仅定义处
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录（iteration 1 needs revision → 修订 → iteration 2 accept）
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致（Phase 1-5 Status/Exit 全 [x]；Verification 口径修订记录在案；日志条目落盘）
 - [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
 - [ ] 结束证据存在于文件中
 

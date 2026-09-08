@@ -11,7 +11,6 @@ import io.nop.orm.support.OrmEntity;
 import jakarta.inject.Inject;
 
 import java.sql.Timestamp;
-import java.util.Objects;
 
 /**
  * 项目级 Processor 根基类（plan 2026-07-24-2200-1 Phase 1）。
@@ -51,21 +50,6 @@ public abstract class AbstractProcessor<T extends OrmEntity> {
         }
     }
 
-    public void validateDocStatus(T entity, String docStatusField, String... allowedStatuses) {
-        String current = readStatus(entity, docStatusField);
-        for (String allowed : allowedStatuses) {
-            if (Objects.equals(current, allowed)) {
-                return;
-            }
-        }
-        throw illegalStatusException(entity, current, allowedStatuses);
-    }
-
-    protected String readStatus(T entity, String fieldName) {
-        Object value = entity.orm_propValueByName(fieldName);
-        return value == null ? null : value.toString();
-    }
-
     protected String getCreatedBy(T entity) {
         Object value = entity.orm_propValueByName("createdBy");
         return value == null ? null : value.toString();
@@ -89,20 +73,13 @@ public abstract class AbstractProcessor<T extends OrmEntity> {
                 .param(ErpCommonErrors.ARG_BIZ_OBJ_ID, id);
     }
 
-    /**
-     * 契约（plan 2026-09-07-0043-2 MI.5a Decision）：current 与 expected 均传状态码/枚举名/字典值本身，
-     * 禁止中文散文；否定语义（如「非已作废」）传 {@code "!" + 状态码}（如 {@code "!CANCELLED"}），
-     * 不改 ErrorCode 模板与抛出条件。中文语义仍由 ErrorCode.define 模板 + i18n 承载。
-     */
-    protected NopException defaultIllegalStatusException(String current, String... expected) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
-    }
-
     protected abstract NopException notFoundException(String id);
 
-    protected NopException illegalStatusException(T entity, String current, String... expected) {
-        return defaultIllegalStatusException(current, expected);
-    }
+    /**
+     * 非法状态迁移领域异常工厂（骨架守卫唯一出码口）。plan 2026-09-07-2200-1 起 abstract：
+     * StateMachine 直抛领域码后，common 码 {@code ERR_ILLEGAL_STATUS_TRANSITION} 无通用消费方
+     * （lesson 19 反模式），骨架守卫路径不得再回落 common 码——各实体必须给出领域码实现。
+     * current 与 expected 均传状态码/枚举名/字典值本身（禁中文散文），否定语义传 {@code "!" + 状态码}。
+     */
+    protected abstract NopException illegalStatusException(T entity, String current, String... expected);
 }
