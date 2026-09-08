@@ -1,6 +1,6 @@
 # 状态机直抛领域错误码：退役"先抛 common 码再外层转码"反模式
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-09-08
 > Source: `docs/lessons/19-statemachine-throw-domain-error-code-directly.md`（用户 2026-09-07 裁定："底层不直接把错误码搞好，先抛通用码再转码，多此一举"——全仓核实成立）
 > Related: `docs/lessons/15-xbiz-xscript-no-trycatch-sink-to-java-bean.md`（2026-09-07 勘误版，转码断链的技术根源）、`docs/design/assets/state-machine.md` §错误码迁移说明、`docs/architecture/entity-state-machine-bean.md` §错误码契约
@@ -183,7 +183,7 @@ Prereqs: Phase 1-4 全部完成
       - Skill: none
 - [x] 全仓 `mvn test` full-green verification：**BUILD SUCCESS（24:39 min，156/156 模块）；surefire XML 权威口径 suites=671 / tests=3991 / failures=0 / errors=0 / skipped=1**（与 MI.8 收官磁盘汇总 3991/0/0 一致，零测试计数漂移）
       - Skill: none
-- [ ] 独立 closure audit（fresh session 子代理，逐 Phase 核对 Evidence）
+- [x] 独立 closure audit（fresh session 子代理，逐 Phase 核对 Evidence）——**VERDICT: passes closure audit**（见 Closure）
       - Skill: closure-audit-prompt
 
 Exit Criteria:
@@ -212,8 +212,8 @@ Exit Criteria:
 - [x] 无范围内项目降级为 deferred/follow-up
 - [x] 独立草案审查已完成并记录（iteration 1 needs revision → 修订 → iteration 2 accept）
 - [x] 文本一致性已验证：状态、阶段、门控和日志都一致（Phase 1-5 Status/Exit 全 [x]；Verification 口径修订记录在案；日志条目落盘）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中（本计划 `## Closure` 回执 + 各 Phase 条目证据 + 9 个批次 commit + 日志条目）
 
 ## Deferred But Adjudicated
 
@@ -221,13 +221,15 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <closure 时填写>
+Status Note: 计划核心目的达成——"先抛 common 码再外层转码"反模式全仓清除：103 StateMachine 全部直抛领域码（18 域，逐 Bean 终码锚保端到端不变）；转码层退役/同码补参（form-1/2 全覆盖）；骨架裸奔 77 Processor 补覆写 + `AbstractProcessor.illegalStatusException` 抽象化 149/149 编译闭环；`ERR_ILLEGAL_STATUS_TRANSITION` `@Deprecated` 零生产引用（三道 rg 门实跑通过）；全仓 `mvn test` full-green（surefire 3991/0/0/1，156/156 模块）；文档四方（lesson 19 / state-machine.md / entity-state-machine-bean.md / 本 plan）口径一致。审计 MAJOR-1（hr Employee terminate 路径 2 站点残留 catch-and-rewrap 旧形态，防御路径、零用户可见影响）已当场整改为 G2① 同码补参形态 + 注释修正，hr 249 tests 复跑绿——无静默残留。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立子代理指针>
-- Evidence: <task id / 逐 Phase 核对记录>
+- Auditor / Agent: 独立 closure audit 子代理（fresh session `agent_1bc772ad-f2c2-4677-ad16-477c2c1661da`，general-purpose，只读，非执行者上下文），2026-09-08
+- Evidence: 9 项核验全 pass（HEAD/9 commit 核对、103 StateMachine 覆盖 18 域逐体抽验、三道 rg 门实跑、骨架裸奔 loop=0、surefire XML 独立汇总 3991/0/0/1 与声称逐位一致且 671 份 XML 时间戳落于全仓单跑窗口、端到端锚域集成测试最后改动均早于本计划、文档四方一致、owner-doc→代码 4 断言抽样 0 漂移、反松弛与诚实性四项披露属实）；发现 MAJOR-1（hr 2 站点旧形态）+ MINOR-1（native-image reflect-config 构建再生工件残留已删方法名，下次再生自愈）+ MINOR-2（Phase 2 inv 计数 253 vs 终态 248 为 jqwik property 试次波动，权威终态两轮一致）；**VERDICT: passes closure audit**。MAJOR-1 整改：`ErpHrEmployeeBizModel`/`ErpHrEmployeeTransferEmployeeProcessor` terminate 守卫改 `throw e.param(ARG_CONTRACT_ID, ...)` 同码补参 + 注释修正，hr `mvn test` 249/0/0 复跑绿（本文件与 commit 即整改证据）。
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现>
+- native-image `reflect-config.json` 再生工件含已删方法名——下次 `mvn clean install` 自愈，无需人工动作（MINOR-1）。
+- 后续批次测试计数声明宜标注"当次运行快照"口径（MINOR-2 提示，方法论层面）。
+- `ErpPrjProjectSettlementProcessor.requireSettlement` 未找到实体误用迁移码（模板渲染空串）——prj 批执行期发现的本计划范围外既有 quirk，留待 prj 域下次触碰时修正（非本计划契约面）。

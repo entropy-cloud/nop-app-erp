@@ -237,14 +237,12 @@ public class ErpHrEmployeeBizModel extends AbstractErpCrudBizModel<ErpHrEmployee
         ErpHrEmploymentContract active = findActiveContract(employee.getId(), context);
         if (active != null) {
             // 固定来源态/目标态判断委托 ErpHrEmploymentContractStateMachine（Bean 矩阵权威，契约 §4/§7）：
-            // terminate 仅 ACTIVE 合法。findActiveContract 已限定 status=ACTIVE，常规流程必过；非法边 Bean 抛
-            // common 层码，此处映射领域 ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION（common 码作 cause）。
+            // terminate 仅 ACTIVE 合法。findActiveContract 已限定 status=ACTIVE，常规流程必过；非法边由 Bean
+            // 直抛领域 ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION（plan 2026-09-07-2200-1），此处仅同码补参补 contractId。
             try {
                 contractStateMachine.assertCanTerminate(active.getStatus());
             } catch (NopException e) {
-                throw new NopException(ErpHrErrors.ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION, e)
-                        .param(ErpHrErrors.ARG_CONTRACT_ID, active.getId())
-                        .param(ErpHrErrors.ARG_CURRENT_STATUS, active.getStatus());
+                throw e.param(ErpHrErrors.ARG_CONTRACT_ID, active.getId());
             }
             active.setStatus(contractStateMachine.terminateTargetStatus());
             employmentContractBiz.updateEntity(active, null, context);
