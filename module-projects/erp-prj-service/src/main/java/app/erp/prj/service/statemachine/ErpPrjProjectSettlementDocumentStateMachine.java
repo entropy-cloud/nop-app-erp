@@ -1,7 +1,7 @@
 package app.erp.prj.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.prj.service.ErpPrjConstants;
+import app.erp.prj.service.ErpPrjErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -26,8 +26,8 @@ import java.util.List;
  * <p>严格无状态（契约 §2）：不注入 DAO/IBiz/IServiceContext/事务，只接收状态值。承载 docStatus 轴迁移矩阵
  * （approve/cancel）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpPrjErrors#ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1）；结算单号（settlementCode）经调用点同码补参。
  *
  * <p>迁移矩阵（3 条边）：approve(DRAFT→APPROVED，doApprove 双轴同动触发)、cancel 多源 {DRAFT, APPROVED}→CANCELLED = 2 边。
  * {@code reverseSettlement} 不写 docStatus（纯 {@code posted} 轴冲销）→ 在本 Bean 中<b>无迁移边</b>。
@@ -70,9 +70,9 @@ public class ErpPrjProjectSettlementDocumentStateMachine {
     /**
      * cancel 守卫：非 CANCELLED 终态合法（行为保持，对齐 facade {@code validateTransitionForCancel}）。
      *
-     * <p>对 CANCELLED 报告 common 层非法边（携带 {@code action=cancel}/{@code fromStatus=CANCELLED}）。
-     * 接线方 {@code ErpPrjProjectSettlementProcessor.validateTransitionForCancel} 映射为领域码
-     * {@code ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION}（保持既有 expected="非CANCELLED" 文案）。
+     * <p>对 CANCELLED 直抛领域码 {@code ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION}（携带 {@code action=cancel}/
+     * {@code currentStatus}/{@code expectedStatus=!CANCELLED}）。
+     * 接线方 {@code ErpPrjProjectSettlementProcessor.validateTransitionForCancel} 同码补参 settlementCode。
      */
     public void assertCanCancel(String docStatus) {
         if (isTerminal(docStatus)) {
@@ -118,10 +118,10 @@ public class ErpPrjProjectSettlementDocumentStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpPrjErrors.ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPrjErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpPrjErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpPrjErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

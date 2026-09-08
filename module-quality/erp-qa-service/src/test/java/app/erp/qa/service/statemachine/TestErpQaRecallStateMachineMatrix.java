@@ -1,6 +1,6 @@
 package app.erp.qa.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.qa.service.ErpQaErrors;
 import app.erp.qa.service.ErpQaConstants;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
@@ -79,9 +79,9 @@ public class TestErpQaRecallStateMachineMatrix {
                 ErpQaConstants.RECALL_STATUS_IN_PROGRESS, ErpQaConstants.RECALL_STATUS_CLOSED,
                 ErpQaConstants.RECALL_STATUS_CANCELLED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanApprove(illegal));
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("approve", ex.getParam(ErpQaRecallStateMachine.ARG_ACTION));
-            assertEquals(illegal, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(illegal, ex.getParam(ErpQaErrors.ARG_CURRENT_STATUS));
         }
     }
 

@@ -2,6 +2,7 @@ package app.erp.qa.service.processor;
 
 import app.erp.qa.dao.entity.ErpQaNonConformance;
 import app.erp.qa.service.ErpQaConfigs;
+import app.erp.qa.service.ErpQaErrors;
 import app.erp.qa.service.entity.NcrLifecycleService;
 import app.erp.qa.service.posting.NcrPostingDispatcher;
 import app.erp.qa.service.posting.NcrReturnOrchestrator;
@@ -34,7 +35,7 @@ public class ErpQaNonConformanceResolveProcessor extends AbstractErpQaNonConform
         try {
             ncrStateMachine.assertCanResolve(current);
         } catch (NopException e) {
-            throw illegalNcrTransition(ncr, current, "IN_REVIEW");
+            throw e.param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode());
         }
         // CAPA 闭环门控：有措施须全 COMPLETED + 验证人/验证日期；无措施须显式提供 noCapaReason（误开/降级场景）
         ncrLifecycleService.requireResolveGate(ncrId, ncr.getCode(), noCapaReason);

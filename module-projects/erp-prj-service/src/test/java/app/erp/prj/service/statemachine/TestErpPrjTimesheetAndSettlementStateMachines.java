@@ -1,7 +1,7 @@
 package app.erp.prj.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.prj.service.ErpPrjConstants;
+import app.erp.prj.service.ErpPrjErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -84,9 +84,9 @@ public class TestErpPrjTimesheetAndSettlementStateMachines {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> timesheetSm.assertCanSubmit(s),
                         "submit 对非 UNSUBMITTED 应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+                assertEquals(ErpPrjErrors.ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
                 assertEquals("submit", ex.getParam(ErpPrjTimesheetStateMachine.ARG_ACTION));
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+                assertEquals(s, ex.getParam(ErpPrjErrors.ARG_CURRENT_STATUS));
             }
         }
     }
@@ -269,7 +269,7 @@ public class TestErpPrjTimesheetAndSettlementStateMachines {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> documentSm.assertCanApprove(s),
                         "approve 对非 DRAFT 应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+                assertEquals(ErpPrjErrors.ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
                 assertEquals("approve", ex.getParam(ErpPrjProjectSettlementDocumentStateMachine.ARG_ACTION));
             }
         }
@@ -284,9 +284,9 @@ public class TestErpPrjTimesheetAndSettlementStateMachines {
             if (ErpPrjConstants.DOC_STATUS_CANCELLED.equals(s)) {
                 NopException ex = assertThrows(NopException.class, () -> documentSm.assertCanCancel(s),
                         "cancel 对 CANCELLED 应非法");
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+                assertEquals(ErpPrjErrors.ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
                 assertEquals("cancel", ex.getParam(ErpPrjProjectSettlementDocumentStateMachine.ARG_ACTION));
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+                assertEquals(s, ex.getParam(ErpPrjErrors.ARG_CURRENT_STATUS));
             } else {
                 documentSm.assertCanCancel(s); // 合法不抛
             }
@@ -364,10 +364,10 @@ public class TestErpPrjTimesheetAndSettlementStateMachines {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeTimesheetAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                        "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
+                assertEquals(ErpPrjErrors.ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                        "Bean 直抛领域非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpPrjTimesheetStateMachine.ARG_ACTION));
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+                assertEquals(s, ex.getParam(ErpPrjErrors.ARG_CURRENT_STATUS));
             }
         }
     }
@@ -413,10 +413,10 @@ public class TestErpPrjTimesheetAndSettlementStateMachines {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeApprovalAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                        "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
+                assertEquals(ErpPrjErrors.ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                        "Bean 直抛领域非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpPrjProjectSettlementApprovalStateMachine.ARG_ACTION));
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+                assertEquals(s, ex.getParam(ErpPrjErrors.ARG_CURRENT_STATUS));
             }
         }
     }

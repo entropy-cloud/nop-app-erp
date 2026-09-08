@@ -19,6 +19,7 @@ public interface ErpPrjErrors {
     String ARG_TASK_ID = "taskId";
     String ARG_CURRENT_STATUS = "currentStatus";
     String ARG_EXPECTED_STATUS = "expectedStatus";
+    String ARG_ACTION = "action";
     String ARG_AMOUNT = "amount";
     String ARG_BUDGET_TOTAL = "budgetTotal";
     String ARG_BUDGET_USED = "budgetUsed";

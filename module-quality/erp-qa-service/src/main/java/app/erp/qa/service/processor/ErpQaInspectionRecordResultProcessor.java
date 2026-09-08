@@ -24,8 +24,9 @@ import java.util.Set;
  * 自包含行级评测 + 结果汇总 + posted + REJECTED 自动 NCR 编排（{@code docs/design/quality/state-machine.md §适用对象一`}）。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。共享 helper 单一真相源在 {@link AbstractErpQaInspectionProcessor}。
  *
- * <p>result 轴来源态守卫委托 {@code ErpQaInspectionResultStateMachine.assertCanRecordResult}（非法边→领域码
- * {@code ERR_INVALID_INSPECTION_STATUS_TRANSITION}）；目标态由行级评测器决定（数据驱动三分支，非 Bean 固定值）。
+ * <p>result 轴来源态守卫委托 {@code ErpQaInspectionResultStateMachine.assertCanRecordResult}（Bean 直抛领域码
+ * {@code ERR_INVALID_INSPECTION_STATUS_TRANSITION}，本处同码补参 inspectionCode，plan 2026-09-07-2200-1）；
+ * 目标态由行级评测器决定（数据驱动三分支，非 Bean 固定值）。
  * approveStatus 轴让步审批目标态委托 {@link ErpQaInspectionApprovalStateMachine#concessionApproveTargetStatus()}。
  * posted 三件套写入 + NCR auto-create 保留原位（动态副作用，契约 §8）。
  */
@@ -46,7 +47,7 @@ public class ErpQaInspectionRecordResultProcessor extends AbstractErpQaInspectio
         try {
             resultStateMachine.assertCanRecordResult(current);
         } catch (NopException e) {
-            throw illegalInspectionTransition(inspection, current, "PENDING");
+            throw e.param(ErpQaErrors.ARG_INSPECTION_CODE, inspection.getCode());
         }
 
         List<ErpQaInspectionLine> lines = loadLines(inspectionId);

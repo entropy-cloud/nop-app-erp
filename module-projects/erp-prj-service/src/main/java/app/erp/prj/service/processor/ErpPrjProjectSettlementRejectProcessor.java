@@ -2,6 +2,7 @@ package app.erp.prj.service.processor;
 
 import app.erp.prj.dao.entity.ErpPrjProjectSettlement;
 import app.erp.prj.service.ErpPrjConstants;
+import app.erp.prj.service.ErpPrjErrors;
 import app.erp.common.service.AbstractRejectProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -17,6 +18,18 @@ public class ErpPrjProjectSettlementRejectProcessor extends AbstractRejectProces
 
     @Inject
     ErpPrjProjectSettlementProcessor processor;
+
+    /**
+     * 骨架守卫裸奔通道修正（plan 2026-09-07-2200-1 form-3）：非法迁移错误由 common 码改为直抛领域码
+     * ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION（参数形态与 facade illegalTransition helper 一致）。
+     */
+    @Override
+    protected NopException illegalStatusException(ErpPrjProjectSettlement entity, String current, String... expected) {
+        return new NopException(ErpPrjErrors.ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPrjErrors.ARG_SETTLEMENT_CODE, entity.getCode())
+                .param(ErpPrjErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpPrjErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
+    }
 
     @Override
     public ErpPrjProjectSettlement reject(String id, IServiceContext context) {

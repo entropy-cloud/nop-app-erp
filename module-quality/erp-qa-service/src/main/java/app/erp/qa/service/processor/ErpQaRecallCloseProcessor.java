@@ -16,9 +16,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 自包含 IN_PROGRESS→CLOSED 关闭编排，含通知门控（config-gated erp-qua.recall-notify-required-to-close）。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。共享 helper 单一真相源在 {@link AbstractErpQaRecallProcessor}。
  *
- * <p>status 轴来源态守卫委托 {@link ErpQaRecallStateMachine#assertCanClose}（非法边→领域码
- * {@code ERR_INVALID_RECALL_STATUS_TRANSITION}）；目标态委托 {@code statusStateMachine.closeTargetStatus()}。
- * 通知门控（动态守卫）保留原位。
+ * <p>status 轴来源态守卫委托 {@link ErpQaRecallStateMachine#assertCanClose}（Bean 直抛领域码
+ * {@code ERR_INVALID_RECALL_STATUS_TRANSITION}，本处同码补参 recallCode，plan 2026-09-07-2200-1）；
+ * 目标态委托 {@code statusStateMachine.closeTargetStatus()}。通知门控（动态守卫）保留原位。
  */
 public class ErpQaRecallCloseProcessor extends AbstractErpQaRecallProcessor {
 
@@ -28,7 +28,7 @@ public class ErpQaRecallCloseProcessor extends AbstractErpQaRecallProcessor {
         try {
             statusStateMachine.assertCanClose(current);
         } catch (NopException e) {
-            throw illegalRecallTransition(recall, current, "IN_PROGRESS");
+            throw e.param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
         }
         // 通知门控：配置开启时全部 target returnStatus≠PENDING 且 notifyCustomer=true 方可 CLOSED
         if (ErpQaConfigs.isRecallNotifyRequiredToClose()) {

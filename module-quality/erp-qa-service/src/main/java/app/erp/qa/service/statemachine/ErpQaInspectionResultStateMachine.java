@@ -1,7 +1,7 @@
 package app.erp.qa.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.qa.service.ErpQaConstants;
+import app.erp.qa.service.ErpQaErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -23,8 +23,8 @@ import java.util.List;
  * 来源态守卫，不提供 {@code recordResultTargetStatus()}（目标态由 Processor 经评测器计算）。passInspection/failInspection
  * 目标态固定（ACCEPTED/REJECTED），提供 {@link #passInspectionTargetStatus()}/{@link #failInspectionTargetStatus()}。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpQaErrors#ERR_INVALID_INSPECTION_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1）；质检单号（inspectionCode）经调用点同码补参。
  *
  * <p><b>M4.58 docStatus 裁定</b>（plan Phase 1 Decision）：质检单 {@code docStatus}（DRAFT/ACTIVE/CANCELLED）
  * 实仓零状态机 writer（仅测试 seed ACTIVE），裁定为 dict-only 泛型占位轴，排除迁移（对齐 M0.2 §5.1 死状态登记范式），
@@ -40,8 +40,8 @@ public class ErpQaInspectionResultStateMachine {
     /**
      * recordResult 守卫：来源态为 {@code PENDING}/{@code null} 合法（终态不可恢复，复检请新建质检单）。
      *
-     * <p>非法来源态报告 common 层非法边（携带 {@code action=recordResult}/{@code fromStatus}）。
-     * 接线方 {@code ErpQaInspectionRecordResultProcessor} 映射为领域码 {@code ERR_INVALID_INSPECTION_STATUS_TRANSITION}。
+     * <p>非法来源态直抛领域码 {@code ERR_INVALID_INSPECTION_STATUS_TRANSITION}（携带 {@code action=recordResult}/
+     * {@code currentStatus}）。接线方 {@code ErpQaInspectionRecordResultProcessor} 同码补参 inspectionCode。
      * 目标态由行级评测器决定，不在此守卫范围内。
      */
     public void assertCanRecordResult(String result) {
@@ -124,10 +124,10 @@ public class ErpQaInspectionResultStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpQaErrors.ERR_INVALID_INSPECTION_STATUS_TRANSITION)
+                .param(ErpQaErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpQaErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpQaErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

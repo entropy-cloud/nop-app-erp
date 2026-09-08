@@ -55,10 +55,8 @@ public class ErpPrjProjectCloseProjectProcessor {
         try {
             stateMachine.assertCanClose(status);
         } catch (NopException e) {
-            // 非法边（Bean 报告 common 层码）映射为领域 ERR_PROJECT_NOT_CLOSABLE + 项目上下文，common 码作 cause（契约 §7）
-            throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE, e)
-                    .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
-                    .param(ErpPrjErrors.ARG_CURRENT_STATUS, status);
+            // 非法边 Bean 直抛领域码 ERR_PROJECT_NOT_CLOSABLE（plan 2026-09-07-2200-1 转码退役），本处同码补参 projectId
+            throw e.param(ErpPrjErrors.ARG_PROJECT_ID, projectId);
         }
         // 动态守卫保留原位：关闭前校验任务已结束（config-gated STRICT/WARN，对齐 state-machine.md §迁移完整性 OPEN→COMPLETED）
         validateTasksFinished(projectId, context);

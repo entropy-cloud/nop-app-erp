@@ -1,7 +1,7 @@
 package app.erp.qa.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.qa.service.ErpQaConstants;
+import app.erp.qa.service.ErpQaErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -23,8 +23,8 @@ import java.util.List;
  * 不改变 status（自环 RESOLVED→RESOLVED）。Bean 只集中固定来源态守卫（须 RESOLVED），posted 判定 + 过账编排
  * （NcrPostingDispatcher/NcrReturnOrchestrator）保留在 Processor 原位（动态副作用，契约 §8）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpQaErrors#ERR_INVALID_NCR_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1）；NCR 编号（ncrCode）经调用点同码补参。
  */
 public class ErpQaNonConformanceStateMachine {
 
@@ -134,10 +134,10 @@ public class ErpQaNonConformanceStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpQaErrors.ERR_INVALID_NCR_STATUS_TRANSITION)
+                .param(ErpQaErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpQaErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpQaErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

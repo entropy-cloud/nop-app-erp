@@ -1,6 +1,6 @@
 package app.erp.prj.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.prj.service.ErpPrjErrors;
 import app.erp.prj.service.ErpPrjConstants;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
@@ -90,10 +90,10 @@ public class TestErpPrjProjectStateMachineMatrix {
             if (sm.isTerminal(s)) {
                 NopException ex = assertThrows(NopException.class, () -> sm.assertCanCancel(s),
                         "cancel 对终态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                        "Bean 报告 common 层非法迁移码");
+                assertEquals(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE.getErrorCode(), ex.getErrorCode(),
+                        "Bean 直抛领域非法迁移码");
                 assertEquals("cancel", ex.getParam(ErpPrjProjectStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
+                assertEquals(s, ex.getParam(ErpPrjErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
             } else {
                 sm.assertCanCancel(s); // 合法边不抛
                 assertEquals(ErpPrjConstants.PROJECT_STATUS_CANCELLED, sm.cancelTargetStatus());
@@ -165,7 +165,7 @@ public class TestErpPrjProjectStateMachineMatrix {
     // ---------- helpers ----------
 
     /**
-     * 断言某单来源 action 仅允许指定来源态：该来源态放行（不抛），其余全部状态非法（抛 common 码 + action 元数据）。
+     * 断言某单来源 action 仅允许指定来源态：该来源态放行（不抛），其余全部状态非法（直抛领域码 + action 元数据）。
      */
     private void assertActionAllowsOnly(String action, String allowedFrom) {
         for (String s : ALL_STATUSES) {
@@ -174,11 +174,11 @@ public class TestErpPrjProjectStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                assertEquals(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE.getErrorCode(), ex.getErrorCode(),
                         "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpPrjProjectStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + action);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpPrjErrors.ARG_CURRENT_STATUS),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }

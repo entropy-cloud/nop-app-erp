@@ -41,11 +41,12 @@ public class ErpPrjTimesheetSubmitProcessor {
         if (status != null && Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_SUBMITTED)) {
             return timesheet;
         }
-        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + expected="DRAFT" 文案保持）
+        // 固定来源态守卫委托 StateMachine Bean（Bean 直抛领域码，本处同码补参 timesheetCode，
+        // plan 2026-09-07-2200-1；原遗留 expected="DRAFT" 文案随转码退役消失，直抛为字典值 UNSUBMITTED）
         try {
             stateMachine.assertCanSubmit(status);
         } catch (NopException e) {
-            throw illegalTransition(timesheet, status, "DRAFT");
+            throw e.param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheet.getCode());
         }
 
         validateProjectReferenceable(timesheet);
@@ -134,13 +135,6 @@ public class ErpPrjTimesheetSubmitProcessor {
 
     private BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
-    }
-
-    private NopException illegalTransition(ErpPrjTimesheet timesheet, String current, String expected) {
-        return new NopException(ErpPrjErrors.ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheet.getCode())
-                .param(ErpPrjErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpPrjErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     private IEntityDao<ErpPrjTimesheet> timesheetDao() {

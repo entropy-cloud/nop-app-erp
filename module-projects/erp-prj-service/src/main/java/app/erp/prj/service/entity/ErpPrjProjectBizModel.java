@@ -132,9 +132,10 @@ public class ErpPrjProjectBizModel extends AbstractErpCrudBizModel<ErpPrjProject
     }
 
     /**
-     * 经 StateMachine Bean 断言来源态合法（start）；非法边（Bean 报告 common 层码）映射为领域
-     * {@code ERR_PROJECT_NOT_CLOSABLE}（项目域 start/cancel/Hold/Resume/Close 共享此码）+ 项目编号/上下文，
-     * common 码作 cause 保留（契约 §7）。cancel 的终态拒绝不经此 helper（终态优先走领域码路径，见 cancelProject）。
+     * 经 StateMachine Bean 断言来源态合法（start）；非法边 Bean 直抛领域码
+     * {@code ERR_PROJECT_NOT_CLOSABLE}（项目域 start/cancel/Hold/Resume/Close 共享此码；
+     * plan 2026-09-07-2200-1 转码退役），本处同码补参 projectId。cancel 的终态拒绝不经此 helper
+     * （终态优先走显式直抛路径，见 cancelProject）。
      */
     private void assertCan(String action, String projectId, String from) {
         try {
@@ -146,9 +147,7 @@ public class ErpPrjProjectBizModel extends AbstractErpCrudBizModel<ErpPrjProject
                     throw new IllegalArgumentException("unexpected action: " + action);
             }
         } catch (NopException e) {
-            throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE, e)
-                    .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
-                    .param(ErpPrjErrors.ARG_CURRENT_STATUS, from);
+            throw e.param(ErpPrjErrors.ARG_PROJECT_ID, projectId);
         }
     }
 

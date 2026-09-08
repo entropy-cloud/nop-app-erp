@@ -1,7 +1,7 @@
 package app.erp.prj.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.prj.service.ErpPrjConstants;
+import app.erp.prj.service.ErpPrjErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -18,17 +18,17 @@ import java.util.List;
  * （DRAFT/OPEN/ON_HOLD/COMPLETED/CANCELLED）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。
  * 可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 BizModel/Processor（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpPrjErrors#ERR_PROJECT_NOT_CLOSABLE}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1 有意契约修正：项目域非法边端到端码今日经
+ * BizModel/Processor catch 转码收敛于此码，直抛消除转码层）；项目编号（projectId）经调用点同码补参。
  *
  * <p>迁移矩阵（7 条边）：start(DRAFT→OPEN)、hold(OPEN→ON_HOLD)、resume(ON_HOLD→OPEN)、
  * close(OPEN→COMPLETED)、cancel 多源 {DRAFT/OPEN/ON_HOLD→CANCELLED} = 3 边。
  * OPEN↔ON_HOLD 为合法往复；COMPLETED/CANCELLED 终态无出边。
  *
  * <p>cancel 多源 + 终态领域异常重叠（契约 §11.4 警示）：{@link #assertCanCancel(String)} 对终态
- * （COMPLETED/CANCELLED）同样报告 common 非法边，接线时 BizModel 须令终态优先走领域码
- * * {@code ERR_PROJECT_NOT_CLOSABLE}（保持既有外部错误码）、非终态非法走 Bean→领域映射（参照 M1.1
- * {@code ErpCsTicketBizModel.cancel} 范式防冲突）。
+ * （COMPLETED/CANCELLED）同样直抛本领域码，接线时 BizModel 须令终态优先走显式直抛路径（携带 projectId 补参，
+ * 参照 M1.1 {@code ErpCsTicketBizModel.cancel} 范式防冲突）。
  *
  * <p>动态守卫边界（保留 BizModel/Processor）：{@code validateStartPreconditions}（start，config-gated STRICT/WARN）、
  * {@code validateTasksFinished}（close，config-gated STRICT/WARN）、成本归集、乐观锁不属于状态轴判断，本 Bean 不承载。
@@ -83,9 +83,9 @@ public class ErpPrjProjectStateMachine {
     /**
      * cancel 守卫：非终态（DRAFT/OPEN/ON_HOLD）均合法。
      *
-     * <p>注意：终态（COMPLETED/CANCELLED）的 cancel 由 BizModel 抛领域码 {@code ERR_PROJECT_NOT_CLOSABLE}
-     * （保持既有外部错误码，项目域 start/cancel/Hold/Resume/Close 共享此码）。本方法对终态同样报告 common
-     * 非法边，接线时 BizModel 须令终态优先走领域码路径（见 plan Phase 2 cancel 防冲突说明 + 契约 §11.4）。
+     * <p>注意：终态（COMPLETED/CANCELLED）的 cancel 由 BizModel 显式直抛领域码 {@code ERR_PROJECT_NOT_CLOSABLE}
+     * （项目域 start/cancel/Hold/Resume/Close 共享此码）。本方法对终态同样直抛该领域码，接线时 BizModel 须令
+     * 终态优先走显式直抛路径（见契约 §11.4）。
      */
     public void assertCanCancel(String status) {
         if (isTerminal(status)) {
@@ -129,10 +129,10 @@ public class ErpPrjProjectStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE)
+                .param(ErpPrjErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpPrjErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpPrjErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

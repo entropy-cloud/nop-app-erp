@@ -70,11 +70,11 @@ public class ErpPrjTimesheetBizModel extends AbstractErpCrudBizModel<ErpPrjTimes
     public ErpPrjTimesheet reject(@Name("timesheetId") String timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
         String status = timesheet.getStatus();
-        // 固定来源态守卫委托 StateMachine Bean（非法边映射为领域码 + expected="SUBMITTED" 文案保持）
+        // 固定来源态守卫委托 StateMachine Bean（Bean 直抛领域码，本处同码补参 timesheetCode，plan 2026-09-07-2200-1）
         try {
             stateMachine.assertCanReject(status);
         } catch (NopException e) {
-            throw illegalTransition(timesheet, status, "SUBMITTED");
+            throw e.param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheet.getCode());
         }
         timesheet.setStatus(stateMachine.rejectTargetStatus());
         updateEntity(timesheet, null, context);
@@ -91,13 +91,6 @@ public class ErpPrjTimesheetBizModel extends AbstractErpCrudBizModel<ErpPrjTimes
 
     private ErpPrjTimesheet requireTimesheet(String timesheetId, IServiceContext context) {
         return requireEntity(String.valueOf(timesheetId), null, context);
-    }
-
-    private NopException illegalTransition(ErpPrjTimesheet timesheet, String current, String expected) {
-        return new NopException(ErpPrjErrors.ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheet.getCode())
-                .param(ErpPrjErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpPrjErrors.ARG_EXPECTED_STATUS, expected);
     }
 
 }

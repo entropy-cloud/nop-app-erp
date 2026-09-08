@@ -1,7 +1,7 @@
 package app.erp.prj.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.prj.service.ErpPrjConstants;
+import app.erp.prj.service.ErpPrjErrors;
 import io.nop.api.core.exceptions.NopException;
 
 /**
@@ -20,9 +20,9 @@ public class ErpPrjProjectStateMachineDelta extends ErpPrjProjectStateMachine {
     @Override
     public void assertCanCancel(String status) {
         if (!ErpPrjConstants.PROJECT_STATUS_OPEN.equals(status)) {
-            throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpCommonErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpCommonErrors.ARG_EXPECTED_STATUS, "OPEN")
+            throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE)
+                    .param(ErpPrjErrors.ARG_CURRENT_STATUS, status)
+                    .param(ErpPrjErrors.ARG_EXPECTED_STATUS, "OPEN")
                     .param(ARG_ACTION, "cancel");
         }
     }

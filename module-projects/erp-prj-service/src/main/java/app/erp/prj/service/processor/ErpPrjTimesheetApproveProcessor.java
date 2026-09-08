@@ -39,11 +39,11 @@ public class ErpPrjTimesheetApproveProcessor {
         if (status != null && Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_APPROVED)) {
             return timesheet;
         }
-        // 固定来源态守卫委托 StateMachine Bean（非法边映射为领域码 + expected="SUBMITTED" 文案保持）
+        // 固定来源态守卫委托 StateMachine Bean（Bean 直抛领域码，本处同码补参 timesheetCode，plan 2026-09-07-2200-1）
         try {
             stateMachine.assertCanApprove(status);
         } catch (NopException e) {
-            throw illegalTransition(timesheet, status, "SUBMITTED");
+            throw e.param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheet.getCode());
         }
 
         // F1.2（P1-CK-prj-006 工时链）：成本归集前移到 tryPost（REQUIRES_NEW 凭证独立提交）之前——
@@ -84,13 +84,6 @@ public class ErpPrjTimesheetApproveProcessor {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    private NopException illegalTransition(ErpPrjTimesheet timesheet, String current, String expected) {
-        return new NopException(ErpPrjErrors.ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheet.getCode())
-                .param(ErpPrjErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpPrjErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     private IEntityDao<ErpPrjTimesheet> timesheetDao() {

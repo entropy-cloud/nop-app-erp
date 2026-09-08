@@ -98,11 +98,11 @@ public class ErpPrjProjectSettlementProcessor {
 
     protected void validateTransitionForSubmit(ErpPrjProjectSettlement settlement) {
         String approveStatus = settlement.getApproveStatus();
-        // 固定来源态守卫委托 Approval Bean（非法边映射为领域码 + 实体上下文，common 码作 cause，契约 §7）
+        // 固定来源态守卫委托 Approval Bean（Bean 直抛领域码，本处同码补参 settlementCode，plan 2026-09-07-2200-1）
         try {
             approvalStateMachine.assertCanSubmit(approveStatus);
         } catch (NopException e) {
-            throw illegalTransition(settlement, approveStatus, ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
+            throw e.param(ErpPrjErrors.ARG_SETTLEMENT_CODE, settlement.getCode());
         }
     }
 
@@ -110,11 +110,11 @@ public class ErpPrjProjectSettlementProcessor {
         String approveStatus = settlement.getApproveStatus();
         boolean requireApproval = ErpPrjConfigs.settlementRequireApproval();
         if (requireApproval) {
-            // STRICT 默认矩阵委托 Approval Bean（SUBMITTED 单源）
+            // STRICT 默认矩阵委托 Approval Bean（SUBMITTED 单源；Bean 直抛领域码，同码补参 settlementCode）
             try {
                 approvalStateMachine.assertCanApprove(approveStatus);
             } catch (NopException e) {
-                throw illegalTransition(settlement, approveStatus, ErpPrjConstants.APPROVE_STATUS_SUBMITTED);
+                throw e.param(ErpPrjErrors.ARG_SETTLEMENT_CODE, settlement.getCode());
             }
         } else {
             // RELAXED 分支（config-gated 动态扩展）：允许 UNSUBMITTED 直审，保留原位（行为保持）
@@ -130,17 +130,17 @@ public class ErpPrjProjectSettlementProcessor {
         try {
             approvalStateMachine.assertCanReject(approveStatus);
         } catch (NopException e) {
-            throw illegalTransition(settlement, approveStatus, ErpPrjConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpPrjErrors.ARG_SETTLEMENT_CODE, settlement.getCode());
         }
     }
 
     protected void validateTransitionForCancel(ErpPrjProjectSettlement settlement) {
         String docStatus = settlement.getDocStatus();
-        // 固定来源态守卫委托 Document Bean（仅终态 CANCELLED 非法，行为保持）
+        // 固定来源态守卫委托 Document Bean（仅终态 CANCELLED 非法，行为保持；同码补参 settlementCode）
         try {
             documentStateMachine.assertCanCancel(docStatus);
         } catch (NopException e) {
-            throw illegalTransition(settlement, docStatus, "!CANCELLED");
+            throw e.param(ErpPrjErrors.ARG_SETTLEMENT_CODE, settlement.getCode());
         }
     }
 
@@ -275,6 +275,10 @@ public class ErpPrjProjectSettlementProcessor {
         return context != null && context.getUserId() != null ? context.getUserId() : "system";
     }
 
+    /**
+     * 非法迁移领域码构造（不经 StateMachine 的 if-throw 直抛守卫专用，如 RELAXED 直审分支；
+     * SM 非法边已直抛同码 + 本处调用点同码补参，plan 2026-09-07-2200-1）。
+     */
     protected NopException illegalTransition(ErpPrjProjectSettlement settlement, String current, String expected) {
         return new NopException(ErpPrjErrors.ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpPrjErrors.ARG_SETTLEMENT_CODE, settlement.getCode())

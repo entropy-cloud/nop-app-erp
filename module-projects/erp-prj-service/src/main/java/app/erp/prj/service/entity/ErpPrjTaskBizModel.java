@@ -324,8 +324,9 @@ public class ErpPrjTaskBizModel extends AbstractErpCrudBizModel<ErpPrjTask> impl
     }
 
     /**
-     * 经 StateMachine Bean 断言来源态合法；非法边（Bean 报告 common 层码）映射为领域
-     * {@code ERR_TASK_ILLEGAL_STATUS_TRANSITION} + 任务编号/上下文，common 码作 cause 保留（契约 §7）。
+     * 经 StateMachine Bean 断言来源态合法；非法边 Bean 直抛领域码 {@code ERR_TASK_ILLEGAL_STATUS_TRANSITION}
+     * （plan 2026-09-07-2200-1 转码退役），本处同码补参 taskId，并按既有端到端语义以动作目标态覆写
+     * {@code targetStatus} 参数（模板文案「不允许迁移至 {targetStatus}」保持既有值）。
      */
     private void assertCan(String action, String taskId, String from, String target) {
         try {
@@ -346,19 +347,9 @@ public class ErpPrjTaskBizModel extends AbstractErpCrudBizModel<ErpPrjTask> impl
                     throw new IllegalArgumentException("unexpected action: " + action);
             }
         } catch (NopException e) {
-            throw illegalTransition(taskId, from, target, e);
+            throw e.param(ErpPrjErrors.ARG_TASK_ID, taskId)
+                    .param(ErpPrjErrors.ARG_TARGET_STATUS, target);
         }
-    }
-
-    private NopException illegalTransition(String taskId, String current, String target) {
-        return illegalTransition(taskId, current, target, null);
-    }
-
-    private NopException illegalTransition(String taskId, String current, String target, Throwable cause) {
-        return new NopException(ErpPrjErrors.ERR_TASK_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpPrjErrors.ARG_TASK_ID, taskId)
-                .param(ErpPrjErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpPrjErrors.ARG_TARGET_STATUS, target);
     }
 
 }

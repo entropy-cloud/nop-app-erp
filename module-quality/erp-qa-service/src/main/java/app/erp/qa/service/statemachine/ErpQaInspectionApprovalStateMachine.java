@@ -1,7 +1,7 @@
 package app.erp.qa.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.qa.service.ErpQaConstants;
+import app.erp.qa.service.ErpQaErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -22,8 +22,9 @@ import java.util.List;
  *
  * <p>严格无状态（契约 §2）。命名带 {@code Approval} 后缀（契约 §1 双轴约定，与 result 轴分离）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}，并附 {@code action} 补充诊断参数；
- * 领域 ErrorCode 映射归 Processor（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpQaErrors#ERR_INVALID_INSPECTION_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1 裸奔通道有意契约修正：今日无转码层，common 码
+ * 直达调用方，收敛到质检单既有实体专属码）；质检单号（inspectionCode）由接线调用点同码补参。
  */
 public class ErpQaInspectionApprovalStateMachine {
 
@@ -35,7 +36,8 @@ public class ErpQaInspectionApprovalStateMachine {
     /**
      * concessionApprove（让步审批）守卫：来源态为 {@code UNSUBMITTED}/{@code null} 合法（让步接收降级审批）。
      *
-     * <p>非法来源态报告 common 层非法边（携带 {@code action=concessionApprove}/{@code fromStatus}）。
+     * <p>非法来源态直抛领域码 {@code ERR_INVALID_INSPECTION_STATUS_TRANSITION}（携带 {@code action=concessionApprove}/
+     * {@code currentStatus}）。
      */
     public void assertCanConcessionApprove(String approveStatus) {
         String status = normalize(approveStatus);
@@ -81,10 +83,10 @@ public class ErpQaInspectionApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpQaErrors.ERR_INVALID_INSPECTION_STATUS_TRANSITION)
+                .param(ErpQaErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpQaErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpQaErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

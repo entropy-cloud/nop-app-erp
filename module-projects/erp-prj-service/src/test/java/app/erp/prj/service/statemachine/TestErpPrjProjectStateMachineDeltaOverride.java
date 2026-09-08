@@ -1,7 +1,7 @@
 package app.erp.prj.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.prj.service.ErpPrjConstants;
+import app.erp.prj.service.ErpPrjErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.autotest.NopTestProperty;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -53,14 +53,14 @@ public class TestErpPrjProjectStateMachineDeltaOverride extends JunitAutoTestCas
         // Delta 覆盖语义：cancel(DRAFT) 抛异常（基线放行 → Delta 收紧，可区分差异）
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanCancel(ErpPrjConstants.PROJECT_STATUS_DRAFT));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
-                "Delta cancel(DRAFT) 报告 common 层非法迁移码");
+        assertEquals(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE.getErrorCode(), ex.getErrorCode(),
+                "Delta cancel(DRAFT) 直抛领域非法迁移码");
 
         // Delta 收紧的来源态 ON_HOLD 同样非法（Delta 仅允许 OPEN）
         NopException ex2 = assertThrows(NopException.class,
                 () -> stateMachine.assertCanCancel(ErpPrjConstants.PROJECT_STATUS_ON_HOLD));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex2.getErrorCode(),
-                "Delta cancel(ON_HOLD) 报告 common 层非法迁移码");
+        assertEquals(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE.getErrorCode(), ex2.getErrorCode(),
+                "Delta cancel(ON_HOLD) 直抛领域非法迁移码");
 
         // Delta 仍允许 OPEN（基线 + Delta 均允许）
         stateMachine.assertCanCancel(ErpPrjConstants.PROJECT_STATUS_OPEN);

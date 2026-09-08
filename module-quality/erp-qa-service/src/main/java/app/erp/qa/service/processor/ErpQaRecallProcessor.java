@@ -71,14 +71,14 @@ public class ErpQaRecallProcessor {
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
-    // approveStatus 轴固定来源态守卫委托 ErpQaRecallApprovalStateMachine（非法边→领域码 ERR_INVALID_RECALL_STATUS_TRANSITION）
+    // approveStatus 轴固定来源态守卫委托 ErpQaRecallApprovalStateMachine（Bean 直抛领域码，本处同码补参 recallCode）
 
     protected void validateTransitionForSubmit(ErpQaRecall recall, IServiceContext context) {
         String aStatus = recall.getApproveStatus();
         try {
             approvalStateMachine.assertCanSubmit(aStatus);
         } catch (NopException e) {
-            throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_UNSUBMITTED + " / " + ErpQaConstants.APPROVE_STATUS_REJECTED);
+            throw e.param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
         }
     }
 
@@ -87,7 +87,7 @@ public class ErpQaRecallProcessor {
         try {
             approvalStateMachine.assertCanWithdraw(aStatus);
         } catch (NopException e) {
-            throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
         }
     }
 
@@ -96,7 +96,7 @@ public class ErpQaRecallProcessor {
         try {
             approvalStateMachine.assertCanApprove(aStatus);
         } catch (NopException e) {
-            throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
         }
     }
 
@@ -105,7 +105,7 @@ public class ErpQaRecallProcessor {
         try {
             approvalStateMachine.assertCanReject(aStatus);
         } catch (NopException e) {
-            throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED);
+            throw e.param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
         }
     }
 
@@ -114,7 +114,7 @@ public class ErpQaRecallProcessor {
         try {
             approvalStateMachine.assertCanReverseApprove(aStatus);
         } catch (NopException e) {
-            throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_APPROVED);
+            throw e.param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
         }
     }
 
@@ -130,7 +130,7 @@ public class ErpQaRecallProcessor {
         try {
             statusStateMachine.assertCanApprove(current);
         } catch (NopException e) {
-            throw illegalTransition(recall, current, ErpQaConstants.RECALL_STATUS_OPEN);
+            throw e.param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
         }
     }
 
@@ -210,6 +210,10 @@ public class ErpQaRecallProcessor {
         }
     }
 
+    /**
+     * 非法迁移领域码构造（不经 StateMachine 的守卫专用，如 {@link #requireRecallStatus} 前置条件守卫；
+     * SM 非法边已直抛同码 + 调用点同码补参，plan 2026-09-07-2200-1）。
+     */
     protected NopException illegalTransition(ErpQaRecall recall, String current, String expected) {
         return new NopException(ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION)
                 .param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode())

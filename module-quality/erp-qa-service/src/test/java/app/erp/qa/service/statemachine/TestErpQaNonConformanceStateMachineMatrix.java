@@ -1,6 +1,6 @@
 package app.erp.qa.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.qa.service.ErpQaErrors;
 import app.erp.qa.service.ErpQaConstants;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
@@ -81,9 +81,9 @@ public class TestErpQaNonConformanceStateMachineMatrix {
                 ErpQaConstants.NCR_STATUS_RESOLVED, ErpQaConstants.NCR_STATUS_ESCALATED_TO_RECALL,
                 ErpQaConstants.NCR_STATUS_CANCELLED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanSubmitReview(illegal));
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpQaErrors.ERR_INVALID_NCR_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("submitReview", ex.getParam(ErpQaNonConformanceStateMachine.ARG_ACTION));
-            assertEquals(illegal, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(illegal, ex.getParam(ErpQaErrors.ARG_CURRENT_STATUS));
         }
     }
 

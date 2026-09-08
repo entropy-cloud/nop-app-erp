@@ -23,7 +23,7 @@ public class ErpQaNonConformanceReverseNcrProcessor extends AbstractErpQaNonConf
         try {
             ncrStateMachine.assertCanReverseNcr(current);
         } catch (NopException e) {
-            throw illegalNcrTransition(ncr, current, "RESOLVED");
+            throw e.param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode());
         }
         if (!Boolean.TRUE.equals(ncr.getPosted())) {
             throw new NopException(ErpQaErrors.ERR_NCR_NOT_POSTED).param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode());

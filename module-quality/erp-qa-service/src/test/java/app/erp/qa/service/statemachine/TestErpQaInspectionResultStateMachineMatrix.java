@@ -1,6 +1,6 @@
 package app.erp.qa.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.qa.service.ErpQaErrors;
 import app.erp.qa.service.ErpQaConstants;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
@@ -77,9 +77,9 @@ public class TestErpQaInspectionResultStateMachineMatrix {
         for (String illegal : Arrays.asList(ErpQaConstants.INSPECTION_RESULT_ACCEPTED,
                 ErpQaConstants.INSPECTION_RESULT_CONDITIONAL, ErpQaConstants.INSPECTION_RESULT_REJECTED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanRecordResult(illegal));
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpQaErrors.ERR_INVALID_INSPECTION_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("recordResult", ex.getParam(ErpQaInspectionResultStateMachine.ARG_ACTION));
-            assertEquals(illegal, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
+            assertEquals(illegal, ex.getParam(ErpQaErrors.ARG_CURRENT_STATUS));
         }
     }
 

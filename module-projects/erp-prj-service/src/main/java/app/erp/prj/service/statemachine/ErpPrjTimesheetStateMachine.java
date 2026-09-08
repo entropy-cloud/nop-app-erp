@@ -1,7 +1,7 @@
 package app.erp.prj.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.prj.service.ErpPrjConstants;
+import app.erp.prj.service.ErpPrjErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -24,8 +24,8 @@ import java.util.List;
  * （submit/approve/reject/cancel）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。
  * 可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpPrjErrors#ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1）；工时单号（timesheetCode）经调用点同码补参。
  *
  * <p>迁移矩阵（5 条边）：submit(UNSUBMITTED→SUBMITTED)、approve(SUBMITTED→APPROVED)、
  * reject(SUBMITTED→UNSUBMITTED)、cancel 多源 {SUBMITTED, APPROVED}→UNSUBMITTED = 2 边。
@@ -53,9 +53,9 @@ public class ErpPrjTimesheetStateMachine {
     /**
      * submit 守卫：来源态为 {@code UNSUBMITTED}（{@code null} 归一化为 UNSUBMITTED，初始态语义）合法。
      *
-     * <p>非法来源态报告 common 层非法边（携带 {@code action=submit}/{@code fromStatus}）。
-     * 接线方 {@code ErpPrjTimesheetSubmitProcessor} 映射为领域码 {@code ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION}
-     * （保持既有 expected="DRAFT" 文案）。
+     * <p>非法来源态直抛领域码（携带 {@code action=submit}/{@code currentStatus}）。
+     * 接线方 {@code ErpPrjTimesheetSubmitProcessor} 同码补参 timesheetCode（plan 2026-09-07-2200-1 转码退役；
+     * 原转码层遗留 expected="DRAFT" 文案随退役消失，直抛后为字典值 {@code UNSUBMITTED}）。
      */
     public void assertCanSubmit(String status) {
         String s = normalizeSubmit(status);
@@ -145,10 +145,10 @@ public class ErpPrjTimesheetStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpPrjErrors.ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPrjErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpPrjErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpPrjErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

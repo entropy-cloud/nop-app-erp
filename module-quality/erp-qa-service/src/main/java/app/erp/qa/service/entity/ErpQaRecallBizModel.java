@@ -67,7 +67,7 @@ public class ErpQaRecallBizModel extends AbstractErpCrudBizModel<ErpQaRecall> im
         try {
             statusStateMachine.assertCanCancel(current);
         } catch (NopException e) {
-            throw illegalRecallTransition(recall, current, "OPEN / APPROVED / IN_PROGRESS");
+            throw e.param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
         }
         recall.setStatus(statusStateMachine.cancelTargetStatus());
         updateEntity(recall, null, context);
@@ -105,12 +105,5 @@ public class ErpQaRecallBizModel extends AbstractErpCrudBizModel<ErpQaRecall> im
             throw new NopException(ErpQaErrors.ERR_RECALL_NOT_FOUND).param(ErpQaErrors.ARG_RECALL_ID, recallId);
         }
         return requireEntity(recallId, null, context);
-    }
-
-    private NopException illegalRecallTransition(ErpQaRecall recall, String current, String expected) {
-        return new NopException(ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION)
-                .param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode())
-                .param(ErpQaErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpQaErrors.ARG_EXPECTED_STATUS, expected);
     }
 }

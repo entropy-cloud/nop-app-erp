@@ -1,7 +1,7 @@
 package app.erp.qa.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.qa.service.ErpQaConstants;
+import app.erp.qa.service.ErpQaErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -28,8 +28,8 @@ import java.util.List;
  * <p><b>approve/reject 联动</b>（Decision (B)）：Bean 按单轴建模；approve/reject 联动写 status=APPROVED/CANCELLED
  * 保留在 facade {@code doApprove/doReject} 原位（status 轴归 {@link ErpQaRecallStateMachine}）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 facade（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpQaErrors#ERR_INVALID_RECALL_STATUS_TRANSITION}（参数 {@code currentStatus}/
+ * {@code expectedStatus}/{@code action}；plan 2026-09-07-2200-1）；召回单号（recallCode）经 facade 调用点同码补参。
  */
 public class ErpQaRecallApprovalStateMachine {
 
@@ -137,10 +137,10 @@ public class ErpQaRecallApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION)
+                .param(ErpQaErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpQaErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpQaErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

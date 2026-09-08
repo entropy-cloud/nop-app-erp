@@ -16,6 +16,7 @@ public interface ErpQaErrors {
     String ARG_INSPECTION_CODE = "inspectionCode";
     String ARG_CURRENT_STATUS = "currentStatus";
     String ARG_EXPECTED_STATUS = "expectedStatus";
+    String ARG_ACTION = "action";
     String ARG_NCR_ID = "ncrId";
     String ARG_NCR_CODE = "ncrCode";
     String ARG_ACTION_ID = "actionId";

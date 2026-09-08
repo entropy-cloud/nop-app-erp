@@ -1,6 +1,7 @@
 package app.erp.qa.service.processor;
 
 import app.erp.qa.dao.entity.ErpQaRecall;
+import app.erp.qa.service.ErpQaErrors;
 import app.erp.qa.service.entity.RecallTargetLocator;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -11,8 +12,9 @@ import jakarta.inject.Inject;
  * 自包含 APPROVED→IN_PROGRESS 目标定位编排（经 {@link RecallTargetLocator} 反查受影响销售出库 → ErpQaRecallTarget）。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。共享 helper 单一真相源在 {@link AbstractErpQaRecallProcessor}。
  *
- * <p>status 轴来源态守卫委托 {@code statusStateMachine.assertCanLocateTargets}（非法边→领域码
- * {@code ERR_INVALID_RECALL_STATUS_TRANSITION}）；目标态委托 {@code statusStateMachine.locateTargetsTargetStatus()}。
+ * <p>status 轴来源态守卫委托 {@code statusStateMachine.assertCanLocateTargets}（Bean 直抛领域码
+ * {@code ERR_INVALID_RECALL_STATUS_TRANSITION}，本处同码补参 recallCode，plan 2026-09-07-2200-1）；
+ * 目标态委托 {@code statusStateMachine.locateTargetsTargetStatus()}。
  */
 public class ErpQaRecallLocateTargetsProcessor extends AbstractErpQaRecallProcessor {
 
@@ -25,7 +27,7 @@ public class ErpQaRecallLocateTargetsProcessor extends AbstractErpQaRecallProces
         try {
             statusStateMachine.assertCanLocateTargets(current);
         } catch (NopException e) {
-            throw illegalRecallTransition(recall, current, "APPROVED");
+            throw e.param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
         }
         targetLocator.locate(recall, context);
         recall.setStatus(statusStateMachine.locateTargetsTargetStatus());

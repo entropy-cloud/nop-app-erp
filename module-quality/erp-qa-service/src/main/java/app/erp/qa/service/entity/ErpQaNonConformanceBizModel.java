@@ -56,7 +56,7 @@ public class ErpQaNonConformanceBizModel extends AbstractErpCrudBizModel<ErpQaNo
         try {
             ncrStateMachine.assertCanSubmitReview(current);
         } catch (NopException e) {
-            throw illegalNcrTransition(ncr, current, "OPEN");
+            throw e.param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode());
         }
         ncr.setStatus(ncrStateMachine.submitReviewTargetStatus());
         updateEntity(ncr, null, context);
@@ -92,7 +92,7 @@ public class ErpQaNonConformanceBizModel extends AbstractErpCrudBizModel<ErpQaNo
         try {
             ncrStateMachine.assertCanUpgradeToRecall(current);
         } catch (NopException e) {
-            throw illegalNcrTransition(ncr, current, "IN_REVIEW");
+            throw e.param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode());
         }
         // 升级为召回（终态，仅状态迁移占位；不建召回实体。真正建召回用 upgradeToRecall）
         ncr.setStatus(ncrStateMachine.upgradeToRecallTargetStatus());
@@ -114,7 +114,7 @@ public class ErpQaNonConformanceBizModel extends AbstractErpCrudBizModel<ErpQaNo
         try {
             ncrStateMachine.assertCanCancel(current);
         } catch (NopException e) {
-            throw illegalNcrTransition(ncr, current, "OPEN / IN_REVIEW");
+            throw e.param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode());
         }
         ncr.setStatus(ncrStateMachine.cancelTargetStatus());
         updateEntity(ncr, null, context);
@@ -128,12 +128,5 @@ public class ErpQaNonConformanceBizModel extends AbstractErpCrudBizModel<ErpQaNo
             throw new NopException(ErpQaErrors.ERR_NCR_NOT_FOUND).param(ErpQaErrors.ARG_NCR_ID, ncrId);
         }
         return requireEntity(ncrId, null, context);
-    }
-
-    private NopException illegalNcrTransition(ErpQaNonConformance ncr, String current, String expected) {
-        return new NopException(ErpQaErrors.ERR_INVALID_NCR_STATUS_TRANSITION)
-                .param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode())
-                .param(ErpQaErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpQaErrors.ARG_EXPECTED_STATUS, expected);
     }
 }
