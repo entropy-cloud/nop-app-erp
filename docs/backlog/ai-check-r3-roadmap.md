@@ -86,7 +86,7 @@
 | M1.5 **manufacturing 切片 1/3 — 工单与报工** | `todo`（执行完成待收官翻转：plan `2026-09-08-1042-2` 五维全跑零跳维，`ck-mfg-workorder-r3.md` 覆盖矩阵 5/5（B=finding / F=finding(minor) / S=pass / T=pass / I=pass）；三态裁决 复用 5 / 归并 16 / 新立 2（P1-CK-mfg-022-r3 + P3-CK-mfg-023-r3），历史 ID 零覆写；零生产代码改动核证通过；mfg service 回归两次 308/0/0/0 全绿；依本 roadmap 规则「结束审计通过 ready→done」+ plan Non-Goal「不做 roadmap 状态翻转」+ M1.1 同批先例，done 翻转归 owner/engine 依独立结束审计处置） | `docs/design/manufacturing/state-machine.md` | M0.6 + MI.9 | 同上 |
 | M1.6 **manufacturing 切片 2/3 — BOM/MRP/CRP** | `todo` | `mrp.md` + `crp.md` | M1.5 | 同上 |
 | M1.7 **manufacturing 切片 3/3 — 委外/批次追溯/差异** | `todo` | `subcontracting.md` + `batch-genealogy.md` + `variance-analysis.md` | M1.5 | 同上 |
-| M1.8 **assets 切片 1/2 — 资产生命周期** | `todo` | `docs/design/assets/` | M0.6 + MI.9 | 同上 |
+| M1.8 **assets 切片 1/2 — 资产生命周期** | `todo`（执行完成待收官翻转：plan `2026-09-08-1042-3` 五维全跑零跳维，`ck-assets-lifecycle-r3.md` 覆盖矩阵 5/5（B=finding / F=pass / S=pass / T=pass / I=pass）；三态裁决 复用 8 / 归并 19 / 新立 1（P3-CK-ast-028-r3），历史 27 ID 零覆写；零生产代码改动核证通过；ast service 回归两次 339/0/0/0 全绿（锚点 cjk-baseline §批注账 337 + 姊妹 StateMachine 计划矩阵测试增量）；依本 roadmap 规则「结束审计通过 ready→done」+ plan Non-Goal「不做 roadmap 状态翻转」+ M1.1/M1.5 同批先例，done 翻转归 owner/engine 依独立结束审计处置） | `docs/design/assets/` | M0.6 + MI.9 | 同上 |
 | M1.9 **assets 切片 2/2 — 折旧与过账 + 盘点** | `todo` | `depreciation-and-posting.md` | M1.8 | 同上 |
 | M1.10 **hr 切片 1/2 — 组织与员工** | `todo` | `docs/design/human-resource/` | M0.6 + MI.9 | 同上 |
 | M1.11 **hr 切片 2/2 — 考勤、薪酬与排班** | `todo` | `docs/design/human-resource/payroll.md` + `shift-scheduling.md`（考勤语义散布于 README/state-machine） | M1.10 | 同上 |

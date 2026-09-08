@@ -17,5 +17,6 @@
 | `m0-5-audit-checklists.md` | M0.5 | 五维 × 21 核对单元强制核对矩阵（冻结版）：每维 owner doc 锚点 + 判定标准 + 机械核查程式 + 跨轮查重程序与列 + S 级 11 切片粒度与共享代码唯一归属 + M1.1~M1.16 唯一格集合映射 |
 | `ck-finance-posting-r3.md` | M1.1 | finance fin-1（过账与凭证）五维符合性审计报告：覆盖矩阵 5/5（B=finding 归并态 0 新立 / F=pass / S=pass / T=pass / I=pass）+ 三态裁决（复用 5 / 归并 15 / 新立 0，历史 ID 零覆写）+ 统计 + 剩余风险四件套；审计时点 HEAD `8825a10e`（2026-09-08） |
 | `ck-mfg-workorder-r3.md` | M1.5 | manufacturing mfg-1（工单与报工）五维符合性审计报告：覆盖矩阵 5/5（B=finding / F=finding(minor) / S=pass / T=pass / I=pass）+ 三态裁决（复用 5 / 归并 16 / 新立 2——P1-CK-mfg-022-r3 reverseApprove×终态 docStatus 复活、P3-CK-mfg-023-r3 dashboard 孪生页日期参数错配，历史 ID 零覆写）+ 统计 + 剩余风险四件套；审计时点 HEAD `dd39e6cce`（2026-09-08） |
+| `ck-assets-lifecycle-r3.md` | M1.8 | assets ast-1（资产生命周期：建档/变动/盘点）五维符合性审计报告：覆盖矩阵 5/5（B=finding / F=pass / S=pass / T=pass / I=pass）+ 三态裁决（复用 8（P1-001..006 + P2-007/015，F1.2/F1.3/F2.8 修复 HEAD 复核有效）/ 归并 19（P2-008..014+016、P3-017..027）/ 新立 1——P3-CK-ast-028-r3 AssetBizModel 跨实体 daoFor 直查 ActionLog 无 I*Biz 无豁免注释，历史 27 ID 零覆写）+ 统计 + 剩余风险四件套；审计时点 HEAD `69851bb2`（2026-09-08，脏面空） |
 
 > i18n 工具链产物 = 脚本输出 + 基线登记（roadmap 横切关注点 13）：M0.2/M0.3 的 checker/快照产物落 `docs/audits/cjk-baseline.md` + 本目录，不产 `ck-*` 报告；`ck-*` 报告自 M1.x 审计切片起产出。
