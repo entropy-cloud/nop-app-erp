@@ -63,6 +63,7 @@
 | `ck-finance-posting-r3.md`（r3 轮，目录 `2026-09-06-1645-ai-check-r3/`） | M1.1 | finance（过账与凭证 fin-1） | 0 | 0 | 0 | 0 | done（0 新立；复用 5 / 归并 15；五维矩阵 B=finding 归并态、F/S/T/I=pass） |
 | `ck-mfg-workorder-r3.md`（r3 轮，目录 `2026-09-06-1645-ai-check-r3/`） | M1.5 | manufacturing（工单与报工 mfg-1） | 0 | 1 | 0 | 1 | done（新立 2：P1-CK-mfg-022-r3 + P3-CK-mfg-023-r3；复用 5 / 归并 16；五维矩阵 B=finding、F=finding(minor)、S/T/I=pass；2026-09-08 勘误：P0/P3 计数列错位随 M1.8 闭包审计 B-1 同批修正——原 `1\|1\|0\|0` 为列序误植） |
 | `ck-assets-lifecycle-r3.md`（r3 轮，目录 `2026-09-06-1645-ai-check-r3/`） | M1.8 | assets（资产生命周期 ast-1：建档/变动/盘点） | 0 | 0 | 0 | 1 | done（新立 1：P3-CK-ast-028-r3；复用 8 / 归并 19；五维矩阵 B=finding、F/S/T/I=pass） |
+| `ck-hr-org-r3.md`（r3 轮，目录 `2026-09-06-1645-ai-check-r3/`） | M1.10 | hr（组织与员工 hr-1：组织/岗位/员工/编制） | 0 | 0 | 0 | 0 | done（0 新立；复用 2 / 归并 13；五维矩阵 B=finding 归并态、F/S/I=pass、T=pass 附 findDepartmentTree 测试缺位注记归并 P2-CK-hr-003） |
 
 ## Finding 追踪
 
@@ -608,6 +609,8 @@
  | P3-CK-common-010 | P3 | D1 | ck-common-app.md | ErpCommonErrors 错误码命名空间 `nop.err.erp.common.*` 偏离项目 `erp.err.<short>` 约定 | 新增 | open |  |
 
 > **r3 轮复核注记（2026-09-08，M1.1 fin-1，HEAD `8825a10e`，报告 `2026-09-06-1645-ai-check-r3/ck-finance-posting-r3.md`）**：fin 域 19 条逐一复核——P1-CK-fin-001..005 复用（fixed，HEAD 复核有效：F2.1/F1.1/F1.4 修复在位）；P2-CK-fin-006..015、P3-CK-fin-016..019 归并（open，现场逐一复核仍在，证据落 r3 报告 §2.2，原 ID 状态不动）；P3-CK-fin2-012 追加 fin-1 新站点（`ErpFinPostingExceptionRetryProcessor.currentUserId` 宽 catch，同族）；**新立 0 条**（无 `-r3` 后缀新 ID），历史 ID 零覆写。
+
+> **r3 轮复核注记（2026-09-08，M1.10 hr-1，HEAD `f40b4bbae`，报告 `2026-09-06-1645-ai-check-r3/ck-hr-org-r3.md`）**：hr 域 17 条逐一复核——P1-CK-hr-001 复用（修复在 HEAD 有效：defaultPrepareDelete 5 守卫 + 5 错误码 + TestErpHrDepartmentPositionDeleteGuard 8 用例绿；索引行状态仍 open = 回填缺口注记在报告 §2.1，lesson-11 同型，状态回填归索引 owner 流程）；P2-CK-hr-004 复用（F1.3 基类接入，索引已 fixed 一致）；P2-CK-hr-002/003/005、P3-CK-hr-006..008/010..016 归并 13 条（open，现场逐一复核仍在，P2-CK-hr-003 追加 DIM-T findDepartmentTree 测试缺位证据，证据落 r3 报告 §2.2，原 ID 状态不动）；P3-CK-hr-009/017 范围外注记（招聘 BizModel 本体不在 hr-1 r3 格集合，维持登记态归 M1.11/修复批）；**新立 0 条**（无 `-r3` 后缀新 ID），历史 ID 零覆写。
 
 ## 阶段状态
 
