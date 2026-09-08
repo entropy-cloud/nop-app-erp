@@ -1,7 +1,7 @@
 package app.erp.ct.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.ct.service.ErpCtConstants;
+import app.erp.ct.service.ErpCtErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -91,10 +91,10 @@ public class TestErpCtContractVersionStateMachineMatrix {
             }
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanFinalize(s),
                     "finalize 对非 DRAFT 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+            assertEquals(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                     "Bean 报告 common 层非法迁移码");
             assertEquals("finalize", ex.getParam(ErpCtContractVersionStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
+            assertEquals(s, ex.getParam(ErpCtErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
         }
     }
 
@@ -110,10 +110,10 @@ public class TestErpCtContractVersionStateMachineMatrix {
             }
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanSign(s),
                     "sign 对非 FINALIZED 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+            assertEquals(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                     "Bean 报告 common 层非法迁移码");
             assertEquals("sign", ex.getParam(ErpCtContractVersionStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
+            assertEquals(s, ex.getParam(ErpCtErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
         }
     }
 

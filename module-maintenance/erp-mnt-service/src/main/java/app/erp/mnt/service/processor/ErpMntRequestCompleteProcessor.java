@@ -1,7 +1,7 @@
 package app.erp.mnt.service.processor;
 
-import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntRequest;
+import app.erp.mnt.service.ErpMntErrors;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.time.CoreMetrics;
@@ -19,7 +19,7 @@ public class ErpMntRequestCompleteProcessor extends AbstractErpMntRequestProcess
         try {
             stateMachine.assertCanComplete(from);
         } catch (NopException e) {
-            throw illegalRequestTransition(request, from, ErpMntDaoConstants.REQUEST_STATUS_IN_PROGRESS, e);
+            throw e.param(ErpMntErrors.ARG_REQUEST_CODE, request.getCode());
         }
         doComplete(request, context);
         return request;

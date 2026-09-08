@@ -220,11 +220,12 @@ public class ErpB2bPartnerProfileBizModel extends AbstractErpCrudBizModel<ErpB2b
         return count;
     }
 
-    // ---------- 守卫映射（契约 §7：common 码 → 领域码） ----------
+    // ---------- 守卫同码补参（plan 2026-09-07-2200-1：Bean 直抛领域码） ----------
 
     /**
-     * 经 StateMachine Bean 断言来源态合法；非法边（Bean 报告 common 层码）映射为领域
-     * {@code ERR_B2B_PARTNER_ILLEGAL_TRANSITION} + 伙伴编码/上下文，common 码作 cause 保留（契约 §7）。
+     * 经 StateMachine Bean 断言来源态合法；Bean 自 plan 2026-09-07-2200-1 起直抛领域码
+     * {@code ERR_B2B_PARTNER_ILLEGAL_TRANSITION}（action/currentState/expectedState），
+     * 非法边 catch 同码补参 {@code partnerCode}。
      */
     private void assertCan(String action, ErpB2bPartnerProfile profile, String from, String expected) {
         try {
@@ -248,15 +249,8 @@ public class ErpB2bPartnerProfileBizModel extends AbstractErpCrudBizModel<ErpB2b
                     throw new IllegalArgumentException("unexpected action: " + action);
             }
         } catch (NopException e) {
-            throw illegalTransition(profile, from, expected, e);
+            throw e.param(ErpB2bErrors.ARG_PARTNER_CODE, profile.getCode());
         }
-    }
-
-    private NopException illegalTransition(ErpB2bPartnerProfile profile, String current, String expected, Throwable cause) {
-        return new NopException(ErpB2bErrors.ERR_B2B_PARTNER_ILLEGAL_TRANSITION, cause)
-                .param(ErpB2bErrors.ARG_PARTNER_CODE, profile.getCode())
-                .param(ErpB2bErrors.ARG_CURRENT_STATE, current)
-                .param(ErpB2bErrors.ARG_EXPECTED_STATE, expected);
     }
 
 }

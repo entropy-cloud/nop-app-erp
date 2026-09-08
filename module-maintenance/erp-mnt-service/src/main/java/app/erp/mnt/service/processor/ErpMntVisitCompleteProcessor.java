@@ -39,7 +39,7 @@ public class ErpMntVisitCompleteProcessor extends AbstractErpMntVisitProcessor {
         try {
             stateMachine.assertCanComplete(from);
         } catch (NopException e) {
-            throw illegalVisitTransition(visit, from, ErpMntDaoConstants.VISIT_STATUS_IN_PROGRESS, e);
+            throw e.param(ErpMntErrors.ARG_VISIT_CODE, visit.getCode());
         }
         // F1.2（P2-CK-mnt-007）：设备状态恢复与 request 联动前移到 doComplete（内含 REQUIRES_NEW
         // 工时 GL 凭证）之前——两步均可抛（设备写/request 状态机守卫），原顺序下失败会回滚主事务
@@ -98,8 +98,7 @@ public class ErpMntVisitCompleteProcessor extends AbstractErpMntVisitProcessor {
             try {
                 requestStateMachine.assertCanStartRepair(status);
             } catch (NopException e) {
-                throw illegalLinkedRequestTransition(request, status,
-                        ErpMntDaoConstants.REQUEST_STATUS_ACCEPTED, e);
+                throw e.param(ErpMntErrors.ARG_REQUEST_CODE, request.getCode());
             }
             request.setStatus(requestStateMachine.startRepairTargetStatus());
             daoProvider.daoFor(ErpMntRequest.class).updateEntity(request);
@@ -108,19 +107,10 @@ public class ErpMntVisitCompleteProcessor extends AbstractErpMntVisitProcessor {
         try {
             requestStateMachine.assertCanComplete(status);
         } catch (NopException e) {
-            throw illegalLinkedRequestTransition(request, status,
-                    ErpMntDaoConstants.REQUEST_STATUS_IN_PROGRESS, e);
+            throw e.param(ErpMntErrors.ARG_REQUEST_CODE, request.getCode());
         }
         request.setStatus(requestStateMachine.completeTargetStatus());
         request.setCompletedAt(CoreMetrics.currentTimestamp());
         daoProvider.daoFor(ErpMntRequest.class).updateEntity(request);
-    }
-
-    private NopException illegalLinkedRequestTransition(ErpMntRequest request, String current,
-                                                        String expected, Throwable cause) {
-        return new NopException(ErpMntErrors.ERR_INVALID_REQUEST_STATUS_TRANSITION, cause)
-                .param(ErpMntErrors.ARG_REQUEST_CODE, request.getCode())
-                .param(ErpMntErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpMntErrors.ARG_EXPECTED_STATUS, expected);
     }
 }

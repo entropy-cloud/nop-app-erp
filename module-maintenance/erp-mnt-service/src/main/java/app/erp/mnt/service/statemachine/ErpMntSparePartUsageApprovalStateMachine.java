@@ -1,7 +1,7 @@
 package app.erp.mnt.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mnt.dao.ErpMntDaoConstants;
+import app.erp.mnt.service.ErpMntErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -17,8 +17,9 @@ import java.util.List;
  * <p>严格无状态（契约 §2）。承载最小迁移矩阵（UNSUBMITTED/SUBMITTED/APPROVED/REJECTED 四态字典，但仅
  * confirmApprove 单边可达）+ 终态/初始态分类 + 只读 {@link #transitions()}。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/BizModel（契约 §7）。
+ * <p>非法边直抛域通用码 {@link ErpMntErrors#ERR_MNT_ILLEGAL_STATUS_TRANSITION}（参数 {@code action}/
+ * {@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1 直抛领域码——本 Bean 无生产转码层，
+ * common 码原直达调用方，属有意契约修正）。
  *
  * <p>迁移矩阵（1 条边）：confirmApprove(null/UNSUBMITTED→APPROVED)。
  *
@@ -74,9 +75,9 @@ public class ErpMntSparePartUsageApprovalStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpMntErrors.ERR_MNT_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpMntErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpMntErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

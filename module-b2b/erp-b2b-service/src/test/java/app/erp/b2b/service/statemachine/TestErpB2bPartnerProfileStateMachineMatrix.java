@@ -1,7 +1,7 @@
 package app.erp.b2b.service.statemachine;
 
 import app.erp.b2b.service.ErpB2bConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.b2b.service.ErpB2bErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -192,10 +192,10 @@ public class TestErpB2bPartnerProfileStateMachineMatrix {
     public void testIllegalEdgeThrowsCommonErrorCode() {
         NopException e = assertThrows(NopException.class,
                 () -> sm.assertCanActivate(ErpB2bConstants.PARTNER_STATUS_REGISTERED));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), e.getErrorCode(),
+        assertEquals(ErpB2bErrors.ERR_B2B_PARTNER_ILLEGAL_TRANSITION.getErrorCode(), e.getErrorCode(),
                 "Bean 应抛 common 层 ERR_ILLEGAL_STATUS_TRANSITION（领域映射归 BizModel）");
         assertEquals("activate", e.getParam(ErpB2bPartnerProfileStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-        assertEquals(ErpB2bConstants.PARTNER_STATUS_REGISTERED, e.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+        assertEquals(ErpB2bConstants.PARTNER_STATUS_REGISTERED, e.getParam(ErpB2bErrors.ARG_CURRENT_STATE),
                 "拒绝元数据携带当前态");
     }
 }

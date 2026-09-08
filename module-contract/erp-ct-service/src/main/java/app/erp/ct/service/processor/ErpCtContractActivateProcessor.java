@@ -26,10 +26,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 自包含合同激活编排（NEGOTIATION→ACTIVE + 当前版本定稿则同步签署）；共享 protected helper 已随编排迁入。
  *
  * <p>固定来源态/目标态判断委托 {@link ErpCtContractStateMachine}（合同头 status 轴 Bean，契约 §4/§7）；
- * 动态业务守卫（contractType↔direction 组合校验）+ 签署/版本生效副作用保留原位。非法边 Bean 抛 common 层码
- * （含 {@code action}/fromStatus 元数据），本 Processor 捕获后映射领域码 {@link ErpCtErrors#ERR_CT_ILLEGAL_STATUS_TRANSITION}
- * （+ contractCode/currentStatus/expectedStatus 实体编号/上下文，common 码作 cause 保留）。
- * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
+ * 动态业务守卫（contractType↔direction 组合校验）+ 签署/版本生效副作用保留原位。Bean 自 plan 2026-09-07-2200-1
+ * 起直抛领域码 {@link ErpCtErrors#ERR_CT_ILLEGAL_STATUS_TRANSITION}（action/currentStatus/expectedStatus），
+ * 非法边 catch 同码补参 {@code contractCode}。下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
 public class ErpCtContractActivateProcessor {
 
@@ -50,7 +49,7 @@ public class ErpCtContractActivateProcessor {
         try {
             stateMachine.assertCanActivate(contract.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_NEGOTIATION, e);
+            throw e.param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode());
         }
         validateTypeDirectionCombo(contract);
         // 审批链完整性联动（RC-R1.34，UC-CT-07 step 5「所有节点通过后合同可进入 ACTIVE 状态」）：
@@ -107,18 +106,6 @@ public class ErpCtContractActivateProcessor {
         query.addFilter(eq("contractId", contractId));
         query.addFilter(eq("isCurrent", true));
         return contractVersionBiz.findFirst(query, null, context);
-    }
-
-    protected NopException illegalTransition(ErpCtContract contract, String expected) {
-        return illegalTransition(contract, expected, null);
-    }
-
-    /** 领域非法迁移异常构造；可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7）。 */
-    protected NopException illegalTransition(ErpCtContract contract, String expected, Throwable cause) {
-        return new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode())
-                .param(ErpCtErrors.ARG_CURRENT_STATUS, contract.getStatus())
-                .param(ErpCtErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     protected IEntityDao<ErpCtContract> dao() {

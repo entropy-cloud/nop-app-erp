@@ -1,7 +1,7 @@
 package app.erp.b2b.service.statemachine;
 
 import app.erp.b2b.service.ErpB2bConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.b2b.service.ErpB2bErrors;
 import io.nop.api.core.exceptions.NopException;
 
 /**
@@ -19,9 +19,9 @@ public class ErpB2bEdiDocStateMachineDelta extends ErpB2bEdiDocStateMachine {
     @Override
     public void assertCanCancel(String state) {
         if (!ErpB2bConstants.EDI_DOC_STATE_TO_SEND.equals(state)) {
-            throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpCommonErrors.ARG_CURRENT_STATUS, state)
-                    .param(ErpCommonErrors.ARG_EXPECTED_STATUS, ErpB2bConstants.EDI_DOC_STATE_TO_SEND)
+            throw new NopException(ErpB2bErrors.ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION)
+                    .param(ErpB2bErrors.ARG_CURRENT_STATE, state)
+                    .param(ErpB2bErrors.ARG_EXPECTED_STATE, ErpB2bConstants.EDI_DOC_STATE_TO_SEND)
                     .param(ARG_ACTION, "cancel");
         }
     }

@@ -1,7 +1,7 @@
 package app.erp.b2b.service.statemachine;
 
 import app.erp.b2b.service.ErpB2bConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.b2b.service.ErpB2bErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.autotest.NopTestProperty;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -57,12 +57,12 @@ public class TestErpB2bEdiDocStateMachineDeltaOverride extends JunitAutoTestCase
         // 关键差异点：cancel(SENT) 和 cancel(ERROR) 在 Delta 非法（基线放行）
         NopException exSent = assertThrows(NopException.class,
                 () -> stateMachine.assertCanCancel(ErpB2bConstants.EDI_DOC_STATE_SENT));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), exSent.getErrorCode(),
+        assertEquals(ErpB2bErrors.ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION.getErrorCode(), exSent.getErrorCode(),
                 "Delta cancel(SENT) 报告 common 层非法迁移码");
 
         NopException exError = assertThrows(NopException.class,
                 () -> stateMachine.assertCanCancel(ErpB2bConstants.EDI_DOC_STATE_ERROR));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), exError.getErrorCode(),
+        assertEquals(ErpB2bErrors.ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION.getErrorCode(), exError.getErrorCode(),
                 "Delta cancel(ERROR) 报告 common 层非法迁移码");
     }
 

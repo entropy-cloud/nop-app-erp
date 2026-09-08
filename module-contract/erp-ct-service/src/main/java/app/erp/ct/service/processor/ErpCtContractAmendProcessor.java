@@ -24,10 +24,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 自包含合同修订编排（ACTIVE→DRAFT + 新建版本 max+1 + isCurrent 原子翻转）；共享 protected helper 已随编排迁入。
  *
  * <p>固定来源态/目标态判断委托 {@link ErpCtContractStateMachine}（合同头 status 轴 Bean，契约 §4/§7）；
- * 动态业务副作用（新版本创建 + isCurrent 原子翻转）保留原位。非法边 Bean 抛 common 层码（含 {@code action}/
- * fromStatus 元数据），本 Processor 捕获后映射领域码 {@link ErpCtErrors#ERR_CT_ILLEGAL_STATUS_TRANSITION}
- * （+ contractCode/currentStatus/expectedStatus 实体编号/上下文，common 码作 cause 保留）。
- * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
+ * 动态业务副作用（新版本创建 + isCurrent 原子翻转）保留原位。Bean 自 plan 2026-09-07-2200-1 起直抛领域码
+ * {@link ErpCtErrors#ERR_CT_ILLEGAL_STATUS_TRANSITION}（action/currentStatus/expectedStatus），
+ * 非法边 catch 同码补参 {@code contractCode}。下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
 public class ErpCtContractAmendProcessor {
 
@@ -45,7 +44,7 @@ public class ErpCtContractAmendProcessor {
         try {
             stateMachine.assertCanAmend(contract.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_ACTIVE, e);
+            throw e.param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode());
         }
 
         // 行语义（D3 裁决，RC-R1.32）：同合同 amend 模型下「复制原合同所有行到变更单」= 行保留即满足——
@@ -95,18 +94,6 @@ public class ErpCtContractAmendProcessor {
         query.addFilter(eq("contractId", contractId));
         List<ErpCtContractVersion> list = contractVersionBiz.findList(query, null, context);
         return list == null ? new ArrayList<>() : new ArrayList<>(list);
-    }
-
-    protected NopException illegalTransition(ErpCtContract contract, String expected) {
-        return illegalTransition(contract, expected, null);
-    }
-
-    /** 领域非法迁移异常构造；可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7）。 */
-    protected NopException illegalTransition(ErpCtContract contract, String expected, Throwable cause) {
-        return new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode())
-                .param(ErpCtErrors.ARG_CURRENT_STATUS, contract.getStatus())
-                .param(ErpCtErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     protected IEntityDao<ErpCtContract> dao() {

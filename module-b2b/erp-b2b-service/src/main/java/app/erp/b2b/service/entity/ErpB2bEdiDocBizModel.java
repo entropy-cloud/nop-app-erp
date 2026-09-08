@@ -183,8 +183,9 @@ public class ErpB2bEdiDocBizModel extends AbstractErpCrudBizModel<ErpB2bEdiDoc> 
     }
 
     /**
-     * 经 StateMachine Bean 断言来源态合法；非法边（Bean 报告 common 层码）映射为领域
-     * {@code ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION} + 实体编号/上下文，common 码作 cause 保留（契约 §7）。
+     * 经 StateMachine Bean 断言来源态合法；Bean 自 plan 2026-09-07-2200-1 起直抛领域码
+     * {@code ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION}（action/currentState/expectedState），
+     * 非法边 catch 同码补参 {@code ediDocCode}。
      */
     private void assertCan(String action, ErpB2bEdiDoc doc, String from, String expected) {
         try {
@@ -211,19 +212,8 @@ public class ErpB2bEdiDocBizModel extends AbstractErpCrudBizModel<ErpB2bEdiDoc> 
                     throw new IllegalArgumentException("unexpected action: " + action);
             }
         } catch (NopException e) {
-            throw illegalTransition(doc, from, expected, e);
+            throw e.param(ErpB2bErrors.ARG_EDI_DOC_CODE, doc.getCode());
         }
-    }
-
-    private NopException illegalTransition(ErpB2bEdiDoc doc, String current, String expected) {
-        return illegalTransition(doc, current, expected, null);
-    }
-
-    private NopException illegalTransition(ErpB2bEdiDoc doc, String current, String expected, Throwable cause) {
-        return new NopException(ErpB2bErrors.ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION, cause)
-                .param(ErpB2bErrors.ARG_EDI_DOC_CODE, doc.getCode())
-                .param(ErpB2bErrors.ARG_CURRENT_STATE, current)
-                .param(ErpB2bErrors.ARG_EXPECTED_STATE, expected);
     }
 
     void writeLog(ErpB2bEdiDoc doc, String direction, String resultCode, String resultMsg,

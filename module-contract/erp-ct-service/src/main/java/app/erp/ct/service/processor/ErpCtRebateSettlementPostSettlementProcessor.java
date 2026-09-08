@@ -49,7 +49,7 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
         try {
             stateMachine.assertCanPostSettlement(settlement.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(settlementId, settlement, e);
+            throw e.param(ErpCtErrors.ARG_SETTLEMENT_ID, settlementId);
         }
 
         // 汇总关联未结算计提
@@ -169,18 +169,6 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
     }
 
     // ---------- helpers ----------
-
-    /**
-     * 领域非法迁移异常构造。{@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7：
-     * Bean 报 common 码 + action/currentStatus/expectedStatus 元数据，Processor 映射领域码 +
-     * 实体编号/上下文，common 码作 cause 保留）。领域 re-throw 仅传 {@code settlementId} + {@code currentStatus}
-     * （action/expectedStatus 仅存于 common 码 cause，不向领域码传播）。
-     */
-    protected NopException illegalTransition(String settlementId, ErpCtRebateSettlement settlement, Throwable cause) {
-        return new NopException(ErpCtErrors.ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION, cause)
-                .param(ErpCtErrors.ARG_SETTLEMENT_ID, settlementId)
-                .param(ErpCtErrors.ARG_CURRENT_STATUS, settlement.getStatus());
-    }
 
     protected ErpCtRebateSettlement requireSettlement(String settlementId) {
         ErpCtRebateSettlement settlement = dao().getEntityById(settlementId);

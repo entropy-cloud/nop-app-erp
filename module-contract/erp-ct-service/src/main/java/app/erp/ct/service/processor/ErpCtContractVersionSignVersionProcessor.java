@@ -42,7 +42,7 @@ public class ErpCtContractVersionSignVersionProcessor {
         try {
             stateMachine.assertCanSign(version.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(version, ErpCtConstants.VERSION_STATUS_FINALIZED, e);
+            throw e.param(ErpCtErrors.ARG_CONTRACT_CODE, version.getContractId());
         }
 
         // 原子翻转：同合同其他版本 isCurrent=false
@@ -78,21 +78,6 @@ public class ErpCtContractVersionSignVersionProcessor {
         query.addFilter(eq("contractId", contractId));
         List<ErpCtContractVersion> list = dao().findAllByQuery(query);
         return list == null ? new ArrayList<>() : new ArrayList<>(list);
-    }
-
-    protected NopException illegalTransition(ErpCtContractVersion version, String expected) {
-        return illegalTransition(version, expected, null);
-    }
-
-    /**
-     * 领域非法迁移异常构造。可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7：
-     * Bean 报 common 码 + action/fromStatus 元数据，Processor 映射领域码 + 实体编号/上下文，common 码作 cause 保留）。
-     */
-    protected NopException illegalTransition(ErpCtContractVersion version, String expected, Throwable cause) {
-        return new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpCtErrors.ARG_CONTRACT_CODE, version.getContractId())
-                .param(ErpCtErrors.ARG_CURRENT_STATUS, version.getStatus())
-                .param(ErpCtErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     protected IEntityDao<ErpCtContractVersion> dao() {

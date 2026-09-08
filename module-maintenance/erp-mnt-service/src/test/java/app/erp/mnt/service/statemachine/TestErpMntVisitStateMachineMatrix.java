@@ -1,7 +1,7 @@
 package app.erp.mnt.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mnt.dao.ErpMntDaoConstants;
+import app.erp.mnt.service.ErpMntErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -93,10 +93,10 @@ public class TestErpMntVisitStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> sm.assertCanCancel(s),
                         "cancel 对终态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                assertEquals(ErpMntErrors.ERR_INVALID_VISIT_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                         "Bean 报告 common 层非法迁移码");
                 assertEquals("cancel", ex.getParam(ErpMntVisitStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
+                assertEquals(s, ex.getParam(ErpMntErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
             }
         }
     }
@@ -157,11 +157,11 @@ public class TestErpMntVisitStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                assertEquals(ErpMntErrors.ERR_INVALID_VISIT_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                         "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpMntVisitStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + action);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpMntErrors.ARG_CURRENT_STATUS),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }

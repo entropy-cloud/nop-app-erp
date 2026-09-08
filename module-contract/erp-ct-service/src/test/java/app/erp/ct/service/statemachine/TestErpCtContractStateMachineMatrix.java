@@ -1,7 +1,7 @@
 package app.erp.ct.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.ct.service.ErpCtConstants;
+import app.erp.ct.service.ErpCtErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -114,10 +114,10 @@ public class TestErpCtContractStateMachineMatrix {
             }
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanTerminate(s),
                     "terminate 对非 {ACTIVE,NEGOTIATION} 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+            assertEquals(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                     "Bean 报告 common 层非法迁移码");
             assertEquals("terminate", ex.getParam(ErpCtContractStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
+            assertEquals(s, ex.getParam(ErpCtErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
         }
     }
 
@@ -194,11 +194,11 @@ public class TestErpCtContractStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                assertEquals(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                         "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpCtContractStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + action);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpCtErrors.ARG_CURRENT_STATUS),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }

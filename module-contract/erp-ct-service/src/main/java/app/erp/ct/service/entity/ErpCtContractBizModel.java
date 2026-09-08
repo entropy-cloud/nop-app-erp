@@ -121,7 +121,7 @@ public class ErpCtContractBizModel extends AbstractErpCrudBizModel<ErpCtContract
         try {
             stateMachine.assertCanSubmitForNegotiation(contract.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_DRAFT, e);
+            throw e.param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode());
         }
         // 动态业务校验保留原位（D1 语义复用 + §2 前置条件「金额/条款/日期必填」由 submit 守卫生效）：
         // 行金额数据源 = DAO 查询（跨请求已落库行可靠，对齐 R1.8 totalHours 先例）。
@@ -165,7 +165,7 @@ public class ErpCtContractBizModel extends AbstractErpCrudBizModel<ErpCtContract
         try {
             stateMachine.assertCanRejectAmend(contract.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_DRAFT, e);
+            throw e.param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode());
         }
         // 恢复 D5 裁决目标（选项 B）：优先 status==SIGNED 中 versionNo 最大者，无 SIGNED 回落 FINALIZED 最大者
         // ——跨请求可行（amend 与 rejectAmend 独立事务，不依赖 amend 内存快照）+ 对重复 amend/reject 周期
@@ -189,7 +189,7 @@ public class ErpCtContractBizModel extends AbstractErpCrudBizModel<ErpCtContract
         try {
             stateMachine.assertCanSuspend(contract.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_ACTIVE, e);
+            throw e.param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode());
         }
         contract.setStatus(stateMachine.suspendTargetStatus());
         updateEntity(contract, null, context);
@@ -203,7 +203,7 @@ public class ErpCtContractBizModel extends AbstractErpCrudBizModel<ErpCtContract
         try {
             stateMachine.assertCanResume(contract.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_SUSPENDED, e);
+            throw e.param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode());
         }
         contract.setStatus(stateMachine.resumeTargetStatus());
         updateEntity(contract, null, context);
@@ -219,12 +219,11 @@ public class ErpCtContractBizModel extends AbstractErpCrudBizModel<ErpCtContract
         ErpCtContract contract = requireContract(contractId, context);
         // 守卫接受 ACTIVE（生效合同提前终止）与 NEGOTIATION（谈判破裂放弃）两类源态
         // （对齐 state-machine.md §2 L34/L51 + §3 L58：NEGOTIATION 或后续态不可作废，只能 TERMINATED）。
-        // 矩阵判定下沉 Bean（多源 {ACTIVE,NEGOTIATION}），非法边 Bean 抛 common 码，此处映射领域码。
+        // 矩阵判定下沉 Bean（多源 {ACTIVE,NEGOTIATION}），Bean 直抛领域码（plan 2026-09-07-2200-1）。
         try {
             stateMachine.assertCanTerminate(contract.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(contract,
-                    ErpCtConstants.CONTRACT_STATUS_ACTIVE + "/" + ErpCtConstants.CONTRACT_STATUS_NEGOTIATION, e);
+            throw e.param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode());
         }
         // 两段化（RC-R1.34，P1-RC-076，D1 选项 B）：发起终止申请 → 生成法务审批记录（PENDING），
         // 合同保持原状态；法务经 approveTermination 通过后执行终止操作，rejectTermination 驳回 → 原状态。
@@ -298,7 +297,7 @@ public class ErpCtContractBizModel extends AbstractErpCrudBizModel<ErpCtContract
         try {
             stateMachine.assertCanExpire(contract.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_ACTIVE, e);
+            throw e.param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode());
         }
         contract.setStatus(stateMachine.expireTargetStatus());
         updateEntity(contract, null, context);
@@ -750,21 +749,6 @@ public class ErpCtContractBizModel extends AbstractErpCrudBizModel<ErpCtContract
                 .param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode())
                 .param("totalAmount", contract.getTotalAmount())
                 .param("sumLineAmount", sumLineAmount);
-    }
-
-    protected NopException illegalTransition(ErpCtContract contract, String expected) {
-        return illegalTransition(contract, expected, null);
-    }
-
-    /**
-     * 领域非法迁移异常构造。可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7：
-     * Bean 报 common 码 + action/fromStatus 元数据，Processor 映射领域码 + 实体编号/上下文，common 码作 cause 保留）。
-     */
-    protected NopException illegalTransition(ErpCtContract contract, String expected, Throwable cause) {
-        return new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode())
-                .param(ErpCtErrors.ARG_CURRENT_STATUS, contract.getStatus())
-                .param(ErpCtErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     // ---------- E3.1 后端响应层脱敏（@BizLoader，plan 2026-08-10-2059-2）----------

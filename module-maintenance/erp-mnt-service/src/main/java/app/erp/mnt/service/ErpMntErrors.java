@@ -24,6 +24,7 @@ public interface ErpMntErrors {
     String ARG_ASSIGNED_TO = "assignedTo";
     String ARG_VISIT_DATE = "visitDate";
     String ARG_CONFLICT_VISIT_CODE = "conflictVisitCode";
+    String ARG_ACTION = "action";
 
     // --- 报表渲染作用域参数键 ---
     String ARG_REPORT_NAME = "reportName";
@@ -54,6 +55,11 @@ public interface ErpMntErrors {
     ErrorCode ERR_INVALID_REQUEST_STATUS_TRANSITION = ErrorCode.define("erp.err.mnt.request-illegal-status-transition",
             "维护请求 {requestCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
             ARG_REQUEST_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    // --- 域通用非法迁移码（裸奔 Bean 通道，plan 2026-09-07-2200-1：无实体专属转码终码的状态机 Bean 直抛本码） ---
+    ErrorCode ERR_MNT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.mnt.illegal-status-transition",
+            "维护域状态迁移非法：当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_ACTION, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
 
     ErrorCode ERR_SCHEDULE_NOT_FOUND = ErrorCode.define("erp.err.mnt.schedule-not-found",
             "维护计划 {scheduleId} 不存在", ARG_SCHEDULE_ID);

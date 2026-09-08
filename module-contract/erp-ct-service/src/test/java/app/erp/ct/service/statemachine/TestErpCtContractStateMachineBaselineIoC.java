@@ -1,7 +1,7 @@
 package app.erp.ct.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.ct.service.ErpCtConstants;
+import app.erp.ct.service.ErpCtErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.exceptions.NopException;
@@ -49,7 +49,7 @@ public class TestErpCtContractStateMachineBaselineIoC extends JunitAutoTestCase 
         // 其余态非法
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanTerminate(ErpCtConstants.CONTRACT_STATUS_DRAFT));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "基线 terminate(DRAFT) 报告 common 层非法迁移码");
     }
 

@@ -1,7 +1,7 @@
 package app.erp.ct.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.ct.service.ErpCtConstants;
+import app.erp.ct.service.ErpCtErrors;
 import io.nop.api.core.exceptions.NopException;
 
 /**
@@ -20,9 +20,9 @@ public class ErpCtContractStateMachineDelta extends ErpCtContractStateMachine {
     @Override
     public void assertCanTerminate(String status) {
         if (!ErpCtConstants.CONTRACT_STATUS_ACTIVE.equals(status)) {
-            throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpCommonErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpCommonErrors.ARG_EXPECTED_STATUS, ErpCtConstants.CONTRACT_STATUS_ACTIVE)
+            throw new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION)
+                    .param(ErpCtErrors.ARG_CURRENT_STATUS, status)
+                    .param(ErpCtErrors.ARG_EXPECTED_STATUS, ErpCtConstants.CONTRACT_STATUS_ACTIVE)
                     .param(ARG_ACTION, "terminate");
         }
     }

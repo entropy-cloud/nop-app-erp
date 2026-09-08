@@ -1,7 +1,7 @@
 package app.erp.ct.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.ct.service.ErpCtConstants;
+import app.erp.ct.service.ErpCtErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -17,8 +17,9 @@ import java.util.List;
  * <p>严格无状态（契约 §2）：不注入 DAO/IBiz/IServiceContext/事务，只接收状态值。承载**已实现**迁移矩阵
  * （DRAFT/FINALIZED/SIGNED）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。可经 Delta 同名 Bean 覆盖（契约 §6）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpCtErrors#ERR_CT_ILLEGAL_STATUS_TRANSITION}（参数 {@code action}/
+ * {@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1 直抛领域码，{@code contractCode}（版本归属
+ * 合同 id）实体元数据经调用点同码补参补齐）。
  *
  * <p>迁移矩阵（2 条边，线性无分支，dict {@code erp-ct/version-status} 3 值全可达——无死状态）：
  * <ul>
@@ -90,9 +91,9 @@ public class ErpCtContractVersionStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpCtErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpCtErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

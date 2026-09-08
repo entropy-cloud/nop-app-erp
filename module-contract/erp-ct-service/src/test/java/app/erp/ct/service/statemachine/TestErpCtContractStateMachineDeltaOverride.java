@@ -1,7 +1,7 @@
 package app.erp.ct.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.ct.service.ErpCtConstants;
+import app.erp.ct.service.ErpCtErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.autotest.NopTestProperty;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -53,7 +53,7 @@ public class TestErpCtContractStateMachineDeltaOverride extends JunitAutoTestCas
         // Delta 覆盖语义：terminate(NEGOTIATION) 抛异常（基线放行 → Delta 收紧，可区分差异）
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanTerminate(ErpCtConstants.CONTRACT_STATUS_NEGOTIATION));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "Delta terminate(NEGOTIATION) 报告 common 层非法迁移码（Delta 收紧为仅 ACTIVE）");
 
         // Delta 仍允许 ACTIVE（基线 + Delta 均允许）

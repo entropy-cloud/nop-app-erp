@@ -18,8 +18,8 @@ import jakarta.inject.Inject;
  * 各子类 doComplete/doCancel 内（对照 TestErpMntLaborPosting 校验语义不变）。
  *
  * <p>状态守卫经实体级 {@link ErpMntVisitStateMachine} Bean（契约 §5）：各 Processor 直接调用 {@code assertCanXxx}，
- * common 层非法迁移码经 {@link #illegalVisitTransition(ErpMntVisit, String, String, Throwable)} cause-chain 映射为领域
- * {@code ERR_INVALID_VISIT_STATUS_TRANSITION}（契约 §7）。目标态经 {@code *TargetStatus()}。
+ * Bean 自 plan 2026-09-07-2200-1 起直抛领域码 {@code ERR_INVALID_VISIT_STATUS_TRANSITION}（非法边 catch 同码补参
+ * {@code visitCode}）。目标态经 {@code *TargetStatus()}。
  */
 public abstract class AbstractErpMntVisitProcessor {
 
@@ -48,15 +48,7 @@ public abstract class AbstractErpMntVisitProcessor {
     }
 
     protected NopException illegalVisitTransition(ErpMntVisit visit, String current, String expected) {
-        return illegalVisitTransition(visit, current, expected, null);
-    }
-
-    /**
-     * 非法迁移领域异常（带 cause）：StateMachine Bean 报告 common 层 {@code ERR_ILLEGAL_STATUS_TRANSITION}，
-     * 此处映射为领域 {@code ERR_INVALID_VISIT_STATUS_TRANSITION} + 实体编号/上下文，common 码作 cause 保留（契约 §7）。
-     */
-    protected NopException illegalVisitTransition(ErpMntVisit visit, String current, String expected, Throwable cause) {
-        return new NopException(ErpMntErrors.ERR_INVALID_VISIT_STATUS_TRANSITION, cause)
+        return new NopException(ErpMntErrors.ERR_INVALID_VISIT_STATUS_TRANSITION)
                 .param(ErpMntErrors.ARG_VISIT_CODE, visit.getCode())
                 .param(ErpMntErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpMntErrors.ARG_EXPECTED_STATUS, expected);

@@ -1,7 +1,7 @@
 package app.erp.mnt.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.mnt.dao.ErpMntDaoConstants;
+import app.erp.mnt.service.ErpMntErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -17,8 +17,9 @@ import java.util.List;
  * <p>严格无状态（契约 §2）。承载三态迁移矩阵（DRAFT/ACTIVE/CANCELLED）+ 终态/初始态分类 + 只读 {@link #transitions()}。
  * 可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpMntErrors#ERR_SPARE_PART_USAGE_NOT_POSTED}（参数 {@code action}/
+ * {@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1 直抛领域码，{@code usageCode} 实体元数据
+ * 经调用点同码补参补齐）。终码沿用该实体 docStatus 轴今日转码终码 NOT_POSTED（端到端码值/消息不变锚）。
  *
  * <p>迁移矩阵（2 条边）：confirm(DRAFT→ACTIVE)、reverseConfirm(ACTIVE→CANCELLED)。
  *
@@ -78,9 +79,9 @@ public class ErpMntSparePartUsageDocumentStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpMntErrors.ERR_SPARE_PART_USAGE_NOT_POSTED)
+                .param(ErpMntErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpMntErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

@@ -1,7 +1,7 @@
 package app.erp.mnt.service.processor;
 
-import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntVisit;
+import app.erp.mnt.service.ErpMntErrors;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.api.core.exceptions.NopException;
@@ -19,7 +19,7 @@ public class ErpMntVisitStartProcessor extends AbstractErpMntVisitProcessor {
         try {
             stateMachine.assertCanStart(from);
         } catch (NopException e) {
-            throw illegalVisitTransition(visit, from, ErpMntDaoConstants.VISIT_STATUS_SCHEDULED, e);
+            throw e.param(ErpMntErrors.ARG_VISIT_CODE, visit.getCode());
         }
         doStart(visit, context);
         equipmentStatusLinker.linkToUnderMaintenance(visit.getEquipmentId(), context);

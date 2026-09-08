@@ -1,7 +1,7 @@
 package app.erp.b2b.service.statemachine;
 
 import app.erp.b2b.service.ErpB2bConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.b2b.service.ErpB2bErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -93,10 +93,10 @@ public class TestErpB2bEdiDocStateMachineMatrix {
             }
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanCancel(s),
                     "cancel 对非来源态应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+            assertEquals(ErpB2bErrors.ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
                     "Bean 报告 common 层非法迁移码: status=" + s);
             assertEquals("cancel", ex.getParam(ErpB2bEdiDocStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
+            assertEquals(s, ex.getParam(ErpB2bErrors.ARG_CURRENT_STATE), "拒绝元数据携带当前态");
         }
     }
 
@@ -123,10 +123,10 @@ public class TestErpB2bEdiDocStateMachineMatrix {
         for (String s : illegalSources) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanMarkError(s),
                     "markError 对非文档来源应非法（D-B2B-3 Fix 收紧）: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+            assertEquals(ErpB2bErrors.ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
                     "Bean 报告 common 层非法迁移码: status=" + s);
             assertEquals("markError", ex.getParam(ErpB2bEdiDocStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS), "拒绝元数据携带当前态");
+            assertEquals(s, ex.getParam(ErpB2bErrors.ARG_CURRENT_STATE), "拒绝元数据携带当前态");
         }
     }
 
@@ -146,7 +146,7 @@ public class TestErpB2bEdiDocStateMachineMatrix {
             }
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanRetry(s),
                     "retry 对非 ERROR 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+            assertEquals(ErpB2bErrors.ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
                     "Bean 报告 common 层非法迁移码: status=" + s);
             assertEquals("retry", ex.getParam(ErpB2bEdiDocStateMachine.ARG_ACTION), "拒绝元数据携带动作名");
         }
@@ -233,11 +233,11 @@ public class TestErpB2bEdiDocStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                assertEquals(ErpB2bErrors.ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
                         "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpB2bEdiDocStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + action);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpB2bErrors.ARG_CURRENT_STATE),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }

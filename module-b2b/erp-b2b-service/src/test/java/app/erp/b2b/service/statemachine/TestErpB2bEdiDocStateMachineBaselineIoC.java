@@ -1,7 +1,7 @@
 package app.erp.b2b.service.statemachine;
 
 import app.erp.b2b.service.ErpB2bConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.b2b.service.ErpB2bErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.exceptions.NopException;
@@ -49,7 +49,7 @@ public class TestErpB2bEdiDocStateMachineBaselineIoC extends JunitAutoTestCase {
         // 关键差异点：cancel(CANCELLED) 在基线非法（终态）
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanCancel(ErpB2bConstants.EDI_DOC_STATE_CANCELLED));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpB2bErrors.ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "基线 cancel(CANCELLED) 报告 common 层非法迁移码");
     }
 

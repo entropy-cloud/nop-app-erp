@@ -30,7 +30,7 @@ public class ErpMntVisitScheduleProcessor extends AbstractErpMntVisitProcessor {
         try {
             stateMachine.assertCanSchedule(from);
         } catch (NopException e) {
-            throw illegalVisitTransition(visit, from, ErpMntDaoConstants.VISIT_STATUS_DRAFT, e);
+            throw e.param(ErpMntErrors.ARG_VISIT_CODE, visit.getCode());
         }
         decommissionedGuard.rejectIfDecommissioned(visit.getEquipmentId(), context);
         validateSchedulePrereqs(visit, context);

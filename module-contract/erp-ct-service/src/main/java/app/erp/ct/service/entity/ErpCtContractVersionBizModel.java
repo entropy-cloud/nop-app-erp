@@ -14,7 +14,6 @@ import io.nop.dao.api.IEntityDao;
 
 import app.erp.contract.dao.entity.ErpCtContractVersion;
 import app.erp.ct.biz.IErpCtContractVersionBiz;
-import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
 import app.erp.ct.service.processor.ErpCtContractVersionSignVersionProcessor;
 import app.erp.ct.service.statemachine.ErpCtContractVersionStateMachine;
@@ -53,7 +52,7 @@ public class ErpCtContractVersionBizModel extends AbstractErpCrudBizModel<ErpCtC
         try {
             stateMachine.assertCanFinalize(version.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(version, ErpCtConstants.VERSION_STATUS_DRAFT, e);
+            throw e.param(ErpCtErrors.ARG_CONTRACT_CODE, version.getContractId());
         }
         version.setStatus(stateMachine.finalizeTargetStatus());
         updateEntity(version, null, context);
@@ -83,21 +82,6 @@ public class ErpCtContractVersionBizModel extends AbstractErpCrudBizModel<ErpCtC
         query.addFilter(eq("contractId", contractId));
         List<ErpCtContractVersion> list = findList(query, null, context);
         return list == null ? new ArrayList<>() : new ArrayList<>(list);
-    }
-
-    protected NopException illegalTransition(ErpCtContractVersion version, String expected) {
-        return illegalTransition(version, expected, null);
-    }
-
-    /**
-     * 领域非法迁移异常构造。可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7：
-     * Bean 报 common 码 + action/fromStatus 元数据，BizModel/Processor 映射领域码 + 实体编号/上下文，common 码作 cause 保留）。
-     */
-    protected NopException illegalTransition(ErpCtContractVersion version, String expected, Throwable cause) {
-        return new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpCtErrors.ARG_CONTRACT_CODE, version.getContractId())
-                .param(ErpCtErrors.ARG_CURRENT_STATUS, version.getStatus())
-                .param(ErpCtErrors.ARG_EXPECTED_STATUS, expected);
     }
 
 }

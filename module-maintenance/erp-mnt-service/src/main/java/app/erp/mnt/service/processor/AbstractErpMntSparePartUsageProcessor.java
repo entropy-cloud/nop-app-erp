@@ -72,8 +72,7 @@ public abstract class AbstractErpMntSparePartUsageProcessor {
         try {
             documentStateMachine.assertCanConfirm(usage.getDocStatus());
         } catch (NopException e) {
-            throw new NopException(ErpMntErrors.ERR_SPARE_PART_USAGE_NOT_POSTED, e)
-                    .param(ErpMntErrors.ARG_USAGE_CODE, usage.getCode());
+            throw e.param(ErpMntErrors.ARG_USAGE_CODE, usage.getCode());
         }
     }
 
@@ -93,8 +92,7 @@ public abstract class AbstractErpMntSparePartUsageProcessor {
         try {
             documentStateMachine.assertCanReverseConfirm(usage.getDocStatus());
         } catch (NopException e) {
-            throw new NopException(ErpMntErrors.ERR_SPARE_PART_USAGE_NOT_POSTED, e)
-                    .param(ErpMntErrors.ARG_USAGE_CODE, usage.getCode());
+            throw e.param(ErpMntErrors.ARG_USAGE_CODE, usage.getCode());
         }
     }
 

@@ -3,7 +3,6 @@ package app.erp.b2b.service.processor;
 import app.erp.b2b.biz.IErpB2bEdiDocBiz;
 import app.erp.b2b.dao.entity.ErpB2bAsn;
 import app.erp.b2b.dao.entity.ErpB2bAsnLine;
-import app.erp.b2b.service.ErpB2bConstants;
 import app.erp.b2b.service.ErpB2bErrors;
 import app.erp.b2b.service.statemachine.ErpB2bAsnStateMachine;
 import app.erp.pur.dao.entity.ErpPurOrder;
@@ -28,7 +27,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * （R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  *
  * <p>固定来源/目标态判断经 {@link ErpB2bAsnStateMachine} Bean（契约 {@code entity-state-machine-bean.md}）。
- * Bean 抛 common 层非法迁移码，本类映射为 {@link ErpB2bErrors#ERR_B2B_ASN_ILLEGAL_TRANSITION}（参数不变，common 码作 cause）。
+ * Bean 自 plan 2026-09-07-2200-1 起直抛领域码 {@link ErpB2bErrors#ERR_B2B_ASN_ILLEGAL_TRANSITION}
+ * （action/currentState/expectedState），非法边 catch 同码补参 {@code asnCode}。
  * 动态守卫保留原位：HMAC 校验、PO 匹配/超量、EdiDoc 归档失败容忍。
  */
 public class ErpB2bAsnMatchPurchaseOrderProcessor {
@@ -111,10 +111,7 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
         try {
             stateMachine.assertCanMatchPurchaseOrder(from);
         } catch (NopException e) {
-            throw new NopException(ErpB2bErrors.ERR_B2B_ASN_ILLEGAL_TRANSITION, e)
-                    .param(ErpB2bErrors.ARG_ASN_CODE, asn.getCode())
-                    .param(ErpB2bErrors.ARG_CURRENT_STATE, from)
-                    .param(ErpB2bErrors.ARG_EXPECTED_STATE, ErpB2bConstants.ASN_STATUS_RECEIVED);
+            throw e.param(ErpB2bErrors.ARG_ASN_CODE, asn.getCode());
         }
     }
 

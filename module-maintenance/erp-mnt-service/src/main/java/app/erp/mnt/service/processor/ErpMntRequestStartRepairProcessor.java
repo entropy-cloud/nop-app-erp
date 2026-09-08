@@ -1,7 +1,7 @@
 package app.erp.mnt.service.processor;
 
-import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntRequest;
+import app.erp.mnt.service.ErpMntErrors;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 
@@ -18,7 +18,7 @@ public class ErpMntRequestStartRepairProcessor extends AbstractErpMntRequestProc
         try {
             stateMachine.assertCanStartRepair(from);
         } catch (NopException e) {
-            throw illegalRequestTransition(request, from, ErpMntDaoConstants.REQUEST_STATUS_ACCEPTED, e);
+            throw e.param(ErpMntErrors.ARG_REQUEST_CODE, request.getCode());
         }
         doStartRepair(request, context);
         return request;

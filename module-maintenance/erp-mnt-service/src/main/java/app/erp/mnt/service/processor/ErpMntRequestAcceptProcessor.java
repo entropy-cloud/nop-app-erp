@@ -3,6 +3,7 @@ package app.erp.mnt.service.processor;
 import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntRequest;
 import app.erp.mnt.dao.entity.ErpMntVisit;
+import app.erp.mnt.service.ErpMntErrors;
 import app.erp.mnt.service.support.DecommissionedEquipmentGuard;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -30,7 +31,7 @@ public class ErpMntRequestAcceptProcessor extends AbstractErpMntRequestProcessor
         try {
             stateMachine.assertCanAccept(from);
         } catch (NopException e) {
-            throw illegalRequestTransition(request, from, ErpMntDaoConstants.REQUEST_STATUS_OPEN, e);
+            throw e.param(ErpMntErrors.ARG_REQUEST_CODE, request.getCode());
         }
         decommissionedGuard.rejectIfDecommissioned(request.getEquipmentId(), context);
         ErpMntVisit visit = generateResponsiveVisit(request, context);

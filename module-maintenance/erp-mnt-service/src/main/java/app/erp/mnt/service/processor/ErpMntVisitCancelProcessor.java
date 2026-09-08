@@ -1,6 +1,7 @@
 package app.erp.mnt.service.processor;
 
 import app.erp.mnt.dao.entity.ErpMntVisit;
+import app.erp.mnt.service.ErpMntErrors;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.exceptions.NopException;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ public class ErpMntVisitCancelProcessor extends AbstractErpMntVisitProcessor {
         try {
             stateMachine.assertCanCancel(from);
         } catch (NopException e) {
-            throw illegalVisitTransition(visit, from, "!COMPLETED / CANCELLED", e);
+            throw e.param(ErpMntErrors.ARG_VISIT_CODE, visit.getCode());
         }
         doCancel(visit, context);
         equipmentStatusLinker.restoreToRunning(visit.getEquipmentId(), context);
