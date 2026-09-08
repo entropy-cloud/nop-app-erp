@@ -1,6 +1,5 @@
 package app.erp.hr.service.processor;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.hr.biz.IErpHrLeaveBalanceBiz;
 import app.erp.hr.dao.entity.ErpHrLeaveBalance;
 import app.erp.hr.dao.entity.ErpHrLeaveRequest;
@@ -29,9 +28,9 @@ import static io.nop.api.core.beans.FilterBeans.in;
  * 承载 submit/approve/cancel 共用的加载、状态守卫、余额校验、日期重叠校验与审批人解析辅助（单一真相源）。子类只编排单 mutation 步骤顺序。
  *
  * <p>状态守卫改调实体级 {@link ErpHrLeaveRequestStateMachine}（Bean 矩阵权威，契约 §4/§7）：{@link #assertCanSubmit} /
- * {@link #assertCanApprove} / {@link #assertCanCancel} 调用 Bean 的 {@code assertCan<Action>}，非法边由 Bean 抛
- * common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}，本基类映射为领域
- * {@link ErpHrErrors#ERR_LEAVE_ILLEGAL_STATUS_TRANSITION} + 实体编号/上下文（common 码作 cause 保留）。
+ * {@link #assertCanApprove} / {@link #assertCanCancel} 调用 Bean 的 {@code assertCan<Action>}；Bean 自
+ * plan 2026-09-07-2200-1 起直抛领域码 {@link ErpHrErrors#ERR_LEAVE_ILLEGAL_STATUS_TRANSITION}
+ * （action/currentStatus/expectedStatus），本基类仅同码补参补 {@code leaveRequestId}（码与 cause 不变）。
  */
 public abstract class AbstractErpHrLeaveRequestProcessor {
 
@@ -61,14 +60,14 @@ public abstract class AbstractErpHrLeaveRequestProcessor {
     }
 
     /**
-     * 经 StateMachine Bean 断言 submit 来源态合法；非法边（Bean 报告 common 层码）映射为领域
-     * {@link ErpHrErrors#ERR_LEAVE_ILLEGAL_STATUS_TRANSITION} + 实体编号/上下文，common 码作 cause 保留（契约 §7）。
+     * 经 StateMachine Bean 断言 submit 来源态合法；非法边由 Bean 直抛领域码
+     * {@link ErpHrErrors#ERR_LEAVE_ILLEGAL_STATUS_TRANSITION}，此处仅同码补参补 {@code leaveRequestId}。
      */
     protected void assertCanSubmit(ErpHrLeaveRequest leave) {
         try {
             stateMachine.assertCanSubmit(leave.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(leave, e);
+            throw e.param(ErpHrErrors.ARG_LEAVE_REQUEST_ID, leave.getId());
         }
     }
 
@@ -76,7 +75,7 @@ public abstract class AbstractErpHrLeaveRequestProcessor {
         try {
             stateMachine.assertCanApprove(leave.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(leave, e);
+            throw e.param(ErpHrErrors.ARG_LEAVE_REQUEST_ID, leave.getId());
         }
     }
 
@@ -84,15 +83,8 @@ public abstract class AbstractErpHrLeaveRequestProcessor {
         try {
             stateMachine.assertCanCancel(leave.getStatus());
         } catch (NopException e) {
-            throw illegalTransition(leave, e);
+            throw e.param(ErpHrErrors.ARG_LEAVE_REQUEST_ID, leave.getId());
         }
-    }
-
-    private static NopException illegalTransition(ErpHrLeaveRequest leave, NopException cause) {
-        return new NopException(ErpHrErrors.ERR_LEAVE_ILLEGAL_STATUS_TRANSITION, cause)
-                .param(ErpHrErrors.ARG_LEAVE_REQUEST_ID, leave.getId())
-                .param(ErpHrErrors.ARG_CURRENT_STATUS, leave.getStatus())
-                .param(ErpHrErrors.ARG_EXPECTED_STATUS, cause.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
     }
 
     static void computeDurationDays(ErpHrLeaveRequest entity) {

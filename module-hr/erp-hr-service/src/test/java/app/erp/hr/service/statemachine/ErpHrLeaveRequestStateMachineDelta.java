@@ -1,7 +1,7 @@
 package app.erp.hr.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.hr.service.ErpHrConstants;
+import app.erp.hr.service.ErpHrErrors;
 import io.nop.api.core.exceptions.NopException;
 
 /**
@@ -20,9 +20,9 @@ public class ErpHrLeaveRequestStateMachineDelta extends ErpHrLeaveRequestStateMa
     public void assertCanCancel(String status) {
         if (!ErpHrConstants.LEAVE_STATUS_APPROVED.equals(status)
                 && !ErpHrConstants.LEAVE_STATUS_SUBMITTED.equals(status)) {
-            throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpCommonErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpCommonErrors.ARG_EXPECTED_STATUS, "APPROVED/SUBMITTED")
+            throw new NopException(ErpHrErrors.ERR_LEAVE_ILLEGAL_STATUS_TRANSITION)
+                    .param(ErpHrErrors.ARG_CURRENT_STATUS, status)
+                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, "APPROVED/SUBMITTED")
                     .param(ARG_ACTION, "cancel");
         }
     }

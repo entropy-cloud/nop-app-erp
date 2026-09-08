@@ -1,7 +1,7 @@
 package app.erp.hr.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.hr.service.ErpHrConstants;
+import app.erp.hr.service.ErpHrErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -99,11 +99,11 @@ public class TestErpHrLeaveRequestStateMachineMatrix {
             }
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanCancel(s),
                     "cancel 单源 APPROVED：对 [" + s + "] 应非法");
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+            assertEquals(ErpHrErrors.ERR_LEAVE_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                     "Bean 报告 common 层非法迁移码: status=" + s);
             assertEquals("cancel", ex.getParam(ErpHrLeaveRequestStateMachine.ARG_ACTION),
                     "拒绝元数据携带动作名: status=" + s);
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+            assertEquals(s, ex.getParam(ErpHrErrors.ARG_CURRENT_STATUS),
                     "拒绝元数据携带当前态: status=" + s);
         }
     }
@@ -169,11 +169,11 @@ public class TestErpHrLeaveRequestStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                assertEquals(ErpHrErrors.ERR_LEAVE_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                         "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpHrLeaveRequestStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + action + ", status=" + s);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpHrErrors.ARG_CURRENT_STATUS),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }

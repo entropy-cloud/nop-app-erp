@@ -1,7 +1,7 @@
 package app.erp.hr.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.hr.service.ErpHrConstants;
+import app.erp.hr.service.ErpHrErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -115,11 +115,11 @@ public class TestErpHrEmploymentContractStateMachineMatrix {
                 ErpHrConstants.CONTRACT_STATUS_SUSPENDED)) {
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanRenew(s),
                     "renew 对终态/死状态应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+            assertEquals(ErpHrErrors.ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                     "Bean 报告 common 层非法迁移码: status=" + s);
             assertEquals("renew", ex.getParam(ErpHrEmploymentContractStateMachine.ARG_ACTION),
                     "拒绝元数据携带动作名: status=" + s);
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+            assertEquals(s, ex.getParam(ErpHrErrors.ARG_CURRENT_STATUS),
                     "拒绝元数据携带当前态: status=" + s);
         }
     }
@@ -182,7 +182,7 @@ public class TestErpHrEmploymentContractStateMachineMatrix {
             NopException ex = assertThrows(NopException.class,
                     () -> invokeAssert(action, ErpHrConstants.CONTRACT_STATUS_SUSPENDED),
                     "SUSPENDED 对 " + action + " 应非法（死状态无 writer）");
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpHrErrors.ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
         }
     }
 
@@ -202,11 +202,11 @@ public class TestErpHrEmploymentContractStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                assertEquals(ErpHrErrors.ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                         "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpHrEmploymentContractStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + action + ", status=" + s);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpHrErrors.ARG_CURRENT_STATUS),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }

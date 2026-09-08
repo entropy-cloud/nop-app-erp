@@ -1,6 +1,5 @@
 package app.erp.hr.service.processor;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.hr.dao.entity.ErpHrSalary;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.statemachine.ErpHrSalaryApprovalStateMachine;
@@ -8,18 +7,17 @@ import io.nop.api.core.exceptions.NopException;
 import jakarta.inject.Inject;
 
 /**
- * 薪酬审批轴（approveStatus）xbiz 接线守卫（plan 2026-08-14-0456-2 M4.64，Phase 2 Decision (A) 机制替代注记）。
+ * 薪酬审批轴（approveStatus）xbiz 接线守卫（plan 2026-08-14-0456-2 M4.64）。
  *
  * <p>委托实体级 {@link ErpHrSalaryApprovalStateMachine}（Bean 矩阵权威，契约 §4/§7）：调用 {@code assertCanXxx}
- * 断言来源态，非法边由 Bean 抛 common 层 {@code ERR_ILLEGAL_STATUS_TRANSITION}，本守卫映射为领域
- * {@link ErpHrErrors#ERR_SALARY_ILLEGAL_STATUS_TRANSITION} + salaryId/currentStatus/expectedStatus
- * （common 码作 cause 保留）。
+ * 断言来源态；Bean 自 plan 2026-09-07-2200-1 起直抛领域码 {@link ErpHrErrors#ERR_SALARY_ILLEGAL_STATUS_TRANSITION}
+ * （action/currentStatus/expectedStatus），本守卫仅做同码补参（G2 ①）——catch 后补 {@code salaryId} 元数据，
+ * 码与 cause 不变，无异常重建。
  *
- * <p><strong>机制注记（2026-09-07 勘误）</strong>：计划原案「XScript try/catch common NopException → cause-chain
- * 领域码」在 2026-08 时因 XLang 引擎不支持 {@code TryStatement}（{@code nop.err.xlang.exec.not-supported-node}）
- * 而不可行；nop-entropy plan 2258 后 XScript 已支持 try/catch/finally。本守卫 Bean 下沉「Bean 抛 common 码 →
- * 领域映射」是事务边界与可测试性的架构偏好（契约 §7 的接线层职责），XScript 仅 inject 本守卫调用
- * {@code assertCanXxx(entity)} + 经 Bean {@code *TargetStatus()} 写回目标态。行为与错误码契约不变。
+ * <p><strong>机制注记（2026-09-08 更新）</strong>：本 Bean 原为「Bean 抛 common 码 → 守卫转码领域码」转码层
+ * （历史根源见 lesson 15/19：2026-08 XScript 无 try/catch 迫使转码下沉 Java）；StateMachine 直抛领域码后转码
+ * 职责退役，保留本 Bean 仅因 salaryId 实体元数据增强点在此调用链（删则端到端消息丢 salaryId，违反码值/参数
+ * 不变锚）。XScript 经 inject 调用 {@code assertCanXxx(entity)} + 经 Bean {@code *TargetStatus()} 写回目标态。
  *
  * <p>供 {@code ErpHrSalary.xbiz} 五个审批轴动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）
  * 经 XScript {@code inject('app.erp.hr.service.processor.ErpHrSalaryApprovalGuard')} 调用。
@@ -53,10 +51,7 @@ public class ErpHrSalaryApprovalGuard {
         try {
             assertAction.run();
         } catch (NopException e) {
-            throw new NopException(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION, e)
-                    .param(ErpHrErrors.ARG_SALARY_ID, salary.getId())
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, salary.getApproveStatus())
-                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, e.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
+            throw e.param(ErpHrErrors.ARG_SALARY_ID, salary.getId());
         }
     }
 }

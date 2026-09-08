@@ -95,48 +95,50 @@ Exit Criteria:
 
 ### Phase 2 - 存量转码域：sal / pur / inv（转码层退役主战场，配方 form-1/2/3 沉淀批）
 
-Status: planned
+Status: completed
 Targets: `module-sales` / `module-purchase` / `module-inventory` 的 service 模块（StateMachine、Processor、Errors、测试）
 Skill: none
-Item Types: `Fix`-heavy（转码退役 + 换码，13/14 项 Fix）
+Item Types: `Fix`-heavy
 Prereqs: Phase 1 配方
 
-- [ ] **先建三域 Bean→终码映射表**（端到端不变锚，逐 Bean 落表后执行）：sal Delivery 族→域通用码；sal Order/Quotation/Invoice/Receipt/Return（STATUS+DOC 双轴）→各自实体专属码；pur Receive 族→域通用码；pur Order/Requisition/Invoice/Payment/Return→各自实体专属码；inv StockMove/CostAdjust/LandedCost→域通用码；inv StockTake/OwnershipTransfer→各自实体专属码
+- [x] **先建三域 Bean→终码映射表**（逐 Bean 落表后执行，证据见执行报告）：sal Delivery 双轴→域通用码，Order/Quotation/Invoice/Receipt/Return 双轴→各自实体专属码；pur Receive 双轴→域通用码，Order/Req/Invoice/Payment/Return/Quotation/Rfq 双轴→各自实体专属码；inv StockMove/CostAdjust/LandedCost→域通用码，StockTake/OwnershipTransfer→实体专属码，**TransferOrder→域通用码（映射冲突修正：原 confirm 站点 copy-paste 误用 StockTake 实体码 `erp.err.inv.stock-take.illegal-transition`，按映射规则修正为域通用码——有意契约修正，已记入）**
       - Skill: none
-- [ ] 三域全部 StateMachine `illegal()` 按映射表换抛终码（sal×12 / pur×16 / inv×6）+ javadoc 更新
+- [x] 三域全部 StateMachine `illegal()` 按映射表换抛终码（sal×12 / pur×16 / inv×6）+ javadoc 更新；**pur 裁定**：DOC 轴 SM 状态参数键用 `ARG_CURRENT_DOC_STATUS/ARG_EXPECTED_DOC_STATUS`（模板占位符即该键；缺失参数渲染空串会破坏端到端消息，nop-api-core `ApiStringHelper.renderTemplate:295-297` 实证），审批轴仍用 `ARG_CURRENT_STATUS/ARG_EXPECTED_STATUS`
       - Skill: none
-- [ ] 转码层退役：纯转码 → 直接调 assert；带元数据增强 → 同码补参（G2 形态；**首个实体批含至少一个同码补参点，配方 form-2 确认后铺开**）
+- [x] 转码层退役：sal form-2×36 站点 / pur form-2×48 站点 / inv form-2×13 站点（全部同码补参——三域所有终码模板均含单据码参数，form-1 零站点符合预期）；pur 两 BizModel 死 helper `illegalStatus(...)` 删除
       - Skill: none
-- [ ] inv 7 个骨架裸奔 Processor 补域码 `illegalStatusException` 覆写（码=映射表该 Bean 轴终码；配方 form-3 确认）
+- [x] inv 7 个骨架裸奔 Processor 补域码 `illegalStatusException` 覆写（CostAdjust×5 + LandedCost×2 → 域通用码 + moveCode 参数；裸奔通道 common→领域码为有意契约修正）
       - Skill: none
-- [ ] 域测试断言核对：断言最终码值的测试应零改动通过（锚，适用于今日已有领域终码的实体）；矩阵级断言 common 的翻转
+- [x] 域测试断言核对：端到端锚零改动通过（sal TestErpSalOrderApproval/Invoice/DeliveryApproval/ReturnExchange 族、pur TestErpPur*Approval 族、inv TestErpInvStockMoveBizModel/Bookkeeping/StockTakeCompleteDiffMove）；矩阵级断言 common 翻转（sal×9 / pur×13 / inv×2 测试文件，inv 参数化套件按 Bean 断言各自终码）
       - Skill: none
-- [ ] `module-sales` / `module-purchase` / `module-inventory` 各自 `mvn test -pl <module-service> -am` 绿
+- [x] 三模块 `mvn test` 绿：**sal 316 / pur 341 / inv 253，Failures 0 Errors 0（BUILD SUCCESS ×3）**
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 三域 StateMachine + Processor 生产文件对 `ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION` 引用归零（rg 复核）
-- [ ] 三模块测试绿；sal/pur 各抽 1 实体验证"域集成测试零改动通过"（端到端码值不变锚成立）
+- [x] 三域 StateMachine + Processor 生产文件对 `ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION` 引用归零（rg 复核零命中）
+- [x] 三模块测试绿；sal/pur/inv 各抽实体域集成测试零改动通过（端到端码值不变锚成立）
 
 ### Phase 3 - hr（实体专属码 + Guard 退役）
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service`（StateMachine×5、ErpHrSalaryApprovalGuard、AbstractErpHrSalaryProcessor、测试）
 Skill: none
 Item Types: `Fix`-heavy
 Prereqs: Phase 2 配方
 
-- [ ] hr 5 个 StateMachine 按终码映射换抛各自实体专属码（salary 已有；其余实体按 `ErpHrErrors` 既有码复用/新增）
+- [x] hr 5 个 StateMachine 按终码映射换抛实体专属码：SalaryApproval/SalaryPayment→`ERR_SALARY_ILLEGAL_STATUS_TRANSITION`（Guard :56 / ErpHrSalaryBizModel :125 证据）、LeaveRequest→`ERR_LEAVE_ILLEGAL_STATUS_TRANSITION`、EmploymentContract→`ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION`、Timesheet→`ERR_HR_TIMESHEET_ILLEGAL_TRANSITION`；javadoc 同步
       - Skill: none
-- [ ] `ErpHrSalaryApprovalGuard` 退役（xbiz 直接调 StateMachine；`ErpHrSalary.xbiz` 机制注记更新）；`AbstractErpHrSalaryProcessor` 转码移除
+- [x] **Guard 转码退役（G2 ①裁定：保留 Bean、转同码补参富化委托）**：`ErpHrSalaryApprovalGuard.map()` 原 catch 重建异常 + cause 链退役为 `throw e.param(ARG_SALARY_ID, ...)`——salaryId 是端到端消息参数（删 Bean 则 xbiz 直调丢参数、违反 Gate 2 不变性），故不物理删除 Bean；`ErpHrSalary.xbiz` 机制注记同步更新；`AbstractErpHrSalaryProcessor` 旧契约 javadoc 修正（无活转码，仅注释）
       - Skill: none
-- [ ] hr 测试绿（`TestErpHrSalaryApprovalStateMachineMatrix` 11/11 断言翻转后保持全绿）
+- [x] 其余 hr 转码点同码补参退役：`AbstractErpHrLeaveRequestProcessor`（×3 站点 + `illegalTransition` helper 删除）、`ErpHrLeaveRequestBizModel`/`ErpHrEmploymentContractBizModel`/`ErpHrTimesheetBizModel`（×3）/`ErpHrSalaryBizModel`/`ErpHrSalaryMarkPaidProcessor`（×2 + 双 helper 删除，执行期盘点新增发现站点）
+      - Skill: none
+- [x] hr 测试绿：8 个测试文件断言翻转（含 `ErpHrLeaveRequestStateMachineDelta` fixture 换抛领域码）；**mvn test：Tests run: 249, Failures 0, Errors 0，BUILD SUCCESS**（`TestErpHrSalaryApprovalStateMachineMatrix` 断言翻转后全绿）
       - Skill: none
 
 Exit Criteria:
 
-- [ ] hr 生产文件对 common 常量引用归零；hr 模块测试绿
+- [x] hr 生产+测试文件对 common 常量引用归零（rg 复核零命中）；hr 模块测试绿
 
 ### Phase 4 - 其余域批次（ast 其余 + fin/mfg/prj/qa/mnt/log/crm/drp/b2b/ct/cs/md/aps）
 

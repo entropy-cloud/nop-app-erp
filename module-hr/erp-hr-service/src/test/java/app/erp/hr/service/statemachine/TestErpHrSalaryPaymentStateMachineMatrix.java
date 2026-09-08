@@ -1,7 +1,7 @@
 package app.erp.hr.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.hr.service.ErpHrConstants;
+import app.erp.hr.service.ErpHrErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -141,11 +141,11 @@ public class TestErpHrSalaryPaymentStateMachineMatrix {
             }
             NopException ex = assertThrows(NopException.class, () -> action.assertCan(s),
                     actionName + " 对非允许来源态应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+            assertEquals(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                     "Bean 报告 common 层非法迁移码: action=" + actionName + ", status=" + s);
             assertEquals(actionName, ex.getParam(ErpHrSalaryPaymentStateMachine.ARG_ACTION),
                     "拒绝元数据携带动作名: action=" + actionName + ", status=" + s);
-            assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+            assertEquals(s, ex.getParam(ErpHrErrors.ARG_CURRENT_STATUS),
                     "拒绝元数据携带当前态: action=" + actionName + ", status=" + s);
         }
     }
@@ -153,7 +153,7 @@ public class TestErpHrSalaryPaymentStateMachineMatrix {
     private void assertIllegalNull(AssertAction action, String actionName) {
         NopException ex = assertThrows(NopException.class, () -> action.assertCan(null),
                 actionName + " 对 null 应非法（矩阵仅 PENDING 单源）");
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+        assertEquals(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
         assertEquals(actionName, ex.getParam(ErpHrSalaryPaymentStateMachine.ARG_ACTION));
     }
 

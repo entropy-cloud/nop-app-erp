@@ -28,8 +28,8 @@ import static io.nop.api.core.beans.FilterBeans.in;
  * 可发放薪酬查询辅助（单一真相源）。子类只编排单 mutation 步骤顺序，薪酬语义不变（payroll.md）。
  *
  * <p>固定来源态/目标态判断改调实体级 {@link ErpHrSalaryPaymentStateMachine}（Bean 矩阵权威，契约 §4/§7）：
- * 非法边由 Bean 抛 common 层 {@code ERR_ILLEGAL_STATUS_TRANSITION}，接线方映射为领域
- * {@link ErpHrErrors#ERR_SALARY_ILLEGAL_STATUS_TRANSITION} + 实体编号/上下文（common 码作 cause 保留）。
+ * 非法边由 Bean 直抛领域码 {@link ErpHrErrors#ERR_SALARY_ILLEGAL_STATUS_TRANSITION}
+ * （plan 2026-09-07-2200-1 直抛领域码），接线方仅同码补参补实体编号。
  */
 public abstract class AbstractErpHrSalaryProcessor {
 

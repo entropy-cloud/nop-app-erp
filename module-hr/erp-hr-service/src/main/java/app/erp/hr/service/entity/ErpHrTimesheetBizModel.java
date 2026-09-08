@@ -54,15 +54,11 @@ public class ErpHrTimesheetBizModel extends AbstractErpCrudBizModel<ErpHrTimeshe
         ErpHrTimesheet timesheet = requireEntity(String.valueOf(timesheetId), null, context);
         String status = timesheet.getStatus();
         // 固定来源态/目标态判断委托 ErpHrTimesheetStateMachine（Bean 矩阵权威，契约 §4/§7）：
-        // submit 仅 DRAFT/REJECTED 合法。Bean 抛 common 层码，此处映射领域 ERR_HR_TIMESHEET_ILLEGAL_TRANSITION
-        // （common 码作 cause）。
+        // submit 仅 DRAFT/REJECTED 合法。Bean 直抛领域 ERR_HR_TIMESHEET_ILLEGAL_TRANSITION，此处同码补参补 timesheetId。
         try {
             timesheetStateMachine.assertCanSubmit(status);
         } catch (NopException e) {
-            throw new NopException(ErpHrErrors.ERR_HR_TIMESHEET_ILLEGAL_TRANSITION, e)
-                    .param(ErpHrErrors.ARG_TIMESHEET_ID, timesheetId)
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, status);
-        }
+            throw e.param(ErpHrErrors.ARG_TIMESHEET_ID, timesheetId);        }
         // 动态副作用保留原位：提交时重算 totalHours + 24h 跨表校验（非固定状态判断，归 BizModel）
         timesheet.setTotalHours(sumHoursByTimesheet(timesheetId, context));
         checkDailyHoursLimitForTimesheet(timesheetId, context);
@@ -76,15 +72,11 @@ public class ErpHrTimesheetBizModel extends AbstractErpCrudBizModel<ErpHrTimeshe
     public ErpHrTimesheet approve(@Name("timesheetId") String timesheetId, IServiceContext context) {
         ErpHrTimesheet timesheet = requireEntity(String.valueOf(timesheetId), null, context);
         // 固定来源态/目标态判断委托 ErpHrTimesheetStateMachine（Bean 矩阵权威，契约 §4/§7）：
-        // approve 仅 SUBMITTED 合法。Bean 抛 common 层码，此处映射领域 ERR_HR_TIMESHEET_ILLEGAL_TRANSITION
-        // （common 码作 cause）。
+        // approve 仅 SUBMITTED 合法。Bean 直抛领域 ERR_HR_TIMESHEET_ILLEGAL_TRANSITION，此处同码补参补 timesheetId。
         try {
             timesheetStateMachine.assertCanApprove(timesheet.getStatus());
         } catch (NopException e) {
-            throw new NopException(ErpHrErrors.ERR_HR_TIMESHEET_ILLEGAL_TRANSITION, e)
-                    .param(ErpHrErrors.ARG_TIMESHEET_ID, timesheetId)
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, timesheet.getStatus());
-        }
+            throw e.param(ErpHrErrors.ARG_TIMESHEET_ID, timesheetId);        }
         timesheet.setStatus(timesheetStateMachine.approveTargetStatus());
         updateEntity(timesheet, null, context);
         return timesheet;
@@ -101,15 +93,11 @@ public class ErpHrTimesheetBizModel extends AbstractErpCrudBizModel<ErpHrTimeshe
         }
         ErpHrTimesheet timesheet = requireEntity(String.valueOf(timesheetId), null, context);
         // 固定来源态/目标态判断委托 ErpHrTimesheetStateMachine（Bean 矩阵权威，契约 §4/§7）：
-        // reject 仅 SUBMITTED 合法。Bean 抛 common 层码，此处映射领域 ERR_HR_TIMESHEET_ILLEGAL_TRANSITION
-        // （common 码作 cause）。
+        // reject 仅 SUBMITTED 合法。Bean 直抛领域 ERR_HR_TIMESHEET_ILLEGAL_TRANSITION，此处同码补参补 timesheetId。
         try {
             timesheetStateMachine.assertCanReject(timesheet.getStatus());
         } catch (NopException e) {
-            throw new NopException(ErpHrErrors.ERR_HR_TIMESHEET_ILLEGAL_TRANSITION, e)
-                    .param(ErpHrErrors.ARG_TIMESHEET_ID, timesheetId)
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, timesheet.getStatus());
-        }
+            throw e.param(ErpHrErrors.ARG_TIMESHEET_ID, timesheetId);        }
         timesheet.setStatus(timesheetStateMachine.rejectTargetStatus());
         // 动态副作用保留原位：reason 写入 remark（非固定状态判断，归 BizModel）
         timesheet.setRemark(reason);

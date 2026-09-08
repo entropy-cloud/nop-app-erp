@@ -95,15 +95,12 @@ public class ErpHrEmploymentContractBizModel extends AbstractErpCrudBizModel<Erp
                                          IServiceContext context) {
         ErpHrEmploymentContract contract = requireEntity(id, null, context);
         // 固定来源态/目标态判断委托 ErpHrEmploymentContractStateMachine（Bean 矩阵权威，契约 §4/§7）：
-        // renew 接受 ACTIVE/EXPIRED 两类源（对齐原守卫）。非法边 Bean 抛 common 层码，此处映射领域
-        // ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION（common 码作 cause）。
+        // renew 接受 ACTIVE/EXPIRED 两类源（对齐原守卫）。非法边由 Bean 直抛领域
+        // ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION，此处同码补参补 contractId。
         try {
             stateMachine.assertCanRenew(contract.getStatus());
         } catch (NopException e) {
-            throw new NopException(ErpHrErrors.ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION, e)
-                    .param(ErpHrErrors.ARG_CONTRACT_ID, contract.getId())
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, contract.getStatus());
-        }
+            throw e.param(ErpHrErrors.ARG_CONTRACT_ID, contract.getId());        }
         contract.setStatus(stateMachine.renewTargetStatus());
         contract.setEndDate(newEndDate);
         updateEntity(contract, null, context);

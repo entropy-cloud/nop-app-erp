@@ -1,6 +1,6 @@
 package app.erp.hr.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.ErpHrConstants;
 import io.nop.api.core.exceptions.NopException;
 
@@ -18,8 +18,8 @@ import java.util.List;
  * （DRAFT/SUBMITTED/APPROVED/REJECTED）+ 终态/初始态分类 + 只读 {@link #transitions()} 元数据。
  * 可经 Delta 同名 Bean 覆盖（契约 §6）替换基线矩阵。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 BizModel（契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpHrErrors#ERR_HR_TIMESHEET_ILLEGAL_TRANSITION}（参数 {@code action}/
+ * {@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1 直抛领域码，实体元数据经调用点同码补参补齐）。
  *
  * <p>迁移矩阵（4 条边，编码<strong>已实现</strong>行为）：submit(DRAFT→SUBMITTED) + submit(REJECTED→SUBMITTED)
  * （重提）+ approve(SUBMITTED→APPROVED) + reject(SUBMITTED→REJECTED)。
@@ -109,9 +109,9 @@ public class ErpHrTimesheetStateMachine {
     // ---------- 内部 ----------
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpHrErrors.ERR_HR_TIMESHEET_ILLEGAL_TRANSITION)
+                .param(ErpHrErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpHrErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

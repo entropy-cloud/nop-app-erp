@@ -1,7 +1,7 @@
 package app.erp.hr.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.hr.service.ErpHrConstants;
+import app.erp.hr.service.ErpHrErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.autotest.NopTestProperty;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -84,7 +84,7 @@ public class TestErpHrLeaveRequestStateMachineDeltaOverride extends JunitAutoTes
         // Delta 收紧后仍拒绝其余态
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanCancel(ErpHrConstants.LEAVE_STATUS_DRAFT));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpHrErrors.ERR_LEAVE_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "Delta cancel(DRAFT) 仍报告 common 层非法迁移码");
     }
 

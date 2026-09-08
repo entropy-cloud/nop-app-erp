@@ -1,7 +1,7 @@
 package app.erp.hr.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.hr.service.ErpHrConstants;
+import app.erp.hr.service.ErpHrErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.exceptions.NopException;
@@ -47,7 +47,7 @@ public class TestErpHrLeaveRequestStateMachineBaselineIoC extends JunitAutoTestC
         // SUBMITTED/DRAFT/REJECTED/CANCELLED 全非法（含 owner doc 声明但代码未实现的 DRAFT/SUBMITTED）
         NopException ex = assertThrows(NopException.class,
                 () -> stateMachine.assertCanCancel(ErpHrConstants.LEAVE_STATUS_SUBMITTED));
-        assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+        assertEquals(ErpHrErrors.ERR_LEAVE_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                 "基线 cancel(SUBMITTED) 报告 common 层非法迁移码（单源 APPROVED）");
     }
 

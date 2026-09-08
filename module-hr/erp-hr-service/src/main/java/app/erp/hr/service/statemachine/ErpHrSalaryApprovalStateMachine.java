@@ -1,6 +1,6 @@
 package app.erp.hr.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.ErpHrConstants;
 import io.nop.api.core.exceptions.NopException;
 
@@ -20,8 +20,8 @@ import java.util.List;
  *
  * <p>命名带 {@code Approval} 后缀（契约 §1 双轴约定，与 {@code ErpHrSalaryPaymentStateMachine} paymentStatus 轴分离）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归接线方（xbiz XScript / Processor，契约 §7）。
+ * <p>非法边直抛领域码 {@link ErpHrErrors#ERR_SALARY_ILLEGAL_STATUS_TRANSITION}（参数 {@code action}/
+ * {@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1 直抛领域码，实体元数据经调用点同码补参补齐）。
  *
  * <p>迁移矩阵（6 条边，编码<strong>已实现</strong>行为，矩阵裁定依据实仓 {@code ErpHrSalary.xbiz} 守卫 +
  * {@code TestErpHrPayrollEngine.testIllegalTransitionRejects}）：submit({UNSUBMITTED,null,REJECTED}→SUBMITTED)、
@@ -158,9 +158,9 @@ public class ErpHrSalaryApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
+        return new NopException(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpHrErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpHrErrors.ARG_EXPECTED_STATUS, expectedStatus)
                 .param(ARG_ACTION, action);
     }
 

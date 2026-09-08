@@ -10,11 +10,11 @@
 
         审批轴固定状态判断委托实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md
         §4/§7，plan 2026-08-14-0456-2 M4.64）：XScript inject ErpHrSalaryApprovalStateMachine
-        （*TargetStatus() 写回目标态）+ ErpHrSalaryApprovalGuard（守卫经 Bean assertCanXxx，非法边由 Bean 抛
-        common 码、Guard Java 侧映射为领域码 ERR_SALARY_ILLEGAL_STATUS_TRANSITION + salaryId/currentStatus/
-         expectedStatus，common 码作 cause 保留）。机制注记（2026-09-07 勘误）：计划原案「XScript try/catch
-         在 XLang 引擎不可行」为 2026-08 时点结论——nop-entropy plan 2258 后 XScript 已支持 try/catch/finally；
-         本处编排/失败隔离下沉 Java Guard Bean 是事务边界与可测试性的架构偏好（行为契约不变，见 Guard javadoc）。
+        （*TargetStatus() 写回目标态）+ ErpHrSalaryApprovalGuard（守卫经 Bean assertCanXxx；Bean 自
+        plan 2026-09-07-2200-1 起直抛领域码 ERR_SALARY_ILLEGAL_STATUS_TRANSITION，Guard 仅同码补参
+        补 salaryId——码与 cause 不变，无异常重建）。机制注记（2026-09-08 更新）：本接线原为
+        「Bean 抛 common 码 → Guard 转码领域码」，StateMachine 直抛领域码后转码职责退役（plan
+        2026-09-07-2200-1，反模式裁决见 lesson 19）；保留 Guard Bean 仅因 salaryId 元数据增强点在此调用链。
         approve/reject/reverseApprove 由 approval-support.xbiz 标准 source 提供，wf 结束经 .xwf listener 回调。
 
         approve 后置计提过账（RC-R1.89，payroll.md §6.5/§9.1）：approve 状态写回后委托

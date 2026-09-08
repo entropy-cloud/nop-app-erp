@@ -2,7 +2,6 @@ package app.erp.hr.service.entity;
 
 import app.erp.common.service.MaskHelper;
 import app.erp.common.service.StringMaskFormat;
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.hr.biz.IErpHrSalaryBiz;
 import app.erp.hr.dao.entity.ErpHrEmployee;
 import app.erp.hr.dao.entity.ErpHrPayrollBankFile;
@@ -122,10 +121,7 @@ public class ErpHrSalaryBizModel extends AbstractErpCrudBizModel<ErpHrSalary> im
         try {
             paymentStateMachine.assertCanVoid(salary.getPaymentStatus());
         } catch (NopException e) {
-            throw new NopException(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION, e)
-                    .param(ErpHrErrors.ARG_SALARY_ID, salaryId)
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, salary.getPaymentStatus())
-                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, e.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
+            throw e.param(ErpHrErrors.ARG_SALARY_ID, salaryId);
         }
         salary.setPaymentStatus(paymentStateMachine.voidTargetStatus());
         updateEntity(salary, null, context);

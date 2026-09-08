@@ -24,7 +24,6 @@ import app.erp.hr.service.processor.ErpHrLeaveRequestApproveProcessor;
 import app.erp.hr.service.processor.ErpHrLeaveRequestCancelProcessor;
 import app.erp.hr.service.processor.ErpHrLeaveRequestSubmitProcessor;
 import app.erp.hr.service.statemachine.ErpHrLeaveRequestStateMachine;
-import app.erp.common.service.ErpCommonErrors;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
@@ -100,14 +99,11 @@ public class ErpHrLeaveRequestBizModel extends AbstractErpCrudBizModel<ErpHrLeav
     public ErpHrLeaveRequest reject(@Name("id") String id, IServiceContext context) {
         ErpHrLeaveRequest leave = requireEntity(id, null, context);
         // 固定来源态/目标态判断委托 ErpHrLeaveRequestStateMachine（Bean 矩阵权威，契约 §4/§7）；
-        // 非法边 Bean 抛 common 层码，此处映射领域 ERR_LEAVE_ILLEGAL_STATUS_TRANSITION（common 码作 cause）。
+        // 非法边由 Bean 直抛领域 ERR_LEAVE_ILLEGAL_STATUS_TRANSITION，此处同码补参补 leaveRequestId。
         try {
             stateMachine.assertCanReject(leave.getStatus());
         } catch (NopException e) {
-            throw new NopException(ErpHrErrors.ERR_LEAVE_ILLEGAL_STATUS_TRANSITION, e)
-                    .param(ErpHrErrors.ARG_LEAVE_REQUEST_ID, leave.getId())
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, leave.getStatus())
-                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, e.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
+            throw e.param(ErpHrErrors.ARG_LEAVE_REQUEST_ID, leave.getId());
         }
         leave.setStatus(stateMachine.rejectTargetStatus());
         updateEntity(leave, null, context);

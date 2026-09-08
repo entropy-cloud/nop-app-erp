@@ -1,7 +1,7 @@
 package app.erp.hr.service.statemachine;
 
-import app.erp.common.service.ErpCommonErrors;
 import app.erp.hr.service.ErpHrConstants;
+import app.erp.hr.service.ErpHrErrors;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -102,8 +102,8 @@ public class TestErpHrSalaryApprovalStateMachineMatrix {
         for (String action : Arrays.asList("approve", "reject", "reverseApprove", "withdrawApproval", "markPaid")) {
             NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, null),
                     action + " 对 null 应非法（归一化为 UNSUBMITTED）");
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
-            assertEquals(ErpHrConstants.APPROVE_STATUS_UNSUBMITTED, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+            assertEquals(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpHrConstants.APPROVE_STATUS_UNSUBMITTED, ex.getParam(ErpHrErrors.ARG_CURRENT_STATUS),
                     "null 归一化后 currentStatus=UNSUBMITTED: action=" + action);
         }
     }
@@ -168,7 +168,7 @@ public class TestErpHrSalaryApprovalStateMachineMatrix {
             }
             NopException ex = assertThrows(NopException.class, () -> sm.assertCanMarkPaid(s),
                     "markPaid 交叉守卫对非 APPROVED 应非法: " + s);
-            assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+            assertEquals(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("markPaid", ex.getParam(ErpHrSalaryApprovalStateMachine.ARG_ACTION));
         }
         // 交叉守卫不在 transitions() 元数据中编码（非迁移边，契约 §4.2）
@@ -195,11 +195,11 @@ public class TestErpHrSalaryApprovalStateMachineMatrix {
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
                         action + " 对非允许来源态应非法: " + s);
-                assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
+                assertEquals(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode(),
                         "Bean 报告 common 层非法迁移码: action=" + action + ", status=" + s);
                 assertEquals(action, ex.getParam(ErpHrSalaryApprovalStateMachine.ARG_ACTION),
                         "拒绝元数据携带动作名: action=" + action + ", status=" + s);
-                assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
+                assertEquals(s, ex.getParam(ErpHrErrors.ARG_CURRENT_STATUS),
                         "拒绝元数据携带当前态: action=" + action + ", status=" + s);
             }
         }
