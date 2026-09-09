@@ -119,6 +119,67 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
         assertEquals(ErpMfgConstants.APPROVE_STATUS_SUBMITTED, wo.getApproveStatus(), "重提后 approveStatus=SUBMITTED");
     }
 
+    // ---------- P1-CK-mfg-022-r3：reverseApprove docStatus 守卫（在制/终态拒绝） ----------
+
+    /**
+     * P1-CK-mfg-022-r3 负路径：工单 approve 后 approveStatus 恒 APPROVED（IN_PROCESS/STOCK_RESERVED/
+     * STOCK_PARTIAL/STOPPED/COMPLETED/CLOSED/CANCELLED 全程不翻审批轴），对七种在制/终态 docStatus
+     * 组合调 reverseApprove 须被业务异常拒绝（错误码 + docStatus/approveStatus 双轴不变）。
+     * 修复前 reverseApprove 全链无 docStatus 守卫 × P1-CK-mfg-002 修复（doReverseApprove 无条件回写
+     * docStatus=DRAFT）叠加 → 在制/终态工单被复活为 DRAFT 可编辑可重提态。
+     */
+    @Test
+    public void testReverseApproveRejectedForInProcessAndTerminalDocStatus() {
+        seedBase("9123", "WO-RA-GUARD", "2");
+        String[][] combos = {
+                {ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, "WO-RA-GUARD-IP"},
+                {ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED, "WO-RA-GUARD-SR"},
+                {ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL, "WO-RA-GUARD-SP"},
+                {ErpMfgConstants.WORK_ORDER_STATUS_STOPPED, "WO-RA-GUARD-ST"},
+                {ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED, "WO-RA-GUARD-CP"},
+                {ErpMfgConstants.WORK_ORDER_STATUS_CLOSED, "WO-RA-GUARD-CL"},
+                {ErpMfgConstants.WORK_ORDER_STATUS_CANCELLED, "WO-RA-GUARD-CN"},
+        };
+        for (String[] combo : combos) {
+            String docStatus = combo[0];
+            String code = combo[1];
+            String woId = seedWorkOrderInStatus(code, "9123", docStatus, ErpMfgConstants.APPROVE_STATUS_APPROVED);
+            ApiResponse<?> resp = rpc(mutation, "ErpMfgWorkOrder__reverseApprove", Map.of("id", woId));
+            assertEquals(ErpMfgErrors.ERR_REVERSE_APPROVE_DOC_STATUS_FORBIDDEN.getErrorCode(), resp.getCode(),
+                    docStatus + " 工单 reverseApprove 应被 docStatus 守卫拒绝: " + resp);
+            ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+            assertEquals(docStatus, wo.getDocStatus(), docStatus + " 工单 docStatus 被守卫拒绝后保持不变");
+            assertEquals(ErpMfgConstants.APPROVE_STATUS_APPROVED, wo.getApproveStatus(),
+                    docStatus + " 工单 approveStatus 被守卫拒绝后保持不变");
+        }
+    }
+
+    /**
+     * P1-CK-mfg-022-r3 控制组：NOT_STARTED 合法路径放行且双轴回写行为与现状一致
+     * （docStatus=DRAFT + approveStatus=REJECTED + 审批审计字段清空 + 可重提）——守卫不得收窄合法路径。
+     */
+    @Test
+    public void testReverseApproveNotStartedControlGroupUnchanged() {
+        seedBase("9124", "WO-RA-CTRL", "2");
+        String woId = seedWorkOrder("WO-RA-CTRL", "9124");
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
+        ErpMfgWorkOrder approved = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+        assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, approved.getDocStatus(),
+                "approve 后 docStatus=NOT_STARTED");
+        assertEquals(ErpMfgConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(),
+                "approve 后 approveStatus=APPROVED");
+
+        rpcOk(mutation, "ErpMfgWorkOrder__reverseApprove", Map.of("id", woId), "NOT_STARTED 工单反审核应放行");
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+        assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_DRAFT, wo.getDocStatus(), "反审核回写 docStatus=DRAFT");
+        assertEquals(ErpMfgConstants.APPROVE_STATUS_REJECTED, wo.getApproveStatus(), "审批轴翻 REJECTED");
+        assertNull(wo.getApprovedBy(), "审批审计字段 approvedBy 清空");
+        assertNull(wo.getApprovedAt(), "审批审计字段 approvedAt 清空");
+
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId), "反审核后可重新提交");
+    }
+
     // ---------- ① 审核创建预留（UC-MFG-05） ----------
 
     @Test
@@ -623,6 +684,26 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
             wo.setPlannedQuantity(bd("2"));
             wo.setBusinessDate(LocalDate.of(2026, 7, 1));
             wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_DRAFT);
+            dao.saveEntity(wo);
+        });
+        return id;
+    }
+
+    private String seedWorkOrderInStatus(String code, String bomId, String docStatus, String approveStatus) {
+        String id = String.valueOf(8300L + (long) Math.abs(code.hashCode() % 700));
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
+            ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
+            wo.orm_propValueByName("id", id);
+            wo.setCode(code);
+            wo.setProductId(P);
+            wo.setBomId(bomId);
+            wo.setOrgId(ORG_ID);
+            wo.setCurrencyId(CURRENCY_ID);
+            wo.setPlannedQuantity(bd("2"));
+            wo.setBusinessDate(LocalDate.of(2026, 7, 1));
+            wo.setDocStatus(docStatus);
+            wo.setApproveStatus(approveStatus);
             dao.saveEntity(wo);
         });
         return id;

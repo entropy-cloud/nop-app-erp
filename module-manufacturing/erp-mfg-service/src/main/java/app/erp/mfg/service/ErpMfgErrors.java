@@ -328,4 +328,11 @@ public interface ErpMfgErrors {
             "erp.err.mfg.completion-uom-missing",
             "完工入库缺少计量单位：工单[{workOrderCode}]产出行与物料[{productId}]均未配置 UoM（产成品将永不入库）",
             ARG_WORK_ORDER_CODE, ARG_PRODUCT_ID, ARG_UOM_ID);
+
+    // --- P1-CK-mfg-022-r3：反审核 docStatus 越界守卫（白名单 = 仅 NOT_STARTED） ---
+
+    ErrorCode ERR_REVERSE_APPROVE_DOC_STATUS_FORBIDDEN = ErrorCode.define(
+            "erp.err.mfg.work-order.reverse-approve-doc-status-forbidden",
+            "工单[{workOrderCode}]当前单据状态[{currentStatus}]不允许反审核，仅未开工(NOT_STARTED)的工单可反审核",
+            ARG_WORK_ORDER_CODE, ARG_CURRENT_STATUS);
 }

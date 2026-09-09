@@ -251,6 +251,14 @@ public class ErpMfgWorkOrderProcessor {
         } catch (NopException e) {
             throw e.param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
+        // P1-CK-mfg-022-r3 修复：反审核 docStatus 白名单（仅 NOT_STARTED 放行，对齐 doReverseApprove
+        // 「未开工前提」自述；在制/终态组合在守卫层显式拒绝，不再被回写 DRAFT 复活）。
+        String docStatus = wo.getDocStatus();
+        if (!ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED.equals(docStatus)) {
+            throw new NopException(ErpMfgErrors.ERR_REVERSE_APPROVE_DOC_STATUS_FORBIDDEN)
+                    .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode())
+                    .param(ErpMfgErrors.ARG_CURRENT_STATUS, docStatus);
+        }
     }
 
     // ---------- step：审批业务规则校验 ----------

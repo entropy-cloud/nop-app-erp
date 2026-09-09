@@ -47,7 +47,7 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpMfgWorkOrder@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpInvStockMove@updateTime_5",
+    "updateTime": "*",
     "snapshotBomVersion": null,
     "snapshotBomId": "6"
   },
