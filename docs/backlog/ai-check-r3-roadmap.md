@@ -105,7 +105,7 @@
 
 | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|
-| M2.0 **修复方法基线**：流程文档化 + 同型 finding 基类化裁决；检查点 = 域模块 `mvn test` 全绿 + 全 reactor 零新增失败 + compliance/cjk 双 checker 不高于基线 | `todo` | `processor-extension-pattern.md` | M1.17 | none |
+| M2.0 **修复方法基线**：流程文档化 + 同型 finding 基类化裁决；检查点 = 域模块 `mvn test` 全绿 + 全 reactor 零新增失败 + compliance/cjk 双 checker 不高于基线 | `todo`（执行完成待收官翻转：plan `2026-09-10-0425-1` 三 Phase 全落盘——① 修复方法 owner doc `docs/architecture/finding-remediation-method.md` 成文（七要素：五步流程含断言强度/证伪/保护区路由/seed 联动/双 checker 门控/索引回填协议/族回填范式，口径显式溯源 r1 F0.2 + r2 M2.0 加严 + r3 M2 前言）+ `docs/index.md` 路由行 + `docs/architecture/README.md` 目录行，`processor-extension-pattern.md` 零改动；② 族裁决 `docs/audits/check/2026-09-06-1645-ai-check-r3/m2-0-family-adjudication.md` 落盘（93 条全量映射 8 类去向对账 46 族批+15 doc 批+4 dict 族+24 域批+4 deferred；八族/批选择-替代-残余风险齐备；跨轮继承 6 行；M2.8 六分片切分建议）；③ 检查点全绿：porcelain 生产路径零命中 + 156 模块 install SUCCESS + compliance checker 19 规则逐值=基线（R2b=242/R2c=1542/R12a=71）+ CJK `--strict` PASS（实扫 0/0/0/0）+ 全 reactor `mvn test` 4006/0/0/1 与 2026-09-09 基线行精确一致；依本 roadmap 规则「结束审计通过 ready→done」+ plan Non-Goal「不做 roadmap 状态翻转」+ M1.1~M1.17 全批同型先例，done 翻转归 owner/engine 依独立结束审计处置） | `processor-extension-pattern.md` | M1.17 | none |
 | M2.1 **P0 即时通道**（M1.x 发现 P0 就地修复或异步注入 plan，`docs/plans/YYYY-MM-DD-HHmm-ai-check-r3-fix-*.md`） | `todo` | finding 对应 owner doc | M1.x | `bug-diagnosis-prompt` |
 | M2.2 **finance P1 修复批**（DIM-B/T/S finding 按同型合并） | `todo` | `docs/design/finance/` | M2.0 | `bug-diagnosis-prompt` |
 | M2.3 **manufacturing P1 修复批** | `todo` | `docs/design/manufacturing/` | M2.0 | 同上 |

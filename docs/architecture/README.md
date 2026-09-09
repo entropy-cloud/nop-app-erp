@@ -47,6 +47,7 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 - `api-response-conventions.md` - API 响应约定
 - `service-layer-orchestration.md` - 服务层编排架构（task.xml + Java Processor 双轨编排、步骤实现方式选择、映射约定、Delta 定制模式）
 - `processor-extension-pattern.md` - Java Processor 扩展模式（拓扑稳定流程的 Facade+Processor 两层职责、protected 步骤 + IServiceContext + 派生 bean 同名覆盖的配置余地、反模式）
+- `finding-remediation-method.md` - Finding 修复方法基线（ai-check 修复批操作规程：五步强制流程、证伪路径、保护区路由、seed 联动、双 checker 门控、索引回填协议、族回填范式）
 - `integration-and-transaction-patterns.md` - 集成与事务模式
 - `integration-pattern.md` - 外部 API 集成模式（Webhook 出站/入站）
 - `external-api-integration-pattern.md` - 通用外部 API 集成参考模式（D1，plan `2026-07-21-1206-3`：auth pattern + rate limiting + endpoint 配置范式 + API client lifecycle + logistics/b2b/master-data 三案例对比 + Wimoor ApiBuildService 对照 + 反模式自检表）
