@@ -19,8 +19,8 @@
 | R1c | dao().getEntityById (BizModel) | 🔴 高 | 0 |
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
-| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 240 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1537 |
+| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 242 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1542 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -30,7 +30,7 @@
 | R8 | Processor 无 xbiz 接线 | 🔴 高 | 0 |
 | R10 | REQUIRES_NEW 事务 | 🟡 中 | 14 |
 | R11 | Processor 重复状态判断方法 | 🟡 中 | 0 |
-| R12a | 共享内核 import ErpFinBusinessType | 🟡 中 | 70 |
+| R12a | 共享内核 import ErpFinBusinessType | 🟡 中 | 71 |
 | R12b | 共享内核 import PostingEvent | 🟡 中 | 66 |
 | R12c | 共享内核 import AcctSchemaResolver | 🟡 中 | 42 |
 
@@ -482,8 +482,8 @@ R1b: 0
 R1c: 0
 R1d: 14
 R2a: 34
-R2b: 240
-R2c: 1537
+R2b: 242
+R2c: 1542
 R2d: 38
 R3: 5
 R4: 0
@@ -493,7 +493,7 @@ R7: 0
 R8: 0
 R10: 14
 R11: 0
-R12a: 70
+R12a: 71
 R12b: 66
 R12c: 42
 ```
@@ -728,3 +728,23 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R2b=236=R2b 基线不�
 **R7 `_tmp` 扫描范围校准（Decision 方案 A）**：checker `PRUNE_DIRS` 追加 `-o -name _tmp`（对齐 R8 排除集校准先例 `1057-1`/`0656-1`）——`_tmp/` 为 git-ignored 本地草稿区（`.gitignore:26`）永不入库，CI 干净检出不命中，故 CI 门控行为零变化（测量范围修正非基线放水）；仅消除本地复跑 R7 假 +1（实测 `_tmp/` 对 19 规则唯一贡献 = 1 处 R7）。**R7 基线维持 0**（校准后 actual=0，不上调）。残留风险：`_tmp` 内生产违规被静默豁免——可忽略（永不入库，CI 干净检出不受排除影响）。F2.1 注记（plan 2026-08-26-0630-1）R7 段落已补 supersede 交叉引用（见上文该节注记）。
 
 本块以 R2b=240 / R2c=1536 / R7=0 为回归门控起点，CI green 语义恢复（全 19 规则 actual ≤ baseline，门控 python 模拟 PASS）。
+
+## R2b/R2c/R12a 基线上调注记（plan 2026-09-09-2100-1，ai-check-r3 compliance 基线漂移独立裁决）
+
+`2026-09-09-2100-1`（compliance 基线漂移独立裁决）闭合三处 deferred successor 登记（MI.3 plan `2026-09-06-2104-3` / MI.4 plan `2026-09-07-0043-1` / MI.8 批 2 plan `2026-09-07-1715-2`）：R2b +2（240→**242**）/ R2c +5（1537→**1542**）/ R12a +1（70→**71**），其余 16 规则零漂移不动。漂移为预存（M0.3 快照行 2026-09-06 已登记 actual 全表），源全部来自已审计 r1-F 系列/ai-check 修复批计划；裁决时点 HEAD=`060ddab0a`，冻结参照点 `b53b9234b`（本文件机器块末次收紧提交）worktree 复跑 R2b=239/R2c=1537/R12a=70。
+
+**per-site 证据**（9 增量站点 + 2 改善站点，逐站点 file:line + commit + 源计划 + 分类，详表见 plan §Phase Evidence）：
+
+| # | 站点（file:line） | 规则贡献 | commit → 源计划 | 分类 |
+|---|------------------|---------|----------------|------|
+| 1-3 | `ErpHrDepartmentBizModel.java:91/104/120`（同域删除守卫计数 `findAll()` ×3） | R2b+3/R2c+3 | `751749e17` → `2026-08-30-2238-1`（F2 flux 批 P1-CK-hr-001） | ✅ 合法新增（同域 BizModel 守卫，R2b 含同域口径 V.2 先例 + 自实体自引用 R1.57 先例） |
+| 4-5 | `ErpHrPositionBizModel.java:64/80`（FQCN 形态 `daoFor(app.erp.hr.dao.entity.…)` ×2，仅计 R2c） | R2c+2 | `751749e17` → 同上 | ✅ 合法新增（同上） |
+| 6-7 | `AbstractErpMfgMaterialIssueProcessor.java:142/150`（ErpInvReservation/Line 只读聚合，自 `ErpMfgMaterialIssueConfirmProcessor:332/342` 迁移） | R2c+2/−2 净零 | `a7058c18f` → `2026-08-28-2059-3`（F2.5 mfg-003）；原站点 RC-R1.48 `2026-08-15-2119-3` 已入基线 | ✅ 合法跨域编排（既有裁决站点迁移，净零） |
+| 8 | `ErpPrjProjectSettlementProcessor.java:339`（`findActiveFinalOrCloseSettlement` FINAL/CLOSE 重复创建守卫） | R2c+1 | `88b098043` → `2026-08-29-0745-1`（F2.12 prj-004） | ✅ 合法新增（同域守卫，镜像同文件 :238 既有站点） |
+| 9 | `ErpAstDepreciationReversalListener.java:8` `import ErpFinBusinessType`（消费点 :58 DEPRECIATION 红冲过滤） | R12a+1 | `0a825a42a` → `2026-08-28-2340-1`（F2.9 ast2-005） | ✅ 合法跨域编排（共享内核分支 (b) 既有裁决，ReversalListener 族同型） |
+| −1 | `StockMoveBookkeeper.java` 死 dao 变量移除 | R2c−1 | `86cf0cdb4` → `2026-08-29-0000-1`（F2.11 inv-002） | 改善吸收（单向收紧，回写 actual） |
+| −1 | `ErpFinBudgetCommitmentBizModel.java` `daoFor(ErpFinAccountingPeriod)` 移除 | R2b−1（冻结前） | `b53b9234b`（F2.3 carryForward 重构） | 改善吸收（机器块未回写，冻结真相 239——块差值 +2 = +3 新增 − 1 未回写改善） |
+
+**裁决**：三规则全部 baseline-raise（9 站点全合法，**Fix 分支为空**——无 @Inject private / 字符串 == / System.currentTimeMillis / 越权写类站点），对齐 `2026-07-25-1057-1` 逐站点分类框架 + V.2/`2026-08-27-1540-1` raise 先例。已知失败模式闭环注记：`0a825a42a` closure 自称「compliance 零漂移」仅核 daoFor 规则漏 R12 import 面，即 `project-context.md §已知失败模式 #1` 复发实例——R12 面须与 daoFor 面同列 closure 必查项。
+
+checker 复跑全 19 规则 actual ≤ 机器块（R2b=242≤242 / R2c=1542≤1542 / R12a=71≤71，其余=基线），机器块 ↔ 人类可读表逐行一致（本注记落盘时同步断言），exit 0，CI green 语义恢复。
