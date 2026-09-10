@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinAccountingPeriod）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpFinAccountingPeriod generateNextYearPeriods per-mutation Processor（R6.1，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含次年期间批量生成编排（{@code period-close.md §年度结转规则} 步骤5）；共享 protected helper 单一真相源在

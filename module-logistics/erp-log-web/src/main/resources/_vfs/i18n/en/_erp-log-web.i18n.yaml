@@ -10,6 +10,26 @@ site:
       displayName: Shipment
     ErpLogShipmentLine-main:
       displayName: Shipment Line
+    FNPT:ErpLogDeliveryBooking:book:
+      displayName: Book Delivery
+    FNPT:ErpLogDeliveryBooking:markArrived:
+      displayName: Mark Arrived
+    FNPT:ErpLogDeliveryBooking:markMissed:
+      displayName: Mark Missed
+    FNPT:ErpLogDeliveryBooking:releaseForShipment:
+      displayName: Release For Shipment
+    FNPT:ErpLogShipment:advise:
+      displayName: Advise Shipment
+    FNPT:ErpLogShipment:cancelShipment:
+      displayName: Cancel Shipment
+    FNPT:ErpLogShipment:completeShipment:
+      displayName: Complete Shipment
+    FNPT:ErpLogShipment:handleTrackingWebhook:
+      displayName: Handle Tracking Webhook
+    FNPT:ErpLogShipment:save:
+      displayName: Save Shipment
+    FNPT:ErpLogShipment:scanForPolling:
+      displayName: Scan For Polling
     erp-log:
       displayName: Transportation
     log-carrier:

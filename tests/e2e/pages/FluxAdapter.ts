@@ -557,4 +557,42 @@ export class FluxAdapter implements EngineAdapter {
     await okBtn.click();
     await dialog.waitFor({ state: 'hidden', timeout: 3000 });
   }
+
+  // ── F13 非标视图选择器（cs-027-r3：selector 唯一合法位置 = adapter，
+  // runbook「E2E 编写规范（强制）」；f13-non-standard-views.visual.spec.ts 消费）──
+
+  kanbanRoot(page: Page): Locator {
+    return page.locator('[data-slot="kanban"]');
+  }
+
+  kanbanColumn(page: Page): Locator {
+    return page.locator('[data-slot="kanban-column"]');
+  }
+
+  kanbanEmpty(page: Page): Locator {
+    return page.locator('[data-slot="kanban-empty"]');
+  }
+
+  timelineRoot(page: Page): Locator {
+    return page.locator('[data-slot="timeline-root"]');
+  }
+
+  calendarRoot(page: Page): Locator {
+    return page.locator('.nop-calendar');
+  }
+
+  treeRoot(page: Page): Locator {
+    return page.locator('.nop-tree');
+  }
+
+  treeNode(page: Page): Locator {
+    return page.locator('[data-slot="tree-node"]');
+  }
+
+  /** 非标视图等待选择器：kanban / timeline / calendar / tree 任一渲染即可 */
+  nonStandardViewRoot(page: Page): Locator {
+    return page
+      .locator('[data-slot="kanban"], [data-slot="timeline-root"], .nop-calendar, .nop-tree')
+      .first();
+  }
 }

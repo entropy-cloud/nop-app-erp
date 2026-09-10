@@ -21,6 +21,10 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *
  * <p>模板行 → 质检单行复制：{@code parameterName/specMin/specMax/unit/isCritical}（模板行无 parameterId 列，
  * 质检单行 parameterId 留空，见 baseline + Draft Review iter-1 B1）。
+ *
+ * <p>族 A/U20 豁免登记（qa-028-r3 站点③）：本类为无状态静态匹配器（对齐 NcrLifecycleService 非 BizModel
+ * 服务助手范式），daoFor 目标（ErpQaInspectionTemplate、ErpQaInspectionTemplateLine）=同域实体批量聚合，
+ * 只读批量聚合，逐条 I*Biz 管道不适用批量场景。
  */
 public final class InspectionTemplateMatcher {
 

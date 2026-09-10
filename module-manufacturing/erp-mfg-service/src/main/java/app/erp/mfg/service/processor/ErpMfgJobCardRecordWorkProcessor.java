@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMfgJobCardTimeLog）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * ErpMfgJobCard recordWork per-mutation Processor（R6.2，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含报工编排（报工时长记录 + 累计产量 + 人工成本回写 WorkOrder）；共享 protected helper 单一真相源在

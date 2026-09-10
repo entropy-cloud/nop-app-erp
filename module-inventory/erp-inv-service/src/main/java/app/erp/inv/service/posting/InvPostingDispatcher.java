@@ -26,6 +26,7 @@ import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpInvStockLedger、ErpInvStockMove）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 存货过账派发器。移动单 DONE 后（流水/余额同事务确立终态之后）按移动类型派生业务类型，
  * 构造 {@link PostingEvent} 经 {@link InvPostingExecutor}（独立新事务）调用财务过账引擎；

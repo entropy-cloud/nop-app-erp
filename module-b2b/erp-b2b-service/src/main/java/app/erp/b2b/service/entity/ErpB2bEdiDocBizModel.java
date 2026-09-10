@@ -21,6 +21,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpB2bEdiDoc、ErpB2bEdiLog）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * EDI 事务信封聚合根 Biz。承载 EDI 信封状态机（{@code edi-formats.md §七}）：
  *

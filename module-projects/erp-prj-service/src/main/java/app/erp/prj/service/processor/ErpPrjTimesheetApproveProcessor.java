@@ -16,6 +16,7 @@ import jakarta.inject.Inject;
 
 import java.util.Objects;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpPrjTimesheet）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpPrjTimesheet approve per-mutation Processor（R6.6，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含 SUBMITTED→APPROVED 审批编排：状态守卫 → 业财过账 → 置 APPROVED（成功则 posted=true）→ 归集行增量回写。

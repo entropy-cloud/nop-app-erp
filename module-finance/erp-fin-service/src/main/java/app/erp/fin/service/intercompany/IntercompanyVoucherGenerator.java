@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinVoucher、ErpFinVoucherBillR、ErpFinVoucherLine、ErpMdSubject）=跨域批量聚合（md），批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 跨法人内部交易配对凭证生成器（plan 2026-07-22-1000-1 A3，multi-company.md §Decision B）。
  *

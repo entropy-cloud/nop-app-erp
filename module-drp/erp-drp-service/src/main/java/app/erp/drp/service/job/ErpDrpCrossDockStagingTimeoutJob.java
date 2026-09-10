@@ -28,6 +28,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.dateTimeBetween;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpInvDrpCrossDock、ErpInvStockMove、ErpMdLocation、ErpMdMaterial）=跨域批量聚合（inv/md），批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 越库暂存超时回退 Job Bean（RC-R1.81 / P1-RC-081，UC-DRP-07 异常路径：
  * 「超时未匹配（默认 24h）自动转为正常入库」；cross-dock.md §业务规则 3）。
@@ -89,7 +90,7 @@ public class ErpDrpCrossDockStagingTimeoutJob {
             LOG.info("erp-drp-xdock-staging-timeout-skipped: cross dock disabled (erp-inv.drp-xdock-enabled)");
             return;
         }
-        IServiceContext ctx = new ServiceContextImpl();
+        IServiceContext ctx = serviceContext();
         try {
             int fallbacked = runStagingTimeoutFallback(ctx);
             LOG.info("erp-drp-xdock-staging-timeout-done: fallbacked={}", fallbacked);
@@ -211,5 +212,12 @@ public class ErpDrpCrossDockStagingTimeoutJob {
 
     protected String timeoutHoursLabel() {
         return String.valueOf(resolveTimeoutHours());
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

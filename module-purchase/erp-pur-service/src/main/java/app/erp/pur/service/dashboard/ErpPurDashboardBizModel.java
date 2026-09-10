@@ -51,13 +51,14 @@ import app.erp.common.service.DashboardUtil;
  * 注入 {@link IDaoProvider}/{@link IOrmTemplate} 经 {@link QueryBean} 过滤后内存聚合，
  * 镜像 {@code ErpFinDashboardBizModel} 范式。
  *
- * <p>KPI 口径：本期采购额取自 {@link ErpPurInvoice}（docStatus=ACTIVE Σ amountFunctional）；
- * 本期订单量取自 {@link ErpPurOrder}（docStatus=ACTIVE count）；
+ * <p>KPI 口径：本期采购额取自 {@link ErpPurInvoice}（approveStatus=APPROVED 且 docStatus≠CANCELLED
+ * Σ amountFunctional）；本期订单量取自 {@link ErpPurOrder}（同口径 count）；
  * 应付余额跨域读 {@link ErpFinArApItem}（direction=PAYABLE），经 {@link IErpFinArApItemBiz} 注入（R 跨域只读）；
  * 到货及时率 = {@link ErpPurReceive}（businessDate ≤ 关联 order.deliveryDate）数 / 总 receive 数。
  *
- * <p>三单匹配差异预警口径对齐 {@code purchase/three-way-match.md §差异处理}：检测 ACTIVE 发票行
- * unitPrice 与关联 order line unitPrice 差异超 {@code erp-pur.match-price-tolerance}（默认 5%）的发票数。
+ * <p>三单匹配差异预警口径对齐 {@code purchase/three-way-match.md §差异处理}：检测在账（approveStatus=APPROVED
+ * 且 docStatus≠CANCELLED）发票行 unitPrice 与关联 order line unitPrice 差异超
+ * {@code erp-pur.match-price-tolerance}（默认 5%）的发票数。
  */
 @BizModel("ErpPurDashboard")
 public class ErpPurDashboardBizModel {
@@ -173,9 +174,9 @@ public class ErpPurDashboardBizModel {
     }
 
     /**
-     * 三单匹配差异预警：检测 ACTIVE 发票行 unitPrice 与关联 order line unitPrice 差异
-     * 超 {@code erp-pur.match-price-tolerance}（默认 5%）的发票数。
-     * 口径对齐 {@code purchase/three-way-match.md §价格差异}。
+     * 三单匹配差异预警：检测在账（approveStatus=APPROVED 且 docStatus≠CANCELLED）发票行 unitPrice
+     * 与关联 order line unitPrice 差异超 {@code erp-pur.match-price-tolerance}（默认 5%）的发票数。
+     * 口径对齐 {@code purchase/three-way-match.md §价格差异}（P3-CK-pur-016-r3 javadoc 口径同步）。
      */
     @BizQuery
     public List<Map<String, Object>> findThreeWayMatchDiffAlert(IServiceContext context) {

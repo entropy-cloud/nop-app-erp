@@ -22,6 +22,7 @@ import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.lt;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpHrSalary、ErpHrTaxConfig、ErpHrTaxSpecialDeduction）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 个税累计预扣法计算器（payroll.md §4.5）。从 {@link ErpHrSalary#cumulativeData}（或年度历史查询）
  * 取年初至上月累计应发/免征额/专项扣除/已预扣；累加当月 → 累计应纳税所得额 → 查 {@link ErpHrTaxConfig#taxBrackets}

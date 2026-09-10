@@ -39,6 +39,7 @@ import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.lt;
 import static io.nop.api.core.beans.FilterBeans.in;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpQaInspection、ErpQaInspectionLine、ErpQaNonConformance、ErpQaSpcChart、ErpQaSpcSample）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * SPC 样本采集引擎（{@code docs/design/quality/spc.md §关键流程 1}，plan 2026-07-07-0305-2 Phase 2）。
  *

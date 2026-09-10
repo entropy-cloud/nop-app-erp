@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinCreditFacility）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * ErpFinCreditFacility reserveCredit per-mutation Processor（R6.1，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含额度占用回写编排（强一致校验 availableAmount>=amount 并 increment usedAmount；availableAmount=total−used 同步重算）。

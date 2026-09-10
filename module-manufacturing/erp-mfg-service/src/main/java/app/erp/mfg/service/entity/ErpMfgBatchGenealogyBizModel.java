@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpInvBatch）=跨域批量聚合（inv），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 生产批次基因链追溯 BizModel（plan 2026-07-07-0305-3）。
  *

@@ -35,6 +35,7 @@ import static app.erp.fin.service.ErpFinErrors.ARG_FROM_ORG_ID;
 import static app.erp.fin.service.ErpFinErrors.ARG_TO_ORG_ID;
 import static app.erp.fin.service.ErpFinErrors.ARG_MATERIAL_ID;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpFinIntercompanyTransferPrice、ErpMdOrganization、ErpMdWarehouse）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 跨法人内部交易凭证生成 SPI 实现（plan 2026-07-22-1000-1 A3，multi-company.md §跨公司交易生命周期状态机）。
  *

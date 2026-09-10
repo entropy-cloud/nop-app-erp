@@ -33,6 +33,7 @@ import java.time.LocalDate;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpB2bAsn、ErpB2bAsnLine、ErpB2bEdiDoc、ErpB2bEdiLog、ErpB2bPartnerProfile）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * ErpB2bAsn handleInboundWebhook per-mutation Processor。
  * 自包含 webhook 入站编排：HMAC 校验 + 幂等 → 解析报文（{@link #parseToAsn}）→ 建 ASN/AsnLine。

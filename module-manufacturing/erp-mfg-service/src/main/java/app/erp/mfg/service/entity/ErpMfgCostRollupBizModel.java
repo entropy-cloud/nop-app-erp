@@ -23,6 +23,7 @@ import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpMfgCostRollup、ErpMfgCostRollupLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 @BizModel("ErpMfgCostRollup")
 public class ErpMfgCostRollupBizModel extends AbstractErpCrudBizModel<ErpMfgCostRollup> implements IErpMfgCostRollupBiz {
 

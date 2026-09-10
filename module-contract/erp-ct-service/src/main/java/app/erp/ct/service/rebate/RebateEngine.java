@@ -23,6 +23,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import app.erp.ct.service.ErpCtErrors;
 import app.erp.ct.service.statemachine.ErpCtRebateAgreementStateMachine;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpCtRebateAccrual、ErpCtRebateAgreement、ErpCtRebateTier）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 返利计提引擎（{@code volume-discount.md} §返利计提明细 / §追溯调整）。
  *

@@ -35,6 +35,7 @@ import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpAstAssetActionLog）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 资产卡片 BizModel（Facade）。CRUD 走 CrudBizModel 默认；RC-R1.54 增 suspend/resume
  * 闲置状态机 mutation（L1 UC-AST-03），编排委托 {@link ErpAstAssetSuspendResumeProcessor}

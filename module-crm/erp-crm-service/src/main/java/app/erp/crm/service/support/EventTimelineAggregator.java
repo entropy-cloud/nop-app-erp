@@ -19,6 +19,7 @@ import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpCrmActivity、ErpCrmEvent）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 线索活动时间线聚合器：合并关联的 {@link ErpCrmEvent} + {@link ErpCrmActivity}，
  * 按时间倒序返回只读聚合视图（每条 Map 含 {@code sourceType}/{@code timestamp}/{@code title} 等字段）。

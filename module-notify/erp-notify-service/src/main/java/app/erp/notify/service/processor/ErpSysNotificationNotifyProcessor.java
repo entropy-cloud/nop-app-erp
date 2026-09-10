@@ -19,6 +19,7 @@ import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpSysNotification）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpSysNotification notify per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含通知派发编排：查找 ACTIVE 模板 → 派发引擎（接收人解析→频控合并→站内落库→外发通道）→ 落库通知实例。

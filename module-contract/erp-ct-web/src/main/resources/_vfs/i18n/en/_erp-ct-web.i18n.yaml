@@ -26,10 +26,34 @@ site:
       displayName: Volume Discount
     FNPT:ErpCtContract:activate:
       displayName: Activate Contract
+    FNPT:ErpCtContract:amend:
+      displayName: Amend Contract
+    FNPT:ErpCtContract:approveTermination:
+      displayName: Approve Termination
+    FNPT:ErpCtContract:expire:
+      displayName: Expire Contract
+    FNPT:ErpCtContract:rejectAmend:
+      displayName: Reject Amend
+    FNPT:ErpCtContract:rejectTermination:
+      displayName: Reject Termination
+    FNPT:ErpCtContract:resume:
+      displayName: Resume Contract
+    FNPT:ErpCtContract:submit:
+      displayName: Submit Contract
+    FNPT:ErpCtContract:suspend:
+      displayName: Suspend Contract
+    FNPT:ErpCtContract:terminate:
+      displayName: Terminate Contract
     FNPT:ErpCtContractVersion:finalizeVersion:
       displayName: Finalize Version
     FNPT:ErpCtContractVersion:signVersion:
       displayName: Sign Version
+    FNPT:ErpCtInvoicePlan:triggerInvoice:
+      displayName: Trigger Invoice
+    FNPT:ErpCtRebateAgreement:runAccrual:
+      displayName: Run Accrual
+    FNPT:ErpCtRebateSettlement:postSettlement:
+      displayName: Post Settlement
     FNPT:ErpCtSignatureRequest:cancelSignatureRequest:
       displayName: Cancel Signature Request
     FNPT:ErpCtSignatureRequest:handleSignatureCallback:

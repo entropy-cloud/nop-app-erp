@@ -35,6 +35,7 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpInvDrpLeadTimeRecord、ErpInvDrpSupplierScore）=跨域批量聚合（inv），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 提前期统计与供应商可靠性评分编排 Processor（RC-R1.82 / P1-RC-082，UC-DRP-08）。
  *

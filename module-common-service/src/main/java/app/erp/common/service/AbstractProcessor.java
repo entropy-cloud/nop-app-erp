@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 
 import java.sql.Timestamp;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 项目级 Processor 根基类（plan 2026-07-24-2200-1 Phase 1）。
  *
@@ -80,6 +81,11 @@ public abstract class AbstractProcessor<T extends OrmEntity> {
      * StateMachine 直抛领域码后，common 码 {@code ERR_ILLEGAL_STATUS_TRANSITION} 无通用消费方
      * （lesson 19 反模式），骨架守卫路径不得再回落 common 码——各实体必须给出领域码实现。
      * current 与 expected 均传状态码/枚举名/字典值本身（禁中文散文），否定语义传 {@code "!" + 状态码}。
+     *
+     * <p>契约负例（common-013-r3）：expected 为 vararg，每个期望状态独立一项；
+     * <b>禁止</b>预拼接复合串（如 {@code illegalStatusException(entity, cur, "A / B")}）——
+     * 复合串落单参数会破坏子类按状态码对位断言与诊断参数契约。
+     * 正例：{@code illegalStatusException(entity, cur, "UNSUBMITTED", "REJECTED")}。
      */
     protected abstract NopException illegalStatusException(T entity, String current, String... expected);
 }

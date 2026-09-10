@@ -23,10 +23,10 @@
     "amountFunctional": 0.0000,
     "delVersion": 0,
     "version": 2,
+    "createTime": "*",
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpMfgMaterialIssue@updateTime",
-    "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpMfgMaterialIssue@updateTime_2"
+    "updateTime": "*",
+    "updatedBy": "autotest-ref"
   },
   "status": 0
 }

@@ -22,6 +22,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.notIn;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinArApItem、ErpFinEmployeeAdvance、ErpFinVoucher、ErpFinVoucherBillR）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 报销抵扣借款编排器。报销审核过账（EXPENSE_CLAIM 生成员工应付辅助账）成功后，若
  * {@code erp-fin.advance-auto-offset-on-expense=true}（默认 true）且报销人存在未还借款（员工预支应收辅助账 open>0），

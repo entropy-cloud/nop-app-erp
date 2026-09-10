@@ -19,6 +19,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.le;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpB2bMftCertificate）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * MFT 证书 BizModel。CRUD 之外提供证书过期检查查询入口。
  *

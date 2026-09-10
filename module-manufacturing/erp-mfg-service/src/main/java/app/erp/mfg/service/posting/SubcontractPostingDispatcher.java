@@ -32,6 +32,7 @@ import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpInvStockLedger、ErpInvStockMove、ErpMfgSubcontractOrder、ErpMfgSubcontractOrderLine）=跨域批量聚合（inv），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 委外加工 GL 过账派发器（manufacturing 域侧独立 dispatcher，plan 2026-07-13-0455-1 §Phase 3）。
  *
@@ -178,7 +179,7 @@ public class SubcontractPostingDispatcher {
         ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
         ctx.put("errorMessage", cause.getMessage());
         ctx.put("postingNo", order.getCode());
-        IServiceContext serviceCtx = new ServiceContextImpl();
+        IServiceContext serviceCtx = serviceContext();
         try {
             notificationBiz.notify(NOTIFY_EVENT_SUBCONTRACT_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
@@ -314,5 +315,12 @@ public class SubcontractPostingDispatcher {
 
     private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

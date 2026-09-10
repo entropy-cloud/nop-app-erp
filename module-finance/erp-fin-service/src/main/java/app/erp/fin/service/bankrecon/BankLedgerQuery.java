@@ -23,6 +23,7 @@ import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinVoucher、ErpFinVoucherLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 账面流水按需查询器（替代设计假设的 {@code ErpFinBankLedgerLine} 物化视图，见计划 D1）。
  *

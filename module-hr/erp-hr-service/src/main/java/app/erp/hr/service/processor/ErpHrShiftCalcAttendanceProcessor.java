@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpHrShift）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpHrShift calcAttendance per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含考勤派生字段计算：读 ShiftAssignment 标准班次 vs ErpHrAttendance 实际打卡，计算迟到/早退/缺勤，

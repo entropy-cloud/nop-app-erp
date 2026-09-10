@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpPrjProjectSettlement.xbiz">
 
-    <actions/>
+    <actions>
+        <mutation name="createSettlement">
+            <auth permissions="ErpPrjProjectSettlement:mutation"/>
+        </mutation>
+        <mutation name="submit">
+            <auth permissions="ErpPrjProjectSettlement:mutation"/>
+        </mutation>
+        <mutation name="approve">
+            <auth permissions="ErpPrjProjectSettlement:approve"/>
+        </mutation>
+        <mutation name="reject">
+            <auth permissions="ErpPrjProjectSettlement:approve"/>
+        </mutation>
+        <mutation name="cancel">
+            <auth permissions="ErpPrjProjectSettlement:mutation"/>
+        </mutation>
+        <mutation name="reverseSettlement">
+            <auth permissions="ErpPrjProjectSettlement:reverseApprove"/>
+        </mutation>
+        <mutation name="returnRetention">
+            <auth permissions="ErpPrjProjectSettlement:mutation"/>
+        </mutation>
+    </actions>
 </biz>

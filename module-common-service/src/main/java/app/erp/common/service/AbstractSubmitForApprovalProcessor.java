@@ -66,7 +66,10 @@ public abstract class AbstractSubmitForApprovalProcessor<T extends OrmEntity> ex
     protected void validateTransitionForSubmit(T entity, IServiceContext context) {
         String status = getApproveStatus(entity);
         if (!Objects.equals(status, unsubmittedStatus()) && !Objects.equals(status, rejectedStatus())) {
-            throw illegalStatusException(entity, status, unsubmittedStatus() + " / " + rejectedStatus());
+            // common-013-r3：期望态必须以独立 vararg 传递（禁 "A / B" 预拼接复合串——
+            // 复合串落单参数会破坏子类按状态码断言/诊断参数对位的消费契约，负例见
+            // AbstractProcessor#illegalStatusException javadoc 与 TestSubmitForApprovalExpectationContract）
+            throw illegalStatusException(entity, status, unsubmittedStatus(), rejectedStatus());
         }
     }
 

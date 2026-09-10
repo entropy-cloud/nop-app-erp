@@ -77,7 +77,10 @@ body:
   onCardMove:
     action: ajax
     args:
-      url: '${event.toColumnId === "col-ASSIGNED" ? "@mutation:ErpCsTicket__assign" : event.toColumnId === "col-IN_PROGRESS" ? (event.fromColumnId === "col-RESOLVED" ? "@mutation:ErpCsTicket__reopen" : "@mutation:ErpCsTicket__start") : event.toColumnId === "col-RESOLVED" ? "@mutation:ErpCsTicket__resolve" : event.toColumnId === "col-CLOSED" ? "@mutation:ErpCsTicket__close" : "@mutation:ErpCsTicket__start"}'
+      # cs-026-r3：路由条件式覆盖全部 6 列——col-CANCELLED 补 cancel 分支（状态机 cancel:
+      # NEW/ASSIGNED/IN_PROGRESS/RESOLVED→CANCELLED）；col-NEW 无合法迁移边（状态机无回 NEW 边）
+      # 落空 url 拒绝拖拽（禁拖语义），替换旧 fallback start 必错路由。
+      url: '${event.toColumnId === "col-ASSIGNED" ? "@mutation:ErpCsTicket__assign" : event.toColumnId === "col-IN_PROGRESS" ? (event.fromColumnId === "col-RESOLVED" ? "@mutation:ErpCsTicket__reopen" : "@mutation:ErpCsTicket__start") : event.toColumnId === "col-RESOLVED" ? "@mutation:ErpCsTicket__resolve" : event.toColumnId === "col-CLOSED" ? "@mutation:ErpCsTicket__close" : event.toColumnId === "col-CANCELLED" ? "@mutation:ErpCsTicket__cancel" : ""}'
       method: post
       data:
         ticketId: ${event.cardId.substring(5)}

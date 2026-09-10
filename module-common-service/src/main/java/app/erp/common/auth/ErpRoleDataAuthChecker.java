@@ -9,6 +9,7 @@ import io.nop.dao.api.IDaoProvider;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 角色侧行级数据权限 config-gated checker（plan 2026-07-31-1023-3-r3-4，P1-MA6-002）。
  *

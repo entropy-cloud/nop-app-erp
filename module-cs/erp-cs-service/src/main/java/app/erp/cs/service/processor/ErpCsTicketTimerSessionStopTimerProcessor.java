@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 
 import java.time.LocalDateTime;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpCsTicketTimerSession）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * stopTimer per-mutation Processor（RC-R1.66，UC-CS-11 ④；owner doc §2.2/§2.3）。
  *

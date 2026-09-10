@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 自动派工扫描 Job Bean（RC-R1.88 / P1-RC-090，UC-APS-07；R1.38 简单 job bean 范式）。
  *
@@ -52,12 +53,19 @@ public class ErpApsAutoDispatchJob {
             LOG.info("erp-aps-auto-dispatch-skipped: cron config empty (erp-aps.auto-dispatch-cron)");
             return;
         }
-        IServiceContext ctx = new ServiceContextImpl();
+        IServiceContext ctx = serviceContext();
         try {
             Integer dispatched = ormTemplate.runInSession(session -> operationOrderBiz.scanAutoDispatch(ctx));
             LOG.info("erp-aps-auto-dispatch-done: dispatched={}", dispatched);
         } catch (Exception e) {
             LOG.error("erp-aps-auto-dispatch-failed", e);
         }
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

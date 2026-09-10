@@ -35,6 +35,7 @@ import static io.nop.api.core.beans.FilterBeans.ne;
 import static io.nop.api.core.beans.FilterBeans.notIn;
 import static io.nop.api.core.beans.FilterBeans.or;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinAccountingPeriod、ErpFinVoucher、ErpFinVoucherLine、ErpMdCurrency、ErpMdSubject）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 损益结转服务（{@code period-close.md §步骤5}）。按 {@code erp-md/subject-class} 识别收入(40)/费用(50)/成本(60)
  * 三类科目，聚合本期发生额，生成本年利润结转凭证（业财类型 PERIOD_CLOSE）。

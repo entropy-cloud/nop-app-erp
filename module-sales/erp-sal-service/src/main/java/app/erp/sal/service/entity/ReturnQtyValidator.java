@@ -21,6 +21,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.ne;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpSalDeliveryLine、ErpSalReturn、ErpSalReturnLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 退货数量上限校验器。每行 {@code quantity} ≤ 对应 {@link ErpSalDeliveryLine} 已出库量 − 该出库行
  * <b>已审核</b>退货行 SUM（聚合查询 {@code ErpSalReturnLine} 关联 {@code ErpSalReturn} 过滤

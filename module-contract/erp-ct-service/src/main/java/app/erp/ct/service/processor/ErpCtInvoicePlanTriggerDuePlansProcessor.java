@@ -17,6 +17,7 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.le;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpCtInvoicePlan）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpCtInvoicePlan triggerDuePlans per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含到期计划批量触发生成发票草稿编排（config-gated + 逐 plan 委托 triggerInvoice）。

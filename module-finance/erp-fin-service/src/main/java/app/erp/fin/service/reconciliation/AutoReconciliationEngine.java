@@ -56,7 +56,7 @@ public class AutoReconciliationEngine {
      * @return 候选行列表（可能为空，表示无匹配）+ 未匹配项报告
      */
     public MatchResult matchAndBuild(String direction, String partnerId, String strategy, IServiceContext context) {
-        IServiceContext ctx = context != null ? context : new ServiceContextImpl();
+        IServiceContext ctx = context != null ? context : serviceContext();
         List<ErpFinArApItem> opens = arApItemBiz.findOpenItemsByPartner(partnerId, direction, ctx);
         List<ErpFinArApItem> invoices = filterInvoices(opens);
         List<ErpFinArApItem> payments = filterPayments(opens);
@@ -337,7 +337,7 @@ public class AutoReconciliationEngine {
      * 查询指定 direction 下所有有开口余额的 partner ID（partnerId=null 全量遍历用）。
      */
     public List<String> findPartnersWithOpenItems(String direction, IServiceContext context) {
-        IServiceContext ctx = context != null ? context : new ServiceContextImpl();
+        IServiceContext ctx = context != null ? context : serviceContext();
         QueryBean query = new QueryBean();
         query.addFilter(eq("direction", direction));
         query.addFilter(in("status", Arrays.asList(
@@ -364,5 +364,12 @@ public class AutoReconciliationEngine {
         public List<AutoReconUnmatched> getUnmatched() {
             return unmatched;
         }
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

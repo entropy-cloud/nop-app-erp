@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpCsSurvey、ErpCsTicket、ErpCsTicketType）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 客服域报表渲染入口。注入平台 {@link IReportEngine}，按报表名解析 VFS 模板路径
  * （{@code /nop/main/report/cs/<name>.xpt.xml}）并渲染 html/xlsx/pdf。

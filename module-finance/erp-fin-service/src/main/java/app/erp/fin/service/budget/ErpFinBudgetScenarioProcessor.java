@@ -22,6 +22,7 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinBudgetLine、ErpFinBudgetScenario）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 预算方案编排 Processor（{@code processor-extension-pattern.md} Facade + Processor）。
  * Facade {@code ErpFinBudgetScenarioBizModel} 仅负责入口/事务/委托，编排委托本类。

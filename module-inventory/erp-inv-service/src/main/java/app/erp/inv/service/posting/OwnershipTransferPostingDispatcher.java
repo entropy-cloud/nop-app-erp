@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpInvOwnershipTransfer）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 所有权转移过账派发器。转移单 DONE 后（同库位调账同事务确立之后）按 {@code transferType} 派生业务类型，
  * 构造 {@link PostingEvent}(OWNERSHIP_TRANSFER) 经 {@link InvPostingExecutor}（独立新事务由 Facade

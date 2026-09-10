@@ -21,7 +21,8 @@
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
                                 cell: { type: "text", text: '<span class="label label-${' + valueProp
-                                    + " == 'ACTIVE' ? 'success' : 'default'}\">"
+                                    + " == 'APPROVED' ? 'success' : (" + valueProp
+                                    + " == 'SUSPENDED' ? 'danger' : 'default')}\">"
                                     + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>

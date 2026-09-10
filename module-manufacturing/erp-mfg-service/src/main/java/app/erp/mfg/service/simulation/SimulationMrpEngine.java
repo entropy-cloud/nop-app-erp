@@ -34,6 +34,7 @@ import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpInvStockBalance、ErpMdMaterial、ErpMfgBomOperation、ErpMfgMrpDemand、ErpMfgMrpPlan、ErpMfgMrpPlanLine等）=跨域批量聚合（inv/md），批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * MRP 仿真计算引擎（plan 2026-07-22-1000-2 §与单次引擎关系 Decision E2；权威：
  * `docs/design/manufacturing/simulation-engine.md`）。

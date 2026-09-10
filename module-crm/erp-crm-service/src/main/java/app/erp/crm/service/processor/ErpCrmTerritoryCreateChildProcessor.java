@@ -10,6 +10,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.dao.exceptions.UnknownEntityException;
 import jakarta.inject.Inject;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpCrmTerritory）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpCrmTerritory createChild per-mutation Processor（R6.6，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含区域树建子节点编排（回填 level/fullPath/isLeaf + 父节点 isLeaf 翻转 + 深度校验）。

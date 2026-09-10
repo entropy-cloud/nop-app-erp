@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+<auth x:extends="_erp-hr.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
       xmlns:i18n-en="i18n-en" xmlns:app="app">
     <site id="main">
+        <!-- 继承生成层：恢复逐实体 FNPT 权限点入聚合链（app-001-r3）；显式移除生成层测试菜单根 -->
+        <resource id="test-orm-erp-hr" x:override="remove"/>
         <resource id="erp-hr" displayName="人力资源管理" i18n-en:displayName="Human Resources"
                   icon="users" resourceType="TOPM" orderNo="1200"
                   routePath="/erp-hr" component="layouts/default/index" roles="HR 专员,薪酬审批人">
@@ -42,11 +44,45 @@
                         <resource id="ErpHrAttendance-main" app:useCases="UC-HR-06"
                                   displayName="考勤记录" i18n-en:displayName="Attendance" icon="clock"
                                   component="FLUX" resourceType="SUBM" orderNo="300"
-                                  url="/erp/hr/pages/ErpHrAttendance/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrAttendance/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpHrAttendance:clockIn" displayName="打卡上班" i18n-en:displayName="Clock In"
+                                                    resourceType="FNPT" orderNo="30010" roles="HR 专员">
+                                              <permissions>ErpHrAttendance:clockIn</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrAttendance:clockOut" displayName="打卡下班" i18n-en:displayName="Clock Out"
+                                                    resourceType="FNPT" orderNo="30020" roles="HR 专员">
+                                              <permissions>ErpHrAttendance:clockOut</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrAttendance:makeUpClockIn" displayName="补卡上班" i18n-en:displayName="Make Up Clock In"
+                                                    resourceType="FNPT" orderNo="30030" roles="HR 专员">
+                                              <permissions>ErpHrAttendance:makeUpClockIn</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrAttendance:makeUpClockOut" displayName="补卡下班" i18n-en:displayName="Make Up Clock Out"
+                                                    resourceType="FNPT" orderNo="30040" roles="HR 专员">
+                                              <permissions>ErpHrAttendance:makeUpClockOut</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpHrTimesheet-main" app:useCases="UC-HR-03"
                                   displayName="工时表" i18n-en:displayName="Timesheet" icon="clipboard-list"
                                   component="FLUX" resourceType="SUBM" orderNo="310"
-                                  url="/erp/hr/pages/ErpHrTimesheet/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrTimesheet/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpHrTimesheet:submit" displayName="提交工时单" i18n-en:displayName="Submit Timesheet"
+                                                    resourceType="FNPT" orderNo="31010" roles="HR 专员">
+                                              <permissions>ErpHrTimesheet:submit</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrTimesheet:approve" displayName="审核工时单" i18n-en:displayName="Approve Timesheet"
+                                                    resourceType="FNPT" orderNo="31020" roles="HR 专员">
+                                              <permissions>ErpHrTimesheet:approve</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrTimesheet:reject" displayName="驳回工时单" i18n-en:displayName="Reject Timesheet"
+                                                    resourceType="FNPT" orderNo="31030" roles="HR 专员">
+                                              <permissions>ErpHrTimesheet:reject</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpHrTimesheetLine-main" app:useCases="UC-HR-03"
                                   displayName="工时明细" i18n-en:displayName="Timesheet Line" icon="list"
                                   component="FLUX" resourceType="SUBM" orderNo="320"
@@ -59,11 +95,61 @@
                         <resource id="ErpHrShift-main" app:useCases="UC-HR-09"
                                   displayName="班次模板" i18n-en:displayName="Shift" icon="clock"
                                   component="FLUX" resourceType="SUBM" orderNo="350"
-                                  url="/erp/hr/pages/ErpHrShift/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrShift/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpHrShift:calcAttendance" displayName="排班考勤计算" i18n-en:displayName="Calc Attendance"
+                                                    resourceType="FNPT" orderNo="35010" roles="HR 专员">
+                                              <permissions>ErpHrShift:calcAttendance</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrShift:onLeaveApproved" displayName="请假生效联动" i18n-en:displayName="On Leave Approved"
+                                                    resourceType="FNPT" orderNo="35020" roles="HR 专员">
+                                              <permissions>ErpHrShift:onLeaveApproved</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrShift:onLeaveCancelled" displayName="请假取消联动" i18n-en:displayName="On Leave Cancelled"
+                                                    resourceType="FNPT" orderNo="35030" roles="HR 专员">
+                                              <permissions>ErpHrShift:onLeaveCancelled</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrShiftRotationPattern:generateRotation" displayName="生成轮班计划" i18n-en:displayName="Generate Rotation"
+                                                    resourceType="FNPT" orderNo="35040" roles="HR 专员">
+                                              <permissions>ErpHrShiftRotationPattern:generateRotation</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpHrShiftAssignment-main" app:useCases="UC-HR-09"
                                   displayName="排班分配" i18n-en:displayName="Shift Assignment" icon="calendar-days"
                                   component="FLUX" resourceType="SUBM" orderNo="360"
-                                  url="/erp/hr/pages/ErpHrShiftAssignment/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrShiftAssignment/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpHrShiftAssignment:assignBatch" displayName="批量排班" i18n-en:displayName="Assign Batch"
+                                                    resourceType="FNPT" orderNo="36010" roles="HR 专员">
+                                              <permissions>ErpHrShiftAssignment:assignBatch</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrShiftAssignment:assignSingle" displayName="单个排班" i18n-en:displayName="Assign Single"
+                                                    resourceType="FNPT" orderNo="36020" roles="HR 专员">
+                                              <permissions>ErpHrShiftAssignment:assignSingle</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrShiftAssignment:copyFromPeriod" displayName="复制排班周期" i18n-en:displayName="Copy From Period"
+                                                    resourceType="FNPT" orderNo="36030" roles="HR 专员">
+                                              <permissions>ErpHrShiftAssignment:copyFromPeriod</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrShiftSwapRequest:submit" displayName="提交换班申请" i18n-en:displayName="Submit Swap"
+                                                    resourceType="FNPT" orderNo="36040" roles="HR 专员">
+                                              <permissions>ErpHrShiftSwapRequest:submit</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrShiftSwapRequest:approve" displayName="审批换班申请" i18n-en:displayName="Approve Swap"
+                                                    resourceType="FNPT" orderNo="36050" roles="HR 专员">
+                                              <permissions>ErpHrShiftSwapRequest:approve</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrShiftSwapRequest:reject" displayName="驳回换班申请" i18n-en:displayName="Reject Swap"
+                                                    resourceType="FNPT" orderNo="36060" roles="HR 专员">
+                                              <permissions>ErpHrShiftSwapRequest:reject</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrShiftSwapRequest:cancel" displayName="取消换班申请" i18n-en:displayName="Cancel Swap"
+                                                    resourceType="FNPT" orderNo="36070" roles="HR 专员">
+                                              <permissions>ErpHrShiftSwapRequest:cancel</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                     </children>
                 </resource>
                 <resource id="hr-leave" displayName="休假管理" i18n-en:displayName="Leave Management"
@@ -77,6 +163,18 @@
                                 <resource id="FNPT:ErpHrLeaveRequest:approve" displayName="审批休假" i18n-en:displayName="Approve Leave"
                                           resourceType="FNPT" orderNo="40010" roles="HR 专员">
                                     <permissions>ErpHrLeaveRequest:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpHrLeaveRequest:submit" displayName="提交请假申请" i18n-en:displayName="Submit Leave"
+                                          resourceType="FNPT" orderNo="40020" roles="HR 专员">
+                                    <permissions>ErpHrLeaveRequest:submit</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpHrLeaveRequest:reject" displayName="驳回请假申请" i18n-en:displayName="Reject Leave"
+                                          resourceType="FNPT" orderNo="40030" roles="HR 专员">
+                                    <permissions>ErpHrLeaveRequest:reject</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpHrLeaveRequest:cancel" displayName="取消请假申请" i18n-en:displayName="Cancel Leave"
+                                          resourceType="FNPT" orderNo="40040" roles="HR 专员">
+                                    <permissions>ErpHrLeaveRequest:cancel</permissions>
                                 </resource>
                             </children>
                         </resource>
@@ -114,6 +212,18 @@
                                           resourceType="FNPT" orderNo="50030" roles="薪酬审批人">
                                     <permissions>ErpHrSalary:voidSalary</permissions>
                                 </resource>
+                                <resource id="FNPT:ErpHrSalary:calculateSalary" displayName="核算薪酬" i18n-en:displayName="Calculate Salary"
+                                          resourceType="FNPT" orderNo="50040" roles="薪酬审批人">
+                                    <permissions>ErpHrSalary:calculateSalary</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpHrSalary:runPayroll" displayName="运行薪酬发放" i18n-en:displayName="Run Payroll"
+                                          resourceType="FNPT" orderNo="50050" roles="薪酬审批人">
+                                    <permissions>ErpHrSalary:runPayroll</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpHrSalary:generateBankFile" displayName="生成银行代发文件" i18n-en:displayName="Generate Bank File"
+                                          resourceType="FNPT" orderNo="50060" roles="薪酬审批人">
+                                    <permissions>ErpHrSalary:generateBankFile</permissions>
+                                </resource>
                             </children>
                         </resource>
                         <resource id="hr-payroll-approval" app:useCases="UC-HR-04,UC-HR-10" displayName="薪酬核算审批"
@@ -123,7 +233,38 @@
                         <resource id="ErpHrSalarySimulation-main" app:useCases="UC-HR-10"
                                   displayName="薪酬模拟" i18n-en:displayName="Salary Simulation" icon="calculator"
                                   component="FLUX" resourceType="SUBM" orderNo="510"
-                                  url="/erp/hr/pages/ErpHrSalarySimulation/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrSalarySimulation/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpHrSalarySimulation:createSimulation" displayName="创建薪酬仿真" i18n-en:displayName="Create Simulation"
+                                                    resourceType="FNPT" orderNo="51010" roles="薪酬审批人">
+                                              <permissions>ErpHrSalarySimulation:createSimulation</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrSalarySimulation:adjustItem" displayName="调整仿真项" i18n-en:displayName="Adjust Item"
+                                                    resourceType="FNPT" orderNo="51020" roles="薪酬审批人">
+                                              <permissions>ErpHrSalarySimulation:adjustItem</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrSalarySimulation:applyBatchAdjustment" displayName="批量调整" i18n-en:displayName="Apply Batch Adjustment"
+                                                    resourceType="FNPT" orderNo="51030" roles="薪酬审批人">
+                                              <permissions>ErpHrSalarySimulation:applyBatchAdjustment</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrSalarySimulation:convertToFormal" displayName="转正式薪酬" i18n-en:displayName="Convert To Formal"
+                                                    resourceType="FNPT" orderNo="51040" roles="薪酬审批人">
+                                              <permissions>ErpHrSalarySimulation:convertToFormal</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrSalarySimulation:submitForReview" displayName="提交复核" i18n-en:displayName="Submit For Review"
+                                                    resourceType="FNPT" orderNo="51050" roles="薪酬审批人">
+                                              <permissions>ErpHrSalarySimulation:submitForReview</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrSalarySimulation:approve" displayName="审批仿真" i18n-en:displayName="Approve Simulation"
+                                                    resourceType="FNPT" orderNo="51060" roles="薪酬审批人">
+                                              <permissions>ErpHrSalarySimulation:approve</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrSalarySimulation:reject" displayName="驳回仿真" i18n-en:displayName="Reject Simulation"
+                                                    resourceType="FNPT" orderNo="51070" roles="薪酬审批人">
+                                              <permissions>ErpHrSalarySimulation:reject</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpHrPayrollBankFile-main" displayName="银行代发文件"
                                   i18n-en:displayName="Payroll Bank File" icon="file-text"
                                   component="FLUX" resourceType="SUBM" orderNo="520"
@@ -162,15 +303,44 @@
                         <resource id="ErpHrSurvey-main" app:useCases="UC-HR-11"
                                   displayName="问卷模板" i18n-en:displayName="Survey Template" icon="file-question"
                                   component="FLUX" resourceType="SUBM" orderNo="550"
-                                  url="/erp/hr/pages/ErpHrSurvey/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrSurvey/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpHrSurvey:publish" displayName="发布调研" i18n-en:displayName="Publish Survey"
+                                                    resourceType="FNPT" orderNo="55010" roles="HR 专员">
+                                              <permissions>ErpHrSurvey:publish</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrSurvey:close" displayName="关闭调研" i18n-en:displayName="Close Survey"
+                                                    resourceType="FNPT" orderNo="55020" roles="HR 专员">
+                                              <permissions>ErpHrSurvey:close</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrSurvey:archive" displayName="归档调研" i18n-en:displayName="Archive Survey"
+                                                    resourceType="FNPT" orderNo="55030" roles="HR 专员">
+                                              <permissions>ErpHrSurvey:archive</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpHrSurveyResponse-main" app:useCases="UC-HR-11"
                                   displayName="调研答卷" i18n-en:displayName="Survey Response" icon="file-check"
                                   component="FLUX" resourceType="SUBM" orderNo="560"
-                                  url="/erp/hr/pages/ErpHrSurveyResponse/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrSurveyResponse/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpHrSurveyResponse:submitResponse" displayName="提交调研答卷" i18n-en:displayName="Submit Response"
+                                                    resourceType="FNPT" orderNo="55110" roles="HR 专员">
+                                              <permissions>ErpHrSurveyResponse:submitResponse</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpHrSurveyResult-main" app:useCases="UC-HR-11"
                                   displayName="结果分析" i18n-en:displayName="Survey Result" icon="bar-chart"
                                   component="FLUX" resourceType="SUBM" orderNo="570"
-                                  url="/erp/hr/pages/ErpHrSurveyResult/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrSurveyResult/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpHrSurveyResult:aggregateResult" displayName="汇总调研结果" i18n-en:displayName="Aggregate Result"
+                                                    resourceType="FNPT" orderNo="55210" roles="HR 专员">
+                                              <permissions>ErpHrSurveyResult:aggregateResult</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                     </children>
                 </resource>
                 <resource id="hr-competency" displayName="胜任力管理" i18n-en:displayName="Competency Management"
@@ -187,15 +357,52 @@
                         <resource id="ErpHrEmployeeAssessment-main" app:useCases="UC-HR-12"
                                   displayName="员工评估" i18n-en:displayName="Employee Assessment" icon="clipboard-check"
                                   component="FLUX" resourceType="SUBM" orderNo="670"
-                                  url="/erp/hr/pages/ErpHrEmployeeAssessment/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrEmployeeAssessment/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpHrEmployeeAssessment:submitAssessment" displayName="提交考评" i18n-en:displayName="Submit Assessment"
+                                                    resourceType="FNPT" orderNo="67010" roles="HR 专员">
+                                              <permissions>ErpHrEmployeeAssessment:submitAssessment</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrEmployeeAssessment:completeAssessment" displayName="完成考评" i18n-en:displayName="Complete Assessment"
+                                                    resourceType="FNPT" orderNo="67020" roles="HR 专员">
+                                              <permissions>ErpHrEmployeeAssessment:completeAssessment</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpHrGapAnalysis-main" app:useCases="UC-HR-12"
                                   displayName="差距分析" i18n-en:displayName="Gap Analysis" icon="triangle-alert"
                                   component="FLUX" resourceType="SUBM" orderNo="680"
-                                  url="/erp/hr/pages/ErpHrGapAnalysis/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrGapAnalysis/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpHrGapAnalysis:refreshGapAnalysis" displayName="刷新差距分析" i18n-en:displayName="Refresh Gap Analysis"
+                                                    resourceType="FNPT" orderNo="66010" roles="HR 专员">
+                                              <permissions>ErpHrGapAnalysis:refreshGapAnalysis</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrGapAnalysis:refreshGapAnalysisWithLevels" displayName="按层级刷新差距分析" i18n-en:displayName="Refresh Gap Analysis With Levels"
+                                                    resourceType="FNPT" orderNo="66020" roles="HR 专员">
+                                              <permissions>ErpHrGapAnalysis:refreshGapAnalysisWithLevels</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpHrDevelopmentPlan-main" app:useCases="UC-HR-12"
                                   displayName="发展计划" i18n-en:displayName="Development Plan" icon="target"
                                   component="FLUX" resourceType="SUBM" orderNo="690"
-                                  url="/erp/hr/pages/ErpHrDevelopmentPlan/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrDevelopmentPlan/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpHrDevelopmentPlan:generateDevelopmentPlan" displayName="生成发展计划" i18n-en:displayName="Generate Development Plan"
+                                                    resourceType="FNPT" orderNo="65010" roles="HR 专员">
+                                              <permissions>ErpHrDevelopmentPlan:generateDevelopmentPlan</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrDevelopmentPlan:updatePlanItemStatus" displayName="更新计划项状态" i18n-en:displayName="Update Plan Item Status"
+                                                    resourceType="FNPT" orderNo="65020" roles="HR 专员">
+                                              <permissions>ErpHrDevelopmentPlan:updatePlanItemStatus</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpHrDevelopmentPlan:completePlan" displayName="完成发展计划" i18n-en:displayName="Complete Plan"
+                                                    resourceType="FNPT" orderNo="65030" roles="HR 专员">
+                                              <permissions>ErpHrDevelopmentPlan:completePlan</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                     </children>
                 </resource>
                 <resource id="hr-recruit" displayName="招聘管理" i18n-en:displayName="Recruitment"

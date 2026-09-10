@@ -11,6 +11,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpInvDrpSafetyStockCalc）=跨域批量聚合（inv），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpInvDrpSafetyStockCalc confirmWriteback per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含人工确认回写编排：配置 {@code erp-inv.drp-ss-auto-writeback} 默认 false（人工复核门）+ 委派 {@link SafetyStockEngine#confirmWriteback}

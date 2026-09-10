@@ -33,6 +33,7 @@ import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpCrmBundlePricing、ErpCrmBundlePricingLine、ErpCrmConfigRule、ErpCrmLead、ErpCrmPriceRule、ErpCrmProductConfigurator）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpCrmProductConfigurator generateQuote per-mutation Processor（R6.6，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含配置→定价→报价生成跨域链路：配置规则评估 → 捆绑/价格规则/标准定价 → 跨域建报价单（{@link IErpSalQuotationBiz#save}）→ lead 弱指针回写。

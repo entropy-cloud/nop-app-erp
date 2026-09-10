@@ -18,7 +18,22 @@
                         <resource id="ErpMntEquipment-main" app:useCases="UC-MAIN-03,UC-MAIN-06,UC-MAIN-08,UC-MAIN-10" displayName="设备"
                                   i18n-en:displayName="Equipment" icon="cog"
                                   component="FLUX" resourceType="SUBM" orderNo="100"
-                                  url="/erp/mnt/pages/ErpMntEquipment/main.page.yaml"/>
+                                  url="/erp/mnt/pages/ErpMntEquipment/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMntEquipment:changeStatus" displayName="设备状态变更" i18n-en:displayName="Change Status"
+                                                    resourceType="FNPT" orderNo="10010" roles="维护主管">
+                                              <permissions>ErpMntEquipment:changeStatus</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMntEquipment:changeStatusForAssetDisposal" displayName="资产处置联动状态变更" i18n-en:displayName="Change Status For Asset Disposal"
+                                                    resourceType="FNPT" orderNo="10020" roles="维护主管">
+                                              <permissions>ErpMntEquipment:changeStatusForAssetDisposal</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMntEquipment:restoreFromAssetDisposal" displayName="资产处置恢复" i18n-en:displayName="Restore From Asset Disposal"
+                                                    resourceType="FNPT" orderNo="10030" roles="维护主管">
+                                              <permissions>ErpMntEquipment:restoreFromAssetDisposal</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpMntEquipmentCategory-main" app:useCases="UC-MAIN-08" displayName="设备分类"
                                   i18n-en:displayName="Equipment Category" icon="folder-tree"
                                   component="FLUX" resourceType="SUBM" orderNo="110"
@@ -32,7 +47,14 @@
                         <resource id="ErpMntSchedule-main" app:useCases="UC-MAIN-01,UC-MAIN-02" displayName="维护计划"
                                   i18n-en:displayName="Maintenance Schedule" icon="calendar-clock"
                                   component="FLUX" resourceType="SUBM" orderNo="200"
-                                  url="/erp/mnt/pages/ErpMntSchedule/main.page.yaml"/>
+                                  url="/erp/mnt/pages/ErpMntSchedule/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMntSchedule:generateDueVisits" displayName="生成到期维护访问" i18n-en:displayName="Generate Due Visits"
+                                                    resourceType="FNPT" orderNo="20010" roles="维护主管">
+                                              <permissions>ErpMntSchedule:generateDueVisits</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpMntCalibration-main" app:useCases="UC-MAIN-01" displayName="校准记录"
                                   i18n-en:displayName="Calibration" icon="gauge"
                                   component="FLUX" resourceType="SUBM" orderNo="210"
@@ -56,7 +78,30 @@
                         <resource id="ErpMntVisit-main" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-07,UC-MAIN-09" displayName="维护访问"
                                   i18n-en:displayName="Maintenance Visit" icon="clipboard-check"
                                   component="FLUX" resourceType="SUBM" orderNo="300"
-                                  url="/erp/mnt/pages/ErpMntVisit/main.page.yaml"/>
+                                  url="/erp/mnt/pages/ErpMntVisit/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMntVisit:schedule" displayName="排程维护访问" i18n-en:displayName="Schedule Visit"
+                                                    resourceType="FNPT" orderNo="31010" roles="维护主管">
+                                              <permissions>ErpMntVisit:schedule</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMntVisit:start" displayName="开始维护访问" i18n-en:displayName="Start Visit"
+                                                    resourceType="FNPT" orderNo="31020" roles="维护人员">
+                                              <permissions>ErpMntVisit:start</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMntVisit:complete" displayName="完成维护访问" i18n-en:displayName="Complete Visit"
+                                                    resourceType="FNPT" orderNo="31030" roles="维护人员">
+                                              <permissions>ErpMntVisit:complete</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMntVisit:cancel" displayName="取消维护访问" i18n-en:displayName="Cancel Visit"
+                                                    resourceType="FNPT" orderNo="31040" roles="维护主管">
+                                              <permissions>ErpMntVisit:cancel</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMntVisit:reportAdditionalFault" displayName="追加故障上报" i18n-en:displayName="Report Additional Fault"
+                                                    resourceType="FNPT" orderNo="31050" roles="维护人员">
+                                              <permissions>ErpMntVisit:reportAdditionalFault</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <!-- F12 Tier C + F16 maintenance 4 步执行向导（plan 2026-07-23-1145-1）：引导式驱动 __start→__save→__complete + __cancel，零后端 delta -->
                         <resource id="mnt-visit-wizard" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-07,UC-MAIN-09" displayName="维护访问执行向导"
                                   i18n-en:displayName="Visit Execution Wizard" icon="magic"
@@ -74,12 +119,43 @@
                                           resourceType="FNPT" orderNo="10020" roles="管理员">
                                     <permissions>ErpMntRequest:reverseApprove</permissions>
                                 </resource>
+                                <resource id="FNPT:ErpMntRequest:accept" displayName="受理维护请求" i18n-en:displayName="Accept Request"
+                                          resourceType="FNPT" orderNo="33010" roles="维护主管">
+                                    <permissions>ErpMntRequest:accept</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMntRequest:startRepair" displayName="开始维修" i18n-en:displayName="Start Repair"
+                                          resourceType="FNPT" orderNo="33020" roles="维护人员">
+                                    <permissions>ErpMntRequest:startRepair</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMntRequest:complete" displayName="完成维修" i18n-en:displayName="Complete Repair"
+                                          resourceType="FNPT" orderNo="33030" roles="维护人员">
+                                    <permissions>ErpMntRequest:complete</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMntRequest:rejectRequest" displayName="拒绝维护请求" i18n-en:displayName="Reject Request"
+                                          resourceType="FNPT" orderNo="33040" roles="维护主管">
+                                    <permissions>ErpMntRequest:rejectRequest</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMntRequest:cancel" displayName="取消维护请求" i18n-en:displayName="Cancel Request"
+                                          resourceType="FNPT" orderNo="33050" roles="维护主管">
+                                    <permissions>ErpMntRequest:cancel</permissions>
+                                </resource>
                             </children>
                         </resource>
                         <resource id="ErpMntDowntimeEntry-main" app:useCases="UC-MAIN-06,UC-MAIN-10" displayName="停机记录"
                                   i18n-en:displayName="Downtime Entry" icon="timer-off"
                                   component="FLUX" resourceType="SUBM" orderNo="320"
-                                  url="/erp/mnt/pages/ErpMntDowntimeEntry/main.page.yaml"/>
+                                  url="/erp/mnt/pages/ErpMntDowntimeEntry/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMntDowntimeEntry:record" displayName="记录停机" i18n-en:displayName="Record Downtime"
+                                                    resourceType="FNPT" orderNo="34010" roles="维护人员">
+                                              <permissions>ErpMntDowntimeEntry:record</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMntDowntimeEntry:complete" displayName="结束停机" i18n-en:displayName="Complete Downtime"
+                                                    resourceType="FNPT" orderNo="34020" roles="维护人员">
+                                              <permissions>ErpMntDowntimeEntry:complete</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                     </children>
                 </resource>
                 <!-- 团队 -->
@@ -99,7 +175,18 @@
                         <resource id="ErpMntSparePartUsage-main" app:useCases="UC-MAIN-04" displayName="备件消耗"
                                   i18n-en:displayName="Spare Part Usage" icon="package-minus"
                                   component="FLUX" resourceType="SUBM" orderNo="500"
-                                  url="/erp/mnt/pages/ErpMntSparePartUsage/main.page.yaml"/>
+                                  url="/erp/mnt/pages/ErpMntSparePartUsage/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMntSparePartUsage:confirm" displayName="确认备件消耗" i18n-en:displayName="Confirm Usage"
+                                                    resourceType="FNPT" orderNo="50010" roles="维护主管">
+                                              <permissions>ErpMntSparePartUsage:confirm</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMntSparePartUsage:reverseConfirm" displayName="反冲备件消耗" i18n-en:displayName="Reverse Confirm"
+                                                    resourceType="FNPT" orderNo="50020" roles="管理员">
+                                              <permissions>ErpMntSparePartUsage:reverseConfirm</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                     </children>
                 </resource>
                 <!-- 维护报表 -->

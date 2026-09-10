@@ -43,6 +43,7 @@ import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
 import static io.nop.api.core.beans.FilterBeans.ne;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMfgCrpLoad、ErpMfgRoutingOperation、ErpMfgWorkOrder、ErpMfgWorkcenter、ErpMfgWorkcenterCalendar、ErpMfgWorkcenterCapacity）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * CRP 负荷计算引擎。服务于 {@code IErpMfgCrpBiz.calculateLoad/getLoadReport}（{@code crp.md §核心设计点}）。
  *

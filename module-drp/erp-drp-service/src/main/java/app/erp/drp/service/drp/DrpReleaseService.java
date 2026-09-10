@@ -27,6 +27,7 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import io.nop.api.core.time.CoreMetrics;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpDrpLine、ErpDrpParameter、ErpDrpPlan、ErpInvTransferOrder、ErpInvTransferOrderLine、ErpMdCurrency等）=跨域批量聚合（inv/md/pur），批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * DRP 计划释放。服务于 {@code IErpDrpLineBiz.releaseLine/releaseApproved}（{@code drp/state-machine.md §场景 C}、
  * {@code drp/use-cases.md UC-DRP-03}）。

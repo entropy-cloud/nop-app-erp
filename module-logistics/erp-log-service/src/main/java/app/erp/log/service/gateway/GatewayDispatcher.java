@@ -38,6 +38,7 @@ import java.util.Map;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpLogCarrier、ErpLogShipment、ErpLogShipmentLog、ErpLogShipmentParcel）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 承运商网关派发器。承载网关调用编排 + 运单状态机 ORM 操作（completeDeliveryOrder 重试/写回、trackShipment 轮询推进、
  * advise/cancelShipment 状态迁移、webhook 解析后的追踪推进），被 {@code ErpLogShipmentBizModel} 委托调用。
@@ -304,7 +305,7 @@ public class GatewayDispatcher {
             return;
         }
         try {
-            deliveryBookingBiz.releaseForShipment(shipment.getId(), new ServiceContextImpl());
+            deliveryBookingBiz.releaseForShipment(shipment.getId(), serviceContext());
         } catch (Exception e) {
             LOG.warn("Failed to release delivery booking after shipment {} status transition (degraded, non-blocking): {}",
                     shipment.getCode(), e.getMessage());
@@ -396,7 +397,7 @@ public class GatewayDispatcher {
         ctx.put("errorCode", errorCode);
         ctx.put("errorMessage", errorMessage);
         ctx.put("postingNo", shipment.getCode());
-        IServiceContext serviceCtx = new ServiceContextImpl();
+        IServiceContext serviceCtx = serviceContext();
         try {
             notificationBiz.notify(NOTIFY_EVENT_GATEWAY_DEAD_LETTER, ctx, serviceCtx);
         } catch (Exception notifyErr) {
@@ -469,5 +470,12 @@ public class GatewayDispatcher {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

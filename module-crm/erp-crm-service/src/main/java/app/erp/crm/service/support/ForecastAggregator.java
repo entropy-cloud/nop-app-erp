@@ -28,6 +28,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.le;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpCrmForecast、ErpCrmForecastAccuracy、ErpCrmForecastLine、ErpCrmForecastPeriod、ErpCrmLead）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 销售预测聚合引擎。{@link #refreshForecast} 按 ownerId 聚合 commit/upside/best-case/weighted →
  * upsert {@link ErpCrmForecast} + 重建 {@link ErpCrmForecastLine}（商机级快照）；

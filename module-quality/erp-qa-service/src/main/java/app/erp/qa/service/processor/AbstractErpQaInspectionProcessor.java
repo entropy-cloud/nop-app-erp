@@ -16,6 +16,7 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpQaInspection、ErpQaInspectionLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 质检单 per-mutation Processor 共享基类（R6.6）。承载 recordResult/passInspection/failInspection/
  * createForBusinessBill 四个 per-mutation Processor 共用的加载、状态守卫与 posted 簿记辅助（单一真相源，对齐

@@ -9,6 +9,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import jakarta.inject.Inject;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpB2bAsn）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * ErpB2bAsn retryMatch per-mutation Processor。
  * 自包含重试匹配编排：幂等短路（MATCHED/RECEIVED_TO_STOCK）→ 必要时回到 RECEIVED → 委托 {@link ErpB2bAsnMatchPurchaseOrderProcessor}。

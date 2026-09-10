@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+<auth x:extends="_erp-log.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
       xmlns:i18n-en="i18n-en" xmlns:app="app">
     <site id="main">
+        <!-- 继承生成层：恢复逐实体 FNPT 权限点入聚合链（app-001-r3）；显式移除生成层测试菜单根 -->
+        <resource id="test-orm-erp-log" x:override="remove"/>
         <resource id="erp-log" displayName="运输管理" i18n-en:displayName="Transportation"
                   icon="truck" resourceType="TOPM" orderNo="1050"
                   routePath="/erp-log" component="layouts/default/index">
@@ -12,7 +14,50 @@
                         <resource id="ErpLogShipment-main" app:useCases="UC-LOG-01,UC-LOG-02,UC-LOG-03"
                                   displayName="发运单" i18n-en:displayName="Shipment" icon="truck"
                                   component="FLUX" resourceType="SUBM" orderNo="100"
-                                  url="/erp/log/pages/ErpLogShipment/main.page.yaml"/>
+                                  url="/erp/log/pages/ErpLogShipment/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpLogShipment:advise" displayName="发运通知承运商" i18n-en:displayName="Advise Shipment"
+                                                    resourceType="FNPT" orderNo="10010" roles="库管员,销售员">
+                                              <permissions>ErpLogShipment:advise</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpLogShipment:completeShipment" displayName="完成发运" i18n-en:displayName="Complete Shipment"
+                                                    resourceType="FNPT" orderNo="10020" roles="库管员,销售员">
+                                              <permissions>ErpLogShipment:completeShipment</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpLogShipment:cancelShipment" displayName="取消发运" i18n-en:displayName="Cancel Shipment"
+                                                    resourceType="FNPT" orderNo="10030" roles="库管员,销售员">
+                                              <permissions>ErpLogShipment:cancelShipment</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpLogShipment:save" displayName="保存发运单" i18n-en:displayName="Save Shipment"
+                                                    resourceType="FNPT" orderNo="10040" roles="库管员,销售员">
+                                              <permissions>ErpLogShipment:save</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpLogShipment:handleTrackingWebhook" displayName="处理物流追踪回调" i18n-en:displayName="Handle Tracking Webhook"
+                                                    resourceType="FNPT" orderNo="10050" roles="管理员">
+                                              <permissions>ErpLogShipment:handleTrackingWebhook</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpLogShipment:scanForPolling" displayName="追踪轮询扫描" i18n-en:displayName="Scan For Polling"
+                                                    resourceType="FNPT" orderNo="10060" roles="管理员">
+                                              <permissions>ErpLogShipment:scanForPolling</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpLogDeliveryBooking:book" displayName="预约配送" i18n-en:displayName="Book Delivery"
+                                                    resourceType="FNPT" orderNo="10070" roles="库管员,销售员">
+                                              <permissions>ErpLogDeliveryBooking:book</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpLogDeliveryBooking:releaseForShipment" displayName="预约转发运" i18n-en:displayName="Release For Shipment"
+                                                    resourceType="FNPT" orderNo="10080" roles="库管员,销售员">
+                                              <permissions>ErpLogDeliveryBooking:releaseForShipment</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpLogDeliveryBooking:markArrived" displayName="标记承运商到车" i18n-en:displayName="Mark Arrived"
+                                                    resourceType="FNPT" orderNo="10090" roles="库管员,销售员">
+                                              <permissions>ErpLogDeliveryBooking:markArrived</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpLogDeliveryBooking:markMissed" displayName="标记失约" i18n-en:displayName="Mark Missed"
+                                                    resourceType="FNPT" orderNo="10100" roles="库管员,销售员">
+                                              <permissions>ErpLogDeliveryBooking:markMissed</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="log-shipment-tracking" app:useCases="UC-LOG-02,UC-LOG-03" displayName="发运追踪时间线"
                                   i18n-en:displayName="Shipment Tracking" icon="route"
                                   component="FLUX" resourceType="SUBM" orderNo="105"

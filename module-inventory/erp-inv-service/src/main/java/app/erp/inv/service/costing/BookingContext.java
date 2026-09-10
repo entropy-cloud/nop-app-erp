@@ -11,6 +11,7 @@ import io.nop.orm.IOrmTemplate;
 import java.math.BigDecimal;
 import java.util.function.Consumer;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 记账上下文：策略实现经此访问共享记账基础设施（余额 upsert / 流水写入 / 余额可用量重算 / dao / orm）。
  *

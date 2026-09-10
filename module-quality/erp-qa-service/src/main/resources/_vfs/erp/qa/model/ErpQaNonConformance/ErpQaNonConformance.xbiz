@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpQaNonConformance.xbiz">
 
-    <actions/>
+    <actions>
+        <mutation name="postNcr">
+            <auth permissions="ErpQaNonConformance:mutation"/>
+        </mutation>
+        <mutation name="reverseNcr">
+            <auth permissions="ErpQaNonConformance:reverseApprove"/>
+        </mutation>
+        <mutation name="resolve">
+            <auth permissions="ErpQaNonConformance:mutation"/>
+        </mutation>
+    </actions>
 </biz>

@@ -42,6 +42,7 @@ import static io.nop.api.core.beans.FilterBeans.in;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.EntityData;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpHrEmployee、ErpHrSalary）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 薪酬记录聚合根 BizModel（payroll.md §五/§六/§七）。继承 {@link CrudBizModel} 标准 CRUD，
  * 扩展薪酬核算引擎与支付轴动作。

@@ -36,6 +36,7 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.isNull;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpInvReservation、ErpInvReservationLine、ErpInvStockBalance）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 库存预留单 BizModel（Facade + 实现）。除标准 CRUD 外，落地跨域物料预留写路径三方法
  * （{@code IErpInvReservationBiz} purpose-built 契约，mfg 工单审核/取消/完工/领料消费侧调用）：

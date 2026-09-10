@@ -48,6 +48,22 @@ site:
       displayName: Warehouse
     ErpSysConfig-main:
       displayName: System Config
+    FNPT:ErpMdCurrency:refreshRatesFromApi:
+      displayName: Refresh Rates From Api
+    FNPT:ErpMdSupplierApproval:apply:
+      displayName: Apply Approval
+    FNPT:ErpMdSupplierApproval:approve:
+      displayName: Approve Approval
+    FNPT:ErpMdSupplierApproval:probate:
+      displayName: Probate Supplier
+    FNPT:ErpMdSupplierApproval:reinstate:
+      displayName: Reinstate Supplier
+    FNPT:ErpMdSupplierApproval:reject:
+      displayName: Reject Approval
+    FNPT:ErpMdSupplierApproval:suspend:
+      displayName: Suspend Supplier
+    FNPT:ErpMdSupplierApproval:suspendByPartner:
+      displayName: Suspend By Partner
     cost-center:
       displayName: Cost Center
     erp-md:

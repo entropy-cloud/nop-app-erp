@@ -34,14 +34,46 @@ site:
       displayName: Work Order
     ErpMfgWorkcenter-main:
       displayName: Work Center
+    FNPT:ErpMfgBom:rollupCost:
+      displayName: Rollup Cost
+    FNPT:ErpMfgCostVariance:calculateVariances:
+      displayName: Calculate Variances
+    FNPT:ErpMfgCrpLoad:calculateLoad:
+      displayName: Calculate Load
+    FNPT:ErpMfgForecast:approve:
+      displayName: Approve Forecast
+    FNPT:ErpMfgForecast:cancel:
+      displayName: Cancel Forecast
     FNPT:ErpMfgMaterialIssue:approve:
       displayName: Approve
     FNPT:ErpMfgMaterialIssue:reverseApprove:
       displayName: Reverse Approve
+    FNPT:ErpMfgMrpPlan:runMrp:
+      displayName: Run MRP
+    FNPT:ErpMfgMrpPlanLine:releasePurchaseRequest:
+      displayName: Release Purchase Request
+    FNPT:ErpMfgMrpPlanLine:releaseSubcontractRequest:
+      displayName: Release Subcontract Request
+    FNPT:ErpMfgMrpPlanLine:releaseWorkRequest:
+      displayName: Release Work Request
+    FNPT:ErpMfgMrpScenario:promoteToFormalPlan:
+      displayName: Promote To Formal Plan
+    FNPT:ErpMfgMrpScenario:runSimulation:
+      displayName: Run Simulation
     FNPT:ErpMfgSubcontractOrder:approve:
       displayName: Approve Subcontract Order
+    FNPT:ErpMfgSubcontractOrder:cancel:
+      displayName: Cancel Subcontract Order
+    FNPT:ErpMfgSubcontractOrder:issueMaterials:
+      displayName: Issue Materials
+    FNPT:ErpMfgSubcontractOrder:postProcessingFee:
+      displayName: Post Processing Fee
+    FNPT:ErpMfgSubcontractOrder:receiveFinished:
+      displayName: Receive Finished
     FNPT:ErpMfgSubcontractOrder:reverseApprove:
       displayName: Reverse Approve
+    FNPT:ErpMfgSubcontractOrder:reverseCompletion:
+      displayName: Reverse Completion
     FNPT:ErpMfgWorkOrder:approve:
       displayName: Approve
     FNPT:ErpMfgWorkOrder:cancel:

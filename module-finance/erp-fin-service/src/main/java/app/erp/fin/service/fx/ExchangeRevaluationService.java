@@ -37,6 +37,7 @@ import static io.nop.api.core.beans.FilterBeans.ne;
 import static io.nop.api.core.beans.FilterBeans.notIn;
 import static io.nop.api.core.beans.FilterBeans.or;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinAccountingPeriod、ErpFinArApItem、ErpFinFundAccount、ErpFinVoucher、ErpFinVoucherLine、ErpMdCurrency等）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 期末汇兑重估服务（{@code period-close.md §汇兑重估}，承接 0300-3 deferred + 0540-2 银行存款扩展）。查询外币应收应付未核销项
  * 与外币银行存款账户余额，按期末汇率重估差额，生成 EXCHANGE_GAIN_LOSS(130) 凭证。

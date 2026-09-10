@@ -19,6 +19,7 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpCsTicket）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpCsTicket reopen per-mutation Processor（R6.6，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含工单驳回重开编排（状态迁移 RESOLVED→IN_PROGRESS + 审计 + 取消未响应调查）。下游可经 Delta beans.xml 同名 bean id 覆盖本类。

@@ -9,6 +9,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpAstSplit）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpAstSplit reverseApprove per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
  * 拆分执行后不可撤销（owner doc split-merge.md §关键业务规则 5 不可逆契约）。require 后直接抛错。

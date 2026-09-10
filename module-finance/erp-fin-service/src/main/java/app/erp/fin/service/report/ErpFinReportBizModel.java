@@ -60,6 +60,7 @@ import static io.nop.api.core.beans.FilterBeans.isNull;
 import static io.nop.api.core.beans.FilterBeans.notIn;
 import static io.nop.api.core.beans.FilterBeans.or;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpFinAccountingPeriod、ErpFinAccountingPeriodStatus、ErpFinArApItem、ErpFinGlBalance、ErpFinVoucher、ErpFinVoucherBillR等）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 财务报表渲染入口。注入平台 {@link IReportEngine}，按报表名解析 VFS 模板路径
  * （{@code /nop/main/report/fin/<name>.xpt.xml}）并渲染 html/xlsx/pdf。

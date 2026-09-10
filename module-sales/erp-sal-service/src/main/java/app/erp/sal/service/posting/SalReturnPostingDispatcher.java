@@ -24,6 +24,7 @@ import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpSalDelivery、ErpSalReturnLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 销售退货过账派发器。退货 APPROVED 后组装 {@link PostingEvent}(SALES_RETURN) 经 {@link SalPostingExecutor}
  * （独立新事务由 Facade {@code IErpFinVoucherBiz.post()} 的 {@code REQUIRES_NEW} 承接）调用财务过账引擎，

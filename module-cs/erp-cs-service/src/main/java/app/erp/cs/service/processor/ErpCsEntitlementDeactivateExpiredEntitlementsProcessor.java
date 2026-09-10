@@ -16,6 +16,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.lt;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpCsEntitlement）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpCsEntitlement deactivateExpiredEntitlements per-mutation Processor（R6.6，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含过期权益批量停用编排（endDate&lt;now 的 active 权益置 isActive=false，单条失败隔离）。下游可经 Delta beans.xml 同名 bean id 覆盖本类。

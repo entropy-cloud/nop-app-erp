@@ -18,7 +18,14 @@
                         <resource id="ErpMfgBom-main" app:useCases="UC-MFG-02,UC-MFG-10" displayName="BOM"
                                   i18n-en:displayName="BOM" icon="git-branch"
                                   component="FLUX" resourceType="SUBM" orderNo="100"
-                                  url="/erp/mfg/pages/ErpMfgBom/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgBom/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMfgBom:rollupCost" displayName="成本滚算" i18n-en:displayName="Rollup Cost"
+                                                    resourceType="FNPT" orderNo="10010" roles="生产主管">
+                                              <permissions>ErpMfgBom:rollupCost</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="mfg-bom-tree" app:useCases="UC-MFG-02,UC-MFG-10" displayName="BOM 展开树"
                                   i18n-en:displayName="BOM Tree" icon="list-tree"
                                   component="FLUX" resourceType="SUBM" orderNo="105"
@@ -95,7 +102,26 @@
                         <resource id="ErpMfgMrpPlan-main" app:useCases="UC-MFG-03" displayName="MRP计划"
                                   i18n-en:displayName="MRP Plan" icon="calendar-clock"
                                   component="FLUX" resourceType="SUBM" orderNo="300"
-                                  url="/erp/mfg/pages/ErpMfgMrpPlan/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgMrpPlan/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMfgMrpPlan:runMrp" displayName="运行MRP" i18n-en:displayName="Run MRP"
+                                                    resourceType="FNPT" orderNo="30010" roles="生产计划员">
+                                              <permissions>ErpMfgMrpPlan:runMrp</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMfgMrpPlanLine:releasePurchaseRequest" displayName="释放采购申请" i18n-en:displayName="Release Purchase Request"
+                                                    resourceType="FNPT" orderNo="30020" roles="生产计划员">
+                                              <permissions>ErpMfgMrpPlanLine:releasePurchaseRequest</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMfgMrpPlanLine:releaseWorkRequest" displayName="释放生产请求" i18n-en:displayName="Release Work Request"
+                                                    resourceType="FNPT" orderNo="30030" roles="生产计划员">
+                                              <permissions>ErpMfgMrpPlanLine:releaseWorkRequest</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMfgMrpPlanLine:releaseSubcontractRequest" displayName="释放委外请求" i18n-en:displayName="Release Subcontract Request"
+                                                    resourceType="FNPT" orderNo="30040" roles="生产计划员">
+                                              <permissions>ErpMfgMrpPlanLine:releaseSubcontractRequest</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpMfgMrpDemand-main" displayName="MRP独立需求"
                                   i18n-en:displayName="MRP Demand" icon="git-pull-request-arrow"
                                   component="FLUX" resourceType="SUBM" orderNo="310"
@@ -103,7 +129,18 @@
                         <resource id="ErpMfgForecast-main" displayName="需求预测"
                                   i18n-en:displayName="Demand Forecast" icon="trending-up"
                                   component="FLUX" resourceType="SUBM" orderNo="320"
-                                  url="/erp/mfg/pages/ErpMfgForecast/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgForecast/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMfgForecast:approve" displayName="审核需求预测" i18n-en:displayName="Approve Forecast"
+                                                    resourceType="FNPT" orderNo="32010" roles="生产计划员">
+                                              <permissions>ErpMfgForecast:approve</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMfgForecast:cancel" displayName="取消需求预测" i18n-en:displayName="Cancel Forecast"
+                                                    resourceType="FNPT" orderNo="32020" roles="生产计划员">
+                                              <permissions>ErpMfgForecast:cancel</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                     </children>
                 </resource>
                 <!-- MRP仿真（plan 2026-07-22-1000-2） -->
@@ -113,7 +150,18 @@
                         <resource id="ErpMfgMrpScenario-main" displayName="MRP仿真场景"
                                   i18n-en:displayName="MRP Simulation Scenario" icon="flask-conical"
                                   component="FLUX" resourceType="SUBM" orderNo="350"
-                                  url="/erp/mfg/pages/ErpMfgMrpScenario/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgMrpScenario/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMfgMrpScenario:runSimulation" displayName="运行仿真" i18n-en:displayName="Run Simulation"
+                                                    resourceType="FNPT" orderNo="35010" roles="生产主管">
+                                              <permissions>ErpMfgMrpScenario:runSimulation</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMfgMrpScenario:promoteToFormalPlan" displayName="转正式计划" i18n-en:displayName="Promote To Formal Plan"
+                                                    resourceType="FNPT" orderNo="35020" roles="生产主管">
+                                              <permissions>ErpMfgMrpScenario:promoteToFormalPlan</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpMfgMrpScenarioVersion-main" displayName="MRP仿真版本"
                                   i18n-en:displayName="MRP Simulation Version" icon="git-branch"
                                   component="FLUX" resourceType="SUBM" orderNo="360"
@@ -141,6 +189,26 @@
                                           resourceType="FNPT" orderNo="11020" roles="管理员">
                                     <permissions>ErpMfgSubcontractOrder:reverseApprove</permissions>
                                 </resource>
+                                <resource id="FNPT:ErpMfgSubcontractOrder:cancel" displayName="取消委外加工单" i18n-en:displayName="Cancel Subcontract Order"
+                                          resourceType="FNPT" orderNo="40020" roles="生产计划员,生产主管">
+                                    <permissions>ErpMfgSubcontractOrder:cancel</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMfgSubcontractOrder:issueMaterials" displayName="委外发料" i18n-en:displayName="Issue Materials"
+                                          resourceType="FNPT" orderNo="40030" roles="生产计划员,生产主管">
+                                    <permissions>ErpMfgSubcontractOrder:issueMaterials</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMfgSubcontractOrder:receiveFinished" displayName="委外收货" i18n-en:displayName="Receive Finished"
+                                          resourceType="FNPT" orderNo="40040" roles="生产计划员,生产主管">
+                                    <permissions>ErpMfgSubcontractOrder:receiveFinished</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMfgSubcontractOrder:postProcessingFee" displayName="过账加工费" i18n-en:displayName="Post Processing Fee"
+                                          resourceType="FNPT" orderNo="40050" roles="生产计划员,生产主管">
+                                    <permissions>ErpMfgSubcontractOrder:postProcessingFee</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMfgSubcontractOrder:reverseCompletion" displayName="反冲委外完工" i18n-en:displayName="Reverse Completion"
+                                          resourceType="FNPT" orderNo="40060" roles="生产主管">
+                                    <permissions>ErpMfgSubcontractOrder:reverseCompletion</permissions>
+                                </resource>
                             </children>
                         </resource>
                     </children>
@@ -156,7 +224,14 @@
                         <resource id="ErpMfgCostVariance-main" app:useCases="UC-MFG-12" displayName="成本差异分析"
                                   i18n-en:displayName="Cost Variance Analysis" icon="bar-chart-2"
                                   component="FLUX" resourceType="SUBM" orderNo="510"
-                                  url="/erp/mfg/pages/ErpMfgCostVariance/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgCostVariance/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMfgCostVariance:calculateVariances" displayName="计算成本差异" i18n-en:displayName="Calculate Variances"
+                                                    resourceType="FNPT" orderNo="51010" roles="生产主管">
+                                              <permissions>ErpMfgCostVariance:calculateVariances</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                     </children>
                 </resource>
                 <!-- 质量追溯 -->
@@ -176,7 +251,14 @@
                         <resource id="crp-load-report" app:useCases="UC-MFG-03,UC-MFG-11" displayName="CRP 负荷报表"
                                   i18n-en:displayName="CRP Load Report" icon="gauge"
                                   component="FLUX" resourceType="SUBM" orderNo="7010"
-                                  url="/erp/mfg/pages/report/crp-load-report.page.yaml"/>
+                                  url="/erp/mfg/pages/report/crp-load-report.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMfgCrpLoad:calculateLoad" displayName="计算负荷" i18n-en:displayName="Calculate Load"
+                                                    resourceType="FNPT" orderNo="70110" roles="生产主管">
+                                              <permissions>ErpMfgCrpLoad:calculateLoad</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="production-variance-report" app:useCases="UC-MFG-12" displayName="生产差异报表"
                                   i18n-en:displayName="Production Variance Report" icon="bar-chart-2"
                                   component="FLUX" resourceType="SUBM" orderNo="7020"

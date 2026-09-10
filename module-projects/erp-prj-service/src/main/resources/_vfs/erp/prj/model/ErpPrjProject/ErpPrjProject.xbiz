@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpPrjProject.xbiz">
 
-    <actions/>
+    <actions>
+        <mutation name="requireReferenceable">
+            <auth permissions="ErpPrjProject:mutation"/>
+        </mutation>
+        <mutation name="refreshActualCost">
+            <auth permissions="ErpPrjProject:mutation"/>
+        </mutation>
+        <mutation name="startProject">
+            <auth permissions="ErpPrjProject:mutation"/>
+        </mutation>
+        <mutation name="closeProject">
+            <auth permissions="ErpPrjProject:mutation"/>
+        </mutation>
+        <mutation name="holdProject">
+            <auth permissions="ErpPrjProject:mutation"/>
+        </mutation>
+        <mutation name="resumeProject">
+            <auth permissions="ErpPrjProject:mutation"/>
+        </mutation>
+        <mutation name="cancelProject">
+            <auth permissions="ErpPrjProject:mutation"/>
+        </mutation>
+    </actions>
 </biz>

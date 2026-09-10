@@ -34,6 +34,7 @@ import static io.nop.api.core.beans.FilterBeans.isNull;
 import static io.nop.api.core.beans.FilterBeans.le;
 import static io.nop.api.core.beans.FilterBeans.or;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMntSchedule、ErpMntVisit）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 维护计划到期生成访问生成器。两类计划同一入口评估（RC-R1.73 / UC-MAIN-02 运行时长触发并入
  * 既有 due-visit job，无新 job）：

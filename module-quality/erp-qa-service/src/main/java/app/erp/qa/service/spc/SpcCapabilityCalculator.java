@@ -1,7 +1,5 @@
 package app.erp.qa.service.spc;
 
-import app.erp.qa.biz.IErpQaQualityGoalBiz;
-import app.erp.qa.biz.IErpQaRiskRegisterBiz;
 import app.erp.qa.dao.entity.ErpQaQualityGoal;
 import app.erp.qa.dao.entity.ErpQaRiskRegister;
 import app.erp.qa.dao.entity.ErpQaSpcCapability;
@@ -28,6 +26,7 @@ import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpQaQualityGoal、ErpQaRiskRegister、ErpQaSpcCapability、ErpQaSpcChart、ErpQaSpcSample）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * SPC 过程能力分析引擎（{@code docs/design/quality/spc.md §关键流程 4}，plan 2026-07-07-0305-2 Phase 4）。
  *
@@ -42,8 +41,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *
  * <p>等级 < ACCEPTABLE（即 INADEQUATE）触发：
  * <ol>
- *   <li>回写 {@link IErpQaQualityGoalBiz#update}（currentValue=Cpk）—— 仅当 chart 关联的质量目标存在。</li>
- *   <li>登记 {@link IErpQaRiskRegisterBiz}（新增风险登记，category=SPC_PROCESS_CAPABILITY）。</li>
+ *   <li>回写质量目标（currentValue=Cpk）—— 仅当 chart 关联的质量目标存在（经 daoProvider.daoFor 同域直写，族 A/U20 豁免登记见类上注）。</li>
+ *   <li>登记风险（新增风险登记，category=SPC_PROCESS_CAPABILITY，同上 daoFor 直写豁免）。</li>
  * </ol>
  */
 public class SpcCapabilityCalculator {

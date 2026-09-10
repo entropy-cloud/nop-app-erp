@@ -22,6 +22,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpCsTicketTimerSession）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 计时器会话共享步骤（RC-R1.66，plan D3/D6）：12h 惰性结算 + 停止生成条目。
  *

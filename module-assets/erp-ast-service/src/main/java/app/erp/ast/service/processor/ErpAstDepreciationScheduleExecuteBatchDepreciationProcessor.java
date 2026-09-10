@@ -15,6 +15,7 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpAstAsset）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpAstDepreciationSchedule executeBatchDepreciation per-mutation Processor（R6.3，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含批量折旧计提编排（期间控制 + 逐资产委托 {@link ErpAstDepreciationScheduleExecuteDepreciationProcessor} + 错误隔离）；

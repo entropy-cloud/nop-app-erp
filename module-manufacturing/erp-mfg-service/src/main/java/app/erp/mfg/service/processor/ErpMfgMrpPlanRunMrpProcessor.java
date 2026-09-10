@@ -8,6 +8,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMfgMrpPlan）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpMfgMrpPlan runMrp per-mutation Processor（R6.2，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含 MRP 运算编排（需求聚合 → MRP 引擎计算 → 重载计划返回）；从 ErpMfgMrpPlanBizModel 内联 @BizMutation 提取。

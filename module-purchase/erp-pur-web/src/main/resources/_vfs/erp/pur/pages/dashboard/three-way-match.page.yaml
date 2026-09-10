@@ -126,7 +126,7 @@ body:
         label: "状态"
         i18nEn: "Status"
         type: tpl
-        tpl: '<span class="label label-${docStatus == "ACTIVE" ? "primary" : "default"}">${docStatus}</span>'
+        tpl: '<span class="label label-${docStatus != "CANCELLED" ? "primary" : "default"}">${docStatus}</span>'
 
   - type: data-source
     name: receiveData
@@ -167,7 +167,7 @@ body:
         label: "状态"
         i18nEn: "Status"
         type: tpl
-        tpl: '<span class="label label-${docStatus == "ACTIVE" ? "primary" : "default"}">${docStatus}</span>'
+        tpl: '<span class="label label-${docStatus != "CANCELLED" ? "primary" : "default"}">${docStatus}</span>'
 
   - type: data-source
     name: invoiceData
@@ -208,4 +208,4 @@ body:
         label: "状态"
         i18nEn: "Status"
         type: tpl
-        tpl: '<span class="label label-${docStatus == "ACTIVE" ? "primary" : "default"}">${docStatus}</span>'
+        tpl: '<span class="label label-${docStatus != "CANCELLED" ? "primary" : "default"}">${docStatus}</span>'

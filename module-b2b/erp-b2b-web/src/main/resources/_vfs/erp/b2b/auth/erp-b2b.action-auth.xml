@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+<auth x:extends="_erp-b2b.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
       xmlns:i18n-en="i18n-en" xmlns:app="app">
     <site id="main">
+        <!-- 继承生成层：恢复逐实体 FNPT 权限点入聚合链（app-001-r3）；显式移除生成层测试菜单根 -->
+        <resource id="test-orm-erp-b2b" x:override="remove"/>
         <resource id="erp-b2b" displayName="B2B集成" i18n-en:displayName="B2B Integration"
                   icon="refresh-cw" resourceType="TOPM" orderNo="1400"
                   routePath="/erp-b2b" component="layouts/default/index" roles="B2B 对账员,B2B 管理员">

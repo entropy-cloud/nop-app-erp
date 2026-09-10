@@ -12,6 +12,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpAstAsset）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpAstAsset suspend/resume per-mutation Processor（RC-R1.54，R6.3 {@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 资产闲置状态机（L1 UC-AST-03）：suspend（IN_SERVICE→IDLE，暂停时点经 remark「闲置自 {date}」强制记录——

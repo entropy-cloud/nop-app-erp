@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+<auth x:extends="_erp-ct.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
       xmlns:i18n-en="i18n-en" xmlns:app="app">
     <site id="main">
+        <!-- 继承生成层：恢复逐实体 FNPT 权限点入聚合链（app-001-r3）；显式移除生成层测试菜单根 -->
+        <resource id="test-orm-erp-ct" x:override="remove"/>
         <resource id="erp-ct" displayName="合同管理" i18n-en:displayName="Contract Management"
                   icon="file-text" resourceType="TOPM" orderNo="950"
                   routePath="/erp-ct" component="layouts/default/index" roles="合同专员,合同审批人">
@@ -25,6 +27,42 @@
                                 <resource id="FNPT:ErpCtContractVersion:signVersion" displayName="签署合同版本(签章门控)" i18n-en:displayName="Sign Version"
                                           resourceType="FNPT" orderNo="10030" roles="合同审批人">
                                     <permissions>ErpCtContractVersion:signVersion</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtContract:submit" displayName="提交合同审批" i18n-en:displayName="Submit Contract"
+                                          resourceType="FNPT" orderNo="10040" roles="合同专员">
+                                    <permissions>ErpCtContract:submit</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtContract:amend" displayName="合同变更" i18n-en:displayName="Amend Contract"
+                                          resourceType="FNPT" orderNo="10050" roles="合同专员">
+                                    <permissions>ErpCtContract:amend</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtContract:rejectAmend" displayName="驳回合同变更" i18n-en:displayName="Reject Amend"
+                                          resourceType="FNPT" orderNo="10060" roles="合同审批人">
+                                    <permissions>ErpCtContract:rejectAmend</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtContract:suspend" displayName="暂停合同" i18n-en:displayName="Suspend Contract"
+                                          resourceType="FNPT" orderNo="10070" roles="合同专员">
+                                    <permissions>ErpCtContract:suspend</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtContract:resume" displayName="恢复合同" i18n-en:displayName="Resume Contract"
+                                          resourceType="FNPT" orderNo="10080" roles="合同专员">
+                                    <permissions>ErpCtContract:resume</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtContract:expire" displayName="合同到期" i18n-en:displayName="Expire Contract"
+                                          resourceType="FNPT" orderNo="10090" roles="合同专员">
+                                    <permissions>ErpCtContract:expire</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtContract:terminate" displayName="终止合同" i18n-en:displayName="Terminate Contract"
+                                          resourceType="FNPT" orderNo="10100" roles="合同审批人">
+                                    <permissions>ErpCtContract:terminate</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtContract:approveTermination" displayName="审批合同终止" i18n-en:displayName="Approve Termination"
+                                          resourceType="FNPT" orderNo="10110" roles="合同审批人">
+                                    <permissions>ErpCtContract:approveTermination</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtContract:rejectTermination" displayName="驳回合同终止" i18n-en:displayName="Reject Termination"
+                                          resourceType="FNPT" orderNo="10120" roles="合同审批人">
+                                    <permissions>ErpCtContract:rejectTermination</permissions>
                                 </resource>
                             </children>
                         </resource>
@@ -70,11 +108,25 @@
                         <resource id="ErpCtRebateAgreement-main" app:useCases="UC-CT-08"
                                   displayName="返利协议" i18n-en:displayName="Rebate Agreement" icon="gift"
                                   component="FLUX" resourceType="SUBM" orderNo="190"
-                                  url="/erp/ct/pages/ErpCtRebateAgreement/main.page.yaml"/>
+                                  url="/erp/ct/pages/ErpCtRebateAgreement/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpCtRebateAgreement:runAccrual" displayName="计提返利" i18n-en:displayName="Run Accrual"
+                                                    resourceType="FNPT" orderNo="18010" roles="财务员">
+                                              <permissions>ErpCtRebateAgreement:runAccrual</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpCtRebateSettlement-main" app:useCases="UC-CT-08"
                                   displayName="返利结算单" i18n-en:displayName="Rebate Settlement" icon="file-check"
                                   component="FLUX" resourceType="SUBM" orderNo="195"
-                                  url="/erp/ct/pages/ErpCtRebateSettlement/main.page.yaml"/>
+                                  url="/erp/ct/pages/ErpCtRebateSettlement/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpCtRebateSettlement:postSettlement" displayName="过账返利结算" i18n-en:displayName="Post Settlement"
+                                                    resourceType="FNPT" orderNo="18020" roles="财务员">
+                                              <permissions>ErpCtRebateSettlement:postSettlement</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                     </children>
                 </resource>
                 <resource id="ct-signature" displayName="签章管理" i18n-en:displayName="Signature Management"
@@ -124,7 +176,14 @@
                         <resource id="ErpCtInvoicePlan-main" app:useCases="UC-CT-03"
                                   displayName="开票计划" i18n-en:displayName="Invoice Plan" icon="calendar"
                                   component="FLUX" resourceType="SUBM" orderNo="300"
-                                  url="/erp/ct/pages/ErpCtInvoicePlan/main.page.yaml"/>
+                                  url="/erp/ct/pages/ErpCtInvoicePlan/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpCtInvoicePlan:triggerInvoice" displayName="触发开票" i18n-en:displayName="Trigger Invoice"
+                                                    resourceType="FNPT" orderNo="30010" roles="财务员">
+                                              <permissions>ErpCtInvoicePlan:triggerInvoice</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpCtConsumptionLine-main" app:useCases="UC-CT-04"
                                   displayName="消耗记录" i18n-en:displayName="Consumption Log" icon="bar-chart"
                                   component="FLUX" resourceType="SUBM" orderNo="310"

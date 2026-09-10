@@ -32,6 +32,7 @@ import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpPurOrderLine）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 采购订单 BizModel（聚合根 Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
  * withdrawApproval）由 xbiz 一行委托注入 Processor；非审批动作（cancel）在本类完成

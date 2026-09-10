@@ -24,6 +24,7 @@ import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpHrEmployeeAssessment）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpHrEmployeeAssessment completeAssessment per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含评估完成编排（SUBMITTED 守卫 + 明细存在校验 + 360 多源加权聚合写回 + 综合评分写回 + COMPLETED 状态翻转 +

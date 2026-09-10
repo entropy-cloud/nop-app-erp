@@ -33,6 +33,7 @@ import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinVoucher、ErpFinVoucherBillR、ErpHrEmployee、ErpMdAcctSchema）=跨域批量聚合（fin/md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 薪酬过账派发器。APPROVED 触发计提链（RC-R1.89）：SALARY(270) + SOCIAL_INSURANCE_ER(290) +
  * HOUSING_FUND_ER(300) 三类计提凭证，经 {@link SalaryPostingExecutor}（独立新事务由 Facade
@@ -233,7 +234,7 @@ public class SalaryPostingDispatcher {
         ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
         ctx.put("errorMessage", cause.getMessage());
         ctx.put("postingNo", buildBillCode(salary));
-        IServiceContext serviceCtx = new ServiceContextImpl();
+        IServiceContext serviceCtx = serviceContext();
         try {
             notificationBiz.notify(NOTIFY_EVENT_SALARY_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
@@ -400,5 +401,12 @@ public class SalaryPostingDispatcher {
 
     private static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

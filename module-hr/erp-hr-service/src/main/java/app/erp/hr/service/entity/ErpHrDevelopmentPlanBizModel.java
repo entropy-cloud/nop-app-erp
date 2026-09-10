@@ -34,6 +34,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 import io.nop.biz.crud.EntityData;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpHrDevelopmentPlanItem）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 发展计划聚合根 BizModel（competency-management.md §发展计划生成）。CRUD 之上承载：
  * <ul>

@@ -31,6 +31,7 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
+import io.nop.commons.util.StringHelper;
 import jakarta.inject.Inject;
 
 import java.time.LocalDateTime;
@@ -234,11 +235,14 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
         ErpCsTicket ticket = requireTicket(ticketId, context);
         String from = ticket.getStatus();
         assertCan("assign", ticket, from, ErpCsConstants.TICKET_STATUS_NEW);
-        ticket.setAssignedToId(assignedToId);
+        // cs-026-r3：看板拖拽 assign 通道不携 assignedToId 时回落当前操作员，
+        // 杜绝「ASSIGNED 无主」单（P2-CK-cs-010 前端可达入口的服务端兜底）。
+        String assignee = StringHelper.isEmpty(assignedToId) ? context.getUserId() : assignedToId;
+        ticket.setAssignedToId(assignee);
         ticket.setStatus(stateMachine.assignTargetStatus());
         updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_ASSIGN, from, stateMachine.assignTargetStatus(),
-                "assign: " + assignedToId, context);
+                "assign: " + assignee, context);
         return ticket;
     }
 

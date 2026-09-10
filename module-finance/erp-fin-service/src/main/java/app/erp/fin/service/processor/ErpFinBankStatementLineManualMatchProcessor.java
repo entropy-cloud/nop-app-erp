@@ -10,6 +10,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinBankStatementLine、ErpFinVoucherLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpFinBankStatementLine manualMatch per-mutation Processor（R6.1，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含人工勾对编排（加载行 + 状态守卫 + 凭证行存在校验 + 标记 MANUAL_MATCHED）。

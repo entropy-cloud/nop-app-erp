@@ -25,6 +25,8 @@ import java.util.Objects;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpAstAsset、ErpAstValueAdjustment）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
+
 public class ErpAstValueAdjustmentProcessor {
 
     @Inject

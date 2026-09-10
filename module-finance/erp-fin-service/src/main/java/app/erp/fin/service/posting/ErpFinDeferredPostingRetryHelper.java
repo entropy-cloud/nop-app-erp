@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinPostingException）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 过账异常重试帮助类（plan 2026-07-18-1600-1 Phase 3，自原 {@code DeferredPostingSweepJob} 抽取）。
  *
@@ -214,7 +215,7 @@ public class ErpFinDeferredPostingRetryHelper {
         ctx.put("errorCode", ex.getErrorCode());
         ctx.put("errorMessage", cause != null ? truncate(cause.getMessage(), 200) : null);
         ctx.put("postingNo", ex.getBillHeadCode());
-        IServiceContext serviceCtx = new ServiceContextImpl();
+        IServiceContext serviceCtx = serviceContext();
         try {
             notificationBiz.notify(ErpFinConstants.NOTIFY_EVENT_POSTING_EXCEPTION, ctx, serviceCtx);
         } catch (Exception notifyErr) {
@@ -240,5 +241,12 @@ public class ErpFinDeferredPostingRetryHelper {
             LOG.warn("erp-fin-deferred-posting-unknown-business-type: {}", name);
             return null;
         }
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

@@ -12,6 +12,7 @@ import io.nop.orm.IOrmTemplate;
 import io.nop.sys.dao.entity.NopSysSequence;
 import jakarta.inject.Inject;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * TK 工单编号按月序列 CodeRule 变量（RC-R1.65，P1-RC-054，UC-CS-01 ⑥）。
  *

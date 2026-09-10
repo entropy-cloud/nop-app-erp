@@ -19,6 +19,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.lt;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpHrEmploymentContract）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpHrEmploymentContract expireOverdueContracts per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含逾期合同批量到期编排（ACTIVE 且 endDate &lt; today → EXPIRED，逐条容错跳过失败项并告警）。

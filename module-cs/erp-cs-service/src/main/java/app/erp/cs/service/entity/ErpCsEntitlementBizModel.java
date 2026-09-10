@@ -35,6 +35,7 @@ import static io.nop.api.core.beans.FilterBeans.dateTimeBetween;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.lt;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpCsEntitlement）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 服务权益 BizModel（{@code docs/design/customer-service/entitlement.md}）。
  *

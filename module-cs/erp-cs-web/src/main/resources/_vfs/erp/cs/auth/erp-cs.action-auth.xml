@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+<auth x:extends="_erp-cs.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
       xmlns:i18n-en="i18n-en" xmlns:app="app">
     <site id="main">
+        <!-- 继承生成层：恢复逐实体 FNPT 权限点入聚合链（app-001-r3）；显式移除生成层测试菜单根 -->
+        <resource id="test-orm-erp-cs" x:override="remove"/>
         <resource id="erp-cs" displayName="售后服务" i18n-en:displayName="Customer Service"
                   icon="headset" resourceType="TOPM" orderNo="1100"
                   routePath="/erp-cs" component="layouts/default/index">

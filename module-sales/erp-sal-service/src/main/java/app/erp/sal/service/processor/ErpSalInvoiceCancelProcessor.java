@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 
 import java.util.Objects;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpSalInvoice）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpSalInvoice cancel per-mutation Processor (plan 2026-07-30-1433-2 R5.2, no xbiz source;
  * StateMachine 接线 plan 2026-08-13-0810-2 M4.23)。

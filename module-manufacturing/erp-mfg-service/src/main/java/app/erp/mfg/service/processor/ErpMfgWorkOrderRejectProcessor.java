@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 
 import java.util.Objects;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMfgWorkOrder）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpMfgWorkOrder reject per-mutation Processor (plan 2026-07-30-1909-2 R5.5)。
  * Pattern B（custom public override）：1:1 复刻 facade 公共 reject 编排流，经 facade protected helper

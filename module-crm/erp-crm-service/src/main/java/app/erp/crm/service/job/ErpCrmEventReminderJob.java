@@ -59,7 +59,7 @@ public class ErpCrmEventReminderJob {
             LOG.info("erp-crm-event-reminder-skipped: cron config empty (erp-crm.event-reminder-cron)");
             return;
         }
-        IServiceContext ctx = new ServiceContextImpl();
+        IServiceContext ctx = serviceContext();
         try {
             int notified = runReminders(ctx);
             LOG.info("erp-crm-event-reminder-done: notified={}", notified);
@@ -109,5 +109,12 @@ public class ErpCrmEventReminderJob {
 
     protected String resolveCronConfig() {
         return AppConfig.var(ErpCrmConstants.CONFIG_EVENT_REMINDER_CRON, "");
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

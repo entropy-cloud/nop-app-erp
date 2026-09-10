@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpPrjTimesheet.xbiz">
 
-    <actions/>
+    <actions>
+        <mutation name="submit">
+            <auth permissions="ErpPrjTimesheet:mutation"/>
+        </mutation>
+        <mutation name="approve">
+            <auth permissions="ErpPrjTimesheet:approve"/>
+        </mutation>
+        <mutation name="reject">
+            <auth permissions="ErpPrjTimesheet:approve"/>
+        </mutation>
+        <mutation name="cancel">
+            <auth permissions="ErpPrjTimesheet:mutation"/>
+        </mutation>
+    </actions>
 </biz>

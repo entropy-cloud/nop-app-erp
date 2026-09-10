@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import io.nop.api.core.time.CoreMetrics;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMfgJobCard、ErpMfgJobCardTimeLog、ErpMfgWorkOrder）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 作业卡共享 helper 持有者（R6.2 per-mutation 拆分后 facade 瘦身：7 个 D-mutation public 入口已迁入
  * {@code ErpMfgJobCard<Method>Processor}，本类仅保留 protected helper 供 per-mutation Processor 经同包调用）。

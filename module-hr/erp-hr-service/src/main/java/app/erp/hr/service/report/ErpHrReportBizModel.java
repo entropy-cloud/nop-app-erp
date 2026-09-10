@@ -45,6 +45,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpHrEmployee、ErpHrSalarySimulationItemAdjustment、ErpMdPartner）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * HR 域报表渲染入口。注入平台 {@link IReportEngine}，按报表名解析 VFS 模板路径
  * （{@code /nop/main/report/hr/<name>.xpt.xml}）并渲染 html/xlsx/pdf。

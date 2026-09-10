@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 退货入库移动单请求构造器：将 {@link ErpSalReturn}+{@link ErpSalReturnLine} 映射为库存域
  * {@link StockMoveRequest}（INCOMING，反向入库），供 {@code ErpSalReturnBizModel.approve} 调

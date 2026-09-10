@@ -13,6 +13,7 @@ import io.nop.dao.api.IEntityDao;
 import java.math.BigDecimal;
 import java.util.Map;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpHrSalarySimulationItemAdjustment）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpHrSalarySimulation adjustItem per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含单项即时调整（DRAFT 守卫 + 源薪酬字段读取 + ItemAdjustment upsert + 覆盖合入即时重算），模拟语义不变（payroll-simulation.md §二）。

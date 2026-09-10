@@ -1,7 +1,5 @@
 package app.erp.qa.service.spc;
 
-import app.erp.qa.biz.IErpQaActionBiz;
-import app.erp.qa.biz.IErpQaNonConformanceBiz;
 import app.erp.qa.dao.entity.ErpQaAction;
 import app.erp.qa.dao.entity.ErpQaNonConformance;
 import app.erp.qa.dao.entity.ErpQaSpcChart;
@@ -23,6 +21,7 @@ import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpQaAction、ErpQaNonConformance）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * SPC 失控样本 → NCR/CAPA 级联处理器（{@code docs/design/quality/spc.md §关键流程 3}，
  * plan 2026-07-07-0305-2 Phase 3）。
@@ -47,10 +46,6 @@ public class SpcOutOfControlHandler {
     IDaoProvider daoProvider;
     @Inject
     ITransactionTemplate transactionTemplate;
-    @Inject
-    IErpQaNonConformanceBiz ncrBiz;
-    @Inject
-    IErpQaActionBiz actionBiz;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -60,13 +55,7 @@ public class SpcOutOfControlHandler {
         this.transactionTemplate = transactionTemplate;
     }
 
-    public void setNcrBiz(IErpQaNonConformanceBiz ncrBiz) {
-        this.ncrBiz = ncrBiz;
-    }
 
-    public void setActionBiz(IErpQaActionBiz actionBiz) {
-        this.actionBiz = actionBiz;
-    }
 
     /**
      * 失控样本级联创建 NCR + CAPA。post-commit 触发，确保 sample 事务提交后再建单

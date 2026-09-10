@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinPostingException）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpFinPostingException retry per-mutation Processor（R6.1，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含重试编排：翻 RETRYING + 记重试次数 + 经 {@link IErpFinVoucherBiz} 独立事务重新触发过账。

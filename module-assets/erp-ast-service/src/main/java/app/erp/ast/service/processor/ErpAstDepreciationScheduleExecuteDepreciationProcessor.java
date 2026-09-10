@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpAstAsset、ErpAstDepreciationSchedule）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * ErpAstDepreciationSchedule executeDepreciation per-mutation Processor（R6.3，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含单资产折旧计提编排（计算 + 汇总回写 + DEPRECIATION 业财过账）；共享 protected helper 单一真相源在

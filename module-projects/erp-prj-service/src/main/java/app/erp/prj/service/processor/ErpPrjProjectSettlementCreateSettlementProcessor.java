@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpPrjProjectSettlement）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpPrjProjectSettlement createSettlement per-mutation Processor（R6.6，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含基于最新 PnL 快照建头 + 来源单据行的结算单创建编排；共享 protected helper 单一真相源在

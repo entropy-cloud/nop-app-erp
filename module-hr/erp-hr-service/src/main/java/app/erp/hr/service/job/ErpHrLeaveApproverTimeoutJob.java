@@ -29,6 +29,7 @@ import java.util.Map;
 import static io.nop.api.core.beans.FilterBeans.dateTimeBetween;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 定时休假审批超时转派 Job Bean（use-cases.md UC-HR-02⑦）。
  *
@@ -98,7 +99,7 @@ public class ErpHrLeaveApproverTimeoutJob {
             LOG.info("erp-hr-leave-approver-timeout-skipped: cron config empty (erp-hr.leave-approver-timeout-cron)");
             return;
         }
-        IServiceContext ctx = new ServiceContextImpl();
+        IServiceContext ctx = serviceContext();
         try {
             int escalated = runTimeoutEscalation(ctx);
             LOG.info("erp-hr-leave-approver-timeout-done: escalated={}", escalated);
@@ -231,5 +232,12 @@ public class ErpHrLeaveApproverTimeoutJob {
 
     protected long resolveTimeoutHours() {
         return AppConfig.var(ErpHrConstants.CONFIG_LEAVE_APPROVER_TIMEOUT_HOURS, 72);
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

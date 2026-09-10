@@ -45,6 +45,7 @@ import java.util.regex.Pattern;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinApDocument、ErpFinApDocumentLog）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * E3.5 文档摄取管道编排 Processor（`document-driven-ap-automation.md` §1 消费管道：
  * 上传 → OCR 解析 → 分类（置信度）→ 草稿发票 → 三单匹配预填衔接）。

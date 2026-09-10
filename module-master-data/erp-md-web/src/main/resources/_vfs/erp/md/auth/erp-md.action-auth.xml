@@ -48,7 +48,38 @@
                         <resource id="ErpMdSupplierApproval-main" displayName="供应商准入资格"
                                   i18n-en:displayName="Supplier Approval" icon="badge-check"
                                   component="FLUX" resourceType="SUBM" orderNo="230"
-                                  url="/erp/md/pages/ErpMdSupplierApproval/main.page.yaml"/>
+                                  url="/erp/md/pages/ErpMdSupplierApproval/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMdSupplierApproval:apply" displayName="供应商准入申请" i18n-en:displayName="Apply Approval"
+                                                    resourceType="FNPT" orderNo="20010" roles="采购员">
+                                              <permissions>ErpMdSupplierApproval:apply</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMdSupplierApproval:approve" displayName="供应商准入审核" i18n-en:displayName="Approve Approval"
+                                                    resourceType="FNPT" orderNo="20020" roles="采购员">
+                                              <permissions>ErpMdSupplierApproval:approve</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMdSupplierApproval:reject" displayName="供应商准入拒绝" i18n-en:displayName="Reject Approval"
+                                                    resourceType="FNPT" orderNo="20030" roles="采购员">
+                                              <permissions>ErpMdSupplierApproval:reject</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMdSupplierApproval:probate" displayName="供应商转正式" i18n-en:displayName="Probate Supplier"
+                                                    resourceType="FNPT" orderNo="20040" roles="采购员">
+                                              <permissions>ErpMdSupplierApproval:probate</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMdSupplierApproval:reinstate" displayName="供应商恢复" i18n-en:displayName="Reinstate Supplier"
+                                                    resourceType="FNPT" orderNo="20050" roles="采购员">
+                                              <permissions>ErpMdSupplierApproval:reinstate</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMdSupplierApproval:suspend" displayName="供应商暂停" i18n-en:displayName="Suspend Supplier"
+                                                    resourceType="FNPT" orderNo="20060" roles="采购员">
+                                              <permissions>ErpMdSupplierApproval:suspend</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpMdSupplierApproval:suspendByPartner" displayName="按往来单位暂停供应商" i18n-en:displayName="Suspend By Partner"
+                                                    resourceType="FNPT" orderNo="20070" roles="采购员">
+                                              <permissions>ErpMdSupplierApproval:suspendByPartner</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                     </children>
                 </resource>
                 <!-- 仓储组织 -->
@@ -84,7 +115,14 @@
                         <resource id="ErpMdCurrency-main" displayName="币种"
                                   i18n-en:displayName="Currency" icon="coins"
                                   component="FLUX" resourceType="SUBM" orderNo="420"
-                                  url="/erp/md/pages/ErpMdCurrency/main.page.yaml"/>
+                                  url="/erp/md/pages/ErpMdCurrency/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpMdCurrency:refreshRatesFromApi" displayName="从汇率源刷新汇率" i18n-en:displayName="Refresh Rates From Api"
+                                                    resourceType="FNPT" orderNo="40010" roles="管理员">
+                                              <permissions>ErpMdCurrency:refreshRatesFromApi</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpMdExchangeRate-main" displayName="汇率"
                                   i18n-en:displayName="Exchange Rate" icon="trending-up"
                                   component="FLUX" resourceType="SUBM" orderNo="430"

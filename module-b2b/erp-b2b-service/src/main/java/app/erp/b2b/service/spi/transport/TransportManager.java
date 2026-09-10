@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpB2bEdiDoc、ErpB2bMftConfig、ErpB2bMftLog）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * MFT 传输管理器。承载传输编排：路由（按 protocol 经 Registry 取 Adapter）+ 重试（5xx/超时指数退避，
  * 4xx 不重试）+ 死信（耗尽→DEAD_LETTER）+ 审计日志（写 {@link ErpB2bMftLog}）。

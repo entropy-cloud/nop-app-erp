@@ -46,6 +46,7 @@ import java.util.Map;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.isNull;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpInvStockBalance、ErpInvStockLedger）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 库存记账器：移动单 DONE 时按 {@code ErpMdMaterial.costMethod} 分派到 {@link CostingStrategy} 写不可变库存流水
  * （{@link ErpInvStockLedger}）并更新库存余额（{@link ErpInvStockBalance}）。同时提供余额维度的 upsert（供状态机预留量使用）。

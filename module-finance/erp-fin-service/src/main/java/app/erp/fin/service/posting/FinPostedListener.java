@@ -18,6 +18,7 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinEmployeeAdvance、ErpFinExpenseClaim、ErpFinNotesPayable、ErpFinNotesReceivable）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * F2.1（P1-CK-fin-001）一期：finance 本域 posted 回写监听者。覆盖 EXPENSE_CLAIM/EMPLOYEE_ADVANCE/
  * NOTES_RECEIVABLE 系/NOTES_PAYABLE 系（billHeadCode=单据 code 直查，镜像 {@code PurReversalListener}

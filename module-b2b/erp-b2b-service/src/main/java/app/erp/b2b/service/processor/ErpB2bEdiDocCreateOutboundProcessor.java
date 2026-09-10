@@ -22,6 +22,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpB2bEdiDoc、ErpB2bEdiFormat、ErpB2bEdiLog）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * ErpB2bEdiDoc createOutbound per-mutation Processor。
  * 自包含出站报文创建编排：Registry 派发 Provider → 查 EdiFormat → 防重守门 → 生成 payload → 建 TO_SEND 信封 + 写 EdiLog。

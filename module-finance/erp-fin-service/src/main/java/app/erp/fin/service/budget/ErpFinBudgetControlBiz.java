@@ -32,6 +32,7 @@ import static io.nop.api.core.beans.FilterBeans.isNull;
 import static io.nop.api.core.beans.FilterBeans.notIn;
 import static io.nop.api.core.beans.FilterBeans.or;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinBudgetControlLog、ErpFinBudgetLine、ErpFinVoucher、ErpFinVoucherLine、ErpMdSubject）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 预算控制实现（{@code budget.md §业务规则2/4/8}）。在采购/付款/报销审核事务内同步校验预算余量。
  *

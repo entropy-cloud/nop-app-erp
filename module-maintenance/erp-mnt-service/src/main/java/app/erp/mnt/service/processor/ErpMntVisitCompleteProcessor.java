@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Duration;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMntRequest）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * ErpMntVisit complete per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含 IN_PROGRESS→COMPLETED 编排：状态守卫 + 状态翻转 + endTime/totalMinutes/completedAt 计算 + 落库 + 设备状态恢复

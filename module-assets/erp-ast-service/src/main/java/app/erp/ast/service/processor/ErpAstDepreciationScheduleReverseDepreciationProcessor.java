@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpAstAsset、ErpAstDepreciationSchedule）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * ErpAstDepreciationSchedule reverseDepreciation per-mutation Processor（R6.3，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含反折旧编排（红冲凭证 + 回滚资产卡片累计折旧/净值 + 状态回退）；共享 protected helper 单一真相源在

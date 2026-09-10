@@ -39,6 +39,7 @@ import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpMdMaterial、ErpMdMaterialCategory）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 物料 SKU 业务服务（UC-MD-01/03/04/05/06，{@code docs/design/master-data/use-cases.md}）。
  *

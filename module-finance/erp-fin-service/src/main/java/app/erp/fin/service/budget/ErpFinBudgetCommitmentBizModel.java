@@ -24,6 +24,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.le;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpFinAccountingPeriod、ErpMdSubject）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 承付占用/释放 SPI 实现（A2，plan 2026-07-21-1206-2，budget.md §承付会计 §承付占用/释放 SPI）。
  *

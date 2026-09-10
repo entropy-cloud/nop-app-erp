@@ -46,6 +46,14 @@ site:
       displayName: Voucher Template
     FNPT:ErpFinAccountingPeriod:closePeriod:
       displayName: Close Period
+    FNPT:ErpFinAccountingPeriod:finalizePeriod:
+      displayName: Finalize Period
+    FNPT:ErpFinAccountingPeriod:generateNextYearPeriods:
+      displayName: Generate Next Year Periods
+    FNPT:ErpFinAccountingPeriod:openPeriod:
+      displayName: Open Period
+    FNPT:ErpFinAccountingPeriod:preCheck:
+      displayName: Pre Check
     FNPT:ErpFinAccountingPeriod:reverseClose:
       displayName: Reverse Close
     FNPT:ErpFinApDocument:confirmAndDraftApDocument:
@@ -60,6 +68,22 @@ site:
       displayName: Reverse Approve
     FNPT:ErpFinBadDebt:writeOff:
       displayName: Write Off
+    FNPT:ErpFinBankReconciliation:generate:
+      displayName: Generate
+    FNPT:ErpFinBankReconciliation:post:
+      displayName: Post
+    FNPT:ErpFinBankReconciliation:reverse:
+      displayName: Reverse
+    FNPT:ErpFinBankStatement:importStatement:
+      displayName: Import Statement
+    FNPT:ErpFinBankStatementLine:autoMatch:
+      displayName: Auto Match
+    FNPT:ErpFinBankStatementLine:manualMatch:
+      displayName: Manual Match
+    FNPT:ErpFinConsolidationElimination:generateEliminationCandidates:
+      displayName: Generate Elimination Candidates
+    FNPT:ErpFinConsolidationElimination:postElimination:
+      displayName: Post Elimination
     FNPT:ErpFinEmployeeAdvance:approve:
       displayName: Approve
     FNPT:ErpFinEmployeeAdvance:reverseApprove:
@@ -68,6 +92,10 @@ site:
       displayName: Approve
     FNPT:ErpFinExpenseClaim:reverseApprove:
       displayName: Reverse Approve
+    FNPT:ErpFinIntercompanyMatch:checkDualSideConsistency:
+      displayName: Check Dual Side Consistency
+    FNPT:ErpFinIntercompanyMatch:runMatching:
+      displayName: Run Matching
     FNPT:ErpFinVoucher:post:
       displayName: Post Voucher
     FNPT:ErpFinVoucher:reverse:

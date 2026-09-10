@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 追踪轮询兜底 Job Bean（RC-R1.38，P1-RC-085，UC-LOG-03「定时轮询间隔可配置（默认 4 小时）」）。
  *
@@ -50,7 +51,7 @@ public class ErpLogTrackingPollJob {
             LOG.info("erp-log-tracking-poll-skipped: cron config empty (erp-log.tracking-poll-cron)");
             return;
         }
-        IServiceContext ctx = new ServiceContextImpl();
+        IServiceContext ctx = serviceContext();
         try {
             // 与 manual @BizMutation 路径一致：scanForPolling 全链（查询 + 状态推进 + 落库）
             // 在同一 ORM session 内执行，避免跨 session 的 MANAGED 实体保存冲突。
@@ -63,5 +64,12 @@ public class ErpLogTrackingPollJob {
 
     protected String resolveCronConfig() {
         return AppConfig.var(ErpLogConfigs.CONFIG_TRACKING_POLLING_CRON, "");
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

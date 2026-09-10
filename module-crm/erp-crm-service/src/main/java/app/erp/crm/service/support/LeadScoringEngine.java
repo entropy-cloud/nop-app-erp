@@ -27,6 +27,7 @@ import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpCrmEvent、ErpCrmLead、ErpCrmLeadScore、ErpCrmLeadScoreConfig、ErpCrmLeadScoreConfigLine、ErpCrmLeadScoreLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 线索评分引擎（config 驱动）。加载 {@code isActive=true} 的 {@link ErpCrmLeadScoreConfig}，
  * 按 {@link ErpCrmLeadScoreConfigLine#getScoringMethod()}（LOOKUP/FORMULA/BOOLEAN）逐准则计分，

@@ -22,6 +22,7 @@ import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinArApItem、ErpFinCashForecast、ErpFinNotesPayable、ErpFinNotesReceivable）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpFinCashForecast refreshForecast per-mutation Processor（R6.1，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含现金预测批量聚合编排（{@code treasury.md §现金预测派生}）：先清区间再聚合 ArApItem 未核销到期项 +

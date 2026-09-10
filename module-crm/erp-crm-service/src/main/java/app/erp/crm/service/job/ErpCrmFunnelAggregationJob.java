@@ -44,7 +44,7 @@ public class ErpCrmFunnelAggregationJob {
             LOG.info("erp-crm-funnel-aggregation-skipped: cron config empty (erp-crm.funnel.aggregation-cron)");
             return;
         }
-        IServiceContext ctx = new ServiceContextImpl();
+        IServiceContext ctx = serviceContext();
         LocalDate today = CoreMetrics.today();
         LocalDate periodStart = today.withDayOfMonth(1);
         LocalDate periodEnd = today.withDayOfMonth(today.lengthOfMonth());
@@ -54,5 +54,12 @@ public class ErpCrmFunnelAggregationJob {
         } catch (Exception e) {
             LOG.error("erp-crm-funnel-aggregation-failed: periodStart={} periodEnd={}", periodStart, periodEnd, e);
         }
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

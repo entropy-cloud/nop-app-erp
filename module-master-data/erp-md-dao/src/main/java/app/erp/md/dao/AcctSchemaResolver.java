@@ -10,6 +10,7 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMdAcctSchema）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 会计账套解析工具。跨域共享的 primary schema 解析逻辑，避免各域 Dispatcher 重复实现
  * 且保证一致的行为：按 nature 优先级（FINANCIAL→MANAGEMENT→TAX→CONSOLIDATION→BUDGET）

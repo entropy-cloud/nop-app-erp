@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinVoucher、ErpFinVoucherBillR、ErpFinVoucherLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 期末结账凭证写入器（损益结转 / 汇兑重估共用）。期末结账的凭证分录来自余额/辅助账聚合（非来源单据），
  * 不走 {@code IErpFinVoucherBiz.post} 的 Provider 模型（无 PERIOD_CLOSE/FX Provider 且 post 会触发 ArApItem 生成），

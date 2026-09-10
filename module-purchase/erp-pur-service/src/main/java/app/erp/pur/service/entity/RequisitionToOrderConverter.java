@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpPurOrder、ErpPurOrderLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 请购→订单转化组装器：将 APPROVED 的 {@link ErpPurRequisition}+{@link ErpPurRequisitionLine} 组装为
  * {@link ErpPurOrder}(approveStatus=UNSUBMITTED, docStatus=DRAFT) + {@link ErpPurOrderLine}。

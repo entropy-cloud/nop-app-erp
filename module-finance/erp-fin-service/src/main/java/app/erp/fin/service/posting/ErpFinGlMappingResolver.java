@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinGlMappingRule、ErpMdMaterial）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * GL 映射规则解析器实现（plan 2026-07-21-0827-1 A1）。
  *

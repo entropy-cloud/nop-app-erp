@@ -21,6 +21,7 @@ import java.util.Set;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import java.util.List;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpCsCatalogCategory）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 目录分类 BizModel（{@code docs/design/customer-service/service-catalog.md §1.2/§4}）。
  *

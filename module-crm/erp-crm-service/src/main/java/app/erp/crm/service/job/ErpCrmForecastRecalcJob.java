@@ -50,7 +50,7 @@ public class ErpCrmForecastRecalcJob {
             LOG.info("erp-crm-forecast-recalc-skipped: cron config empty (erp-crm.forecast.recalc-cron)");
             return;
         }
-        IServiceContext ctx = new ServiceContextImpl();
+        IServiceContext ctx = serviceContext();
         LocalDate today = CoreMetrics.today();
         ErpCrmForecastPeriod period = findOpenPeriod(today, ctx);
         if (period == null) {
@@ -80,5 +80,12 @@ public class ErpCrmForecastRecalcJob {
 
     protected String resolveCronConfig() {
         return AppConfig.var(ErpCrmConstants.CONFIG_FORECAST_RECALC_CRON, "");
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

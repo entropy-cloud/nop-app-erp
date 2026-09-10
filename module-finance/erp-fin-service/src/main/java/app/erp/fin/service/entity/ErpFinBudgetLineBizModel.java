@@ -31,6 +31,7 @@ import static io.nop.api.core.beans.FilterBeans.isNull;
 import static io.nop.api.core.beans.FilterBeans.ne;
 import static io.nop.api.core.beans.FilterBeans.or;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpFinVoucher、ErpFinVoucherLine、ErpMdSubject）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 预算明细行 Biz（CrudBizModel）。标准 CRUD + {@link #getBudgetVsActual} 预算对比查询。
  *

@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 项目损益汇总定时批量计算帮助类（plan 2026-08-14-2304-3 Phase 2，P1-RC-053 nop-job 调度接线）。
  *
@@ -35,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * <p>{@code batchChunkCtx.serviceContext} 在 nop-batch 执行路径可能为 null（job 触发经
  * {@code BatchTaskRunner.executeAsync} → {@code newBatchTaskContext()} 无绑定上下文），
  * 而 {@code IErpPrjProjectPnlBiz} 代理调用需非 null ctx（{@code EvalServiceAction.invoke} →
- * {@code context.getEvalScope()}）——本类空值兜底 {@code new ServiceContextImpl()}，
+ * {@code context.getEvalScope()}）——本类空值兜底 {@code serviceContext()}，
  * 对齐 R1.23 同型修复（R1.23 Follow-up 注记收口）。
  */
 public class ErpPrjProjectPnlCalcHelper {
@@ -70,7 +71,7 @@ public class ErpPrjProjectPnlCalcHelper {
                     projectId, ErpPrjConstants.CONFIG_PNL_AUTO_CALC_ENABLED);
             return true;
         }
-        IServiceContext svcCtx = ctx != null ? ctx : new ServiceContextImpl();
+        IServiceContext svcCtx = ctx != null ? ctx : serviceContext();
         try {
             return transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
                     ormTemplate.runInSession(session -> {
@@ -82,5 +83,12 @@ public class ErpPrjProjectPnlCalcHelper {
             LOG.warn("erp-prj-pnl-calc-failed: projectId={}, reason={}", projectId, e.getMessage());
             return false;
         }
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

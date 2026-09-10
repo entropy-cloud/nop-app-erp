@@ -33,6 +33,7 @@ import static io.nop.api.core.beans.FilterBeans.dateBetween;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpHrShiftAssignment）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 轮换排班模板 BizModel（shift-scheduling.md §三）。继承 {@link CrudBizModel} 标准 CRUD，
  * 扩展 {@link #generateRotation} 按 patternData + startDate + 组成员 + staggerDays 错峰生成排班。

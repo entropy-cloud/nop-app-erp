@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpSalOrder、ErpSalOrderLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 报价→订单域内转化组装器。将 {@link ErpSalQuotation}+{@link ErpSalQuotationLine} 组装为
  * {@link ErpSalOrder}(UNSUBMITTED/DRAFT) + {@link ErpSalOrderLine}，供 {@link ErpSalQuotationBizModel#convertToOrder} 调用。

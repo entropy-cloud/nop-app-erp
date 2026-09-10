@@ -12,6 +12,7 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import java.util.Objects;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMdAcctSchema、ErpMdMaterial）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 成本方法解析器。按 {@code ErpMdMaterial.costMethod} → {@code ErpMdAcctSchema.costingMethod} →
  * 配置默认（{@code erp-inv.default-cost-method}）顺序解析计价方法；{@code erp-inv.costing-enabled=false}

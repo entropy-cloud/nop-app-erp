@@ -38,7 +38,7 @@ public class ErpFinReconciliationRunAutoReconciliationProcessor extends Abstract
         if (!isAutoReconcileEnabled()) {
             throw new NopException(ErpFinErrors.ERR_AUTO_RECON_DISABLED);
         }
-        IServiceContext ctx = context != null ? context : new ServiceContextImpl();
+        IServiceContext ctx = context != null ? context : serviceContext();
         String effectiveStrategy = resolveStrategy(strategy);
         LocalDate businessDate = CoreMetrics.today();
 
@@ -75,5 +75,12 @@ public class ErpFinReconciliationRunAutoReconciliationProcessor extends Abstract
         String s = AppConfig.var(ErpFinConstants.CONFIG_AUTO_RECON_STRATEGY,
                 ErpFinConstants.AUTO_RECON_STRATEGY_FIFO);
         return !StringHelper.isBlank(s) ? s.toUpperCase() : ErpFinConstants.AUTO_RECON_STRATEGY_FIFO;
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

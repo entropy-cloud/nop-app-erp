@@ -520,7 +520,7 @@ public class ErpInvLandedCostProcessor {
         ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
         ctx.put("errorMessage", cause.getMessage());
         ctx.put("postingNo", landedCost.getCode());
-        IServiceContext serviceCtx = new ServiceContextImpl();
+        IServiceContext serviceCtx = serviceContext();
         try {
             notificationBiz.notify(NOTIFY_EVENT_LANDED_COST_REVERSE_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
@@ -531,5 +531,12 @@ public class ErpInvLandedCostProcessor {
 
     protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

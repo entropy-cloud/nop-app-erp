@@ -43,6 +43,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 import java.util.Collections;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpCrmEvent、ErpCrmSequence、ErpCrmSequenceStep）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 销售序列进度 BizModel。{@link #assignSequence} / {@link #advanceStep} / {@link #switchSequence} 各自委托独立
  * per-mutation Processor（R6.6，{@code processor-extension-pattern.md}）。{@link #scanOverdueSteps} /

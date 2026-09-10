@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinPostingException）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 过账异常记录器。在 {@code ErpFinPostingProcessor.process()}/{@code reverseProcess()} 抛
  * {@link NopException} 时，由编排层 catch 块调用本组件，以**独立事务（REQUIRES_NEW）**写入
@@ -154,7 +155,7 @@ public class ErpFinPostingExceptionRecorder {
         if (amount != null) {
             ctx.put("amount", amount);
         }
-        IServiceContext serviceCtx = new ServiceContextImpl();
+        IServiceContext serviceCtx = serviceContext();
         try {
             transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
                     ormTemplate.runInSession(session -> {
@@ -223,5 +224,12 @@ public class ErpFinPostingExceptionRecorder {
             return null;
         }
         return s.length() <= max ? s : s.substring(0, max);
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

@@ -10,6 +10,54 @@ site:
       displayName: Operation Order
     ErpApsSchedule-main:
       displayName: Schedule Plan
+    FNPT:ErpApsAtpCtpService:checkFeasibility:
+      displayName: CTP Check Feasibility
+    FNPT:ErpApsAtpCtpService:earliestCompletionDate:
+      displayName: ATP Earliest Completion
+    FNPT:ErpApsAtpCtpService:simulateSchedule:
+      displayName: CTP Simulate Schedule
+    FNPT:ErpApsOperationOrder:batchScheduleForward:
+      displayName: Batch Schedule Forward
+    FNPT:ErpApsOperationOrder:cancel:
+      displayName: Cancel Operation Order
+    FNPT:ErpApsOperationOrder:checkFeasibility:
+      displayName: Check Feasibility
+    FNPT:ErpApsOperationOrder:complete:
+      displayName: Complete Operation
+    FNPT:ErpApsOperationOrder:createOperationOrdersFromWorkOrder:
+      displayName: Create From Work Order
+    FNPT:ErpApsOperationOrder:dispatchManually:
+      displayName: Dispatch Manually
+    FNPT:ErpApsOperationOrder:earliestCompletionDate:
+      displayName: Earliest Completion Date
+    FNPT:ErpApsOperationOrder:findGanttData:
+      displayName: Find Gantt Data
+    FNPT:ErpApsOperationOrder:hold:
+      displayName: Hold Operation
+    FNPT:ErpApsOperationOrder:insertRushOrder:
+      displayName: Insert Rush Order
+    FNPT:ErpApsOperationOrder:manualOverrideRouting:
+      displayName: Manual Override Routing
+    FNPT:ErpApsOperationOrder:scanAutoDispatch:
+      displayName: Scan Auto Dispatch
+    FNPT:ErpApsOperationOrder:scanReleasedWorkOrders:
+      displayName: Scan Released Work Orders
+    FNPT:ErpApsOperationOrder:scheduleBackward:
+      displayName: Schedule Backward
+    FNPT:ErpApsOperationOrder:scheduleForward:
+      displayName: Schedule Forward
+    FNPT:ErpApsOperationOrder:scheduleToc:
+      displayName: Schedule TOC
+    FNPT:ErpApsOperationOrder:start:
+      displayName: Start Operation
+    FNPT:ErpApsOperationOrder:unhold:
+      displayName: Unhold Operation
+    FNPT:ErpApsOperationOrder:updateSchedule:
+      displayName: Update Schedule
+    FNPT:ErpApsSchedule:archive:
+      displayName: Archive Schedule
+    FNPT:ErpApsSchedule:publish:
+      displayName: Publish Schedule
     aps-constraint:
       displayName: Constraints
     aps-dispatch:

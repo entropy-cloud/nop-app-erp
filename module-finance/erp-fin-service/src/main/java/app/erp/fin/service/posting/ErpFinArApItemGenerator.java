@@ -22,6 +22,7 @@ import java.util.Map;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinArApItem）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 应收应付辅助账（{@link ErpFinArApItem}）生成器。在业财过账成功（凭证落库）后、同事务内调用，
  * 按 {@link PostingEvent#getBusinessType()} 生成辅助账项，保证「凭证 + 辅助账」强一致

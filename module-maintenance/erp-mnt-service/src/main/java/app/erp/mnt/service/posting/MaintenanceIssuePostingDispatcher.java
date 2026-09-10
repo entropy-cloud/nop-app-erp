@@ -36,6 +36,7 @@ import java.util.Map;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinVoucherBillR、ErpInvStockLedger、ErpInvStockMove、ErpMdAcctSchema、ErpMntSparePartUsage）=跨域批量聚合（fin/inv/md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 维修备件消耗 GL 过账派发器（maintenance 域侧独立 dispatcher，plan 2026-07-10-1100-6）。
  *
@@ -141,7 +142,7 @@ public class MaintenanceIssuePostingDispatcher {
         ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
         ctx.put("errorMessage", cause.getMessage());
         ctx.put("postingNo", usage.getCode());
-        IServiceContext serviceCtx = new ServiceContextImpl();
+        IServiceContext serviceCtx = serviceContext();
         try {
             notificationBiz.notify(NOTIFY_EVENT_MAINTENANCE_ISSUE_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
@@ -273,5 +274,12 @@ public class MaintenanceIssuePostingDispatcher {
         String code = AppConfig.var(ErpMntConstants.CONFIG_INVENTORY_SUBJECT_CODE,
                 ErpMntConstants.DEFAULT_INVENTORY_SUBJECT_CODE);
         return code != null && !code.trim().isEmpty() ? code.trim() : ErpMntConstants.DEFAULT_INVENTORY_SUBJECT_CODE;
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

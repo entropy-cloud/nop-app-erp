@@ -23,6 +23,8 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+import io.nop.core.context.IServiceContext;
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpPrjCostCollection、ErpPrjCostCollectionLine、ErpPrjProject）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 项目成本归集聚合器。工时 APPROVED 时同步生成/追加 {@link ErpPrjCostCollectionLine}
  * （{@code cost-collection.md §4.2}，归集与过账同事务——强一致）。
@@ -125,7 +127,7 @@ public class ProjectCostAggregator {
         // plan 2026-08-31-1426-2 修正：F2.12 原实现误用 findPage(q, DEFAULT_SELECTION, ctx)——DEFAULT_SELECTION
         // 不含 total/items 字段，doFindPageByQueryDirectly 短路返回空 PageBean（total=-1/items=null），
         // 回退查询恒空 → 归集行永不回退（业账分叉复发）。
-        List<ErpPrjCostCollectionLine> lines = lineBiz.findList(q, null, new ServiceContextImpl());
+        List<ErpPrjCostCollectionLine> lines = lineBiz.findList(q, null, serviceContext());
         if (lines == null || lines.isEmpty()) {
             return;
         }
@@ -136,20 +138,20 @@ public class ProjectCostAggregator {
             if (headId == null && line.getCostCollectionId() != null) {
                 headId = line.getCostCollectionId();
             }
-            lineBiz.deleteEntity(line, null, new ServiceContextImpl());
+            lineBiz.deleteEntity(line, null, serviceContext());
         }
         if (headId != null) {
-            ErpPrjCostCollection head = collectionBiz.get(headId, false, new ServiceContextImpl());
+            ErpPrjCostCollection head = collectionBiz.get(headId, false, serviceContext());
             if (head != null) {
                 head.setTotalAmount(nz(head.getTotalAmount()).subtract(total).max(BigDecimal.ZERO));
-                collectionBiz.updateEntity(head, null, new ServiceContextImpl());
+                collectionBiz.updateEntity(head, null, serviceContext());
             }
         }
         if (timesheet.getProjectId() != null) {
-            ErpPrjProject project = projectBiz.get(String.valueOf(timesheet.getProjectId()), false, new ServiceContextImpl());
+            ErpPrjProject project = projectBiz.get(String.valueOf(timesheet.getProjectId()), false, serviceContext());
             if (project != null) {
                 project.setActualCost(nz(project.getActualCost()).subtract(total).max(BigDecimal.ZERO));
-                projectBiz.updateEntity(project, null, new ServiceContextImpl());
+                projectBiz.updateEntity(project, null, serviceContext());
             }
         }
     }
@@ -242,5 +244,12 @@ public class ProjectCostAggregator {
 
     private BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

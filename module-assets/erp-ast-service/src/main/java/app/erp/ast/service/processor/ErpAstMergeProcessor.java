@@ -32,6 +32,7 @@ import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpAstAsset、ErpAstDepreciationSchedule、ErpAstMerge、ErpAstMergeLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 资产合并编排 Processor（Facade + Processor 两层结构，镜像 {@link ErpAstSplitProcessor}）。
  *

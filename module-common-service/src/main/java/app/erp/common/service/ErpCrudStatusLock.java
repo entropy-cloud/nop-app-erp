@@ -20,6 +20,19 @@ public final class ErpCrudStatusLock {
     private ErpCrudStatusLock() {
     }
 
+    /** 实体 posted 列置真判定（save 通道铸造已过账单据的唯一封锁点；无 posted 列恒 false）。 */
+    public static boolean isPosted(IOrmEntity entity) {
+        if (entity == null) {
+            return false;
+        }
+        IEntityModel model = entity.orm_entityModel();
+        if (model == null) {
+            return false;
+        }
+        return model.getColumn(PROP_POSTED, true) != null
+                && Boolean.TRUE.equals(entity.orm_propValueByName(PROP_POSTED));
+    }
+
     /** 判定实体是否因状态锁定而应拒绝通用 update/delete。无 posted/approveStatus 列的实体恒 false。 */
     public static boolean shouldBlock(IOrmEntity entity) {
         if (entity == null) {
@@ -29,8 +42,7 @@ public final class ErpCrudStatusLock {
         if (model == null) {
             return false;
         }
-        if (model.getColumn(PROP_POSTED, true) != null
-                && Boolean.TRUE.equals(entity.orm_propValueByName(PROP_POSTED))) {
+        if (isPosted(entity)) {
             return true;
         }
         if (model.getColumn(PROP_APPROVE_STATUS, true) != null) {

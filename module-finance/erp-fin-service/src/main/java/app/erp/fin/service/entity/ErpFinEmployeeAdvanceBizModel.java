@@ -32,6 +32,7 @@ import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.like;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpFinVoucherBillR）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 员工借款单 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
  * withdrawApproval）经 xbiz 单行委托 per-mutation Processor 全权处理；非审批动作（cancel）经

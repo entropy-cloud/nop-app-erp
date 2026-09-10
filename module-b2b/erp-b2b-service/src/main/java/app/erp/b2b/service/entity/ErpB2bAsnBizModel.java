@@ -26,6 +26,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.le;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpB2bAsn）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ASN 入站处理聚合根 Biz。承载 ASN 入站全流程（{@code asn-processing.md}）：
  *

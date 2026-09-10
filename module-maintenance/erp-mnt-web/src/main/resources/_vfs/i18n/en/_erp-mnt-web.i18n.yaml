@@ -22,10 +22,46 @@ site:
       displayName: Approve
     FNPT:ErpMntCalibration:reverseApprove:
       displayName: Reverse Approve
+    FNPT:ErpMntDowntimeEntry:complete:
+      displayName: Complete Downtime
+    FNPT:ErpMntDowntimeEntry:record:
+      displayName: Record Downtime
+    FNPT:ErpMntEquipment:changeStatus:
+      displayName: Change Status
+    FNPT:ErpMntEquipment:changeStatusForAssetDisposal:
+      displayName: Change Status For Asset Disposal
+    FNPT:ErpMntEquipment:restoreFromAssetDisposal:
+      displayName: Restore From Asset Disposal
+    FNPT:ErpMntRequest:accept:
+      displayName: Accept Request
     FNPT:ErpMntRequest:approve:
       displayName: Approve
+    FNPT:ErpMntRequest:cancel:
+      displayName: Cancel Request
+    FNPT:ErpMntRequest:complete:
+      displayName: Complete Repair
+    FNPT:ErpMntRequest:rejectRequest:
+      displayName: Reject Request
     FNPT:ErpMntRequest:reverseApprove:
       displayName: Reverse Approve
+    FNPT:ErpMntRequest:startRepair:
+      displayName: Start Repair
+    FNPT:ErpMntSchedule:generateDueVisits:
+      displayName: Generate Due Visits
+    FNPT:ErpMntSparePartUsage:confirm:
+      displayName: Confirm Usage
+    FNPT:ErpMntSparePartUsage:reverseConfirm:
+      displayName: Reverse Confirm
+    FNPT:ErpMntVisit:cancel:
+      displayName: Cancel Visit
+    FNPT:ErpMntVisit:complete:
+      displayName: Complete Visit
+    FNPT:ErpMntVisit:reportAdditionalFault:
+      displayName: Report Additional Fault
+    FNPT:ErpMntVisit:schedule:
+      displayName: Schedule Visit
+    FNPT:ErpMntVisit:start:
+      displayName: Start Visit
     downtime-summary:
       displayName: Downtime Summary
     erp-mnt:

@@ -12,6 +12,7 @@ import io.nop.dao.api.IEntityDao;
 import java.math.BigDecimal;
 import java.util.List;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpHrPayrollBankFile）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpHrSalary generateBankFile per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含银行代发文件生成（可发放薪酬查询 + CSV 内容拼装 + 逐条 PAID 标记 + BankFile 落库 + 回填 bankFileId），薪酬语义不变（payroll.md §七）。

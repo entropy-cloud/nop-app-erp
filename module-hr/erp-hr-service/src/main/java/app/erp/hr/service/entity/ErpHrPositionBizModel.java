@@ -18,6 +18,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ne;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 @BizModel("ErpHrPosition")
 public class ErpHrPositionBizModel extends AbstractErpCrudBizModel<ErpHrPosition> implements IErpHrPositionBiz{
     @Inject

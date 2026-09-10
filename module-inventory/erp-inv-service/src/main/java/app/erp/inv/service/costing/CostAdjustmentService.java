@@ -31,6 +31,7 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.isNull;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpInvCostAdjustLine、ErpInvCostLayer、ErpInvStockBalance、ErpInvStockLedger、ErpMdMaterial、ErpMfgCostRollup等）=跨域批量聚合（md/mfg），批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 成本调整引擎（plan 2026-07-05-2352-3；costing-methods.md §成本调整）。
  *

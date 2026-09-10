@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMdSubject）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 折旧过账派发器。折旧执行后（计划条目与资产卡片汇总列同事务确立之后）组装 {@link PostingEvent}(DEPRECIATION)
  * 经 {@link AssetPostingExecutor} 调用财务过账引擎。billHeadCode = 资产编码#期间，作为幂等/红冲键。
@@ -83,7 +84,7 @@ public class DepreciationPostingDispatcher {
         ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
         ctx.put("errorMessage", cause.getMessage());
         ctx.put("billHeadCode", billHeadCode(asset.getCode(), schedule.getPeriod()));
-        IServiceContext serviceCtx = new ServiceContextImpl();
+        IServiceContext serviceCtx = serviceContext();
         try {
             notificationBiz.notify(NOTIFY_EVENT_DEPRECIATION_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
@@ -131,7 +132,7 @@ public class DepreciationPostingDispatcher {
         ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
         ctx.put("errorMessage", cause.getMessage());
         ctx.put("billHeadCode", billHeadCode(asset.getCode(), currentPeriod));
-        IServiceContext serviceCtx = new ServiceContextImpl();
+        IServiceContext serviceCtx = serviceContext();
         try {
             notificationBiz.notify(NOTIFY_EVENT_DEPRECIATION_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
@@ -235,5 +236,12 @@ public class DepreciationPostingDispatcher {
 
     private BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

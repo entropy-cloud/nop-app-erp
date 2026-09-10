@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpAstAsset、ErpAstDepreciationSchedule）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * ErpAstDepreciationSchedule catchUpDepreciation per-mutation Processor（RC-R1.52，R6.3 {@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 方式B 当期一次性补提前期漏提额（L1 UC-AST-07，简化不追溯）：守卫链[资产存在 + 使用中（IDLE 不允许补提——闲置期无折旧义务，

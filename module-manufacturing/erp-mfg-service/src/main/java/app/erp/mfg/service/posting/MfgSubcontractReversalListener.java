@@ -17,6 +17,7 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMfgSubcontractOrder）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 委外加工凭证红冲监听者（业财闭环方向二：财务侧红冲→业务单据回退，M5.2 覆盖 manufacturing 委外段）。
  *

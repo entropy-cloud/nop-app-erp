@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMdSubject）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 维修资本化过账派发器（UC-AST-10）。维修工单 CAPITALIZE 路径 post 时（资产原值增量 + 折旧重算之后）
  * 组装 {@link PostingEvent}(MAINTENANCE_CAPITALIZATION) 经 {@link AssetPostingExecutor} 调用财务过账引擎。

@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinPostingException）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * ErpFinPostingException ignore per-mutation Processor（R6.1，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含显式忽略编排：reason 必填守卫 + 翻 IGNORED + 放弃态告警派发（G2 错误传播分级）。
@@ -64,7 +65,7 @@ public class ErpFinPostingExceptionIgnoreProcessor {
         ctx.put("resolutionNote", resolutionNote);
         ctx.put("postingNo", entity.getBillHeadCode());
         try {
-            notificationBiz.notify(ErpFinConstants.NOTIFY_EVENT_POSTING_EXCEPTION, ctx, new ServiceContextImpl());
+            notificationBiz.notify(ErpFinConstants.NOTIFY_EVENT_POSTING_EXCEPTION, ctx, serviceContext());
         } catch (Exception e) {
             org.slf4j.LoggerFactory.getLogger(ErpFinPostingExceptionIgnoreProcessor.class)
                     .warn("erp-fin-posting-exception-ignored-alert-failed: exceptionId={}, reason={}",
@@ -94,5 +95,12 @@ public class ErpFinPostingExceptionIgnoreProcessor {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

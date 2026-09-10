@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpSysNotification）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 通知派发引擎。职责：模板渲染 + 频控合并 + 站内落库 + 经 nop-integration 派发邮件/短信（config-gated）。
  *

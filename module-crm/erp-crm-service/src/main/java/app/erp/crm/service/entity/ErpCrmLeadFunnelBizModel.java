@@ -29,6 +29,7 @@ import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpCrmFunnelStageMetrics）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 销售漏斗 BizModel。{@link #refreshFunnel} 委托 {@link ErpCrmLeadFunnelRefreshFunnelProcessor}
  * （清旧重建快照，聚合 ConvLog + Lead → LeadFunnel 头 + FunnelStageMetrics 明细）；{@link #getFunnelView} 返回可视化数据结构。

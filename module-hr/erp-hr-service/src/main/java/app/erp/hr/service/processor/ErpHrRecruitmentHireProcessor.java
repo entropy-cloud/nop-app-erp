@@ -17,6 +17,7 @@ import jakarta.inject.Inject;
 
 import java.time.LocalDate;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpHrRecruitment）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * ErpHrRecruitment hire per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含入职编排（OFFERED→HIRED 状态守卫 + 联动创建员工 + 创建 ACTIVE 合同 + employeeId 回写）。

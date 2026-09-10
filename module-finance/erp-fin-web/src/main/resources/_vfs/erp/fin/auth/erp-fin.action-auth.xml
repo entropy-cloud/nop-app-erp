@@ -57,6 +57,22 @@
                                           resourceType="FNPT" orderNo="20020" roles="管理员">
                                     <permissions>ErpFinAccountingPeriod:reverseClose</permissions>
                                 </resource>
+                                <resource id="FNPT:ErpFinAccountingPeriod:preCheck" displayName="结账前置检查" i18n-en:displayName="Pre Check"
+                                          resourceType="FNPT" orderNo="20030" roles="财务员">
+                                    <permissions>ErpFinAccountingPeriod:preCheck</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpFinAccountingPeriod:finalizePeriod" displayName="期末定账" i18n-en:displayName="Finalize Period"
+                                          resourceType="FNPT" orderNo="20040" roles="财务员">
+                                    <permissions>ErpFinAccountingPeriod:finalizePeriod</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpFinAccountingPeriod:openPeriod" displayName="开启期间" i18n-en:displayName="Open Period"
+                                          resourceType="FNPT" orderNo="20050" roles="财务员">
+                                    <permissions>ErpFinAccountingPeriod:openPeriod</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpFinAccountingPeriod:generateNextYearPeriods" displayName="生成下一年度期间" i18n-en:displayName="Generate Next Year Periods"
+                                          resourceType="FNPT" orderNo="20060" roles="财务员">
+                                    <permissions>ErpFinAccountingPeriod:generateNextYearPeriods</permissions>
+                                </resource>
                             </children>
                         </resource>
                         <!-- F12 Tier C 期末结账向导（plan 2026-07-23-0818-2）：引导式驱动 preCheck→closePeriod→finalizePeriod + reverseClose，零后端 delta -->
@@ -168,11 +184,33 @@
                         <resource id="ErpFinIntercompanyMatch-main" displayName="公司间配对记录"
                                   i18n-en:displayName="Intercompany Match" icon="link"
                                   component="FLUX" resourceType="SUBM" orderNo="560"
-                                  url="/erp/fin/pages/ErpFinIntercompanyMatch/main.page.yaml"/>
+                                  url="/erp/fin/pages/ErpFinIntercompanyMatch/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpFinIntercompanyMatch:runMatching" displayName="执行公司间配对" i18n-en:displayName="Run Matching"
+                                                    resourceType="FNPT" orderNo="56010" roles="财务员">
+                                              <permissions>ErpFinIntercompanyMatch:runMatching</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpFinIntercompanyMatch:checkDualSideConsistency" displayName="双边一致性核验" i18n-en:displayName="Check Dual Side Consistency"
+                                                    resourceType="FNPT" orderNo="56020" roles="财务员">
+                                              <permissions>ErpFinIntercompanyMatch:checkDualSideConsistency</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="ErpFinConsolidationElimination-main" displayName="合并抵消候选"
                                   i18n-en:displayName="Consolidation Elimination" icon="minus-circle"
                                   component="FLUX" resourceType="SUBM" orderNo="570"
-                                  url="/erp/fin/pages/ErpFinConsolidationElimination/main.page.yaml"/>
+                                  url="/erp/fin/pages/ErpFinConsolidationElimination/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpFinConsolidationElimination:generateEliminationCandidates" displayName="生成合并抵销候选" i18n-en:displayName="Generate Elimination Candidates"
+                                                    resourceType="FNPT" orderNo="57010" roles="财务员">
+                                              <permissions>ErpFinConsolidationElimination:generateEliminationCandidates</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpFinConsolidationElimination:postElimination" displayName="过账合并抵销" i18n-en:displayName="Post Elimination"
+                                                    resourceType="FNPT" orderNo="57020" roles="财务员">
+                                              <permissions>ErpFinConsolidationElimination:postElimination</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                     </children>
                 </resource>
                 <!-- 资金 -->
@@ -317,15 +355,48 @@
                         <resource id="bank-statement" app:useCases="UC-FIN-14" displayName="银行对账单"
                                   i18n-en:displayName="Bank Statement" icon="receipt"
                                   component="FLUX" resourceType="SUBM" orderNo="9300"
-                                  url="/erp/fin/pages/bank-statement/main.page.yaml"/>
+                                  url="/erp/fin/pages/bank-statement/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpFinBankStatement:importStatement" displayName="导入银行对账单" i18n-en:displayName="Import Statement"
+                                                    resourceType="FNPT" orderNo="93010" roles="财务员">
+                                              <permissions>ErpFinBankStatement:importStatement</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="bank-ledger-line" app:useCases="UC-FIN-14" displayName="账面流水"
                                   i18n-en:displayName="Bank Ledger Line" icon="list"
                                   component="FLUX" resourceType="SUBM" orderNo="9310"
-                                  url="/erp/fin/pages/bank-ledger-line/main.page.yaml"/>
+                                  url="/erp/fin/pages/bank-ledger-line/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpFinBankStatementLine:autoMatch" displayName="自动对账" i18n-en:displayName="Auto Match"
+                                                    resourceType="FNPT" orderNo="93110" roles="财务员">
+                                              <permissions>ErpFinBankStatementLine:autoMatch</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpFinBankStatementLine:manualMatch" displayName="手工对账" i18n-en:displayName="Manual Match"
+                                                    resourceType="FNPT" orderNo="93120" roles="财务员">
+                                              <permissions>ErpFinBankStatementLine:manualMatch</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                         <resource id="bank-reconciliation" app:useCases="UC-FIN-14" displayName="余额调节表"
                                   i18n-en:displayName="Bank Reconciliation" icon="scale"
                                   component="FLUX" resourceType="SUBM" orderNo="9320"
-                                  url="/erp/fin/pages/bank-reconciliation/main.page.yaml"/>
+                                  url="/erp/fin/pages/bank-reconciliation/main.page.yaml">
+                                      <children>
+                                          <resource id="FNPT:ErpFinBankReconciliation:generate" displayName="生成余额调节表" i18n-en:displayName="Generate"
+                                                    resourceType="FNPT" orderNo="93210" roles="财务员">
+                                              <permissions>ErpFinBankReconciliation:generate</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpFinBankReconciliation:post" displayName="过账调节表" i18n-en:displayName="Post"
+                                                    resourceType="FNPT" orderNo="93220" roles="财务员">
+                                              <permissions>ErpFinBankReconciliation:post</permissions>
+                                          </resource>
+                                          <resource id="FNPT:ErpFinBankReconciliation:reverse" displayName="红冲调节表" i18n-en:displayName="Reverse"
+                                                    resourceType="FNPT" orderNo="93230" roles="财务员">
+                                              <permissions>ErpFinBankReconciliation:reverse</permissions>
+                                          </resource>
+                                      </children>
+                                  </resource>
                     </children>
                 </resource>
             </children>

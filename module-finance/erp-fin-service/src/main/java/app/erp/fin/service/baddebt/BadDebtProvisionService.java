@@ -39,6 +39,7 @@ import static io.nop.api.core.beans.FilterBeans.ne;
 import static io.nop.api.core.beans.FilterBeans.notIn;
 import static io.nop.api.core.beans.FilterBeans.or;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinAccountingPeriod、ErpFinArApItem、ErpFinVoucher、ErpFinVoucherBillR、ErpFinVoucherLine、ErpMdCurrency等）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 坏账准备期末计提/释放服务（{@code bad-debt.md §步骤2 计提 / §步骤5 释放 / §步骤2b 反向红冲}）。
  *

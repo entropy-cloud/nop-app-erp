@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpPurOrderLine、ErpPurReceiveLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 三单匹配器（{@code docs/design/purchase/three-way-match.md}）。发票审核时校验「订单↔入库↔发票」的数量与价格一致性。
  *

@@ -31,6 +31,7 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpAstAsset、ErpAstMaintenance、ErpAstMaintenanceCost）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
  * 资产维修编排 Processor（{@code processor-extension-pattern.md} 两层结构：Facade + Processor）。
  *

@@ -54,16 +54,102 @@ site:
       displayName: Timesheet
     ErpHrTimesheetLine-main:
       displayName: Timesheet Line
+    FNPT:ErpHrAttendance:clockIn:
+      displayName: Clock In
+    FNPT:ErpHrAttendance:clockOut:
+      displayName: Clock Out
+    FNPT:ErpHrAttendance:makeUpClockIn:
+      displayName: Make Up Clock In
+    FNPT:ErpHrAttendance:makeUpClockOut:
+      displayName: Make Up Clock Out
+    FNPT:ErpHrDevelopmentPlan:completePlan:
+      displayName: Complete Plan
+    FNPT:ErpHrDevelopmentPlan:generateDevelopmentPlan:
+      displayName: Generate Development Plan
+    FNPT:ErpHrDevelopmentPlan:updatePlanItemStatus:
+      displayName: Update Plan Item Status
+    FNPT:ErpHrEmployeeAssessment:completeAssessment:
+      displayName: Complete Assessment
+    FNPT:ErpHrEmployeeAssessment:submitAssessment:
+      displayName: Submit Assessment
+    FNPT:ErpHrGapAnalysis:refreshGapAnalysis:
+      displayName: Refresh Gap Analysis
+    FNPT:ErpHrGapAnalysis:refreshGapAnalysisWithLevels:
+      displayName: Refresh Gap Analysis With Levels
     FNPT:ErpHrLeaveRequest:approve:
       displayName: Approve Leave
+    FNPT:ErpHrLeaveRequest:cancel:
+      displayName: Cancel Leave
+    FNPT:ErpHrLeaveRequest:reject:
+      displayName: Reject Leave
+    FNPT:ErpHrLeaveRequest:submit:
+      displayName: Submit Leave
     FNPT:ErpHrSalary:approve:
       displayName: Approve Salary
+    FNPT:ErpHrSalary:calculateSalary:
+      displayName: Calculate Salary
+    FNPT:ErpHrSalary:generateBankFile:
+      displayName: Generate Bank File
     FNPT:ErpHrSalary:markPaid:
       displayName: Mark Paid
     FNPT:ErpHrSalary:reverseApprove:
       displayName: Reverse Approve
+    FNPT:ErpHrSalary:runPayroll:
+      displayName: Run Payroll
     FNPT:ErpHrSalary:voidSalary:
       displayName: Void Salary
+    FNPT:ErpHrSalarySimulation:adjustItem:
+      displayName: Adjust Item
+    FNPT:ErpHrSalarySimulation:applyBatchAdjustment:
+      displayName: Apply Batch Adjustment
+    FNPT:ErpHrSalarySimulation:approve:
+      displayName: Approve Simulation
+    FNPT:ErpHrSalarySimulation:convertToFormal:
+      displayName: Convert To Formal
+    FNPT:ErpHrSalarySimulation:createSimulation:
+      displayName: Create Simulation
+    FNPT:ErpHrSalarySimulation:reject:
+      displayName: Reject Simulation
+    FNPT:ErpHrSalarySimulation:submitForReview:
+      displayName: Submit For Review
+    FNPT:ErpHrShift:calcAttendance:
+      displayName: Calc Attendance
+    FNPT:ErpHrShift:onLeaveApproved:
+      displayName: On Leave Approved
+    FNPT:ErpHrShift:onLeaveCancelled:
+      displayName: On Leave Cancelled
+    FNPT:ErpHrShiftAssignment:assignBatch:
+      displayName: Assign Batch
+    FNPT:ErpHrShiftAssignment:assignSingle:
+      displayName: Assign Single
+    FNPT:ErpHrShiftAssignment:copyFromPeriod:
+      displayName: Copy From Period
+    FNPT:ErpHrShiftRotationPattern:generateRotation:
+      displayName: Generate Rotation
+    FNPT:ErpHrShiftSwapRequest:approve:
+      displayName: Approve Swap
+    FNPT:ErpHrShiftSwapRequest:cancel:
+      displayName: Cancel Swap
+    FNPT:ErpHrShiftSwapRequest:reject:
+      displayName: Reject Swap
+    FNPT:ErpHrShiftSwapRequest:submit:
+      displayName: Submit Swap
+    FNPT:ErpHrSurvey:archive:
+      displayName: Archive Survey
+    FNPT:ErpHrSurvey:close:
+      displayName: Close Survey
+    FNPT:ErpHrSurvey:publish:
+      displayName: Publish Survey
+    FNPT:ErpHrSurveyResponse:submitResponse:
+      displayName: Submit Response
+    FNPT:ErpHrSurveyResult:aggregateResult:
+      displayName: Aggregate Result
+    FNPT:ErpHrTimesheet:approve:
+      displayName: Approve Timesheet
+    FNPT:ErpHrTimesheet:reject:
+      displayName: Reject Timesheet
+    FNPT:ErpHrTimesheet:submit:
+      displayName: Submit Timesheet
     employee-net-balance:
       displayName: Employee Net Balance
     erp-hr:

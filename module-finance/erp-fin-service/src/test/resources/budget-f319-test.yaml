@@ -1,0 +1,11 @@
+erp-fin:
+  current-year-profit-subject-code: "4103"
+  bad-debt-allowance-subject-code: "1231"
+  exchange-revaluation-enabled: false
+  auto-depreciation-on-close: false
+  auto-post-on-close: true
+  budget-check-enabled: true
+  budget-commitment-enabled: true
+  budget-commitment-subject-code: "1408"
+  budget-carry-forward-enabled: false
+  budget-roll-forward-enabled: false

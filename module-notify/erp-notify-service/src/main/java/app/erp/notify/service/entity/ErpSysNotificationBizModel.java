@@ -29,6 +29,7 @@ import java.util.Set;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpSysNotification、ErpSysNotificationRead）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 通知实例 BizModel。薄委派层：{@link #notify}/{@link #markRead}/{@link #markAllRead} 委派给 per-mutation Processor，
  * {@link #findUnread}/{@link #findRead}/{@link #countUnread} 围绕 ErpSysNotificationRead 维护已读状态查询。

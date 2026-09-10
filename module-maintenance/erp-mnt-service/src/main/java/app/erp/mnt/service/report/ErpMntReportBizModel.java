@@ -47,6 +47,7 @@ import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
 
+// 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpMntDowntimeEntry、ErpMntEquipment、ErpMntSparePartUsage、ErpMntVisit、ErpMntVisitTask）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 维护域报表渲染入口。注入平台 {@link IReportEngine}，按报表名解析 VFS 模板路径
  * （{@code /nop/main/report/mnt/<name>.xpt.xml}）并渲染 html/xlsx/pdf。

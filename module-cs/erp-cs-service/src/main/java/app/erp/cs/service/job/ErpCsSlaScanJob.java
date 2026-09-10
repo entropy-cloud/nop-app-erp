@@ -39,7 +39,7 @@ public class ErpCsSlaScanJob {
             LOG.info("erp-cs-sla-scan-skipped: cron config empty (erp-cs.sla-scan-cron)");
             return;
         }
-        IServiceContext ctx = new ServiceContextImpl();
+        IServiceContext ctx = serviceContext();
         try {
             int escalated = runSlaScan(ctx);
             LOG.info("erp-cs-sla-scan-done: escalated={}", escalated);
@@ -55,5 +55,12 @@ public class ErpCsSlaScanJob {
 
     protected String resolveCronConfig() {
         return AppConfig.var(ErpCsConstants.CONFIG_SLA_SCAN_CRON, "");
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 合同文档保留策略扫描 Job Bean（RC-R1.80 Phase 4，UC-CT-10 D；owner doc §文档保留策略）。
  *
@@ -53,7 +54,7 @@ public class ErpCtDocRetentionJob {
             LOG.info("erp-ct-doc-retention-skipped: cron config empty (erp-ct.doc-retention-cron)");
             return;
         }
-        IServiceContext ctx = new ServiceContextImpl();
+        IServiceContext ctx = serviceContext();
         try {
             int archived = 0;
             int purged = 0;
@@ -100,5 +101,12 @@ public class ErpCtDocRetentionJob {
 
     protected String resolveCronConfig() {
         return AppConfig.var(ErpCtConfigs.CFG_DOC_RETENTION_CRON, "");
+    }
+
+    /** 当前服务上下文；无绑定（job 入口/直接 Java 调用）时兜底新建——M2.8 分片③ common-015-r3 族回填，
+     * 镜像 ExpenseCostAggregator 兜底范式：优先继承调用方绑定上下文（身份/数据权限），仅无绑定时构造新上下文。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 }

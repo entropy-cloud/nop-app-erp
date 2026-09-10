@@ -17,6 +17,7 @@ import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
+// 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpMdAcctSchema）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
  * 多套账（并行账簿）传播解析器。根据 {@code erp-fin.multi-schema-enabled} 开关和源账套的 {@code isPropagate} 标志，
  * 解析一笔业务需要过账到的全部目标账套。
