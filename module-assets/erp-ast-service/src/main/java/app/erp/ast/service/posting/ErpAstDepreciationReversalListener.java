@@ -5,14 +5,17 @@ import app.erp.ast.biz.IErpAstDepreciationScheduleBiz;
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.ast.service.ErpAstConstants;
+import app.erp.ast.service.ErpAstErrors;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.service.posting.IErpFinVoucherReversedListener;
 import app.erp.fin.service.posting.VoucherReversedEvent;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,7 +36,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *
  * <p>镜像 {@code MfgSubcontractReversalListener} 范式：switch businessType → 反查 → posted 前置 → 回退。
  * billHeadCode = 资产编码#期间（{@code DepreciationPostingDispatcher.billHeadCode}）。
- * CATCHUP 汇总凭证（billHeadCode 含 #CATCHUP 后缀）为多期汇总，无单一计划行可回退——静默跳过。
+ * CATCHUP 汇总凭证（billHeadCode 含 #CATCHUP 后缀，{@code DepreciationPostingDispatcher.catchUpBillHeadCode} =
+ * 资产码#当期#CATCHUP）为多期汇总：按事件 reversalOfVoucherId 反查全部映射计划行聚合回退
+ * （{@code backfillCatchUpSchedules} 逆操作，P2-CK-ast2-024-r3），映射不可达显式报错禁止静默。
  * 跨实体读经 I*Biz（对齐跨实体访问纪律，不新增 daoFor 站点）。
  *
  * <p>监听者失败经 {@code ErpFinReversalListenerRegistry.dispatch} 的 try/catch 隔离，不阻断其他域监听者、
@@ -62,8 +67,11 @@ public class ErpAstDepreciationReversalListener implements IErpFinVoucherReverse
 
     protected void rollbackDepreciationSchedule(VoucherReversedEvent event, IServiceContext context) {
         String billHeadCode = event.getBillHeadCode();
-        if (billHeadCode == null || billHeadCode.endsWith(CATCHUP_SUFFIX)) {
-            // CATCHUP 汇总凭证无单一计划行（多期汇总），静默跳过
+        if (billHeadCode == null) {
+            return;
+        }
+        if (billHeadCode.endsWith(CATCHUP_SUFFIX)) {
+            rollbackCatchUpSchedules(event, context);
             return;
         }
         int idx = billHeadCode.lastIndexOf(BILL_CODE_SEPARATOR);
@@ -96,6 +104,61 @@ public class ErpAstDepreciationReversalListener implements IErpFinVoucherReverse
         }
     }
 
+    /**
+     * CATCHUP 汇总凭证聚合回退（P2-CK-ast2-024-r3 修复）：按事件 {@code reversalOfVoucherId} 反查全部
+     * 映射计划行（{@code ErpAstDepreciationScheduleCatchUpDepreciationProcessor#backfillCatchUpSchedules}
+     * 的逆操作——该路径落行时按 voucherId 回填 posted=true，红冲时按同一键反查回退），逐行置
+     * REVERSED/posted=false/voucherId=null（镜像逐期红冲先例语义），并按 ΣactualAmount 回退资产
+     * 累计折旧/净值。引擎对同一凭证的红冲派发至多一次（已红冲凭证被 {@code findAllPostedVouchers}
+     * 过滤，重红冲报 ERR_REVERSE_SOURCE_NOT_FOUND），故无幂等重入面。
+     *
+     * <p>映射不可达（资产缺失/无计划行映射/无已过账行——数据残缺，如凭证已提交而回填未落）显式报
+     * {@code ERR_DEPRECIATION_CATCHUP_REVERSE_NOT_MAPPABLE}，禁止恢复静默分支；监听者失败经
+     * {@code ErpFinReversalListenerRegistry} 隔离并落 5.1 异常工作台。
+     */
+    protected void rollbackCatchUpSchedules(VoucherReversedEvent event, IServiceContext context) {
+        String billHeadCode = event.getBillHeadCode();
+        String withoutSuffix = billHeadCode.substring(0, billHeadCode.length() - CATCHUP_SUFFIX.length());
+        int idx = withoutSuffix.lastIndexOf(BILL_CODE_SEPARATOR);
+        String assetCode = idx > 0 ? withoutSuffix.substring(0, idx) : withoutSuffix;
+        String voucherId = event.getReversalOfVoucherId();
+
+        ErpAstAsset asset = findAssetByCode(assetCode, context);
+        if (asset == null) {
+            throw notMappable(assetCode, voucherId);
+        }
+        List<ErpAstDepreciationSchedule> posted = new ArrayList<>();
+        for (ErpAstDepreciationSchedule schedule : findSchedulesByVoucherId(voucherId, context)) {
+            if (Boolean.TRUE.equals(schedule.getPosted())) {
+                posted.add(schedule);
+            }
+        }
+        if (posted.isEmpty()) {
+            throw notMappable(assetCode, voucherId);
+        }
+
+        BigDecimal total = BigDecimal.ZERO;
+        for (ErpAstDepreciationSchedule schedule : posted) {
+            // 置 REVERSED（终态标记，语义与逐期红冲先例一致——域内路径据此跳过自身回退）
+            schedule.setStatus(ErpAstConstants.SCHEDULE_STATUS_REVERSED);
+            schedule.setPosted(false);
+            schedule.setVoucherId(null);
+            scheduleBiz.updateEntity(schedule, null, context);
+            total = total.add(nz(schedule.getActualAmount()));
+        }
+        if (total.signum() != 0) {
+            asset.setAccumulatedDepreciation(nz(asset.getAccumulatedDepreciation()).subtract(total));
+            asset.setNetBookValue(nz(asset.getNetBookValue()).add(total));
+            assetBiz.updateEntity(asset, null, context);
+        }
+    }
+
+    private NopException notMappable(String assetCode, String voucherId) {
+        return new NopException(ErpAstErrors.ERR_DEPRECIATION_CATCHUP_REVERSE_NOT_MAPPABLE)
+                .param(ErpAstErrors.ARG_ASSET_CODE, assetCode)
+                .param(ErpAstErrors.ARG_VOUCHER_ID, voucherId);
+    }
+
     protected ErpAstAsset findAssetByCode(String assetCode, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", assetCode));
@@ -111,6 +174,12 @@ public class ErpAstDepreciationReversalListener implements IErpFinVoucherReverse
         q.setLimit(1);
         List<ErpAstDepreciationSchedule> list = scheduleBiz.findList(q, null, context);
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    protected List<ErpAstDepreciationSchedule> findSchedulesByVoucherId(String voucherId, IServiceContext context) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("voucherId", voucherId));
+        return scheduleBiz.findList(q, null, context);
     }
 
     static BigDecimal nz(BigDecimal v) {

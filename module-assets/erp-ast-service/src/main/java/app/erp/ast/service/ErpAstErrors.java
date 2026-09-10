@@ -32,6 +32,7 @@ public interface ErpAstErrors {
     String ARG_AMOUNT = "amount";
     String ARG_MAX_AMOUNT = "maxAmount";
     String ARG_RESIDUAL_VALUE = "residualValue";
+    String ARG_VOUCHER_ID = "voucherId";
     String ARG_ADJUSTMENT_CODE = "adjustmentCode";
     String ARG_ADJUSTMENT_ID = "adjustmentId";
     String ARG_ADJUSTMENT_TYPE = "adjustmentType";
@@ -150,6 +151,11 @@ public interface ErpAstErrors {
             "erp.err.ast.depreciation.catchup-period-invalid",
             "补提期间 {period} 无效或不早于当前期间 {currentPeriod}",
             ARG_PERIOD, ARG_CURRENT_PERIOD);
+    // P2-CK-ast2-024-r3：CATCHUP 汇总凭证红冲回退不可达（数据残缺——凭证实存但无已过账计划行映射），显式报错禁止静默
+    ErrorCode ERR_DEPRECIATION_CATCHUP_REVERSE_NOT_MAPPABLE = ErrorCode.define(
+            "erp.err.ast.depreciation.catchup-reverse-not-mappable",
+            "补提汇总凭证红冲回退失败：资产 {assetCode} 的 CATCHUP 凭证 {voucherId} 未映射到任何已过账折旧计划行（数据残缺），回退不可达——请核对补提计划行与凭证回链一致性",
+            ARG_ASSET_CODE, ARG_VOUCHER_ID);
 
     // --- 处置 ---
     ErrorCode ERR_DISPOSAL_NOT_FOUND = ErrorCode.define(
