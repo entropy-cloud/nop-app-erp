@@ -75,13 +75,18 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         IEntityDao<ErpFinVoucherLine> lineDao = daoProvider.daoFor(ErpFinVoucherLine.class);
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
 
+        // P3-CK-fin4-024-r3 修复：候选实体无账套/币种维度列（实核），按候选 orgId 走同一解析链
+        // （AcctSchemaResolver 主账套 → 本位币，镜像 fin3-005 范式；修复前硬编码 "1"）
+        String acctSchemaId = resolveCandidateAcctSchemaId(candidate.getOrgId());
+        String currencyId = resolveCandidateCurrencyId(candidate.getOrgId());
+
         ErpFinVoucher voucher = voucherDao.newEntity();
         voucher.setCode(ErpFinConstants.ELIMINATION_VOUCHER_BILL_CODE_PREFIX
                 + StringHelper.generateUUID().substring(0, 12));
         voucher.setVoucherType("TRANSFER");
         voucher.setVoucherDate(CoreMetrics.today());
         voucher.setOrgId(candidate.getOrgId());
-        voucher.setAcctSchemaId("1");
+        voucher.setAcctSchemaId(acctSchemaId);
         voucher.setPeriodId(candidate.getPeriodId());
         voucher.setTotalDebit(amount);
         voucher.setTotalCredit(amount);
@@ -104,11 +109,11 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         debitLine.setDcDirection(ErpFinConstants.DC_DEBIT);
         debitLine.setDebitAmount(amount);
         debitLine.setCreditAmount(BigDecimal.ZERO);
-        debitLine.setCurrencyId("1");
+        debitLine.setCurrencyId(currencyId);
         debitLine.setExchangeRate(BigDecimal.ONE);
         debitLine.setAmountSource(amount);
         debitLine.setAmountFunctional(amount);
-        debitLine.setAcctSchemaId("1");
+        debitLine.setAcctSchemaId(acctSchemaId);
         debitLine.setOrgId(candidate.getOrgId());
         debitLine.setBusinessType(ErpFinConstants.ELIMINATION_VOUCHER_BILL_TYPE);
         debitLine.setMemo("Consolidation elimination debit - " + candidate.getEliminationType());
@@ -128,11 +133,11 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         creditLine.setDcDirection(ErpFinConstants.DC_CREDIT);
         creditLine.setDebitAmount(BigDecimal.ZERO);
         creditLine.setCreditAmount(amount);
-        creditLine.setCurrencyId("1");
+        creditLine.setCurrencyId(currencyId);
         creditLine.setExchangeRate(BigDecimal.ONE);
         creditLine.setAmountSource(amount);
         creditLine.setAmountFunctional(amount);
-        creditLine.setAcctSchemaId("1");
+        creditLine.setAcctSchemaId(acctSchemaId);
         creditLine.setOrgId(candidate.getOrgId());
         creditLine.setBusinessType(ErpFinConstants.ELIMINATION_VOUCHER_BILL_TYPE);
         creditLine.setMemo("Consolidation elimination credit - " + candidate.getEliminationType());
@@ -147,6 +152,28 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         billRDao.saveEntity(billR);
 
         return voucherId;
+    }
+
+    /**
+     * P3-CK-fin4-024-r3 修复：候选 orgId → 主账套解析（经 AcctSchemaResolver 共享解析器，
+     * 镜像 fin3-005 范式）；无 ACTIVE 账套时回退 "1"（恒等部署行为逐字节不变）。
+     */
+    protected String resolveCandidateAcctSchemaId(String orgId) {
+        app.erp.md.dao.entity.ErpMdAcctSchema schema = resolveCandidateAcctSchema(orgId);
+        return schema != null ? schema.getId() : "1";
+    }
+
+    /**
+     * P3-CK-fin4-024-r3 修复：经主账套 functionalCurrencyId 解析币种；无账套/无本位币时回退 "1"。
+     */
+    protected String resolveCandidateCurrencyId(String orgId) {
+        app.erp.md.dao.entity.ErpMdAcctSchema schema = resolveCandidateAcctSchema(orgId);
+        return schema != null && schema.getFunctionalCurrencyId() != null
+                ? schema.getFunctionalCurrencyId() : "1";
+    }
+
+    private app.erp.md.dao.entity.ErpMdAcctSchema resolveCandidateAcctSchema(String orgId) {
+        return app.erp.md.dao.AcctSchemaResolver.resolvePrimarySchema(daoProvider, orgId);
     }
 
     protected String resolveEliminationSubjectCode(String eliminationType, boolean debitSide) {

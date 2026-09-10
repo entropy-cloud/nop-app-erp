@@ -4,6 +4,7 @@ import app.erp.fin.biz.IErpFinIntercompanyTransferBiz;
 import app.erp.fin.dao.api.IErpFinTransferPriceResolver;
 import app.erp.fin.dao.dto.TransferPriceResult;
 import app.erp.fin.dao.entity.ErpFinIntercompanyTransferPrice;
+import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdOrganization;
 import app.erp.md.dao.entity.ErpMdWarehouse;
 import app.erp.fin.service.ErpFinConstants;
@@ -124,7 +125,8 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
         String fromAcctSchemaId = resolveOrgAcctSchemaId(fromLegalId);
         String toAcctSchemaId = resolveOrgAcctSchemaId(toLegalId);
         String periodId = resolvePeriodId(businessDate);
-        String currencyId = "1";
+        // P3-CK-fin4-024-r3 修复：币种经 AR 侧法人根账套本位币解析（修复前硬编码 "1"）
+        String currencyId = resolveOrgCurrencyId(fromLegalId);
         // P1-CK-fin4-003：凭证金额 = 转移定价单价 × Σ数量（修复前仅按单价入账，N 倍失真）。
         BigDecimal amount = pricing.getUnitPrice().multiply(totalQty);
 
@@ -174,7 +176,8 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
         String sellerAcctSchemaId = resolveOrgAcctSchemaId(sellerLegal);
         String buyerAcctSchemaId = resolveOrgAcctSchemaId(buyerLegal);
         String periodId = resolvePeriodId(businessDate);
-        String currencyId = "1";
+        // P3-CK-fin4-024-r3 修复：币种经卖方（AR 侧）法人根账套本位币解析（修复前硬编码 "1"）
+        String currencyId = resolveOrgCurrencyId(sellerLegal);
 
         return intercompanyVoucherGenerator.generatePairedVouchers(docCode, sellerLegal, buyerLegal,
                 sellerAcctSchemaId, buyerAcctSchemaId, periodId, currencyId, amount);
@@ -261,8 +264,25 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
     }
 
     private String resolveOrgAcctSchemaId(String orgId) {
-        // 默认账套 = 1（多账套精确解析归 successor）
-        return "1";
+        // P3-CK-fin4-024-r3 修复：orgId → 法人根主账套真实解析（镜像 fin3-005 范式，
+        // 经 AcctSchemaResolver 共享解析器）；无 ACTIVE 账套时回退 "1"（恒等部署行为逐字节不变）。
+        // successor 注记（多账套精确解析）就此收敛。
+        ErpMdAcctSchema schema = resolveOrgAcctSchema(orgId);
+        return schema != null ? schema.getId() : "1";
+    }
+
+    /**
+     * P3-CK-fin4-024-r3 修复：经账套本位币解析币种（镜像 fin3-005 范式）。
+     * 取 AR 侧法人根（调出方/卖方）主账套 functionalCurrencyId；无账套或账套无本位币时回退 "1"。
+     */
+    private String resolveOrgCurrencyId(String orgId) {
+        ErpMdAcctSchema schema = resolveOrgAcctSchema(orgId);
+        return schema != null && schema.getFunctionalCurrencyId() != null
+                ? schema.getFunctionalCurrencyId() : "1";
+    }
+
+    private ErpMdAcctSchema resolveOrgAcctSchema(String orgId) {
+        return app.erp.md.dao.AcctSchemaResolver.resolvePrimarySchema(daoProvider, orgId);
     }
 
     private String resolvePeriodId(LocalDate businessDate) {

@@ -29,6 +29,16 @@ public class AcctSchemaResolver {
     public static final String STATUS_ACTIVE = "ACTIVE";
 
     public static String resolvePrimarySchemaId(IDaoProvider daoProvider, String orgId) {
+        ErpMdAcctSchema schema = resolvePrimarySchema(daoProvider, orgId);
+        return schema != null ? schema.getId() : null;
+    }
+
+    /**
+     * 解析组织的主账套实体（按 nature 优先级选取 FINANCIAL 账套）。
+     *
+     * @return 主账套实体；无 ACTIVE 账套时返回 null
+     */
+    public static ErpMdAcctSchema resolvePrimarySchema(IDaoProvider daoProvider, String orgId) {
         if (orgId == null) {
             return null;
         }
@@ -39,7 +49,6 @@ public class AcctSchemaResolver {
         List<ErpMdAcctSchema> schemas = dao.findAllByQuery(q);
         return schemas.stream()
                 .min(Comparator.comparingInt(AcctSchemaResolver::schemaPriority))
-                .map(ErpMdAcctSchema::getId)
                 .orElse(null);
     }
 
