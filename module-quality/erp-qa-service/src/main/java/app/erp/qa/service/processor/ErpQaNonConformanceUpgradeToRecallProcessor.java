@@ -49,11 +49,19 @@ public class ErpQaNonConformanceUpgradeToRecallProcessor extends AbstractErpQaNo
         if (ncr.getMaterialId() != null) {
             data.put("materialId", ncr.getMaterialId());
         }
-        // NCR severity(LOW/NORMAL/HIGH/CRITICAL=10/20/30/40) 与 recall severity(LOW/MEDIUM/HIGH/CRITICAL=10/20/30/40) 码值对齐
-        String severity = ncr.getSeverity() != null ? ncr.getSeverity() : ErpQaConstants.RECALL_SEVERITY_MEDIUM;
-        data.put("severityLevel", severity);
+        // NCR severity(erp-qa/severity) 与 recall-severity 字典值域不同：recall-severity 仅
+        // LOW/MEDIUM/HIGH/CRITICAL（无 NORMAL）。NORMAL（NCR 默认中等严重程度）显式映射 MEDIUM，
+        // LOW/HIGH/CRITICAL 码值一致直通（P2-CK-qa-026-r3）。
+        data.put("severityLevel", mapSeverityToRecall(ncr.getSeverity()));
         data.put("businessDate", CoreMetrics.today().toString());
         data.put("rootCause", ncr.getDescription());
         return recallBiz.register(data, context);
+    }
+
+    private String mapSeverityToRecall(String ncrSeverity) {
+        if (ncrSeverity == null || ErpQaConstants.NCR_SEVERITY_NORMAL.equals(ncrSeverity)) {
+            return ErpQaConstants.RECALL_SEVERITY_MEDIUM;
+        }
+        return ncrSeverity;
     }
 }

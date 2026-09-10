@@ -21,7 +21,13 @@
             const samplingService = inject('app.erp.qa.service.spc.SpcSamplingService');
             const controlLimitCalculator = inject('app.erp.qa.service.spc.SpcControlLimitCalculator');
             const ruleEngine = inject('app.erp.qa.service.spc.SpcRuleEngine');
-            samplingService.collectSamples(item.id, batchChunkCtx.serviceContext);
+            // P3-CK-qa-030-r3：per-chart 容错，坏 chart（parameterId 空 / subgroupSize<2）WARN 隔离，
+            // 不毒化 chunk（镜像 SpcRuleEngine evaluate 段 per-sample catch 范式）；NopException.message 即错误码
+            try {
+                samplingService.collectSamples(item.id, batchChunkCtx.serviceContext);
+            } catch (e) {
+                logWarn("qa.spc-sampling.collect-samples-skipped: chartId={} reason={}", item.id, e.message);
+            }
             controlLimitCalculator.recalculate(item.id);
             ruleEngine.evaluate(item.id, batchChunkCtx.serviceContext);
         ]]></source>
