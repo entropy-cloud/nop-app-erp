@@ -77,6 +77,12 @@ public interface ErpInvErrors {
             "序列号管控物料 {materialId} 出库必须指定序列号（缺失拒绝确认）",
             ARG_MATERIAL_ID);
 
+    // 序列号出库状态守卫（P2-CK-inv-012-r3，state-machine.md §异常路径「序列号已售：出库时校验序列号状态；
+    // 已售序列号拒绝再次出库」+ README §关键业务规则 6「序列号未售」）
+    ErrorCode ERR_SERIAL_NOT_IN_STOCK = ErrorCode.define("erp.err.inv.serial-not-in-stock",
+            "序列号管控物料 {materialId} 指定序列号 {serialNo} 当前状态={currentStatus}（非在库），拒绝出库",
+            ARG_MATERIAL_ID, ARG_SERIAL_NO, ARG_CURRENT_STATUS);
+
     // 并发扣减乐观锁冲突重试耗尽（plan 2026-07-07-0024-2；UC-INV-08；concurrency-and-transactions.md §模式四）
     ErrorCode ERR_INV_CONCURRENT_DEDUCT_CONFLICT = ErrorCode.define("erp.err.inv.concurrent-deduct-conflict",
             "库存余额 {balanceId} 并发扣减乐观锁冲突，重试 {attempts} 次后仍失败，请重试或检查并发负载",

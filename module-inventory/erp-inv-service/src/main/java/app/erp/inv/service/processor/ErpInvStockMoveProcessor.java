@@ -4,8 +4,10 @@ import app.erp.inv.biz.StockMoveLineRequest;
 import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.biz.TraceChainResult;
 import app.erp.inv.biz.IErpInvBatchBiz;
+import app.erp.inv.biz.IErpInvSerialNumberBiz;
 import app.erp.inv.dao.ErpInvDaoConstants;
 import app.erp.inv.dao.entity.ErpInvBatch;
+import app.erp.inv.dao.entity.ErpInvSerialNumber;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;
@@ -44,7 +46,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 方法、以 {@link IServiceContext} 为末参。
  *
  * <p>跨实体：DONE 写流水/更新余额经 {@link StockMoveBookkeeper}；存货过账事件经 {@link InvPostingDispatcher}；
- * 追溯链经 {@link TraceChainQuery}。
+ * 追溯链经 {@link TraceChainQuery}；序列号出库状态翻转经 {@link IErpInvSerialNumberBiz#markOutbound}。
  */
 public class ErpInvStockMoveProcessor {
 
@@ -65,6 +67,9 @@ public class ErpInvStockMoveProcessor {
 
     @Inject
     IErpInvBatchBiz batchBiz;
+
+    @Inject
+    IErpInvSerialNumberBiz serialNumberBiz;
 
     @Inject
     ErpInvStockMoveStateMachine stateMachine;
@@ -123,6 +128,8 @@ public class ErpInvStockMoveProcessor {
         }
         releaseReservation(move, lines, context);
         bookkeeper.bookCompletion(move, lines, acctSchemaId);
+        // P2-CK-inv-012-r3：序列号 IN_STOCK→OUT 翻转 writer（出库记账同事务，经 I*Biz 域方法）
+        markSerialNumbersOutbound(move, lines, context);
         move.setDocStatus(stateMachine.completeTargetStatus());
         moveDao().saveOrUpdateEntity(move);
         postingDispatcher.dispatchIfApplicable(move, lines);
@@ -198,8 +205,11 @@ public class ErpInvStockMoveProcessor {
      * P1-CK-inv-004：批次/序列号管控物料出库的批次/序列号缺失守卫（state-machine.md §4「批次/序列号缺失：
      * 启用批次/序列号的物料，移动单必须指定批次/序列号；缺失拒绝确认」）。仅在出库/内部转移移动单
      * （{@code reservesOnConfirm} 命中类型）生效——与可用量校验同型边界；INCOMING 类移动单收批次属
-     * 质检域职责。批次在库校验：批号非空但 {@code findBatch} 查无 → 拒绝。序列号「未售/在库状态」翻转
-     * writer 缺失为独立特性（ErpInvSerialNumberBizModel CRUD 桩），本守卫先落「缺失拒绝」子句。
+     * 质检域职责。批次在库校验：批号非空但 {@code findBatch} 查无 → 拒绝。
+     *
+     * <p>P2-CK-inv-012-r3 扩展：序列号状态守卫（state-machine.md §异常路径「序列号已售：出库时校验
+     * 序列号状态；已售序列号拒绝再次出库」）——已登记台账行非 IN_STOCK（已售 OUT/已预留 RESERVED/冻结
+     * BLOCKED）拒绝出库；台账无记录不校验（未登记序列号不入状态守卫，presence 校验短路语义保持）。
      */
     protected void validateBatchSerialPresence(ErpInvStockMove move, List<ErpInvStockMoveLine> lines,
                                                IServiceContext context) {
@@ -222,11 +232,54 @@ public class ErpInvStockMoveProcessor {
                             .param(ErpInvErrors.ARG_BATCH_NO, line.getBatchNo());
                 }
             }
-            if (Boolean.TRUE.equals(material.getIsSerialManaged())
-                    && StringHelper.isBlank(line.getSerialNo())) {
-                throw new NopException(ErpInvErrors.ERR_SERIAL_REQUIRED)
-                        .param(ErpInvErrors.ARG_MATERIAL_ID, line.getMaterialId());
+            if (Boolean.TRUE.equals(material.getIsSerialManaged())) {
+                if (StringHelper.isBlank(line.getSerialNo())) {
+                    throw new NopException(ErpInvErrors.ERR_SERIAL_REQUIRED)
+                            .param(ErpInvErrors.ARG_MATERIAL_ID, line.getMaterialId());
+                }
+                assertSerialInStock(line, context);
             }
+        }
+    }
+
+    /**
+     * P2-CK-inv-012-r3：序列号状态守卫——已登记台账行非 IN_STOCK 拒绝出库
+     * （跨实体：序列台账经 I*Biz 管道查询，与 {@code findBatch} 同型，无 daoFor 新站点）。
+     */
+    protected void assertSerialInStock(ErpInvStockMoveLine line, IServiceContext context) {
+        ErpInvSerialNumber sn = findSerial(line.getSerialNo(), line.getMaterialId(), context);
+        if (sn == null) {
+            return;
+        }
+        if (!ErpInvDaoConstants.SERIAL_STATUS_IN_STOCK.equals(sn.getStatus())) {
+            throw new NopException(ErpInvErrors.ERR_SERIAL_NOT_IN_STOCK)
+                    .param(ErpInvErrors.ARG_MATERIAL_ID, line.getMaterialId())
+                    .param(ErpInvErrors.ARG_SERIAL_NO, line.getSerialNo())
+                    .param(ErpInvErrors.ARG_CURRENT_STATUS, sn.getStatus());
+        }
+    }
+
+    /**
+     * P2-CK-inv-012-r3：出库记账同事务序列号状态翻转（IN_STOCK→OUT + 出库单号回链）。
+     * 仅 OUTGOING 移动单触发（出库语义；内部转移后序列号仍属在库）；writer 经
+     * {@link IErpInvSerialNumberBiz#markOutbound} 域方法（跨实体 I*Biz 注入范式，无 daoFor 新站点），
+     * 同事务边界由调用方 @BizMutation 保证——bookCompletion 失败则翻转同回滚。
+     */
+    protected void markSerialNumbersOutbound(ErpInvStockMove move, List<ErpInvStockMoveLine> lines,
+                                             IServiceContext context) {
+        if (!Objects.equals(move.getMoveType(), ErpInvConstants.MOVE_TYPE_OUTGOING)) {
+            return;
+        }
+        for (ErpInvStockMoveLine line : lines) {
+            if (StringHelper.isBlank(line.getSerialNo())) {
+                continue;
+            }
+            ErpMdMaterial material = materialBiz.get(line.getMaterialId(), true, context);
+            if (material == null || !Boolean.TRUE.equals(material.getIsSerialManaged())) {
+                continue;
+            }
+            serialNumberBiz.markOutbound(line.getSerialNo(), line.getMaterialId(),
+                    move.getRelatedBillType(), move.getRelatedBillCode(), context);
         }
     }
 
@@ -237,6 +290,15 @@ public class ErpInvStockMoveProcessor {
         q.addFilter(eq("warehouseId", resolveReservationWarehouseId(move)));
         q.addOrderField("id", true);
         List<ErpInvBatch> list = batchBiz.findList(q, null, context);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    protected ErpInvSerialNumber findSerial(String serialNo, String materialId, IServiceContext context) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("serialNo", serialNo));
+        q.addFilter(eq("materialId", materialId));
+        q.addOrderField("id", true);
+        List<ErpInvSerialNumber> list = serialNumberBiz.findList(q, null, context);
         return list.isEmpty() ? null : list.get(0);
     }
 

@@ -192,6 +192,16 @@ public interface ErpPurErrors {
             "发票 {invoiceCode} 三单匹配未完成（数量/价格超容差），按配置 erp-pur.settle-recheck-three-way-match 不允许核销",
             ARG_INVOICE_CODE);
 
+    // 核销 docStatus 守卫（P2-CK-pur-015-r3，state-machine.md §异常路径「付款核销时发票已作废→拒绝核销」；
+    // 与 r1 P2-CK-sal-010 / P2-CK-pur-005 统一批次设计——作废单核销与反核销显式拒绝）
+    ErrorCode ERR_SETTLE_INVOICE_CANCELLED = ErrorCode.define("erp.err.pur.settle-invoice-cancelled",
+            "发票 {invoiceCode} 已作废（当前单据状态={currentDocStatus}），不可核销或反核销",
+            ARG_INVOICE_CODE, ARG_CURRENT_DOC_STATUS);
+
+    ErrorCode ERR_SETTLE_PAYMENT_CANCELLED = ErrorCode.define("erp.err.pur.settle-payment-cancelled",
+            "付款单 {paymentCode} 已作废（当前单据状态={currentDocStatus}），不可核销或反核销",
+            ARG_PAYMENT_CODE, ARG_CURRENT_DOC_STATUS);
+
     // --- 退货作用域错误码（消息文案绑定退货单参数，避免复用入库单/发票文案产生误导） ---
 
     ErrorCode ERR_RETURN_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.pur.return-illegal-status-transition",

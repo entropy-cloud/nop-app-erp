@@ -30,7 +30,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 见计划 Phase 2 Decision (b)）。
  *
  * <p>核销约束（{@code state-machine.md §场景D}）：同供应商、双方 approveStatus=APPROVED、核销金额不超发票
- * 未付余额（{@code totalAmountWithTax − paidAmount}）与付款未核销余额。违例抛 {@link ErpPurErrors#ERR_SETTLE_*}。
+ * 未付余额（{@code totalAmountWithTax − paidAmount}）与付款未核销余额；双方 docStatus≠CANCELLED
+ * （P2-CK-pur-015-r3，{@code state-machine.md §异常路径}「付款核销时发票已作废→拒绝核销」，核销与反核销同守）。
+ * 违例抛 {@link ErpPurErrors#ERR_SETTLE_*}。
  *
  * <p>R1.8 P1-MA2-003 方案 A：付款核销三单匹配二次门控（{@code three-way-match.md §匹配时机「付款前最终校验」}）。
  * 经 config {@code erp-pur.settle-recheck-three-way-match}（默认 false）启用后，{@code requireInvoiceForSettle}
@@ -69,6 +71,8 @@ public class PaymentSettler {
                     .param(ErpPurErrors.ARG_PAYMENT_CODE, payment.getCode())
                     .param(ErpPurErrors.ARG_CURRENT_STATUS, payment.getApproveStatus());
         }
+        // P2-CK-pur-015-r3：核销 docStatus 守卫（state-machine.md §异常路径「付款核销时发票已作废→拒绝核销」）
+        assertNotCancelled(payment);
         if (allocations == null || allocations.isEmpty()) {
             return payment;
         }
@@ -124,8 +128,14 @@ public class PaymentSettler {
 
     /**
      * 核销冲销：对指定发票生成反向（负金额）PaymentLine，恢复余额与状态。幂等：无既有核销则空操作。
+     * P2-CK-pur-015-r3：已作废付款单/发票拒绝反核销（与 settle 侧同守卫语义）。
      */
     public ErpPurPayment reverseSettlement(ErpPurPayment payment, String invoiceId) {
+        assertNotCancelled(payment);
+        ErpPurInvoice invoice = daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId);
+        if (invoice != null) {
+            assertInvoiceNotCancelled(invoice);
+        }
         List<ErpPurPaymentLine> existing = findLines(payment.getId(), invoiceId);
         BigDecimal settled = BigDecimal.ZERO;
         for (ErpPurPaymentLine l : existing) {
@@ -150,6 +160,26 @@ public class PaymentSettler {
 
     // ---------- helpers ----------
 
+    /**
+     * P2-CK-pur-015-r3：付款单侧 docStatus 守卫——已作废付款单拒绝核销/反核销
+     * （与 r1 P2-CK-sal-010 统一批次设计：域内专用错误码 + CAT-2 传码）。
+     */
+    private void assertNotCancelled(ErpPurPayment payment) {
+        if (ErpPurConstants.DOC_STATUS_CANCELLED.equals(payment.getDocStatus())) {
+            throw new NopException(ErpPurErrors.ERR_SETTLE_PAYMENT_CANCELLED)
+                    .param(ErpPurErrors.ARG_PAYMENT_CODE, payment.getCode())
+                    .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, payment.getDocStatus());
+        }
+    }
+
+    private void assertInvoiceNotCancelled(ErpPurInvoice invoice) {
+        if (ErpPurConstants.DOC_STATUS_CANCELLED.equals(invoice.getDocStatus())) {
+            throw new NopException(ErpPurErrors.ERR_SETTLE_INVOICE_CANCELLED)
+                    .param(ErpPurErrors.ARG_INVOICE_CODE, invoice.getCode())
+                    .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, invoice.getDocStatus());
+        }
+    }
+
     private ErpPurInvoice requireInvoiceForSettle(ErpPurPayment payment, String invoiceId) {
         ErpPurInvoice invoice = daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId);
         if (invoice == null) {
@@ -167,6 +197,8 @@ public class PaymentSettler {
                     .param(ErpPurErrors.ARG_INVOICE_CODE, invoice.getCode())
                     .param(ErpPurErrors.ARG_CURRENT_STATUS, invoice.getApproveStatus());
         }
+        // P2-CK-pur-015-r3：核销 docStatus 守卫（已作废发票拒绝核销）
+        assertInvoiceNotCancelled(invoice);
         // R1.8 P1-MA2-003 方案 A：付款核销三单匹配二次门控（three-way-match.md §匹配时机「付款前最终校验」）。
         // config-gated 默认 false；启用后强制 strict 复核 invoice 三单匹配完成态。
         // match 为只读校验（无状态变更），重算依赖 invoice/receive/order 行当前状态（APPROVED 发票回链不允许修改，见 three-way-match.md §一致性规则）。
