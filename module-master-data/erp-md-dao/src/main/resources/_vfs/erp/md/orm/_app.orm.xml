@@ -1745,8 +1745,8 @@
                         stdSqlType="DATE" i18n-en:displayName="Valid To"/>
                 <column code="QUALIFICATION_DOC" displayName="资质文件" name="qualificationDoc" precision="500" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Qualification Doc"/>
-                <column code="STATUS" defaultValue="10" displayName="准入状态" mandatory="true" name="status" precision="20"
-                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-md/supplier-approval-status"
+                <column code="STATUS" displayName="准入状态" mandatory="true" name="status" precision="20" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-md/supplier-approval-status"
                         i18n-en:displayName="Approval Status"/>
                 <column code="APPROVED_BY" displayName="批准人" name="approvedBy" precision="50" propId="10"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By" ui:show="R"/>

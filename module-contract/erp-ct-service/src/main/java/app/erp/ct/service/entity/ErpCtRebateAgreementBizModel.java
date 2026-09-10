@@ -57,6 +57,9 @@ public class ErpCtRebateAgreementBizModel extends AbstractErpCrudBizModel<ErpCtR
     @Inject
     ErpCtRebateAgreementRunAccrualProcessor runAccrualProcessor;
 
+    @Inject
+    app.erp.ct.service.statemachine.ErpCtRebateAgreementStateMachine rebateAgreementStateMachine;
+
     public ErpCtRebateAgreementBizModel() {
         setEntityName(ErpCtRebateAgreement.class.getName());
     }
@@ -76,6 +79,31 @@ public class ErpCtRebateAgreementBizModel extends AbstractErpCrudBizModel<ErpCtR
                                            @Name("asOfDate") LocalDate asOfDate,
                                            IServiceContext context) {
         return runAccrualProcessor.runAccrual(agreementId, asOfDate, context);
+    }
+
+    /**
+     * 协议生效（ct-026-r3 修复面）：DRAFT → ACTIVE 命名动作 writer，打通 runAccrual→结算计提链入口。
+     * 守卫：DRAFT 源态（审批前评审态，经 StateMachine Bean 断言）+ 生效日（startDate ≤ 今天）。
+     */
+    @Override
+    @BizMutation
+    public ErpCtRebateAgreement activate(@Name("agreementId") String agreementId, IServiceContext context) {
+        ErpCtRebateAgreement agreement = requireAgreement(agreementId, context);
+        try {
+            rebateAgreementStateMachine.assertCanActivate(agreement.getStatus());
+        } catch (NopException e) {
+            throw e.param(ErpCtErrors.ARG_REBATE_AGREEMENT_ID, agreementId);
+        }
+        LocalDate today = CoreMetrics.today();
+        if (agreement.getStartDate() != null && agreement.getStartDate().isAfter(today)) {
+            throw new NopException(ErpCtErrors.ERR_CT_REBATE_AGREEMENT_NOT_EFFECTIVE)
+                    .param(ErpCtErrors.ARG_REBATE_AGREEMENT_ID, agreementId)
+                    .param("startDate", agreement.getStartDate())
+                    .param("currentDate", today);
+        }
+        agreement.setStatus(ErpCtConstants.REBATE_AGREEMENT_STATUS_ACTIVE);
+        updateEntity(agreement, null, context);
+        return agreement;
     }
 
     // ---------- helpers ----------

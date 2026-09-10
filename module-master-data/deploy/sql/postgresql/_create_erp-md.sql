@@ -274,7 +274,7 @@ CREATE TABLE erp_md_supplier_approval(
   valid_from DATE  ,
   valid_to DATE  ,
   qualification_doc VARCHAR(500)  ,
-  status VARCHAR(20) default '10'  NOT NULL ,
+  status VARCHAR(20) NOT NULL ,
   approved_by VARCHAR(50)  ,
   approved_at TIMESTAMP  ,
   del_version INT8 default 0  NOT NULL ,

@@ -89,6 +89,8 @@ public class DrpEngine {
             if (net.signum() < 0) {
                 net = BigDecimal.ZERO;
             }
+            // 补货方法语义接入（drp-022-r3 修复面）：在需求驱动净额上叠加水位策略
+            net = applyReplenishmentMethod(net, param, ctx.currentStock);
             BigDecimal suggested = roundToMultiple(net, param.getOrderMultiple());
 
             ErpDrpLine line = lineDao.newEntity();
@@ -146,6 +148,43 @@ public class DrpEngine {
         }
         // 两者皆空：默认按 PURCHASE 路径，释放阶段会抛 ERR_DRP_NO_PREFERRED_SUPPLIER
         return ErpDrpConstants.REPLENISHMENT_TYPE_PURCHASE;
+    }
+
+    /**
+     * 补货方法语义（drp-022-r3 修复面，消费 {@code erp-drp/drp-replenishment-method}）：
+     * 在需求驱动净额上叠加水位策略，消除「配置静默无效」死值面。
+     * <ul>
+     *   <li>LOT_FOR_LOT / null：纯需求驱动（既有语义，不变）。</li>
+     *   <li>MIN_MAX：库存低于 minStockLevel 时补至 maxStockLevel（缺省回落 min）——「库存低于最低时补到最高」；
+     *       取 max(demand, topUp) 保证不低于需求净额。</li>
+     *   <li>PERIODIC：定期审视 order-up-to——每次 runDrp 视为一次审视，补至目标水位（max 优先，回落 min）。</li>
+     * </ul>
+     * min/max 未配置时回落需求驱动（兼容既有 seed 形态）。reviewPeriodDays 为运营审视节奏（批引擎无逐日触发语义，
+     * 每次 runDrp 即一次审视），不参与数量计算。
+     */
+    public static BigDecimal applyReplenishmentMethod(BigDecimal demandNet, ErpDrpParameter param,
+                                                      BigDecimal currentStock) {
+        String method = param.getReplenishmentMethod();
+        if (method == null || ErpDrpConstants.REPLENISHMENT_METHOD_LOT_FOR_LOT.equals(method)) {
+            return demandNet;
+        }
+        BigDecimal current = nz(currentStock);
+        if (ErpDrpConstants.REPLENISHMENT_METHOD_MIN_MAX.equals(method)) {
+            BigDecimal min = param.getMinStockLevel();
+            if (min == null || current.compareTo(min) >= 0) {
+                return demandNet;
+            }
+            BigDecimal target = param.getMaxStockLevel() != null ? param.getMaxStockLevel() : min;
+            return demandNet.max(target.subtract(current));
+        }
+        if (ErpDrpConstants.REPLENISHMENT_METHOD_PERIODIC.equals(method)) {
+            BigDecimal target = param.getMaxStockLevel() != null ? param.getMaxStockLevel() : param.getMinStockLevel();
+            if (target == null) {
+                return demandNet;
+            }
+            return demandNet.max(target.subtract(current));
+        }
+        return demandNet;
     }
 
     private BigDecimal roundToMultiple(BigDecimal net, BigDecimal orderMultiple) {

@@ -51,4 +51,11 @@ public interface ErpCommonErrors {
             "不可变台账实体，禁止通用{action}：{entityName}#{entityKey}（台账由域内编排驱动）",
             ARG_ACTION, ARG_ENTITY_NAME, ARG_ENTITY_KEY
     );
+
+    // --- P3-CK-common-012-r3：org 隔离解析失败 fail-closed ---
+    ErrorCode ERR_ORG_ISOLATION_RESOLVE_FAILED = ErrorCode.define(
+            "erp.err.common.org-isolation-resolve-failed",
+            "实体 {entityName} 组织隔离元数据解析失败，fail-closed 模式下拒绝查询（拒答优于未隔离放行）",
+            ARG_ENTITY_NAME
+    );
 }

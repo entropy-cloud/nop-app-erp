@@ -31,6 +31,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  */
 public class TicketAssignResolver {
 
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(TicketAssignResolver.class);
+
     @Inject
     IErpCrmTeamBiz crmTeamBiz;
 
@@ -65,7 +67,10 @@ public class TicketAssignResolver {
             }
             return userIds;
         } catch (RuntimeException e) {
-            // 跨域解析失败降级：池空 → 调用方留 NEW + ⑧ 升级通知
+            // 跨域解析失败降级：池空 → 调用方留 NEW + ⑧ 升级通知。
+            // 降级 WARN（P3-CK-cs-025-r3 修复面）：对齐全域 notify「降级必 WARN」范式，自动分配失效可诊断。
+            LOG.warn("ticket assign resolver degraded to empty pool: teamCode={}, reason={}",
+                    csTeam.getCode(), String.valueOf(e.getMessage()), e);
             return new ArrayList<>();
         }
     }

@@ -25,4 +25,11 @@ public final class ErpOrgIsolationConstants {
 
     /** orgId 列名（业务单据统一的核算组织列）。 */
     public static final String PROP_ORG_ID = "orgId";
+
+    /**
+     * 隔离元数据解析失败策略（P3-CK-common-012-r3）：true = fail-closed（拒答，抛
+     * {@code ERR_ORG_ISOLATION_RESOLVE_FAILED}）；缺省 false = fail-open（WARN 可观测 + 跳过过滤）。
+     * 「隔离开关投产前必须修」触发条件由本两态消解承继。
+     */
+    public static final String CONFIG_ORG_ISOLATION_FAIL_CLOSED = "erp.multi-company.org-isolation-fail-closed";
 }

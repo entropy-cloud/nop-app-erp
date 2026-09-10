@@ -84,6 +84,14 @@ public class TransportManager {
                 if (!retryable || attempt >= maxRetries) {
                     break;
                 }
+                // 重试中间态日志（b2b-018-r3 修复面）：对齐 managed-file-transfer.md §重试策略表
+                // 「配置 maxRetries > 0 → 状态 → RETRYING，按间隔重试」；retryIntervalMin 为运营节奏，批内固定退避
+                long elapsedMs = (CoreMetrics.nanoTime() - startNanos) / 1_000_000;
+                writeLog(config, ediDocId, ErpB2bConstants.DIRECTION_OUTBOUND,
+                        ErpB2bConstants.MFT_STATUS_RETRYING,
+                        TransportResult.failure("MFT_RETRYING", "[transport retry " + (attempt + 1) + "/"
+                                + maxRetries + "] " + e.getDescription()),
+                        e, startTime, elapsedMs, attempt + 1);
                 LOG.warn("MFT transport failed (retry attempt {}), ediDocId={}: {}", attempt + 1, ediDocId, e.getMessage());
                 sleepSilently(1);
             }

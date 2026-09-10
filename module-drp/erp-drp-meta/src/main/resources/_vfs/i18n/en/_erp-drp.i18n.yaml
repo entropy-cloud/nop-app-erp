@@ -209,6 +209,7 @@ prop:
       crossDockId: Cross Dock
       carrierInfo: Carrier Info
       status: Status
+      status_label: null
       remark: Remark
       delVersion: Del Flag
       version: Version
@@ -328,6 +329,7 @@ dict:
     erp-inv/drp-xdock-strategy: Cross Dock Matching Strategy
     erp-inv/drp-lt-flag: Lead Time Flag
     erp-inv/drp-supplier-grade: Supplier Grade
+    erp-inv/drp-xdock-dock-status: Dock Appointment Status
 dict.option.label:
   erp-drp/drp-plan-status:
     DRAFT: Draft
@@ -375,3 +377,9 @@ dict.option.label:
     B: Grade B
     C: Grade C
     D: Grade D
+  erp-inv/drp-xdock-dock-status:
+    AVAILABLE: Available
+    BOOKED: Booked
+    ARRIVED: Arrived
+    COMPLETED: Completed
+    CANCELLED: Cancelled

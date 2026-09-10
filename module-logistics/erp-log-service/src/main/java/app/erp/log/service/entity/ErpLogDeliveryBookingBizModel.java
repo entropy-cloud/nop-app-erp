@@ -62,8 +62,11 @@ public class ErpLogDeliveryBookingBizModel extends AbstractErpCrudBizModel<ErpLo
                                       @Name("bookedDate") LocalDate bookedDate,
                                       IServiceContext context) {
         ErpLogShipment shipment = shipmentBiz.requireEntity(shipmentId, null, context);
-        if (ErpLogConstants.SHIPMENT_STATUS_CANCELLED.equals(shipment.getStatus())
-                || ErpLogConstants.SHIPMENT_STATUS_DELIVERED.equals(shipment.getStatus())) {
+        // 预约时机白名单（P3-CK-log-013-r3 修复面，owner doc delivery-window.md D2 裁决）：
+        // BOOKED = 预约创建态，仅发运单 DRAFT/ADVISED 期可预约占窗；DISPATCHED/IN_TRANSIT 在途运单
+        // 不再放行（原仅拒 CANCELLED/DELIVERED 使在途单可预约新窗口侵占容量）。
+        if (!ErpLogConstants.SHIPMENT_STATUS_DRAFT.equals(shipment.getStatus())
+                && !ErpLogConstants.SHIPMENT_STATUS_ADVISED.equals(shipment.getStatus())) {
             throw new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION)
                     .param(ErpLogErrors.ARG_SHIPMENT_CODE, shipment.getCode())
                     .param(ErpLogErrors.ARG_CURRENT_STATUS, shipment.getStatus())

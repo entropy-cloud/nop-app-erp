@@ -201,7 +201,8 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
         assertNull(activeBooking(shipmentId), "预约已随发运单取消释放");
     }
 
-    /** 组 8：发运单 DELIVERED 迁移点联动释放（webhook 路径，主迁移 + 运费过账不受预约释放影响）。 */
+    /** 组 8：发运单 DELIVERED 迁移点联动释放（webhook 路径，主迁移 + 运费过账不受预约释放影响）。
+     *  预约时机对齐 P3-CK-log-013-r3 白名单：ADVISED 期预约 → DISPATCHED 在途 → DELIVERED 联动释放。 */
     @Test
     public void testShipmentDeliveredReleasesBooking() {
         String windowId = seedWindow(5);
@@ -212,7 +213,7 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
             sh.setCode("SHP-BK-DLV-1");
             sh.setOrgId("1");
             sh.setCarrierId(carrierIdCache);
-            sh.setStatus(ErpLogConstants.SHIPMENT_STATUS_DISPATCHED);
+            sh.setStatus(ErpLogConstants.SHIPMENT_STATUS_ADVISED);
             sh.setTrackingNo("TRK-BK-DLV-1");
             sh.setBusinessDate(LocalDate.now());
             daoProvider.daoFor(ErpLogShipment.class).saveEntity(sh);
@@ -221,6 +222,14 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
 
         ormTemplate.runInSession(s -> bookingBiz.book(shipmentId, windowId, nextWednesday(), CTX));
         assertEquals(Integer.valueOf(1), window(windowId).getCurrentBooked());
+
+        // ADVISED 期预约后在途（DISPATCHED），在途期不再允许新增预约占窗
+        ormTemplate.runInSession(s -> {
+            ErpLogShipment sh = daoProvider.daoFor(ErpLogShipment.class).getEntityById(shipmentId);
+            sh.setStatus(ErpLogConstants.SHIPMENT_STATUS_DISPATCHED);
+            daoProvider.daoFor(ErpLogShipment.class).updateEntity(sh);
+            return null;
+        });
 
         String payload = "{\"trackingNo\":\"TRK-BK-DLV-1\",\"eventType\":\"DELIVERED\"}";
         String sig = hmacSha256(payload, carrierCode);
@@ -370,5 +379,36 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
             return new NopExceptionLike(e.getErrorCode());
         }
         throw new AssertionError("预期抛出 NopException 但未抛出");
+    }
+
+    /** 组 10（P3-CK-log-013-r3）：预约时机白名单——在途（DISPATCHED/IN_TRANSIT）运单不可预约占窗
+     *  （owner doc delivery-window.md D2：BOOKED = DRAFT/ADVISED 期预约）。 */
+    @Test
+    public void testBookRejectsInTransitShipment() {
+        String windowId = seedWindow(10);
+        String dispatchedId = seedShipment("SHP-BK-IT-1");
+        String inTransitId = seedShipment("SHP-BK-IT-2");
+        ormTemplate.runInSession(s -> {
+            setShipmentStatus(dispatchedId, ErpLogConstants.SHIPMENT_STATUS_DISPATCHED);
+            setShipmentStatus(inTransitId, ErpLogConstants.SHIPMENT_STATUS_IN_TRANSIT);
+            return null;
+        });
+
+        NopExceptionLike ex = catchBooking(() ->
+                ormTemplate.runInSession(s -> bookingBiz.book(dispatchedId, windowId, nextWednesday(), CTX)));
+        assertEquals(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION.getErrorCode(), ex.code,
+                "DISPATCHED 在途运单预约应拒绝（在途单不得新占窗口容量）");
+        NopExceptionLike ex2 = catchBooking(() ->
+                ormTemplate.runInSession(s -> bookingBiz.book(inTransitId, windowId, nextWednesday(), CTX)));
+        assertEquals(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION.getErrorCode(), ex2.code,
+                "IN_TRANSIT 在途运单预约应拒绝");
+        assertEquals(Integer.valueOf(0), window(windowId).getCurrentBooked(),
+                "拒绝路径不占窗口容量");
+    }
+
+    private void setShipmentStatus(String shipmentId, String status) {
+        ErpLogShipment sh = daoProvider.daoFor(ErpLogShipment.class).getEntityById(shipmentId);
+        sh.setStatus(status);
+        daoProvider.daoFor(ErpLogShipment.class).updateEntity(sh);
     }
 }

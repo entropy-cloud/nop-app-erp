@@ -3,7 +3,9 @@ package app.erp.notify.service.processor;
 import app.erp.notify.dao.entity.ErpSysNotification;
 import app.erp.notify.dao.entity.ErpSysNotificationRead;
 import app.erp.notify.service.ErpNotifyConstants;
+import app.erp.notify.service.ErpNotifyErrors;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
@@ -42,6 +44,19 @@ public abstract class AbstractErpSysNotificationProcessor {
             return userId;
         }
         return ctx == null ? null : ctx.getUserId();
+    }
+
+    /**
+     * 已读操作身份校验（P2-CK-notify-010-r3 修复面）：ctx 存在登录用户时，目标接收人必须与当前用户一致，
+     * 否则抛 {@link ErpNotifyErrors#ERR_NOTIFY_USER_MISMATCH}。ctx 无用户（系统内部调用/测试）保持兼容放行。
+     */
+    protected void assertActorAllowed(String targetUserId, IServiceContext ctx) {
+        String actor = ctx == null ? null : ctx.getUserId();
+        if (actor != null && !actor.isEmpty() && !actor.equals(targetUserId)) {
+            throw new NopException(ErpNotifyErrors.ERR_NOTIFY_USER_MISMATCH)
+                    .param(ErpNotifyErrors.ARG_ACTOR_USER_ID, actor)
+                    .param(ErpNotifyErrors.ARG_RECIPIENT_USER_ID, targetUserId);
+        }
     }
 
     protected boolean isRead(String notificationId, String userId, IEntityDao<ErpSysNotificationRead> dao) {

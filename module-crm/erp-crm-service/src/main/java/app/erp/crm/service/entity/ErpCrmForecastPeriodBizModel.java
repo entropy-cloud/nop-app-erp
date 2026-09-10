@@ -10,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import io.nop.biz.crud.EntityData;
 import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -32,6 +33,17 @@ public class ErpCrmForecastPeriodBizModel extends AbstractErpCrudBizModel<ErpCrm
 
     public ErpCrmForecastPeriodBizModel() {
         setEntityName(ErpCrmForecastPeriod.class.getName());
+    }
+
+    /**
+     * 创建路径守卫（P3-CK-crm-022-r3 修复面）：status 列 ORM 无 defaultValue，创建可携带任意 status
+     * 直建 FROZEN/CLOSED 绕过 requireOpen 语义——强制初始态 OPEN（Lead/Event「初始态由创建路径写入」
+     * 同族范式；crm2-012 update 侧 fixed 的创建侧承接）。
+     */
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpCrmForecastPeriod> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        entityData.getEntity().setStatus(ErpCrmConstants.FORECAST_PERIOD_STATUS_OPEN);
     }
 
     @Override

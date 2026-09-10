@@ -9,6 +9,7 @@ import app.erp.crm.service.ErpCrmErrors;
 import app.erp.crm.service.statemachine.ErpCrmLeadStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -53,6 +54,18 @@ public class ErpCrmLeadProcessor {
     // ---------- step：迁移校验 ----------
 
     protected void validateTransitionForQualify(ErpCrmLead lead, IServiceContext context) {
+        // qualify 前置（P2-CK-crm-020-r3 修复面，owner doc state-machine.md:44）：联系人信息必填。
+        // 适用面裁决（lesson 13 HEAD 复核）：联系人门槛适用于 leadType=LEAD 入漏斗路径（缺陷面 =
+        // 无联系人 LEAD 可 QUALIFIED 入漏斗）；OPPORTUNITY 经转化链入漏斗（convertToCustomer 新建商机，
+        // 联系数据承载于客户实体），不设联系人门槛——owner doc §转化前置守卫实现注记 + state-machine.md:48
+        // （QUALIFIED→CONVERTED 期待 leadType=OPPORTUNITY）为该路径权威，:44「leadType=LEAD」前置
+        // 若按字面全量适用将击穿转化链（TestErpCrmLeadConversion.testFullConversionChain）。
+        if (Objects.equals(lead.getLeadType(), ErpCrmConstants.LEAD_TYPE_LEAD)
+                && StringHelper.isEmpty(lead.getContactName()) && StringHelper.isEmpty(lead.getContactPhone())
+                && StringHelper.isEmpty(lead.getContactEmail())) {
+            throw new NopException(ErpCrmErrors.ERR_LEAD_CONTACT_REQUIRED)
+                    .param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode());
+        }
         try {
             stateMachine.assertCanQualify(currentStatus(lead));
         } catch (NopException e) {

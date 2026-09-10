@@ -64,6 +64,15 @@
             <option code="C" label="C级" value="C" i18n-en:label='Grade C'/>
             <option code="D" label="D级" value="D" i18n-en:label='Grade D'/>
         </dict>
+        <!-- P3-CK-drp-023-r3：月台预约状态（owner doc cross-dock.md §月台预约 5 值，value==code 单轨；
+             新增加性字典，绑定 ErpInvDrpDockAppointment.status（Non-Goal 实体真相源对齐，双批准 ses_f756d3549ffeXo5U6SGBcNTkiT + ses_f756ce8d6ffek6U24Uhlztqz92）） -->
+        <dict label="月台预约状态" name="erp-inv/drp-xdock-dock-status" valueType="string" i18n-en:label='Dock Appointment Status'>
+            <option code="AVAILABLE" label="空闲" value="AVAILABLE" i18n-en:label='Available'/>
+            <option code="BOOKED" label="已预约" value="BOOKED" i18n-en:label='Booked'/>
+            <option code="ARRIVED" label="已到车" value="ARRIVED" i18n-en:label='Arrived'/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label='Completed'/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label='Cancelled'/>
+        </dict>
     </dicts>
 
     <domains>
@@ -358,7 +367,7 @@
                 <column name="slotEnd" displayName="时间窗口结束" tagSet="clock" stdSqlType="TIMESTAMP" mandatory="true" code="SLOT_END" propId="6" i18n-en:displayName='Slot End' />
                 <column name="crossDockId" displayName="关联越库" stdSqlType="BIGINT" code="CROSS_DOCK_ID" propId="7" stdDataType="string" i18n-en:displayName='Cross Dock' />
                 <column name="carrierInfo" displayName="承运商信息" stdSqlType="VARCHAR" precision="500" code="CARRIER_INFO" propId="8" stdDataType="string" i18n-en:displayName='Carrier Info' />
-                <column name="status" displayName="状态" stdSqlType="VARCHAR" precision="50" code="STATUS" propId="9" stdDataType="string" i18n-en:displayName='Status' />
+                <column name="status" displayName="状态" ext:dict="erp-inv/drp-xdock-dock-status" stdSqlType="VARCHAR" precision="50" code="STATUS" propId="9" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="11" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="12" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />

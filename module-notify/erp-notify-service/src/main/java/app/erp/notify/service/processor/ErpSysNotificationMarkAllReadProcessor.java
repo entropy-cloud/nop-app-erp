@@ -15,6 +15,9 @@ public class ErpSysNotificationMarkAllReadProcessor extends AbstractErpSysNotifi
 
     public int markAllRead(String userId, IServiceContext ctx) {
         String resolved = resolveUserId(userId, ctx);
+        // 越权校验（P2-CK-notify-010-r3）：显式传入 userId 不得偏离 ctx 登录用户（inbox-patterns.md:25
+        // ctx 回退裁决针对「前端不传 userId」场景，未授权任意显式 userId 直通）
+        assertActorAllowed(resolved, ctx);
         List<ErpSysNotification> unread = unreadOf(resolved);
         IEntityDao<app.erp.notify.dao.entity.ErpSysNotificationRead> readDao = readDao();
         int count = 0;

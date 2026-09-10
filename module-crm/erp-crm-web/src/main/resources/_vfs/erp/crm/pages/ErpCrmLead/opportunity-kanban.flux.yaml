@@ -35,7 +35,9 @@ body:
     text: ${card.data.companyName ?? ""}
     className: text-xs text-gray-500
   - type: text
+    # 货币符号走 i18nEn 双语承载（P3-CK-crm-024-r3：zh ¥ / en $，不再硬编码单语）
     text: '${card.data.expectedRevenue != null ? "¥" + card.data.expectedRevenue : ""}'
+    i18nEn: '${card.data.expectedRevenue != null ? "$" + card.data.expectedRevenue : ""}'
     className: text-xs
   - type: status
     value: ${card.data.probability}
@@ -51,8 +53,10 @@ body:
       url: '@mutation:ErpCrmLead__moveStage'
       method: post
       data:
-        leadId: ${event.cardId.substring(5)}
-        toStageId: ${event.toColumnId.substring(4)}
+        # 前缀解耦（P3-CK-crm-024-r3）：按前缀 token 剥离（replace），不再耦合 flux 内部 id 前缀长度
+        # （原 cardId.substring(5)/toColumnId.substring(4) 在前缀变更时静默错参）
+        leadId: ${event.cardId.replace("card-", "")}
+        toStageId: ${event.toColumnId.replace("col-", "")}
   onCardClick:
     action: showToast
     args:

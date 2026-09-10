@@ -183,6 +183,9 @@ public class TestErpC16CsSlaNotification extends ErpIntegrationTestCase {
         assertTrue(html.contains("9.00"), "报表含 avgNps=9.00（seed 9 + 自包含 9 均值）");
 
         // ---------- 10. 通知派发（C09 自包含模板先例）→ markRead → countUnread 归零 ----------
+        // P2-CK-notify-010-r3 身份校验：已读操作以接收人（NOTIFY_USER）身份执行
+        io.nop.api.core.context.ContextProvider.getOrCreateContext().setUserId(NOTIFY_USER);
+        io.nop.api.core.context.ContextProvider.getOrCreateContext().setUserName(NOTIFY_USER);
         seedNotificationTemplate();
         ApiResponse<?> notify = rpcMutation("ErpSysNotification__notify", request("10_notify.json5", Map.class));
         output("10_notify_response.json5", notify);

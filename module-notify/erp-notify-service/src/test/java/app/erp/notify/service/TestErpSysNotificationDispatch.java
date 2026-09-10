@@ -154,6 +154,9 @@ public class TestErpSysNotificationDispatch extends JunitAutoTestCase {
     }
 
     private void markRead(String notificationId) {
+        // P2-CK-notify-010-r3 身份校验：调用方 ctx 用户须与通知接收人（USER_1）一致
+        io.nop.api.core.context.ContextProvider.getOrCreateContext().setUserId(USER_1);
+        io.nop.api.core.context.ContextProvider.getOrCreateContext().setUserName(USER_1);
         ApiResponse<?> resp = rpc(mutation, "ErpSysNotification__markRead",
                 Map.of("notificationId", notificationId));
         assertEquals(0, resp.getStatus(), "markRead 应成功: " + resp);

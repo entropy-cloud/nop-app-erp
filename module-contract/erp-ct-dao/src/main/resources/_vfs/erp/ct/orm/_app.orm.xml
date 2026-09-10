@@ -72,18 +72,18 @@
             <option code="PROGRESSIVE" label="逐笔累计" value="PROGRESSIVE" i18n-en:label="Progressive"/>
         </dict>
         <dict label="签章状态" name="erp-ct/sign-status" valueType="string" i18n-en:label="Signature Status">
-            <option code="PENDING_SIGNATURE" label="待签署" value="10" i18n-en:label="Pending Signature"/>
-            <option code="PARTIALLY_SIGNED" label="部分签署" value="20" i18n-en:label="Partially Signed"/>
-            <option code="FULLY_SIGNED" label="全部签署" value="30" i18n-en:label="Fully Signed"/>
-            <option code="REJECTED" label="拒签" value="40" i18n-en:label="Rejected"/>
-            <option code="EXPIRED" label="过期" value="50" i18n-en:label="Expired"/>
-            <option code="CANCELLED" label="已撤销" value="60" i18n-en:label="Cancelled"/>
+            <option code="PENDING_SIGNATURE" label="待签署" value="PENDING_SIGNATURE" i18n-en:label="Pending Signature"/>
+            <option code="PARTIALLY_SIGNED" label="部分签署" value="PARTIALLY_SIGNED" i18n-en:label="Partially Signed"/>
+            <option code="FULLY_SIGNED" label="全部签署" value="FULLY_SIGNED" i18n-en:label="Fully Signed"/>
+            <option code="REJECTED" label="拒签" value="REJECTED" i18n-en:label="Rejected"/>
+            <option code="EXPIRED" label="过期" value="EXPIRED" i18n-en:label="Expired"/>
+            <option code="CANCELLED" label="已撤销" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
         <dict label="签章提供商" name="erp-ct/sign-provider" valueType="string" i18n-en:label="Signature Provider">
-            <option code="ESIGN_BAO" label="e签宝" value="10" i18n-en:label="eSign Bao"/>
-            <option code="DOCUSIGN" label="DocuSign" value="20" i18n-en:label="DocuSign"/>
-            <option code="TSIGN" label="Tsign" value="30" i18n-en:label="Tsign"/>
-            <option code="MOCK" label="Mock(测试)" value="99" i18n-en:label="Mock"/>
+            <option code="ESIGN_BAO" label="e签宝" value="ESIGN_BAO" i18n-en:label="eSign Bao"/>
+            <option code="DOCUSIGN" label="DocuSign" value="DOCUSIGN" i18n-en:label="DocuSign"/>
+            <option code="TSIGN" label="Tsign" value="TSIGN" i18n-en:label="Tsign"/>
+            <option code="MOCK" label="Mock(测试)" value="MOCK" i18n-en:label="Mock"/>
         </dict>
         <dict label="文档类型" name="erp-ct/doc-type" valueType="string" i18n-en:label="Document Type">
             <option code="CONTRACT_SCAN" label="合同扫描件" value="10" i18n-en:label="Contract Scan"/>

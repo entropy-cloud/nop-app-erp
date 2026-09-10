@@ -142,6 +142,9 @@ public class TestErpSysNotificationSeedTemplates extends JunitAutoTestCase {
     }
 
     private int markAllRead(String userId) {
+        // P2-CK-notify-010-r3 身份校验：调用方 ctx 用户须与目标接收人一致
+        io.nop.api.core.context.ContextProvider.getOrCreateContext().setUserId(userId);
+        io.nop.api.core.context.ContextProvider.getOrCreateContext().setUserName(userId);
         ApiResponse<?> resp = rpc(mutation, "ErpSysNotification__markAllRead", Map.of("userId", userId));
         assertEquals(0, resp.getStatus(), "markAllRead 应成功: " + resp);
         return ((Number) resp.getData()).intValue();

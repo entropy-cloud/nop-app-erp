@@ -181,52 +181,52 @@ public interface _ErpCtDaoConstants {
     /**
      * 签章状态: 待签署 
      */
-    String SIGN_STATUS_PENDING_SIGNATURE = "10";
+    String SIGN_STATUS_PENDING_SIGNATURE = "PENDING_SIGNATURE";
                     
     /**
      * 签章状态: 部分签署 
      */
-    String SIGN_STATUS_PARTIALLY_SIGNED = "20";
+    String SIGN_STATUS_PARTIALLY_SIGNED = "PARTIALLY_SIGNED";
                     
     /**
      * 签章状态: 全部签署 
      */
-    String SIGN_STATUS_FULLY_SIGNED = "30";
+    String SIGN_STATUS_FULLY_SIGNED = "FULLY_SIGNED";
                     
     /**
      * 签章状态: 拒签 
      */
-    String SIGN_STATUS_REJECTED = "40";
+    String SIGN_STATUS_REJECTED = "REJECTED";
                     
     /**
      * 签章状态: 过期 
      */
-    String SIGN_STATUS_EXPIRED = "50";
+    String SIGN_STATUS_EXPIRED = "EXPIRED";
                     
     /**
      * 签章状态: 已撤销 
      */
-    String SIGN_STATUS_CANCELLED = "60";
+    String SIGN_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 签章提供商: e签宝 
      */
-    String SIGN_PROVIDER_ESIGN_BAO = "10";
+    String SIGN_PROVIDER_ESIGN_BAO = "ESIGN_BAO";
                     
     /**
      * 签章提供商: DocuSign 
      */
-    String SIGN_PROVIDER_DOCUSIGN = "20";
+    String SIGN_PROVIDER_DOCUSIGN = "DOCUSIGN";
                     
     /**
      * 签章提供商: Tsign 
      */
-    String SIGN_PROVIDER_TSIGN = "30";
+    String SIGN_PROVIDER_TSIGN = "TSIGN";
                     
     /**
      * 签章提供商: Mock(测试) 
      */
-    String SIGN_PROVIDER_MOCK = "99";
+    String SIGN_PROVIDER_MOCK = "MOCK";
                     
     /**
      * 文档类型: 合同扫描件 

@@ -8,6 +8,7 @@ import app.erp.drp.dao.entity.ErpDrpScenarioVersion;
 import app.erp.drp.service.ErpDrpConstants;
 import app.erp.drp.service.ErpDrpErrors;
 import app.erp.drp.service.drp.DrpDemandAggregator;
+import app.erp.drp.service.drp.DrpEngine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -116,6 +117,8 @@ public class SimulationDrpEngine {
                     .add(nz(ctx.allocatedQty))
                     .subtract(nz(ctx.onOrderQty));
             if (net.signum() < 0) net = BigDecimal.ZERO;
+            // 补货方法语义接入（drp-022-r3 修复面，与主引擎 DrpEngine.applyReplenishmentMethod 同源）
+            net = DrpEngine.applyReplenishmentMethod(net, param, ctx.currentStock);
             BigDecimal suggested = roundToMultiple(net, orderMultiple);
 
             ErpDrpLine line = lineDao.newEntity();

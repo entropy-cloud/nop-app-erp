@@ -139,6 +139,18 @@
         }
 
 
+        private String _status_label;
+
+    
+        public String getStatus_label(){
+            return _status_label;
+        }
+
+        public void setStatus_label(String value){
+            this._status_label = value;
+        }
+
+
         private String _remark;
 
     

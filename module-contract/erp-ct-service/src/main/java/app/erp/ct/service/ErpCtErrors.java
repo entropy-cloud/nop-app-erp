@@ -117,6 +117,14 @@ public interface ErpCtErrors {
             "返利协议 {rebateAgreementId} 非生效中（当前状态={currentStatus}），不可计提",
             ARG_REBATE_AGREEMENT_ID, ARG_CURRENT_STATUS);
 
+    ErrorCode ERR_CT_REBATE_AGREEMENT_ILLEGAL_TRANSITION = ErrorCode.define("erp.err.ct.rebate-agreement-illegal-transition",
+            "返利协议 {rebateAgreementId} 当前状态={currentStatus}，不允许激活（仅 DRAFT 可激活）",
+            ARG_REBATE_AGREEMENT_ID, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_CT_REBATE_AGREEMENT_NOT_EFFECTIVE = ErrorCode.define("erp.err.ct.rebate-agreement-not-effective",
+            "返利协议 {rebateAgreementId} 生效日 {startDate} 未到（当前 {currentDate}），不可激活",
+            ARG_REBATE_AGREEMENT_ID, "startDate", "currentDate");
+
     ErrorCode ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION = ErrorCode.define("erp.err.ct.settlement-illegal-transition",
             "返利结算单 {settlementId} 当前状态={currentStatus}，不允许过账（仅 DRAFT 可过账）",
             ARG_SETTLEMENT_ID, ARG_CURRENT_STATUS);

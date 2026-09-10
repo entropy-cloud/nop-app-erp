@@ -4,6 +4,8 @@ import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.FilterBeans;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.api.IBizObject;
 import io.nop.biz.crud.IQueryTransformer;
 import io.nop.core.context.IServiceContext;
@@ -13,6 +15,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.dao.IOrmEntityDao;
 import io.nop.orm.model.IEntityModel;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,6 +36,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Description("全局 orgId 读路径隔离 QueryTransformer（config-gated，默认关闭）")
 public class ErpOrgIsolationQueryTransformer implements IQueryTransformer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpOrgIsolationQueryTransformer.class);
 
     @Inject
     IDaoProvider daoProvider;
@@ -61,7 +67,17 @@ public class ErpOrgIsolationQueryTransformer implements IQueryTransformer {
         filter.addFilter(FilterBeans.eq(ErpOrgIsolationConstants.PROP_ORG_ID, orgId));
     }
 
-    /** 缓存解析实体是否含 orgId 列（系统配置等无 orgId 实体透明跳过）。 */
+    /**
+     * 解析实体是否含 orgId 列（P3-CK-common-012-r3 修复面：区分「无 orgId 列」与「解析失败」两态）。
+     *
+     * <ul>
+     *   <li>解析成功且无 orgId 列 → false（合法白名单跳过，静默）。</li>
+     *   <li>解析失败（类加载/dao/模型反射失败，重部署窗口/类加载器失配）→ WARN 英文日志；
+     *       config {@code erp.multi-company.org-isolation-fail-closed}=true 时抛
+     *       {@link ErpOrgCommonErrors#ERR_ORG_ISOLATION_RESOLVE_FAILED}（fail-closed，拒答优于未隔离放行），
+     *       缺省 false 保持 fail-open 兼容（WARN 可观测）。</li>
+     * </ul>
+     */
     boolean entityHasOrgId(IBizObject bizObj) {
         if (bizObj == null || bizObj.getObjMeta() == null) {
             return false;
@@ -82,17 +98,31 @@ public class ErpOrgIsolationQueryTransformer implements IQueryTransformer {
     @SuppressWarnings("unchecked")
     private boolean resolveEntityHasOrgId(String entityName) {
         if (daoProvider == null) {
-            return false;
+            return onResolveFailure(entityName, null);
         }
         try {
             Class<?> clazz = Class.forName(entityName, false, Thread.currentThread().getContextClassLoader());
             IEntityDao<?> dao = daoProvider.daoFor((Class<? extends IDaoEntity>) clazz);
             if (dao instanceof IOrmEntityDao) {
                 IEntityModel model = ((IOrmEntityDao<?>) dao).getEntityModel();
-                return model != null && model.getColumn(ErpOrgIsolationConstants.PROP_ORG_ID, true) != null;
+                if (model == null) {
+                    return onResolveFailure(entityName, null);
+                }
+                return model.getColumn(ErpOrgIsolationConstants.PROP_ORG_ID, true) != null;
             }
-        } catch (Throwable e) {
             return false;
+        } catch (Throwable e) {
+            return onResolveFailure(entityName, e);
+        }
+    }
+
+    private boolean onResolveFailure(String entityName, Throwable e) {
+        LOG.warn("org-isolation: entity model resolve failed for [{}], isolation filter skipped for this entity (fail-open). "
+                + "Enable erp.multi-company.org-isolation-fail-closed=true to fail-closed.", entityName,
+                e == null ? new IllegalStateException("daoProvider unavailable") : e);
+        if (AppConfig.var(ErpOrgIsolationConstants.CONFIG_ORG_ISOLATION_FAIL_CLOSED, false)) {
+            throw new NopException(app.erp.common.service.ErpCommonErrors.ERR_ORG_ISOLATION_RESOLVE_FAILED)
+                    .param(app.erp.common.service.ErpCommonErrors.ARG_ENTITY_NAME, entityName);
         }
         return false;
     }

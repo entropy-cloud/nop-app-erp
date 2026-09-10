@@ -113,6 +113,11 @@ public class ErpApsOperationOrderBizModel extends AbstractErpCrudBizModel<ErpAps
     /**
      * F11 批量前向排产（plan 2026-07-22-0444-2 Phase 2）。逐行调 {@link #scheduleForward}；
      * 行级失败（排程引擎异常）记入 {@link BatchOperationResult#getFailures()}，不阻塞其他行。
+     *
+     * <p>行级容错（P3-CK-aps-013-r3 修复面）：catch 面收窄为 {@link Exception}（非 Nop 引擎/持久层异常
+     * 同样行级隔离，不再中止整批违 javadoc「不阻塞其他行」承诺；pur-013/mfg-017 同型族范式），
+     * 失败行经 {@code orm().clearSession()} 丢弃半途脏状态（先行成功行已在各自 run 内 flushSession
+     * 落库，clear 仅 detach 失败行残留，结果上报与事务边界对齐）。
      */
     @Override
     @BizMutation
@@ -126,10 +131,23 @@ public class ErpApsOperationOrderBizModel extends AbstractErpCrudBizModel<ErpAps
                 scheduleForward(id, context);
                 result.recordSuccess();
             } catch (NopException e) {
+                discardFailedRowState();
                 result.recordFailure(id, e.getErrorCode(), e.getDescription());
+            } catch (Exception e) {
+                discardFailedRowState();
+                result.recordFailure(id, e.getClass().getSimpleName(), String.valueOf(e.getMessage()));
             }
         }
         return result;
+    }
+
+    /** 丢弃失败行在共享 ORM 会话中的半途脏状态（防成功上报与实际落库背离）。 */
+    protected void discardFailedRowState() {
+        try {
+            orm().clearSession();
+        } catch (Exception ex) {
+            // 会话清理失败不影响行级失败记录（结果上报为准）
+        }
     }
 
     @Override

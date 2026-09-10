@@ -2,7 +2,7 @@ package app.erp.prj.service;
 
 /**
  * 项目域状态码与配置键常量。权威值来自 {@code module-projects/model/app-erp-projects.orm.xml}
- * 关联字典 {@code erp-prj/project-status}、{@code erp-prj/task-status}、{@code erp-prj/timesheet-status}。
+ * 关联字典 {@code erp-prj/project-status}、{@code erp-prj/task-status}。
  */
 public interface ErpPrjConstants {
 
@@ -59,7 +59,8 @@ public interface ErpPrjConstants {
     String TASK_STATUS_DONE = "DONE";
     String TASK_STATUS_BLOCKED = "BLOCKED";
 
-    // ---- timesheet-status 已合并到 approve-status（wf/approve-status 四态标准）----
+    // ---- 工时单状态已合并到 approve-status（wf/approve-status 四态标准；死字典 erp-prj/timesheet-status
+    //      已随 prj-024-r3 修复自 ORM 登记删除，plan 2026-09-10-1141-2 Phase 1）----
 
     // ---- approve-status（标准审批轴，归集头/预算头/账单头 approveStatus 字段使用）----
     String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
@@ -83,6 +84,8 @@ public interface ErpPrjConstants {
     String SOURCE_BILL_TYPE_PURCHASE_RECEIVE = "PURCHASE_RECEIVE";
 
     // ---- pnl-calc-status（ErpPrjProjectPnl.calcStatus） ----
+    // PENDING 为预留初始态（intentional reserved，prj-024-r3 裁决登记）：当前 ProjectPnlCalculator
+    // 建行直达 CALCULATED，PENDING 零 writer；保留供首次挂账前置检查等初始态语义复用（plan 2026-09-10-1141-2 Phase 1）。
     String PNL_CALC_STATUS_PENDING = "PENDING";
     String PNL_CALC_STATUS_CALCULATED = "CALCULATED";
 

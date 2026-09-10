@@ -15,6 +15,7 @@ import app.erp.contract.dao.entity.ErpCtRebateAgreement;
  * <ul>
  *   <li>{@link #runAccrual}：聚合期间已过账 AP/AR 发票，按 {@code accrualMethod}
  *       （PERIOD_END / PROGRESSIVE）驱动 {@code RebateEngine.accrue}，更新累计/预估金额。</li>
+ *   <li>{@link #activate}：协议生效 DRAFT→ACTIVE（ct-026-r3 修复面，打通计提链入口）。</li>
  * </ul>
  *
  * <p>协议须 ACTIVE，否则抛 {@link io.nop.api.core.exceptions.NopException}。
@@ -25,4 +26,7 @@ public interface IErpCtRebateAgreementBiz extends ICrudBiz<ErpCtRebateAgreement>
     ErpCtRebateAgreement runAccrual(@Name("agreementId") String agreementId,
                                     @Name("asOfDate") java.time.LocalDate asOfDate,
                                     IServiceContext context);
+
+    @BizMutation
+    ErpCtRebateAgreement activate(@Name("agreementId") String agreementId, IServiceContext context);
 }

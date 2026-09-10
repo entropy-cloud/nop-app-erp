@@ -25,6 +25,8 @@ public interface ErpNotifyErrors {
     String ARG_PROVIDER = "provider";
     String ARG_LOCALE = "locale";
     String ARG_RETRY_COUNT = "retryCount";
+    // P2-CK-notify-010-r3 越权校验参数键
+    String ARG_ACTOR_USER_ID = "actorUserId";
 
     ErrorCode ERR_NOTIFY_TEMPLATE_NOT_ACTIVE = ErrorCode.define(
             "erp.err.notify.template.not-active",
@@ -94,4 +96,10 @@ public interface ErpNotifyErrors {
             "erp.err.notify.event-type.invalid",
             "通知事件类型[{eventName}]格式非法（含路径注入字符或不合规段）",
             ARG_EVENT_NAME);
+
+    /** 已读操作越权（P2-CK-notify-010-r3）：当前用户与目标接收人不一致时拒绝 markRead/markAllRead。 */
+    ErrorCode ERR_NOTIFY_USER_MISMATCH = ErrorCode.define(
+            "erp.err.notify.user-mismatch",
+            "当前用户[{actorUserId}]无权操作接收人[{recipientUserId}]的通知已读状态",
+            ARG_ACTOR_USER_ID, ARG_RECIPIENT_USER_ID);
 }

@@ -82,19 +82,19 @@
         <!-- 电子签章状态机（plan 2026-07-04-2200-2）：design e-signature.md 权威状态机 6 态；
              design webhook 表列 DECLINED 但状态机/字典无此态——本期按权威状态机收敛 declined→REJECTED。 -->
         <dict label="签章状态" name="erp-ct/sign-status" valueType="string" i18n-en:label='Signature Status'>
-            <option code="PENDING_SIGNATURE" label="待签署" value="10" i18n-en:label='Pending Signature'/>
-            <option code="PARTIALLY_SIGNED" label="部分签署" value="20" i18n-en:label='Partially Signed'/>
-            <option code="FULLY_SIGNED" label="全部签署" value="30" i18n-en:label='Fully Signed'/>
-            <option code="REJECTED" label="拒签" value="40" i18n-en:label='Rejected'/>
-            <option code="EXPIRED" label="过期" value="50" i18n-en:label='Expired'/>
-            <option code="CANCELLED" label="已撤销" value="60" i18n-en:label='Cancelled'/>
+            <option code="PENDING_SIGNATURE" label="待签署" value="PENDING_SIGNATURE" i18n-en:label='Pending Signature'/>
+            <option code="PARTIALLY_SIGNED" label="部分签署" value="PARTIALLY_SIGNED" i18n-en:label='Partially Signed'/>
+            <option code="FULLY_SIGNED" label="全部签署" value="FULLY_SIGNED" i18n-en:label='Fully Signed'/>
+            <option code="REJECTED" label="拒签" value="REJECTED" i18n-en:label='Rejected'/>
+            <option code="EXPIRED" label="过期" value="EXPIRED" i18n-en:label='Expired'/>
+            <option code="CANCELLED" label="已撤销" value="CANCELLED" i18n-en:label='Cancelled'/>
         </dict>
         <!-- 电子签章提供商（design e-signature.md 列 3 供应商 + MOCK 占位供 stub 测试）。 -->
         <dict label="签章提供商" name="erp-ct/sign-provider" valueType="string" i18n-en:label='Signature Provider'>
-            <option code="ESIGN_BAO" label="e签宝" value="10" i18n-en:label='eSign Bao'/>
-            <option code="DOCUSIGN" label="DocuSign" value="20" i18n-en:label='DocuSign'/>
-            <option code="TSIGN" label="Tsign" value="30" i18n-en:label='Tsign'/>
-            <option code="MOCK" label="Mock(测试)" value="99" i18n-en:label='Mock'/>
+            <option code="ESIGN_BAO" label="e签宝" value="ESIGN_BAO" i18n-en:label='eSign Bao'/>
+            <option code="DOCUSIGN" label="DocuSign" value="DOCUSIGN" i18n-en:label='DocuSign'/>
+            <option code="TSIGN" label="Tsign" value="TSIGN" i18n-en:label='Tsign'/>
+            <option code="MOCK" label="Mock(测试)" value="MOCK" i18n-en:label='Mock'/>
         </dict>
         <!-- RC-R1.80（UC-CT-10 B/C）：文档类型（owner doc contract-repository.md :73-79 规范 5 值表）。 -->
         <dict label="文档类型" name="erp-ct/doc-type" valueType="string" i18n-en:label='Document Type'>

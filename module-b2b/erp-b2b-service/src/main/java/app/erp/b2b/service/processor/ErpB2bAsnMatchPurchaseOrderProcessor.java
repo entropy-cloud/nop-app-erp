@@ -124,6 +124,12 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
         return asn;
     }
 
+    /**
+     * 跨域只读豁免（P2-CK-b2b-017-r3 同点旁证登记）：pur 域 {@code ErpPurOrder}/{@code ErpPurOrderLine}
+     * 经 {@link IDaoProvider} 只读直访——系统级 ASN↔PO 匹配查表，无用户上下文过滤需求，
+     * 对齐 b2b {@code CodeMappingResolver} IDaoProvider 豁免样板；写侧豁免见
+     * {@code ErpB2bAsnCreateReceiveFromAsnProcessor} javadoc「跨域写豁免登记」。
+     */
     protected ErpPurOrder findPurchaseOrder(String code) {
         if (code == null) {
             return null;

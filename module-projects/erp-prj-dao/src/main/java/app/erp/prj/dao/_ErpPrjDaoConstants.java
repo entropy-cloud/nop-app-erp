@@ -49,21 +49,6 @@ public interface _ErpPrjDaoConstants {
     String TASK_STATUS_BLOCKED = "BLOCKED";
                     
     /**
-     * 工时状态: 草稿 
-     */
-    String TIMESHEET_STATUS_DRAFT = "DRAFT";
-                    
-    /**
-     * 工时状态: 已提交 
-     */
-    String TIMESHEET_STATUS_SUBMITTED = "SUBMITTED";
-                    
-    /**
-     * 工时状态: 已审批 
-     */
-    String TIMESHEET_STATUS_APPROVED = "APPROVED";
-                    
-    /**
      * 优先级: 低 
      */
     String PRIORITY_LOW = "LOW";

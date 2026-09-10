@@ -140,6 +140,37 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
                 "IN_PROGRESS 工序不可回退，应拒绝插单");
     }
 
+    // ---------------- 插单本体状态白名单（P2-CK-aps-012-r3） ----------------
+
+    @Test
+    public void testInsertRushOrderRejectsTerminalRush() {
+        String scheduleId = createSchedule("S-TERM", "FORWARD");
+        String rush = createOpWithStatus("OR-FIN", "1", 10, MACHINE_A, 10, "0", "20", "1",
+                "2026-07-13T09:00:00", "FINISHED");
+        setLatest(rush, "2026-07-13T09:55:00");
+
+        ApiResponse<?> resp = runMutation("ErpApsOperationOrder__insertRushOrder",
+                ApiRequest.build(Map.of("operationOrderId", rush)));
+        assertTrue(resp.getStatus() != 0, "FINISHED 终态急单不可插单复活: " + resp);
+        assertEquals(ErpApsErrors.ERR_APS_RUSH_ORDER_NOT_INSERTABLE.getErrorCode(), resp.getCode(),
+                "终态急单插单拒绝码应为 ERR_APS_RUSH_ORDER_NOT_INSERTABLE");
+        assertEquals("FINISHED", reloadOp(rush).get("status"), "终态急单不得被置回 DRAFT/PLANNED");
+    }
+
+    @Test
+    public void testInsertRushOrderRejectsCancelledRush() {
+        String scheduleId = createSchedule("S-CXL", "FORWARD");
+        String rush = createOpWithStatus("OR-CXL", "1", 10, MACHINE_A, 10, "0", "20", "1",
+                "2026-07-14T09:00:00", "CANCELLED");
+        setLatest(rush, "2026-07-14T09:55:00");
+
+        ApiResponse<?> resp = runMutation("ErpApsOperationOrder__insertRushOrder",
+                ApiRequest.build(Map.of("operationOrderId", rush)));
+        assertTrue(resp.getStatus() != 0, "CANCELLED 终态急单不可插单复活: " + resp);
+        assertEquals(ErpApsErrors.ERR_APS_RUSH_ORDER_NOT_INSERTABLE.getErrorCode(), resp.getCode(),
+                "终态急单插单拒绝码应为 ERR_APS_RUSH_ORDER_NOT_INSERTABLE");
+    }
+
     // ---------------- 排产方案状态机 ----------------
 
     @Test

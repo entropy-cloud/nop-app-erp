@@ -73,6 +73,14 @@
             <option code="C" label="C级" value="C" i18n-en:label="Grade C"/>
             <option code="D" label="D级" value="D" i18n-en:label="Grade D"/>
         </dict>
+        <dict label="月台预约状态" name="erp-inv/drp-xdock-dock-status" valueType="string"
+              i18n-en:label="Dock Appointment Status">
+            <option code="AVAILABLE" label="空闲" value="AVAILABLE" i18n-en:label="Available"/>
+            <option code="BOOKED" label="已预约" value="BOOKED" i18n-en:label="Booked"/>
+            <option code="ARRIVED" label="已到车" value="ARRIVED" i18n-en:label="Arrived"/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label="Completed"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -638,7 +646,7 @@
                 <column code="CARRIER_INFO" displayName="承运商信息" name="carrierInfo" precision="500" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Carrier Info"/>
                 <column code="STATUS" displayName="状态" name="status" precision="50" propId="9" stdDataType="string"
-                        stdSqlType="VARCHAR" i18n-en:displayName="Status"/>
+                        stdSqlType="VARCHAR" ext:dict="erp-inv/drp-xdock-dock-status" i18n-en:displayName="Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="10"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"

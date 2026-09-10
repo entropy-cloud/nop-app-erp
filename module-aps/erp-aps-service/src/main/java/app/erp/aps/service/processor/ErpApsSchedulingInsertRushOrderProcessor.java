@@ -93,13 +93,35 @@ public class ErpApsSchedulingInsertRushOrderProcessor {
             facade.opOrderDao().saveOrUpdateEntity(op);
         }
 
+        // 新单本体状态白名单（P2-CK-aps-012-r3 修复面，owner doc aps/state-machine.md §3 终态不可恢复）：
+        // 仅 DRAFT/PLANNED/UNSCHEDULABLE 可插单重排；FINISHED/CANCELLED 终态与 IN_PROGRESS/HOLD/ON_HOLD
+        // 在制/保持态拒绝（终态复活/在制逃逸守卫）。
+        String rushStatus = rush.getStatus();
+        if (!ErpApsConstants.OP_STATUS_DRAFT.equals(rushStatus)
+                && !ErpApsConstants.OP_STATUS_PLANNED.equals(rushStatus)
+                && !ErpApsConstants.OP_STATUS_UNSCHEDULABLE.equals(rushStatus)) {
+            throw new NopException(ErpApsErrors.ERR_APS_RUSH_ORDER_NOT_INSERTABLE)
+                    .param(ErpApsErrors.ARG_OP_CODE, rush.getCode())
+                    .param(ErpApsErrors.ARG_CURRENT_STATUS, rushStatus);
+        }
+
         // 窗口内 DRAFT 工序（含新单 + 回退者）重排
         java.util.List<ErpApsOperationOrder> toSchedule = new java.util.ArrayList<>();
         toSchedule.add(rush);
         toSchedule.addAll(toRevert);
-        // 新单若仍 DRAFT 则纳入；置 DRAFT 统一处理
+        // 新单若仍 DRAFT 则纳入；置 DRAFT 统一处理（PLANNED 经 Bean 矩阵回退并释放原时段预留；
+        // UNSCHEDULABLE 与 DRAFT 同池自愈重排，RC-R1.87 语义）
         if (!ErpApsConstants.OP_STATUS_DRAFT.equals(rush.getStatus())) {
-            rush.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
+            if (ErpApsConstants.OP_STATUS_PLANNED.equals(rush.getStatus())) {
+                // 先释放 PLANNED 态急单原时段产能预留（与回退者同型，防自冲突），再经 Bean 断言矩阵合法性
+                facade.releaseReservationsByOrder(rush.getId());
+                try {
+                    stateMachine.assertCanRevertToDraft(rush.getStatus());
+                } catch (NopException e) {
+                    throw e.param(ErpApsErrors.ARG_OP_CODE, rush.getCode());
+                }
+            }
+            rush.setStatus(stateMachine.revertToDraftTargetStatus());
         }
 
         List<ErpApsConstraint> maintenance = facade.loadMaintenanceConstraintsByMachine(rush.getMachineId(), windowStart, windowEnd);

@@ -217,6 +217,7 @@ prop:
       slotEnd: 时间窗口结束
       slotStart: 时间窗口开始
       status: 状态
+      status_label: 状态
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

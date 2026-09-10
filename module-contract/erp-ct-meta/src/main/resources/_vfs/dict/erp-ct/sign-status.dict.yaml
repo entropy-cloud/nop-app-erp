@@ -6,26 +6,26 @@ description:
 options:
 
   - label: 待签署
-    value: 10
+    value: PENDING_SIGNATURE
     description: 
   
   - label: 部分签署
-    value: 20
+    value: PARTIALLY_SIGNED
     description: 
   
   - label: 全部签署
-    value: 30
+    value: FULLY_SIGNED
     description: 
   
   - label: 拒签
-    value: 40
+    value: REJECTED
     description: 
   
   - label: 过期
-    value: 50
+    value: EXPIRED
     description: 
   
   - label: 已撤销
-    value: 60
+    value: CANCELLED
     description: 
   

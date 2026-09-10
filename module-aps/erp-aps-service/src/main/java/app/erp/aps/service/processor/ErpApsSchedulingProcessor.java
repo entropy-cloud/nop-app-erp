@@ -190,8 +190,13 @@ public class ErpApsSchedulingProcessor {
     protected List<ErpApsConstraint> loadMaintenanceConstraints(ErpApsSchedule schedule) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("constraintType", ErpApsConstants.CONSTRAINT_TYPE_MAINTENANCE));
-        if (schedule.getHorizonStart() != null && schedule.getHorizonEnd() != null) {
+        // 约束 horizon 过滤（P3-CK-aps-014-r3 修复面）：区间重叠语义按已设界单侧过滤——
+        // 原双界强制（任一界为空即整体不过滤）使单界排产方案全量载入历史停机约束侵占未来产能
+        //（与 aps-002 假冲突叠加面见索引注记）。endTime >= horizonStart 且 startTime <= horizonEnd。
+        if (schedule.getHorizonStart() != null) {
             q.addFilter(ge("endTime", schedule.getHorizonStart()));
+        }
+        if (schedule.getHorizonEnd() != null) {
             q.addFilter(le("startTime", schedule.getHorizonEnd()));
         }
         return constraintDao().findAllByQuery(q);

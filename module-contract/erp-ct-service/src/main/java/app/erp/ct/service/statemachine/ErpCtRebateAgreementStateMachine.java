@@ -1,6 +1,8 @@
 package app.erp.ct.service.statemachine;
 
 import app.erp.ct.service.ErpCtConstants;
+import app.erp.ct.service.ErpCtErrors;
+import io.nop.api.core.exceptions.NopException;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,14 +16,14 @@ import java.util.List;
  *
  * <p>严格无状态（契约 §2）：不注入 DAO/IBiz/IServiceContext/事务，只接收状态值。
  *
- * <p><strong>退化分类 Bean（layer-2 四方对照裁定登记）</strong>：dict {@code erp-ct/rebate-agreement-status}
- * 含 4 值（DRAFT/ACTIVE/EXPIRED/SETTLED），但全仓**零命名动作迁移 writer**（无 activate/suspend/expire/
- * terminate/cancel mutation），仅 DRAFT 经 CRUD 创建可达（新建 seed）。ACTIVE/EXPIRED/SETTLED 在命名动作路径下
- * **零 writer 可达**，登记为**预留死状态**（intentional reserved——对齐 Contract CANCELLED/NEGOTIATION +
- * hr SUSPENDED 先例：保留优于删除）。故本 Bean {@link #transitions()} 返回**空列表**（零迁移边），
- * {@link #terminalStatuses()} 亦为空（无终态——三死状态非真正终态，仅预留语义入口）。
+ * <p><strong>分类登记（P1-CK-ct-026-r3 修复后更新）</strong>：dict {@code erp-ct/rebate-agreement-status}
+ * 含 4 值（DRAFT/ACTIVE/EXPIRED/SETTLED）。ct-026-r3 修复新增命名动作 {@code activate}（DRAFT→ACTIVE，
+ * BizModel {@code ErpCtRebateAgreementBizModel.activate}），ACTIVE 转为命名动作可达；EXPIRED/SETTLED
+ * 在命名动作路径下仍**零 writer 可达**，登记为**预留死状态**（intentional reserved——对齐 Contract
+ * CANCELLED/NEGOTIATION + hr SUSPENDED 先例：保留优于删除）。本 Bean {@link #transitions()} 返回
+ * DRAFT→ACTIVE 单边；{@link #terminalStatuses()} 为空。
  *
- * <p><strong>唯一 live 用途 = 只读 accrual 守卫集中化</strong>：{@code ErpCtRebateAgreementRunAccrualProcessor}
+ * <p><strong>计提守卫集中化</strong>：{@code ErpCtRebateAgreementRunAccrualProcessor}
  * 与 {@code RebateEngine} 的 runAccrual/accrual 路径在计提前断言 {@code status==ACTIVE}（否则抛
  * {@code ERR_CT_REBATE_AGREEMENT_NOT_ACTIVE}）。本 Bean 将该只读分类集中为可测元数据 {@link #isActive(String)}，
  * 供两处委托调用，错误码对外不变。
@@ -30,11 +32,11 @@ import java.util.List;
  * {@code settlement-status}（DRAFT→POSTED，M4.65 plan-first），生成 credit-memo 发票保存 {@code posted=false}，
  * **与本 RebateAgreement.status 轴无关**。本 Bean 不触及过账（§8 + §3 posted 不入轴）。
  *
- * <p><strong>死状态集合声明</strong>：ACTIVE/EXPIRED/SETTLED **不在** {@link #initialStatuses()} /
+ * <p><strong>死状态集合声明</strong>：EXPIRED/SETTLED **不在** {@link #initialStatuses()} /
  * {@link #terminalStatuses()} / {@link #transitions()} 任一集合（layer-2 裁定登记为 intentional reserved）。
  *
- * <p><strong>Successor</strong>：返利协议 activate/expire/settle 业务流落地时，开独立 plan 实现命名动作 mutation
- * + 填充本 Bean 的 {@link #transitions()} 边；届时 ACTIVE/EXPIRED/SETTLED 转为可达并据实纳入对应集合。
+ * <p><strong>Successor</strong>：返利协议 expire/settle 业务流落地时，开独立 plan 实现命名动作 mutation
+ * + 补充本 Bean 的 {@link #transitions()} 边；届时 EXPIRED/SETTLED 转为可达并据实纳入对应集合。
  */
 public class ErpCtRebateAgreementStateMachine {
 
@@ -50,28 +52,45 @@ public class ErpCtRebateAgreementStateMachine {
         return ErpCtConstants.REBATE_AGREEMENT_STATUS_ACTIVE.equals(status);
     }
 
-    // ---------- 终态/初始态分类（退化轴如实反映） ----------
+    // ---------- 命名动作迁移守卫 ----------
 
     /**
-     * 终态分类：**退化轴无终态**（ACTIVE/EXPIRED/SETTLED 为预留死状态，非真正终态；零命名动作迁移 writer）。
+     * 协议激活守卫（ct-026-r3）：仅 DRAFT 可激活（DRAFT 为审批前评审态，即「审批守卫」载体；
+     * 生效日守卫由 BizModel activate 方法承载）。
+     */
+    public void assertCanActivate(String status) {
+        if (!ErpCtConstants.REBATE_AGREEMENT_STATUS_DRAFT.equals(status)) {
+            throw new NopException(ErpCtErrors.ERR_CT_REBATE_AGREEMENT_ILLEGAL_TRANSITION)
+                    .param(ErpCtErrors.ARG_CURRENT_STATUS, status)
+                    .param(ErpCtErrors.ARG_EXPECTED_STATUS, ErpCtConstants.REBATE_AGREEMENT_STATUS_DRAFT);
+        }
+    }
+
+    // ---------- 终态/初始态分类 ----------
+
+    /**
+     * 终态分类：**无终态**（EXPIRED/SETTLED 为预留死状态，非真正终态）。
      *
-     * <p>对所有状态返回 false（含三死状态），如实反映退化解。
+     * <p>对所有状态返回 false，如实反映当前解。
      */
     public boolean isTerminal(String status) {
         return false;
     }
 
-    // ---------- 只读元数据接口（退化解：零迁移边） ----------
+    // ---------- 只读元数据接口 ----------
 
     /**
-     * 迁移元数据：**空列表**（退化轴——零命名动作迁移 writer；详见类 javadoc 死状态声明 + Successor）。
+     * 迁移元数据：DRAFT→ACTIVE（ct-026-r3 命名动作 {@code activate}；EXPIRED/SETTLED 零 writer 不入边）。
      */
     public List<TransitionDefinition> transitions() {
-        return Collections.emptyList();
+        return Collections.singletonList(new TransitionDefinition(
+                "activate",
+                ErpCtConstants.REBATE_AGREEMENT_STATUS_DRAFT,
+                ErpCtConstants.REBATE_AGREEMENT_STATUS_ACTIVE));
     }
 
     /**
-     * 终态集合：**空列表**（退化轴无终态；ACTIVE/EXPIRED/SETTLED 为预留死状态，不纳入）。
+     * 终态集合：**空列表**（无终态；EXPIRED/SETTLED 为预留死状态，不纳入）。
      */
     public List<String> terminalStatuses() {
         return Collections.emptyList();

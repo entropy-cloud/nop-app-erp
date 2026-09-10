@@ -51,6 +51,9 @@ public class TestErpSysNotificationSubscription extends JunitAutoTestCase {
 
         assertEquals(3, countUnread(user));
 
+        // P2-CK-notify-010-r3 身份校验：调用方 ctx 用户须与目标接收人一致
+        io.nop.api.core.context.ContextProvider.getOrCreateContext().setUserId(user);
+        io.nop.api.core.context.ContextProvider.getOrCreateContext().setUserName(user);
         ApiResponse<?> resp = executeRpc(mutation, "ErpSysNotification__markAllRead",
                 ApiRequest.build(Map.of("userId", user)));
         assertEquals(0, resp.getStatus());
@@ -73,6 +76,9 @@ public class TestErpSysNotificationSubscription extends JunitAutoTestCase {
         assertEquals(2, all.size());
 
         String firstId = all.get(0).getId();
+        // P2-CK-notify-010-r3 身份校验：调用方 ctx 用户须与通知接收人一致
+        io.nop.api.core.context.ContextProvider.getOrCreateContext().setUserId(user);
+        io.nop.api.core.context.ContextProvider.getOrCreateContext().setUserName(user);
         ApiResponse<?> resp = executeRpc(mutation, "ErpSysNotification__markRead",
                 ApiRequest.build(Map.of("notificationId", firstId)));
         assertEquals(0, resp.getStatus());

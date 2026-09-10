@@ -170,6 +170,23 @@ public class TestErpCrmLeadConversion extends JunitAutoTestCase {
     }
 
     @Test
+    public void testQualifyRequiresContactInfoAndLeadType() {
+        ormTemplate.runInSession(() -> {
+            seedStage(STAGE_NEW, "STG-NEW", "新线索", 10, 20);
+            // leadType=LEAD 但联系人信息全空 → qualify 前置缺口（P2-CK-crm-020-r3）
+            ErpCrmLead noContact = newLead("2801", "LEAD-NOCONTACT-001",
+                    ErpCrmConstants.LEAD_TYPE_LEAD, ErpCrmConstants.DOC_STATUS_NEW);
+            daoProvider.daoFor(ErpCrmLead.class).saveEntity(noContact);
+        });
+        ApiResponse<?> noContact = qualify("2801");
+        assertTrue(noContact.getStatus() != 0, "无联系人信息的 leadType=LEAD 不可 QUALIFIED 入漏斗");
+        assertEquals(ErpCrmErrors.ERR_LEAD_CONTACT_REQUIRED.getErrorCode(), noContact.getCode(),
+                "联系人全空 qualify 拒绝码应为 ERR_LEAD_CONTACT_REQUIRED");
+        assertEquals(ErpCrmConstants.DOC_STATUS_NEW, reloadLead("2801").getDocStatus(),
+                "被拒 lead 不得进入漏斗（docStatus 保持 NEW）");
+    }
+
+    @Test
     public void testAlreadyConvertedRejected() {
         ormTemplate.runInSession(() -> {
             seedCurrency();

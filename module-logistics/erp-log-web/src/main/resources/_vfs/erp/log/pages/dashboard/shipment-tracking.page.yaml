@@ -39,12 +39,18 @@ body:
   - type: data-source
     name: trackingData
     action: ajax
+    # 串页修复（P2-CK-log-012-r3，plan 2026-09-10-1141-2 Phase 2）：补 shipmentId 过滤 + sendOn 门控——
+    # 未选择发运单不发请求，杜绝全量 5000 条混合时间线；与 shipment-tracking.flux.yaml 孪生同语义。
+    dependsOn:
+      - filterForm
+    sendOn: "${filterForm?.shipmentId != null}"
     args:
       url: '@query:ErpLogShipmentLog__findPage'
       method: post
       data:
         query:
           limit: 5000
+          filter_shipmentId: "${filterForm?.shipmentId || null}"
       selection: id shipmentId actionType executedAt isSuccess httpStatus errorCode errorMessage requestBody responseBody
 
   - type: data-source

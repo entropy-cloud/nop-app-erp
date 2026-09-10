@@ -210,6 +210,9 @@ public class TestErpC17HrSalaryPayment extends ErpIntegrationTestCase {
                 "2211", "1002", "280 发放（Dr 应付职工薪酬 / Cr 银行存款 = 实发净额口径）");
 
         // ---------- 7. 发放通知（C09 自包含模板先例）→ markRead → countUnread 归零 ----------
+        // P2-CK-notify-010-r3 身份校验：已读操作以接收人（NOTIFY_USER）身份执行（切换出 SYS "0" 上下文）
+        ContextProvider.getOrCreateContext().setUserId(NOTIFY_USER);
+        ContextProvider.getOrCreateContext().setUserName(NOTIFY_USER);
         seedNotificationTemplate();
         ApiResponse<?> notify = rpcMutation("ErpSysNotification__notify", request("6_notify.json5", Map.class));
         output("6_notify_response.json5", notify);

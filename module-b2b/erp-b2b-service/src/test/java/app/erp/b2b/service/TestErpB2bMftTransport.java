@@ -112,7 +112,6 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
         String ediDocId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = new ErpB2bEdiDoc();
             doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
-            doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
             doc.setCode("EDI-MFT-2-" + System.nanoTime());
             doc.setFormatId(formatId);
             doc.setRelatedBillType("AR_INVOICE");
@@ -132,6 +131,38 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
         List<ErpB2bMftLog> logs = ormTemplate.runInSession(session -> findMftLogs(configId));
         assertTrue(logs.stream().anyMatch(l -> ErpB2bConstants.MFT_STATUS_DEAD_LETTER.equals(l.getStatus())),
                 "5xx 重试耗尽应有 DEAD_LETTER 日志");
+    }
+
+    @Test
+    public void testTransport5xxRetryWritesRetryingLog() {
+        String partnerId = seedPartner();
+        String configId = seedMftConfig(partnerId, "HTTPS", true);
+        String formatId = seedFormat("UBL_INVOICE", "UBL");
+        String ediDocId = ormTemplate.runInSession(session -> {
+            ErpB2bEdiDoc doc = new ErpB2bEdiDoc();
+            doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+            doc.setCode("EDI-MFT-4-" + System.nanoTime());
+            doc.setFormatId(formatId);
+            doc.setRelatedBillType("AR_INVOICE");
+            doc.setRelatedBillCode("INV-MFT-4");
+            doc.setState(ErpB2bConstants.EDI_DOC_STATE_TO_SEND);
+            doc.setBlockingLevel(ErpB2bConstants.BLOCKING_LEVEL_INFO);
+            doc.setRetryCount(0);
+            daoProvider.daoFor(ErpB2bEdiDoc.class).saveEntity(doc);
+            return doc.getId();
+        });
+
+        MockTransportAdapter.failureMode = MockTransportAdapter.FAILURE_MODE_5XX;
+        boolean success = ormTemplate.runInSession(session ->
+                transportManager.send(ediDocId, partnerId, "<invoice/>", "test.xml"));
+        assertTrue(!success, "5xx 重试耗尽应返回 false");
+
+        List<ErpB2bMftLog> logs = ormTemplate.runInSession(session -> findMftLogs(configId));
+        long retrying = logs.stream()
+                .filter(l -> ErpB2bConstants.MFT_STATUS_RETRYING.equals(l.getStatus()))
+                .count();
+        assertTrue(retrying >= 1,
+                "5xx 重试路径应写 RETRYING 中间日志（managed-file-transfer.md 重试策略表），实际=" + retrying);
     }
 
     @Test

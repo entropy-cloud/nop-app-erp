@@ -1188,7 +1188,7 @@
                 <column name="validFrom" code="VALID_FROM" displayName="生效日期" propId="6" stdSqlType="DATE" i18n-en:displayName='Valid From' />
                 <column name="validTo" code="VALID_TO" displayName="失效日期" propId="7" stdSqlType="DATE" i18n-en:displayName='Valid To' />
                 <column name="qualificationDoc" code="QUALIFICATION_DOC" displayName="资质文件" propId="8" stdSqlType="VARCHAR" precision="500" stdDataType="string" i18n-en:displayName='Qualification Doc' />
-                <column name="status" code="STATUS" displayName="准入状态" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-md/supplier-approval-status" defaultValue="10" i18n-en:displayName='Approval Status' />
+                <column name="status" code="STATUS" displayName="准入状态" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-md/supplier-approval-status" i18n-en:displayName='Approval Status' />
                 <column name="approvedBy" code="APPROVED_BY" displayName="批准人" propId="10" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Approved By'  ui:show="R"/>
                 <column name="approvedAt" tagSet="clock" code="APPROVED_AT" displayName="批准时间" propId="11" stdSqlType="TIMESTAMP" i18n-en:displayName='Approved At'  ui:show="R"/>
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>

@@ -149,4 +149,10 @@ public interface ErpApsErrors {
             "erp.err.aps.solver.not-resolved",
             "排产求解器 {solverName} 未注册且默认贪心不可用",
             ARG_SOLVER_NAME);
+
+    /** 急单插单本体状态非法（P2-CK-aps-012-r3）：仅 DRAFT/PLANNED/UNSCHEDULABLE 可插单重排，终态/在制/保持态拒绝。 */
+    ErrorCode ERR_APS_RUSH_ORDER_NOT_INSERTABLE = ErrorCode.define(
+            "erp.err.aps.rush-order.not-insertable",
+            "急单工序 {opCode} 当前状态={currentStatus}，终态/在制/保持态不可插单重排（仅 DRAFT/PLANNED/UNSCHEDULABLE 可插单）",
+            ARG_OP_CODE, ARG_CURRENT_STATUS);
 }

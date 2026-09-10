@@ -183,4 +183,29 @@ public interface _ErpDrpDaoConstants {
      */
     String DRP_SUPPLIER_GRADE_D = "D";
                     
+    /**
+     * 月台预约状态: 空闲 
+     */
+    String DRP_XDOCK_DOCK_STATUS_AVAILABLE = "AVAILABLE";
+                    
+    /**
+     * 月台预约状态: 已预约 
+     */
+    String DRP_XDOCK_DOCK_STATUS_BOOKED = "BOOKED";
+                    
+    /**
+     * 月台预约状态: 已到车 
+     */
+    String DRP_XDOCK_DOCK_STATUS_ARRIVED = "ARRIVED";
+                    
+    /**
+     * 月台预约状态: 已完成 
+     */
+    String DRP_XDOCK_DOCK_STATUS_COMPLETED = "COMPLETED";
+                    
+    /**
+     * 月台预约状态: 已取消 
+     */
+    String DRP_XDOCK_DOCK_STATUS_CANCELLED = "CANCELLED";
+                    
 }

@@ -53,7 +53,7 @@
             <schema type="java.lang.String" precision="500"/>
         </prop>
         <prop name="status" displayName="准入状态" propId="9" i18n-en:displayName="Approval Status" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="10">
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="20" dict="erp-md/supplier-approval-status"/>
         </prop>
         <prop name="approvedBy" displayName="批准人" propId="10" i18n-en:displayName="Approved By" queryable="true"

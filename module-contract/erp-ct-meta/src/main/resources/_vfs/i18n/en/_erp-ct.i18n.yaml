@@ -425,17 +425,17 @@ dict.option.label:
     PERIOD_END: Period End
     PROGRESSIVE: Progressive
   erp-ct/sign-status:
-    '10': Pending Signature
-    '20': Partially Signed
-    '30': Fully Signed
-    '40': Rejected
-    '50': Expired
-    '60': Cancelled
+    PENDING_SIGNATURE: Pending Signature
+    PARTIALLY_SIGNED: Partially Signed
+    FULLY_SIGNED: Fully Signed
+    REJECTED: Rejected
+    EXPIRED: Expired
+    CANCELLED: Cancelled
   erp-ct/sign-provider:
-    '10': eSign Bao
-    '20': DocuSign
-    '30': Tsign
-    '99': Mock
+    ESIGN_BAO: eSign Bao
+    DOCUSIGN: DocuSign
+    TSIGN: Tsign
+    MOCK: Mock
   erp-ct/doc-type:
     '10': Contract Scan
     '20': Amendment

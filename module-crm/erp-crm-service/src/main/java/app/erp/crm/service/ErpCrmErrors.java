@@ -91,6 +91,9 @@ public interface ErpCrmErrors {
     ErrorCode ERR_LEAD_TYPE_MISMATCH = ErrorCode.define("erp.err.crm.lead-type-mismatch",
             "线索/商机 {leadCode} 类型不匹配（期望 {leadType}）", ARG_LEAD_CODE, ARG_LEAD_TYPE);
 
+    ErrorCode ERR_LEAD_CONTACT_REQUIRED = ErrorCode.define("erp.err.crm.lead-contact-required",
+            "线索 {leadCode} 联系人信息必填（contactName/contactPhone/contactEmail 至少一项非空）", ARG_LEAD_CODE);
+
     ErrorCode ERR_LEAD_NOT_QUALIFIED = ErrorCode.define("erp.err.crm.lead-not-qualified",
             "线索/商机 {leadCode} 非 QUALIFIED 状态（当前 {currentStatus}），仅 QUALIFIED 状态的线索可转化/升格",
             ARG_LEAD_CODE, ARG_CURRENT_STATUS);

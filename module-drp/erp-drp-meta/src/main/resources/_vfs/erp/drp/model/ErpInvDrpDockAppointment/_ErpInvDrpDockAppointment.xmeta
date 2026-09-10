@@ -53,7 +53,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="9" i18n-en:displayName="Status" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="50"/>
+            <schema type="java.lang.String" precision="50" dict="erp-inv/drp-xdock-dock-status"/>
         </prop>
         <prop name="remark" displayName="备注" propId="10" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

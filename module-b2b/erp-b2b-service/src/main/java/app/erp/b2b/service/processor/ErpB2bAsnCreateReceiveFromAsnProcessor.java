@@ -36,6 +36,15 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * Bean 自 plan 2026-09-07-2200-1 起直抛领域码 {@link ErpB2bErrors#ERR_B2B_ASN_ILLEGAL_TRANSITION}
  * （action/currentState/expectedState），非法边 catch 同码补参 {@code asnCode}。
  * 动态守卫保留原位：config-gate {@code erp-b2b.asn-auto-create-receive}、ErpPurReceive 构建 + 失败回滚、行级物料守卫。
+ *
+ * <p><b>跨域写豁免登记（P2-CK-b2b-017-r3 修复面）</b>：本 Processor 经 {@link IDaoProvider} 直接持久化
+ * purchase 域 {@code ErpPurReceive}/{@code ErpPurReceiveLine} 草稿（docStatus/approveStatus=UNSUBMITTED）。
+ * 不走 {@code IErpPurReceiveBiz} 的原因：该接口仅 {@code cancel} + 平台标准审批 mutation，无 purpose-built
+ * 外部建单 command；通用 {@code save(Map)} 管道要求调用方穿越 pur 域全部校验且语义为用户面创建，与本
+ * 系统级 ASN 自动回填（config-gated，核心零污染仅弱指针）不匹配。形态对齐 drp {@code DrpReleaseService}
+ * service-helper 范式（镜像 MRP {@code MrpReleaseService}）；边已登记 {@code data-dependency-matrix.md}
+ * §2.2 b2b 行 + §2.4 b2b-service→pur-dao 行 + §4.2 b2b 越库入库草稿行。参 b2b {@code CodeMappingResolver}
+ * IDaoProvider 豁免样板。
  */
 public class ErpB2bAsnCreateReceiveFromAsnProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(ErpB2bAsnCreateReceiveFromAsnProcessor.class);
@@ -64,7 +73,9 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
             return asn;
         }
 
-        // 创建采购入库草稿（核心零污染：仅弱指针 orderId，不加 asnId 列）
+        // 创建采购入库草稿（核心零污染：仅弱指针 orderId，不加 asnId 列）。
+        // 跨域裸 DAO 写豁免（P2-CK-b2b-017-r3）：登记于 data-dependency-matrix §2.2/§2.4/§4.2 b2b 行，
+        // 豁免理由见类 javadoc「跨域写豁免登记」（DrpReleaseService service-helper 同型范式）。
         ErpPurReceive receive = daoProvider.daoFor(ErpPurReceive.class).newEntity();
         receive.setCode("RCV-FROM-ASN-" + asn.getCode());
         receive.setOrderId(po.getId());
@@ -115,7 +126,8 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
             LOG.warn("ASN {} has no AsnLine rows, createReceiveFromAsn creates Receive header only without line-level backfill", asn.getCode());
             return;
         }
-        // 一次性拉取 PO 行列表，O(N) 反查 unitPrice/taxRate/orderLineId（Decision (a)①）
+        // 一次性拉取 PO 行列表，O(N) 反查 unitPrice/taxRate/orderLineId（Decision (a)①）。
+        // 同上：pur 域行级裸 DAO 读写属已登记豁免边（类 javadoc「跨域写豁免登记」）。
         List<ErpPurOrderLine> poLines = findPoLines(po.getId());
         IEntityDao<ErpPurReceiveLine> lineDao = daoProvider.daoFor(ErpPurReceiveLine.class);
         IEntityDao<ErpMdMaterial> materialDao = daoProvider.daoFor(ErpMdMaterial.class);

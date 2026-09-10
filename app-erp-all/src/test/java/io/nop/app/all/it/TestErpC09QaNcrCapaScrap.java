@@ -299,6 +299,9 @@ public class TestErpC09QaNcrCapaScrap extends ErpIntegrationTestCase {
         assertEquals(0, notify.getStatus(), "通知派发应成功");
 
         // 层 1 锚点：通知落库（接收人 + 正文含 NCR 码）→ markRead → countUnread 归零
+        // P2-CK-notify-010-r3 身份校验：已读操作以接收人（NOTIFY_USER）身份执行
+        io.nop.api.core.context.ContextProvider.getOrCreateContext().setUserId(NOTIFY_USER);
+        io.nop.api.core.context.ContextProvider.getOrCreateContext().setUserName(NOTIFY_USER);
         List<ErpSysNotification> sent = notificationsOf(NOTIFY_USER);
         assertEquals(1, sent.size(), "应派发 1 条 NCR 通知");
         ErpSysNotification notification = sent.get(0);

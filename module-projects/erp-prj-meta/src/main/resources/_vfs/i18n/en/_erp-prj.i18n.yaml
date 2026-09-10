@@ -475,7 +475,6 @@ dict:
   label:
     erp-prj/project-status: Project Status
     erp-prj/task-status: Task Status
-    erp-prj/timesheet-status: Timesheet Status
     erp-prj/priority: Priority
     erp-prj/pnl-calc-status: PnL Calc Status
     erp-prj/settlement-type: Settlement Type
@@ -491,10 +490,6 @@ dict.option.label:
     IN_PROGRESS: In Progress
     DONE: Completed
     BLOCKED: Blocked
-  erp-prj/timesheet-status:
-    DRAFT: Draft
-    SUBMITTED: Submitted
-    APPROVED: Approved
   erp-prj/priority:
     LOW: Low
     NORMAL: General
