@@ -153,8 +153,8 @@
 ### ErpPrjBilling（项目开票）
 
 - `docStatus` 绑定 `erp-prj/project-status` 字典（DRAFT/OPEN/ON_HOLD/COMPLETED/CANCELLED 五态）。
-- **零 writer**：`ErpPrjBillingBizModel` 为 18 行 CRUD 桩，无 `setStatus` 调用——五态全为 dict 死状态。
-- CRUD 桩为主路径可用；完整状态机（submitForApproval/approve/reject）属 successor。
+- **实现现状（P3-CK-prj-025-r3 修订）**：`ErpPrjBilling` 已非零 writer CRUD 桩——`ErpPrjBilling.xbiz` 现含 5 个审批 script mutation（submitForApproval/approve/reject/reverseApprove/withdrawApproval，写 `approveStatus='APPROVED'/'REJECTED'` + approvedBy/At）；`docStatus` 五态仍零 setStatus writer（docStatus 面维持 dict 死状态登记）。
+- CRUD + 审批流（approveStatus 轴）为主路径可用；完整 docStatus 状态机（业务流转 writer）属 successor。
 
 ### ErpPrjCostCollection（成本归集头）
 

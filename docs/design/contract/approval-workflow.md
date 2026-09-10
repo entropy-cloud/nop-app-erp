@@ -45,7 +45,8 @@
 | `minAmount` | 触发该节点的最小金额（含） | 10000 |
 | `maxAmount` | 触发该节点的最大金额（含） | 50000 |
 | `allowSkip` | 是否可跳过（金额未达阈值时） | true |
-| `requireSignOff` | 是否需要签署确认 | false |
+
+> **实现注记**：设计草案中的 `requireSignOff`（节点级签署确认开关）**未建模**——`ErpCtApprovalMatrix` 字段集仅含 `allowSkip`，无该列、无运行时消费（P3-CK-ct-028-r3 登记）；签署面由 e-signature 子系统按单据整体承载，节点级签署开关落地归需求通道（涉及 ORM 变更）。
 
 ### 动态路由逻辑
 

@@ -37,7 +37,7 @@
 
 ### 质检单与业务单据的关联
 
-质检单通过 `reference_type` + `reference_name` 关联业务单据：
+质检单通过 `relatedBillType` + `relatedBillCode` 关联业务单据（P3-CK-qa-032-r3 修订：原 `reference_type`/`reference_name` 命名与实体列不符）：
 
 | 检验类型（inspection_type） | 关联业务单据 | 触发时机 |
 |----------------------------|--------------|----------|

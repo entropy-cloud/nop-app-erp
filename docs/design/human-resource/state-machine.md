@@ -285,14 +285,14 @@ APPROVED → SUBMITTED（reverseApprove，需配置门控）
 ### 调查（ErpHrSurvey）
 
 - `erp-hr/survey-status` 含 `OPEN/CLOSED/ARCHIVED`。
-- **实现状态（Deferred）**：`ErpHrSurveyBizModel` 为 CrudBizModel 桩（18 行，零状态机 mutation），三态为**预留死状态**。
-- **Successor**：调查发布/关闭/归档业务流落地时实现 setStatus writer + 迁移守卫。
+- **实现状态（已落地）**：`ErpHrSurveyBizModel` 状态机已落地——`publish`（DRAFT→OPEN，含 startDate/endDate/题目非空守卫）+ `close`（OPEN→CLOSED，触发 aggregateResult）+ `archive`（CLOSED→ARCHIVED），并带 published-immutable `defaultPrepareUpdate` 守卫（OPEN/CLOSED 后禁改问卷定义）。（P3-CK-hr2-027-r3 修订：原「CrudBizModel 桩、三态预留死状态」表述已随 RC-R1.9/R1.10 修复批失真，本行移出 Deferred 清单。）
+- **Successor**：无（状态机面已闭合；问卷结果分析增强归需求通道）。
 
 ### 发展计划（ErpHrDevelopmentPlan / ErpHrDevelopmentPlanItem）
 
 - `erp-hr/devplan-status` 含 `DRAFT/CANCELLED`；`erp-hr/plan-item-status` 含 `OVERDUE`。
-- **实现状态（Deferred）**：`DRAFT/CANCELLED` 与计划项 `OVERDUE` 为**预留死状态**——本期仅活态（IN_PROGRESS/COMPLETED/ACHIEVED 等）有写入，无 cancelPlan mutation，无 OVERDUE 自动 job。
-- **Successor**：发展计划取消流程落地时实现 cancelPlan mutation；计划项逾期判定落地时实现 OVERDUE 定时 job。
+- **实现状态（部分落地）**：计划项 `OVERDUE` 手动 writer 已落地——`updatePlanItemStatus` 守卫显式允许 `IN_PROGRESS→OVERDUE`；`DRAFT/CANCELLED` 仍为预留死状态（无 cancelPlan mutation）。（P3-CK-hr2-027-r3 修订：原「OVERDUE 预留死状态」定性已失真。）
+- **Successor**：发展计划取消流程落地时实现 cancelPlan mutation；自动逾期判定（OVERDUE 定时 job）落地归 successor。
 
 ---
 

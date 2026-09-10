@@ -43,7 +43,7 @@
 | businessDate | 召回发起日期 |
 | notifyCustomer | 是否已通知客户（必备动作，DONE 前必须 true） |
 | status | dict `erp-qa/recall-status`：见状态机 |
-| approveStatus | dict `erp-qa/approve-status`：UNSUBMITTED/SUBMITTED/APPROVED/REJECTED |
+| approveStatus | dict `wf/approve-status`：UNSUBMITTED/SUBMITTED/APPROVED/REJECTED（P3-CK-qa-032-r3 修订：实绑平台字典，码值一致） |
 | 标准审计字段 | |
 
 **triggerType（召回触发双入口）**：
@@ -74,7 +74,7 @@
 |---|---|
 | id/recallId/orgId | 标准 |
 | partnerId | 受影响客户（→ErpMdPartner） |
-| batchId/serialNo | 受影响批次/序列号 |
+| batchNo/serialNo | 受影响批号/序列号（P3-CK-qa-032-r3 修订：实列 `batchNo` VARCHAR，原 `batchId` 命名失真） |
 | salesDeliveryId | 关联销售出库（→ErpSalDelivery，弱指针，trace-chain 反查定位） |
 | shippedQty | 已发货数量 |
 | notifiedAt/notifiedBy | 通知时间/人 |

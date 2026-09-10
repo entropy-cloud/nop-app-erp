@@ -6,20 +6,25 @@
 
 ## 汇率表结构
 
+> **实现现状（P3-CK-md-017-r3 重写）**：本节按实仓 ORM（`app-erp-master-data.orm.xml` `ErpMdExchangeRate`）与实现重写——C3 日期区间改造后，日表已从单点 `rateDate` 演进为 `validFrom/validTo` 区间模型；原设计的 `FIXED/MIDDLE/SELLING` 三值枚举未落 dict（rateType 为自由 VARCHAR，现用值 = `SPOT`（默认/手工+种子）/ `MIDDLE`（API 刷新写入）），`FIXED/SELLING` 收窄登记归需求通道（补实现或收紧校验）。
+
 ```
-ErpMdExchangeRate（汇率日表）
+ErpMdExchangeRate（汇率区间表）
     ├─ rateId
     ├─ fromCurrencyId（源币种）
     ├─ toCurrencyId（目标币种）
-    ├─ rateDate（汇率日期）
-    ├─ rate（汇率值）
-    ├─ rateType（FIXED/MIDDLE/SELLING）
-    └─ isActive
+    ├─ rateType（VARCHAR，默认 SPOT；API 刷新 Processor 写 MIDDLE）
+    ├─ rate（汇率值，DECIMAL(20,8)，必填）
+    ├─ validFrom（生效日期，必填）
+    ├─ validTo（失效日期，可空=开放区间）
+    └─ isActive（是否启用，默认 true）
 ```
 
 ## FALLBACK 兜底
 
-当指定日期的汇率不存在时，按以下优先级查找：
+> **实现现状（P3-CK-md-017-r3 重写）**：原设计的五级兜底查找链（当天→最近 7 天→月初→上月末→报错）未实现为独立解析器；现行取数模式 = 消费方按币种对 + 业务日期落在 `validFrom ≤ date ≤ validTo`（validTo 空视为开放区间）+ `isActive=true` 直接查询区间表，无多级回退。五级兜底链如需恢复，归需求通道（独立解析器 + 明确优先级语义）。
+
+当指定日期的汇率不存在时，按以下优先级查找（**设计愿景，未实现**——现行模式见上注记）：
 
 | 优先级 | 查找规则 |
 |--------|----------|
@@ -37,7 +42,9 @@ ErpMdExchangeRate（汇率日表）
 
 ## 已引用锁定
 
-已用于业务单据的汇率不允许修改：
+> **实现现状（P3-CK-md-017-r3 重写）**：原设计的显式锁定机制（`isLocked` 列 + 引用校验）未实现——ORM 无 `isLocked` 列，全模块零锁定解析器/校验点。现行防篡改语义由平台通用机制承接（生成层实体级 mutation 权限 + 审批流面），「历史汇率行不可变」为流程约定而非代码强制。显式锁定落地归需求通道（涉及 ORM 变更）。
+
+已用于业务单据的汇率不允许修改（**设计愿景，未实现**——现行语义见上注记）：
 
 - 校验逻辑：查询是否有业务单据引用该汇率
 - 锁定后只能新增新汇率，不能修改旧汇率

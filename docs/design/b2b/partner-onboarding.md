@@ -37,7 +37,7 @@ REGISTERED ──→ TESTING ──→ CERTIFIED ──→ PRODUCTION
 | protocol | dict `erp-b2b/protocol`：AS2 / SFTP / HTTP / HTTPS / OFTP2 | 🟢 行业 EDI 协议标准 |
 | transportEndpoint | 传输端点 URL / 地址 | |
 | authMethod | dict：HMAC / BASIC_AUTH / CERTIFICATE / OAUTH2 | |
-| webhookSecret | Webhook 签名密钥（加密存储） | |
+| webhookSecret | Webhook 签名密钥（**当前明文存储**——`ErpB2bAsnHandleInboundWebhookProcessor` HMAC 校验直读原文；加密存储未实现，P3-CK-b2b-019-r3 登记。**Deferred**：引入 EncryptionHelper 加密落库对齐 managed-file-transfer.md 私钥存储安全要求，归后续需求通道） | |
 | certExpiry | 证书过期日期 | |
 | certFingerprint | 证书指纹（SHA256） | |
 | allowedFormats | 支持的 EDI 格式列表（JSON array of formatCodes） | |

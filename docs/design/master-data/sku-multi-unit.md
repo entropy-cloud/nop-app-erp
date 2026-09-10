@@ -175,7 +175,7 @@ SKU 支持四档可配置价格：
 | retailPrice | 零售价 | 零售销售默认价格 | 是（可启用/禁用） |
 | minPrice | 最低价 | 销售价格底线 | 始终启用 |
 
-> 价格档位可按物料类别配置启用/禁用（如服务类物料不需要批发价）。配置项：`erp-md.price-tiers`（按物料类别配置可用档位列表）。
+> 价格档位按物料类别的启用/禁用为设计愿景；配置项 `erp-md.price-tiers` **未实现**（全仓零读取点，P3-CK-md-018-r3 doc 降级登记：键落地走后续需求通道，当前五档位默认语义见上表「启用」列）。
 
 ### 价格优先级
 
@@ -328,7 +328,7 @@ SKU 启停规则
 | `erp-md.sku-default-required` | true | 是否必须有默认 SKU |
 | `erp-md.sku-barcode-unique` | true | 条码是否全局唯一 |
 | `MaterialCategory.priceValidationLevel` | WARN | 价格校验级别(OFF/WARN/HARD),按物料类别配置,见 ORM 字段（RC-R1.40 收敛注记：ORM defaultValue 已由历史孤儿值 "20" 收敛为字典合法值 "WARN"） |
-| `erp-md.sku-auto-create-default` | true | 创建物料时是否自动创建默认 SKU |
+| `erp-md.sku-auto-create-default` | true | 创建物料时是否自动创建默认 SKU。**未实现**（仅 `ErpMdConstants` 常量声明、全仓零读取点，P3-CK-md-018-r3 doc 降级登记：键落地走后续需求通道；现行为创建物料不自动建 SKU） |
 
 ## 开源参考
 

@@ -199,7 +199,7 @@ PENDING_SIGNATURE ──(首签完成)──→ PARTIALLY_SIGNED ──(全部�
 
 ### 签名提供商字典 `erp-ct/sign-provider`
 
-> 产品基线仅含以下 3 个真实签署提供商。测试用 `MOCK` 仅在测试 profile 传参使用（字典值域含 MOCK 供 stub 测试）。
+> **实现现状（P3-CK-ct-029-r3 微裁决登记）**：生产字典实含 4 值——3 个真实签署提供商 + `MOCK`（value=99），且默认 provider 为 `MOCK`（`ErpCtConfigs.DEFAULT_SIGNATURE_DEFAULT_PROVIDER = "MOCK"`，本期 stub 语义；原「MOCK 仅在测试 profile 传参使用」表述与实况不符，已修订）。**生产切换路径裁决**：`erp-ct.signature-default-provider` 为部署侧配置项，投产接入真实提供商时经该键切换（部署契约），真实 provider 通道落地与 MOCK 退役走后续需求通道（doc 降级为默认路径登记，不改需求契约段语义）。
 
 | code | label | value |
 |------|-------|-------|

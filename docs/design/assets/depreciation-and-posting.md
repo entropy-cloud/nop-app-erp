@@ -66,6 +66,8 @@
 | 双倍余额递减法 | 2 × 账面净值 / 使用年限 / 12 | 最后两年改为直线法，确保不低于残值 |
 | 工作量法 | (原值 - 残值) / 预计总工作量 × 本期工作量 | 需维护累计工作量 |
 
+> **实现注记（F2.9 收窄，P3-CK-ast2-025-r3 同步）**：工作量法（UNITS）当前为**显式失败**语义——ORM 无工作量列，`executeDepreciation`/`catchUpDepreciation` 对 UNITS 资产抛 `ERR_DEPRECIATION_UNITS_NOT_CONFIGURED`（不再静默恒 0 掩盖漏提）；工作量数据模型与计算通路 Deferred（见 §十）。
+
 ### 1.4 残值约束
 
 - 折旧后的账面净值 **不得低于** 残值
@@ -222,7 +224,7 @@
 ### 折旧调度规则
 
 - **折旧起始月**：资本化入账的次月开始计提折旧（当月增加下月提）
-- **折旧终止月**：处置/报废的当月停止计提折旧（当月减少当月停）
+- **折旧终止月**：处置/报废的当月停止计提折旧（当月减少当月停）。**补提例外**：处置接线 `catchUpDepreciationToDisposalPeriod` 在损益计算前补提至出售期**含当期**（P3-CK-ast2-025-r3 注记——「当月减少当月停」指常规计提不含处置当期新计划行；出售期补提将漏提期折旧补足至含出售当期，无已执行折旧/IDLE 跳过），两者不矛盾：常规月度批量折旧不产出处置当期行，补提路径显式例外。
 - **并行度**：按资产类别分组并行执行，每组独立事务
 - **幂等性**：同一期间重复执行折旧时，先冲销已执行的折旧凭证再重新生成
 - **异常中断**：部分资产折旧失败不影响其他资产，失败资产记录错误等待人工处理
@@ -347,6 +349,7 @@
 - **资产减值/重估（VALUE_ADJUSTMENT）**：§一/§四描述的减值/重估凭证；`ErpAstValueAdjustmentBizModel` 实现三轴状态机（docStatus/approveStatus/posted）+ VALUE_ADJUSTMENT 过账 Provider（按 adjustmentType 分支科目分解）+ 资产净值/折旧基数联动 + 反向红冲。Deferred 仅余自动减值测试（可收回金额计算 + cron），触发条件：减值测试自动化需求 + 可收回金额数据源就绪时。
 - **库存物料转固（INVENTORY 来源）**：§2.1 库存转固需跨域调 `IErpInvStockMoveBiz` 生成出库移动单，本期不支持；资本化 `sourceType` 仅支持 `DIRECT_PURCHASE(30)` + `CIP(20)`。触发条件：库存转固业务上线。
 - **nop-job 定时自动折旧**：§5.1 定时任务触发折旧本期 Deferred；本实现提供手动 `executeBatchDepreciation`，期末结账可经 I*Biz 调用。触发条件：nop-job 接线。
+- **工作量法（UNITS）计算通路**：§1.3 工作量法公式 Deferred——ORM 无工作量（本期工作量/累计工作量）列，无法落计算输入；实现侧 `executeDepreciation`/`catchUpDepreciation` 对 UNITS 资产显式抛 `ERR_DEPRECIATION_UNITS_NOT_CONFIGURED`（F2.9 收窄，禁止静默恒 0）。触发条件：工作量数据模型（列 + 维护入口）需求落地。
 - **业务类型码段**：§一/§7.1 旧表仍列 `DISPOSAL_SCRAP`/`DISPOSAL_SALE` 等业务类型——实际 `ErpFinBusinessType` 含单一 `DISPOSAL(90)`（报废/出售的科目分解差异由 `DisposalAcctDocProvider` 按 `disposalType=SCRAPPED/SOLD` 内部分支处理，不拆业务类型常量）；`DEPRECIATION(70)`/`CAPITALIZATION(80)`/`VALUE_ADJUSTMENT(390)`。§一/§7.1 的旧表行为最终正确（科目方向一致），仅部分业务类型命名过时（DISPOSAL_SCRAP/DISPOSAL_SALE 应理解为 DISPOSAL 的内部分支）。
 - **期间状态值**：实现以 `ErpFinAccountingPeriod.status` 判定（`OPEN=10` 可折旧，`CLOSED=30` 等非 OPEN 拒绝），非任何 `CLOSED_FINAL` 值。
 - **批量折旧并行/汇总**：§5.2 按类别分组并行 + 汇总单张凭证多行为性能优化；基线实现为按资产串行（错误隔离）+ 每资产单张凭证，留 Follow-up。

@@ -37,7 +37,7 @@
                     │
                     ├─► 创建质检单（PENDING 状态）
                     │
-                    ├─► 关联业务单据（reference_type + reference_id）
+                    ├─► 关联业务单据（relatedBillType + relatedBillCode）
                     │
                     └─► 产生 TODO 分配质检员
 ```
@@ -176,12 +176,13 @@ CAPA 执行
 
 ### 4.4 NCR 状态流转
 
+> **P3-CK-qa-032-r3 修订**：NCR 现状为 5 态基线（`erp-qa/ncr-status`：OPEN/IN_REVIEW/RESOLVED/ESCALATED_TO_RECALL/CANCELLED，`ErpQaNonConformanceStateMachine` 5 边单源）——原图中 `IN_EXECUTION` 为幽灵态（字典无此值，CAPA 执行进度由 CAPA 侧承载，非 NCR 独立状态）。
+
 ```
 待处理 (OPEN)
   ├─► 评审 → 评审中 (IN_REVIEW)
-  │           ├─► CAPA 制定完成 → 执行中 (IN_EXECUTION)
-  │           │           ├─► 效果验证通过 → 已解决 (RESOLVED)
-  │           │           └─► 验证失败 → 返回评审中
+  │           ├─► 效果验证通过 → 已解决 (RESOLVED)　〔resolve：无 CAPA 时须 noCapaReason；有 CAPA 须全部完成+效果验证〕
+  │           ├─► 升级召回 → 已升级为召回 (ESCALATED_TO_RECALL)　〔upgradeToRecall〕
   │           └─► 取消（误开）→ 已取消 (CANCELLED)
   └─► 取消 → 已取消 (CANCELLED)
 ```

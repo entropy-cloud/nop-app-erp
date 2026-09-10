@@ -78,7 +78,7 @@
 
 统一 Party 查询经 `IErpPartyBiz` 暴露 3 个方法（签名见 erp-md-dao 模块）：
 
-- `findParties`：关键字跨实体检索；`partyTypes=null` 查所有 3 类；结果数上限经配置项 `erp-md.party-search.max-results` 控制。
+- `findParties`：关键字跨实体检索；`partyTypes=null` 查所有 3 类；结果数上限当前为代码内固定值 `DEFAULT_LIMIT=50`（`ErpPartyBizModel`；配置项 `erp-md.party-search.max-results` **未实现**——仅 javadoc/注释提及、零配置读取点，P3-CK-md-018-r3 doc 降级登记：键落地走后续需求通道）。
 - `getParty`：单点查询；不存在抛业务异常。
 - `findReferences`：跨实体引用计数预览，返回 `Map<String, Long>`（key=引用域名 + value=引用计数），**与既有 `IErpMdPartnerReferenceChecker.countReferences` 严格同构**（Path A，非 rich DTO）。
 

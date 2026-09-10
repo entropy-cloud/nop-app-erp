@@ -26,7 +26,7 @@ SPC 只做**计量型数据的过程分析**,不做离线检验判定(判定归 
 | specMin/specMax | 规格上下限(DECIMAL(20,6),用于 Cp/Cpk) |
 | subgroupSize | 子组样本量 n(默认 5) |
 | samplingFrequency | 采样频率(cron 或描述) |
-| clCenterType | 中心线计算方式 dict:AUTO_FROM_DATA=10/MANUAL=20/TARGET=30 |
+| clCenterType | 中心线计算方式 dict `erp-qa/spc-cl-center-type`（字符串字典）：AUTO_FROM_DATA / MANUAL / TARGET（P3-CK-qa-032-r3 修订：原数字编码 10/20/30 注记与 string 字典不符） |
 | ruleSet | 启用的判异规则集(逗号分隔 WesternElectric 规则编号,如 "1,2,3,4") |
 | alarmThreshold | 触发预警的违规次数(默认 1) |
 | ucl/lcl/cl | 控制上限/下限/中心线(DECIMAL(20,6),由计算或手工填) |
@@ -165,7 +165,7 @@ body:
 
 ### 数据契约
 
-- 控制图：`getSpcControlChartData(chartId)` 返回 `{ ucl, lcl, cl, samples:[{subgroupNo, mean, range, stdDev, violatedRules, isOutOfControl}] }`
+- 控制图：`getSpcControlChartData(chartId)` 返回 `{ ucl, lcl, cl, samples:[{subgroupNo, mean, violatedRules, isOutOfControl, ...计数型字段}] }`（P3-CK-qa-032-r3 修订：Dashboard `loadSpcSamples` 不返回 `range`/`stdDev` 两字段，原契约表述已按实现收敛）
 - 能力/样本：标准 `findPage`（`{items, total}`）
 
 ## 参考

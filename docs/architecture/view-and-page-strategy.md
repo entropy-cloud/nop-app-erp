@@ -55,8 +55,17 @@ URL 格式规范：`/erp/{appName}/pages/{EntityName}/main.page.yaml`
 1. **菜单资源**：`erp-{xx}.action-auth.xml` 中所有叶子 `resource` 的 `component` 必须为 `"FLUX"`。由脚本工具强制翻转并保持（见 `scripts/flip-menu-to-flux.sh`，幂等，AMIS→FLUX 单向）。
 2. **服务器渲染模式**：`app-erp-all` 的 `application.yaml` 固定 `nop.web.render-mode: flux`，使 `PageProvider__getPage` 对所有页面输出 flux JSON。
 3. **ORM 渲染标记（codegen 持久化的关键）**：每个实体必须带 `ext:web-renderer="flux"`。codegen 模板 `nop-kernel/nop-codegen/.../orm-web/.../_{moduleName}.action-auth.xml.xgen` 按 `objMeta['ext:web-renderer'] == 'flux' ? 'FLUX' : 'AMIS'` 生成菜单资源——缺此属性时 `mvn clean install` 增量 codegen 会把生成式 `_erp-{xx}.action-auth.xml` 重新生成回 AMIS（2026-08-03 实测）。由 `scripts/flip-orm-to-flux.sh` 幂等维护（19 个 orm.xml 全 477 实体），统一构建链 `scripts/rebuild-flux-chain.sh` 在 ERP 构建前自动执行。
-4. **页面模型**：标准 CRUD 页继续由 codegen（`page.yaml`）+ flux-web.xlib 生成器输出 flux JSON；`*.flux.yaml` 双文件回退优先于 `*.page.yaml`。
+4. **页面模型**：标准 CRUD 页继续由 codegen（`page.yaml`）+ flux-web.xlib 生成器输出 flux JSON；`*.flux.yaml` 双文件回退优先于 `*.page.yaml`（孪生载体权威裁决见下节）。
 5. **AMIS 残留**：16 占位页已由计划 `2026-08-03-1232-4` 落地（12 页 flux 实现 + 4 页 Deferred 带理由），其余手写 AMIS 页（看板/向导等，清单见 `docs/plans/2026-08-03-1232-1-flux-crud-migration.md`）按计划 1232-2/3 重写；重写前其菜单同样标记 `FLUX`，页面渲染失败属已知迁移期状态，处理路径见 `docs/testing/e2e-runbook.md` 的 flux 调试三路径。
+
+## 孪生双载体权威裁决（M2.8 E 族正式条款，P3-CK-mfg-023-r3 族收口）
+
+> 裁决位（M2.0 E 族裁决 §2.5 → M2.8 分片③ Decision 项落档）；消费方：M2.7 log-012-r3（注册版追踪页串页 + 修复版死产物，反向形态：page.yaml 为注册载体）。
+
+1. **flux.yaml 为唯一运行时权威**：同一页面同时存在 `*.flux.yaml` 与 `*.page.yaml` 孪生载体时，`*.flux.yaml` 是唯一被渲染链消费的运行时真相；页面行为缺陷一律以 flux.yaml 为准修复与审计。页面级注册面（action-auth `url`）若指向 page.yaml（log-012 形态），以注册载体为显示入口、以 flux.yaml 为行为权威双轨并存——缺陷修复仍落 flux.yaml，注册串页缺陷落注册面。
+2. **page.yaml 冻结为回退产物**：孪生 `*.page.yaml` 自本裁决起冻结——不再作为新功能/参数修正的维护面；其内容仅在与 flux.yaml 语义冲突且回退通道需要启用时按需对齐。**登记例外**：行为级死代码/死状态样式分支（如 pur-017-r3 three-way-match 死分支）按 M2.8 分片③随批修正语义（使其作为回退产物不再误导），但不作为常态维护义务。
+3. **mfg-023-r3 遮蔽文件处置登记（二选一裁决：冻结不修）**：`erp-mfg-web/.../pages/dashboard/main.page.yaml` L190-192 CRP 日期参数错配（`dateFrom`/`dateTo` vs 表单字段 `startDate`/`endDate`）与 `bom-tree.page.yaml` 端点/结构错配——按条款 2 **冻结不修**：运行时权威 `main.flux.yaml` L170-171 已正确绑定参数，遮蔽文件缺陷登记在案（本节即裁决凭据），后续维护者不得按 page.yaml 结构改动日期过滤/端点；若未来需要启用 page.yaml 回退通道，须先按 flux.yaml 现状对齐全量参数（走独立计划）。
+4. **一致性无自动校验通道（登记残余风险）**：孪生双文件无构建期一致性校验；新增孪生页面时默认视为「flux.yaml 权威 + page.yaml 冻结」组合，禁止双向手工同步（同步即漂移源）。
 
 ## 页面数据访问（/r/ REST 约定，强制）
 

@@ -240,7 +240,10 @@ pnpm flux:validate-pages -- <dir>...
 npm run validate:flux
 # → mvn 导出（JUnit）→ app-erp-all/target/flux-pages/*.page.json + manifest.json
 # → node validate-pages.mjs → console 诊断 + _tmp/flux-page-validation-report.json
-# → exit 0（无 error 级诊断）
+# → step[1/3]（导出）exit 0：FLUX_PAGE_ERROR_COUNT 0 / pageCount=999 / erpPages=855
+# → 整体 exit 1 当存在 error 级诊断；当前 325 条既有 `variant="primary"`×dropdown-button
+#   codegen stub 外部漂移族（non-variant=0）已裁决 successor 在案（ai-check-r3 roadmap MI.8 行），
+#   门禁口径 = 零新增 error（对照 325 基线），全链 exit 0 待漂移族清零后恢复（P3-CK-app-002-r3 修订登记）
 ```
 
 ## 8. 与 nop-chaos-next sdks 的关系与演进路径
@@ -267,7 +270,7 @@ npm run validate:flux
 
 1. **nop-entropy 单元级**（J4）：flux 回退等价（导出文件内容 == flux 模式 `getPage`）、manifest 结构、失败收集语义。
 2. **nop-chaos-flux 单元级**（S2 自举）：对 `flux-guide` 已知合法示例跑验证器必须 0 error（与 `pnpm flux-guide:validate` 结论一致）；构造含未知 renderer/坏表达式的 fixture 必须 error 且 exit 1。
-3. **ERP 端到端**（E2）：`npm run validate:flux` 全链 exit 0；manifest 页面数与 `find module-* -name '*.page.yaml' | wc -l`（855）+ 平台模块页面数对账；31 个手写 flux.yaml 页面抽样比对导出内容与 `dumpPageSchemaToFile`（e2e fixture）抓取的生产 schema 一致。
+3. **ERP 端到端**（E2）：`npm run validate:flux` step[1/3]（导出）exit 0（`FLUX_PAGE_ERROR_COUNT: 0 pageCount=999 erpPages=855`）；整体退出码当前为 exit 1，余项 = 325 条既有 `variant="primary"`×dropdown-button codegen stub 外部漂移族（successor 在案，roadmap MI.8 行；门禁口径 = 零新增 error 对照 325 基线，全链 exit 0 待漂移清零——P3-CK-app-002-r3 修订）；manifest 页面数与 `find module-* -name '*.page.yaml' | wc -l`（855）+ 平台模块页面数对账；31 个手写 flux.yaml 页面抽样比对导出内容与 `dumpPageSchemaToFile`（e2e fixture）抓取的生产 schema 一致。
 4. **回归**：nop-entropy `mvn install` 后 ERP 全量 `mvn clean install -DskipTests` 绿 + app-erp-all 相关测试绿；`bash docs/audits/nop-compliance-checker.sh` 零漂移。
 
 ## 11. 参考
