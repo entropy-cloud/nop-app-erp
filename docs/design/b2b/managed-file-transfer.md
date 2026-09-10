@@ -148,14 +148,16 @@
 
 ### MFT 状态字典 `erp-b2b/mft-status`
 
+> **实现注记（P3-CK-b2b-018-r3 修复，plan `2026-09-10-1141-2` Phase 1）**：字典已收敛为 value==code 单轨（数值轨 10..60 删除）。值域 6 值的写入面裁决：SENT/FAILED/DEAD_LETTER 为终态各一笔 log；RETRYING 为重试中间 log（重试循环内逐次写入，见 §重试策略）；**PENDING/RECEIVED 为预留态**——PENDING 为预传输预留语义（MftLog 在传输尝试后落库，故无 PENDING 行），RECEIVED 依赖 SFTP 入站通道（本切片 Non-Goal，出站管理器不写）。两者登记为 intentional reserved，值域保留不删除。
+
 | code | label | value |
 |------|-------|-------|
-| PENDING | 待传输 | 10 |
-| SENT | 已发送 | 20 |
-| RECEIVED | 已接收 | 30 |
-| FAILED | 失败 | 40 |
-| RETRYING | 重试中 | 50 |
-| DEAD_LETTER | 死信 | 60 |
+| PENDING | 待传输 | PENDING |
+| SENT | 已发送 | SENT |
+| RECEIVED | 已接收 | RECEIVED |
+| FAILED | 失败 | FAILED |
+| RETRYING | 重试中 | RETRYING |
+| DEAD_LETTER | 死信 | DEAD_LETTER |
 
 ### ErpB2bMftCertificate（MFT 证书）
 
@@ -254,10 +256,12 @@ SftpPoller (定时任务)
 
 | 条件 | 行为 |
 |------|------|
-| 首次失败 | 记录失败，状态 → FAILED |
-| 配置 maxRetries > 0 | 状态 → RETRYING，按 retryIntervalMin 间隔重试 |
+| 失败（不可重试或未启用重试） | 记录失败，状态 → FAILED |
+| 失败且可重试（maxRetries > 0） | 写 RETRYING 中间日志，按 retryIntervalMin 节奏重试（批内固定退避） |
 | 重试成功 | 状态 → SENT / RECEIVED |
 | 重试耗尽 | 状态 → DEAD_LETTER，通知管理员 |
+
+> **实现注记（b2b-018-r3）**：出站管理器重试循环内逐次写 RETRYING 中间 log（retryCount 逐次递增），FAILED/DEAD_LETTER 仅在重试耗尽或不可重试时落终态一笔。
 
 ### 死信队列
 

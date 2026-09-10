@@ -240,27 +240,27 @@ DRAFT（草稿）─ finalizeVersion ─→ FINALIZED（定稿）─ signVersion
 
 > 本节由 plan `2026-08-13-1430-3`（M3.19）补章节落地——owner doc 原无 §RebateAgreement 章节（返利语义在 `docs/design/contract/volume-discount.md`）。本节集中建立 `ErpCtRebateAgreement.status` 轴（dict `erp-ct/rebate-agreement-status`）的权威迁移语义与退化轴裁定登记。
 >
-> 实体级状态机 Bean：`ErpCtRebateAgreementStateMachine`（退化分类 Bean——`transitions()` 空 + 集中化 ACTIVE accrual 只读守卫 `isActive(status)`）。
+> **实现注记（P1-CK-ct-026-r3 修复，plan `2026-09-10-1141-2` Phase 1）**：本轴不再是纯退化分类轴——新增命名动作 `activate`（DRAFT→ACTIVE，BizModel `ErpCtRebateAgreementBizModel.activate`：源态守卫 `assertCanActivate`（仅 DRAFT，即审批前评审态载体）+ 生效日守卫 `ERR_CT_REBATE_AGREEMENT_NOT_EFFECTIVE`），ACTIVE 转为命名动作可达；EXPIRED/SETTLED 仍为预留死状态（零 writer）。
+>
+> 实体级状态机 Bean：`ErpCtRebateAgreementStateMachine`（`transitions()` 注册 `activate` 单边 + 集中化 ACTIVE accrual 只读守卫 `isActive(status)`）。
 
 ### 1. 状态定义
 
 | status | 业务含义 | 可达性 |
 |--------|----------|--------|
 | 草稿（DRAFT） | 协议正起草，等待激活 | 经 CRUD 创建可达（新建 seed，初始态写入 §9.2 选项 c） |
-| 生效中（ACTIVE） | 协议生效，可计提返利 | **预留死状态**（零命名动作 writer 可达） |
+| 生效中（ACTIVE） | 协议生效，可计提返利 | 命名动作 `activate` 可达（DRAFT→ACTIVE，源态 + 生效日双守卫；ct-026-r3） |
 | 已到期（EXPIRED） | 终态预留：到期 | **预留死状态**（零 writer） |
 | 已结算（SETTLED） | 终态预留：结算完成 | **预留死状态**（零 writer） |
 
 dict `erp-ct/rebate-agreement-status` 4 值（`module-contract/model/app-erp-contract.orm.xml:67-72`）。
 
-### 2. 退化轴声明（layer-2 四方对照裁定）
+### 2. 轴形态声明（layer-2 四方对照裁定 + ct-026-r3 修订）
 
-本轴为**退化分类轴**：
-
-- **零命名动作迁移 writer**：全仓无 `setStatus(REBATE_AGREEMENT_STATUS_ACTIVE|EXPIRED|SETTLED)` 生产 writer，无 activate/suspend/expire/terminate/cancel mutation。仅 DRAFT 经 CRUD 创建可达（新建 seed）。
-- **ACTIVE/EXPIRED/SETTLED = 预留死状态（intentional reserved）**：dict 含值但命名动作路径下零 writer 可达。Bean `transitions()` 返回**空列表**（零迁移边），`terminalStatuses()` 亦为空（三死状态非真正终态，仅预留语义入口），`isTerminal(status)` 对所有状态返回 false。ACTIVE/EXPIRED/SETTLED 不在 `initialStatuses`/`terminalStatuses`/`transitions` 任一集合。
-- **裁定（Decision）**：分类 = `intentional reserved`。dict 值保留（**不删除**——对齐 Contract CANCELLED/NEGOTIATION + hr SUSPENDED 先例：保留优于删除）；owner doc 本节登记。
-- **Successor**：返利协议 activate/expire/settle 业务流落地时，开独立 plan 实现命名动作 mutation + 填充 Bean `transitions()` 边；届时三值转为可达并据实纳入对应集合。
+- **命名动作迁移 writer（ct-026-r3 起）**：`activate`（DRAFT→ACTIVE）为唯一命名动作迁移 writer；EXPIRED/SETTLED 仍零 writer（无 expire/settle/terminate/cancel mutation）。
+- **EXPIRED/SETTLED = 预留死状态（intentional reserved）**：dict 含值但命名动作路径下零 writer 可达。Bean `transitions()` 仅含 `activate` 单边，`terminalStatuses()` 为空（预留死状态非真正终态，仅预留语义入口）。EXPIRED/SETTLED 不在 `initialStatuses`/`terminalStatuses`/`transitions` 任一集合。
+- **裁定（Decision）**：EXPIRED/SETTLED 分类 = `intentional reserved`。dict 值保留（**不删除**——对齐 Contract CANCELLED/NEGOTIATION + hr SUSPENDED 先例：保留优于删除）；owner doc 本节登记。
+- **Successor**：返利协议 expire/settle 业务流落地时，开独立 plan 实现命名动作 mutation + 填充 Bean `transitions()` 边；届时两值转为可达并据实纳入对应集合。
 
 ### 3. 唯一 live 用途：ACTIVE accrual 只读守卫
 

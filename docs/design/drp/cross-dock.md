@@ -126,6 +126,8 @@ DRP 计划标记越库
     └─► 出库确认 → CrossDock.status → COMPLETED
 ```
 
+> **PENDING 创建面实现注记（P2-CK-drp-021-r3 裁决，plan `2026-09-10-1141-2` Phase 2）**：上图「DRP 释放时生成 ErpInvDrpCrossDock（PENDING）」**裁决为不落地**——`DrpReleaseService` 维持 Non-Goal 自认（释放面仅生成 TO/PO），且 `ErpDrpLine` 无 `crossDockFlag` 列（按行门控的释放面自动创建缺 ORM 载体，加列属新保护区面不纳入本修复）。**PENDING 记录裁决为「仅经 CRUD 手工/集成创建」**：调用方须自带精确匹配键（`sourceBillType=PUR_ORDER` + `sourceBillCode=<采购单号>` + `materialId` + `quantity`，必填 `code`/`status=PENDING`），`markReceivedFromPurchase` 与 StagingTimeoutJob 消费该记录。**链路前置条件（越库启用前必须知晓）**：`erp-inv.drp-xdock-enabled=true` 时，收货驱动越库链的入口 = 上述手工/集成创建的 PENDING 记录；无记录则链路空转（无副作用）。既有集成测试以 `setSourceBill` 种子路径覆盖该消费链（`TestErpDrpCrossDock`）。
+
 ### 收货时匹配流程
 
 ```
@@ -150,6 +152,8 @@ ASN/PO 收货时识别 crossDockFlag = true（或操作员手工标记）
 |------|------|
 | id/warehouseId | 标准 |
 | dockId | 月台编号（→ ErpMdWarehouseLocation where type=DOCK） |
+
+> **dock 关系 Non-Goal 裁决（P3-CK-drp-023-r3，plan `2026-09-10-1141-2` Phase 3）**：上表「ErpMdWarehouseLocation(type=DOCK)」目标实体在本产品基线**不存在**（全 ORM/Java 实仓核证零命中），故 ORM `ErpInvDrpDockAppointment.dock` to-one 关系暂保持错挂 `ErpInvDrpCrossDock` 本体不动（月台预约为 Non-Goal 未实现面，运行时零影响；删除/改挂将触发生成链涟漪且无行为收益）。status 字典面已按本表 5 值（AVAILABLE/BOOKED/ARRIVED/COMPLETED/CANCELLED）落 ORM `ext:dict="erp-inv/drp-xdock-dock-status"`（value==code 单轨，双批准在案）。**Successor**：月台预约业务流落地时，先引入月台/库位主数据实体（ErpMdWarehouseLocation 或等价物），再 retarget 本关系——届时本注记关闭。
 | appointmentDate | 预约日期 |
 | slotStart/slotEnd | 时间窗口（30min~2h 粒度） |
 | crossDockId | 关联 ErpInvDrpCrossDock |

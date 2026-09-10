@@ -42,6 +42,8 @@ NEW（新线索/新商机创建）
 | 迁移 | 触发人 | 前置条件 | 结果 |
 |------|--------|----------|------|
 | NEW→QUALIFIED | 销售员 | leadType=LEAD，联系人信息必填 | 允许设置 stageId，概率取阶段默认值 |
+
+> **qualify 前置守卫实现注记（P2-CK-crm-020-r3 修复，plan `2026-09-10-1141-2` Phase 2）**：上表「leadType=LEAD，联系人信息必填」前置已落地为 Processor 层联系人门槛（`ErpCrmLeadProcessor.validateTransitionForQualify`：LEAD 路径 contactName/contactPhone/contactEmail 全空抛 `ERR_LEAD_CONTACT_REQUIRED`）。**适用面裁决（lesson 13 HEAD 复核）**：联系人门槛适用于 leadType=LEAD 入漏斗路径；OPPORTUNITY 经转化链入漏斗（convertToCustomer 新建商机，联系数据承载于客户实体，见 §转化前置守卫实现注记 + 下文 QUALIFIED→CONVERTED 行对 OPPORTUNITY 的期待），不设联系人门槛——「leadType=LEAD」若按字面对 qualify 全量适用将与转化链（`TestErpCrmLeadConversion.testFullConversionChain`）直接矛盾，故该子前置在本路径按转化链语义收窄适用面。
 | NEW→LOST | 销售员 | — | lostReasonId 必填 |
 | NEW→CANCELLED | 销售员/管理员 | — | 不可恢复 |
 | NEW→CONVERTED | 销售员 | leadType=LEAD（convertToCustomer 从 LEAD 类型 NEW 直接转化：建客户 + 新建 OPPORTUNITY(NEW) + 原 lead 弱指针） | relatedBillType/Code 写入，触发跨域 master-data 创建客户 |

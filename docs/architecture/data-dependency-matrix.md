@@ -91,7 +91,7 @@ L3 顶域（业财一体核心，被多业务域 S 写，不反向写业务）�
 | **contract** | master-data | （业务层 S/P 待深化） | （待业务设计补充） |
 | **drp** | master-data | （业务层 S/P 待深化） | （待业务设计补充） |
 | **logistics** | master-data | （业务层 S/P 待深化） | （待业务设计补充） |
-| **b2b** | master-data | （业务层 S/P 待深化） | （待业务设计补充） |
+| **b2b** | master-data | purchase（**Java 层建单写边**：`createReceiveFromAsn` 经 `IDaoProvider` 裸 DAO 建 `erp_pur_receive`/`erp_pur_receive_line` 草稿（UNSUBMITTED，仅弱指针 orderId，核心零污染）——P2-CK-b2b-017-r3 裁决登记，豁免理由与形态见 §2.4 b2b-service→pur-dao 行；无 ORM to-one 反向边） | （待业务设计补充） |
 
 ### 2.3 三类依赖计数
 
@@ -141,6 +141,7 @@ L3 顶域（业财一体核心，被多业务域 S 写，不反向写业务）�
 | cs-service → crm-dao | `IErpCrmTeamBiz`/`IErpCrmTeamMemberBiz`（工单创建自动分配候选池：cs team code → crm 同码团队成员 userId 池，只读） | RC-R1.65（P1-RC-054） | 单向叶依赖：crm 对 cs 零反向（ORM + Java 双向均无），DAG 无环；crm 查询失败经 try/catch 失败隔离（池空/解析失败 → 留 NEW + 客服主管升级通知，非 `@Nullable` 容错路径——节前言 :123 约定的既有偏离先例见 :137-138） |
 | fin-service → md-dao | `ErpMdPartner` 只读直访（E3.5 `ErpFinApDocRuleClassifier` 规则分类引擎：解析出的供应商名对 `ErpMdPartner` 名称双向包含匹配 → 对应方 partnerId + 置信度 0.4 分量；经 `IDaoProvider.daoFor(ErpMdPartner.class)` 只读，对齐 ApsLoadSourceProvider 只读聚合范式，理由注记在类 javadoc） | open-audit P2-C + multi-audit P2-13（plan `2026-08-28-0219-3`） | 单向只读：md 为根域被全量 R 引用（fin→md ORM to-one 97 处为 §5.6.2 既有权威），本行为 Java 层 `IDaoProvider` 直访边补注（读侧为名称匹配非业务动作调用，I*Biz 管道无增益）；DAG 无环 |
 | aps-service → mfg-dao（SPI 消费） | `IErpMfgCapacityProvider`（E3.4 TOC 瓶颈识别试点：接口定义于 mfg-dao，mfg 侧 `CrpCapacityProvider` 实现（复用 `CrpLoadCalculator` 派生链），aps 侧 `ApsBottleneckDetector` 注入 `List<IErpMfgCapacityProvider>` 聚合消费产能供给——镜像 §4.3 `IErpFinAcctDocProvider` 注册范式） | multi-audit P2-13（plan `2026-08-28-0219-3`） | 单向 SPI：aps 只消费 mfg-dao 接口、不依赖 mfg-service（与既有 aps-service→mfg-dao compile 边（ATP/CTP 先例，见 aps→notify 行注记）同 dao 层载体，DAG 无环）；mfg 未装配时 provider 列表空 → 兜底连续产能（horizon 时长，`ApsBottleneckDetector` 内建降级）不阻断排产 |
+| b2b-service → pur-dao | `ErpB2bAsnCreateReceiveFromAsnProcessor`（config `erp-b2b.asn-auto-create-receive` 门控：ASN RECEIVED_TO_STOCK 迁移时经 `IDaoProvider` 裸 DAO 创建 `ErpPurReceive`/`ErpPurReceiveLine` 草稿（UNSUBMITTED）+ 行级回填；`ErpB2bAsnMatchPurchaseOrderProcessor` 同 dao 只读匹配） | P2-CK-b2b-017-r3（plan `2026-09-10-1141-2` Phase 2） | 单向叶依赖：pur 不反向依赖 b2b（DAG 无环）；**RAW-DAO 写豁免裁决**——`IErpPurReceiveBiz` 仅 `cancel` + 平台标准审批 mutation，无 purpose-built 外部建单 command，通用 `save(Map)` 用户面管道与系统级 config-gated ASN 自动回填不匹配（对齐 drp `DrpReleaseService` service-helper 豁免范式 + b2b `CodeMappingResolver` 只读样板）；草稿不触发过账（posting 归 pur 域 approve 链），写点 javadoc 豁免注记在位 |
 
 > mfg-service 对 mnt-dao 为 **test scope 另挂 `app-erp-maintenance-service`**（`TestErpMfgJobCardDowntimeGate` 需真实 BizModel Bean）；此为测试装配边，不计入生产依赖方向。
 
@@ -256,6 +257,7 @@ L3 顶域（业财一体核心，被多业务域 S 写，不反向写业务）�
 | 资产处置 | assets | `erp_ast_disposal` + finance 凭证 | `confirmDisposal()` |
 | 项目成本归集 | projects | `erp_prj_cost_collection` + finance 凭证 | `confirmCollection()` |
 | 维修领料 | maintenance | `erp_mnt_spare_part_usage` + inventory（stock_move）+ finance 凭证 | `confirmUsage()` |
+| B2B ASN 入库草稿（非过账闭环，草稿创建写边） | b2b | `erp_pur_receive` + `erp_pur_receive_line`（仅 UNSUBMITTED 草稿，过账仍归 purchase `confirmReceive()` 链） | `createReceiveFromAsn()`（config-gated；P2-CK-b2b-017-r3 登记） |
 
 > **关键模式**：所有 S 写都是"业务域触发 → inventory（写库存）+ finance（写凭证）"。这是 13 个开源 ERP 验证过的业财一体共识（见 `docs/analysis/2026-06-22-0000-cross-domain-coupling-vs-microservice.md` §9.10）。
 

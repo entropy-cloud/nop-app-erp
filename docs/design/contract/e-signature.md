@@ -186,24 +186,27 @@ PENDING_SIGNATURE ──(首签完成)──→ PARTIALLY_SIGNED ──(全部�
 
 ### 签名状态字典 `erp-ct/sign-status`
 
+> **实现注记（P1-CK-ct-025-r3 修复，plan `2026-09-10-1141-2` Phase 1）**：字典已收敛为 **value==code 单轨语义编码**（对齐 `system-baseline.md` §字段与类型约定 D1）。历史数值轨（10..60）已删除；writer 全链（InitProcessor/回调/轮询）与存疑存量数据（seed/_cases）均为 code 形态，零数据迁移。
+
 | code | label | value |
 |------|-------|-------|
-| PENDING_SIGNATURE | 待签署 | 10 |
-| PARTIALLY_SIGNED | 部分签署 | 20 |
-| FULLY_SIGNED | 全部签署 | 30 |
-| REJECTED | 拒签 | 40 |
-| EXPIRED | 过期 | 50 |
-| CANCELLED | 已撤销 | 60 |
+| PENDING_SIGNATURE | 待签署 | PENDING_SIGNATURE |
+| PARTIALLY_SIGNED | 部分签署 | PARTIALLY_SIGNED |
+| FULLY_SIGNED | 全部签署 | FULLY_SIGNED |
+| REJECTED | 拒签 | REJECTED |
+| EXPIRED | 过期 | EXPIRED |
+| CANCELLED | 已撤销 | CANCELLED |
 
 ### 签名提供商字典 `erp-ct/sign-provider`
 
-> 产品基线仅含以下 3 个真实签署提供商。测试用 `MOCK`（value=99）仅在测试 profile / 测试 dict 启用，不进入生产 `sign-provider` 字典。
+> 产品基线仅含以下 3 个真实签署提供商。测试用 `MOCK` 仅在测试 profile 传参使用（字典值域含 MOCK 供 stub 测试）。
 
 | code | label | value |
 |------|-------|-------|
-| ESIGN_BAO | e签宝 | 10 |
-| DOCUSIGN | DocuSign | 20 |
-| TSIGN | Tsign | 30 |
+| ESIGN_BAO | e签宝 | ESIGN_BAO |
+| DOCUSIGN | DocuSign | DOCUSIGN |
+| TSIGN | Tsign | TSIGN |
+| MOCK | Mock(测试) | MOCK |
 
 ## 证据强度
 
