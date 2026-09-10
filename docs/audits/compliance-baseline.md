@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 242 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1542 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1543 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -483,7 +483,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 242
-R2c: 1542
+R2c: 1543
 R2d: 38
 R3: 5
 R4: 0
@@ -748,3 +748,15 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R2b=236=R2b 基线不�
 **裁决**：三规则全部 baseline-raise（9 站点全合法，**Fix 分支为空**——无 @Inject private / 字符串 == / System.currentTimeMillis / 越权写类站点），对齐 `2026-07-25-1057-1` 逐站点分类框架 + V.2/`2026-08-27-1540-1` raise 先例。已知失败模式闭环注记：`0a825a42a` closure 自称「compliance 零漂移」仅核 daoFor 规则漏 R12 import 面，即 `project-context.md §已知失败模式 #1` 复发实例——R12 面须与 daoFor 面同列 closure 必查项。
 
 checker 复跑全 19 规则 actual ≤ 机器块（R2b=242≤242 / R2c=1542≤1542 / R12a=71≤71，其余=基线），机器块 ↔ 人类可读表逐行一致（本注记落盘时同步断言），exit 0，CI green 语义恢复。
+
+## R2c 基线上调注记（plan 2026-09-11-0457-1，ai-check-r3 M2.9 R2c 1542→1543 收官裁决）
+
+`2026-09-11-0457-1`（ai-check-r3 M2.9 修复阶段收官，R2c 单站点 baseline-raise 裁决）闭合 M2.5 批（plan `2026-09-10-0705-3`）Closure Gates 登记 deferred successor「R2c 1542→1543 +1」。**Fix 分支评估**：全树 `git diff 48b57cd06^..HEAD -- '*.java'` 实核无第二处新增 daoFor 站点（+27 行含 daoFor 字样的新增全部为 inv Processor 既有站点迁移/注释行，checker R2c 实测恒 1543 稳定）；同文件 `#settle` 侧 invoice 站点（`PaymentSettler.java:135` requireInvoiceForSettle）为基线内既有站点。**per-site 证据**（对齐 `2026-07-25-1057-1`/`2026-09-09-2100-1` 逐站点分类框架）：
+
+| # | 站点（file:line） | 规则贡献 | commit → 源计划 | 分类 |
+|---|------------------|---------|----------------|------|
+| 1 | `module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/entity/PaymentSettler.java:184`（`#reverseSettlement` 反核销路径 `requireInvoiceForReverseSettle` invoice docStatus 守卫加载 `daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId)`） | R2c+1 | `48b57cd06` → `2026-09-10-0705-3`（M2.5 P2-CK-pur-015-r3） | ✅ 修复义务内在面（「已作废发票拒绝反核销」守卫必须加载 invoice 校验 docStatus——P2-CK-pur-015-r3 owner doc state-machine.md §异常路径 L99 修复义务的直接实现站点；intra-module pur 域只读 load-by-id，非可重构 FK 导航（invoiceId 为弱指针入参非托管实体 getter），非跨域编排；同文件既有聚合写范式第 3 处同型调用） |
+
+checker 复跑（2026-09-11，M2.9 Phase 3）：exit 0，R2c=**1543**≤1543（机器块与本人类可读表双写同步上调），R2b=242/R2a=34/R2d=38/R3=5/R6=2/R10=14/R12a=71/R12b=66/R12c=42 逐值=机器块。
+
+**同跑披露（归独立裁决 successor，非本注记处置面）**：checker 全表同跑实测 **R1b=1**（`ErpInvSerialNumberBizModel.java:56` `dao().updateEntity(sn)`）> 机器块 0、**R1d=15**（同文件 `dao().findAllByQuery(q)` 新站点）> 机器块 14——漂移源同为 M2.5 commit `48b57cd06`（机器块冻结点 `060ddab0a` 之后引入），M2.5~M2.8 各批收尾仅断言 R2b/R2c/R12a 三元未复核全表，属 `project-context.md §已知失败模式「Compliance 基线漂移」`复发实例。按 M2.9 plan Non-Goal 6（不开 R2c 以外新基线裁决面）移交独立基线裁决计划（Fix `updateEntity(sn, null, context)` 或 per-site baseline-raise，二选一由该计划裁决）并登记为 M2.9 收官阻塞；本注记仅登记 R2c 上调，不放宽 R1b/R1d。
