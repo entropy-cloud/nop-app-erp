@@ -30,9 +30,13 @@ When a bug, retrospective, or audit reveals a repeatable pattern, consider promo
 - `17-code-history-deferred-triangulation-audit.md` — **代码 × 历史 × Deferred 三路交叉审计**：新一輪审计 mission 的非平凡增量 = 三路交叉（代码 / 历史 / Deferred），第三路（读最近 50 份 plan 的 Deferred 段）= 隐藏的 finding 金矿。ai-check-r2 M0.2 扫描揭示 8 项已满足 / 11 项部分满足 / 21 项未满足的 deferred 触发条件。含多次执行隔离纪律 + 状态机延用 + 同型 finding 合并基类 + 保护区域不绕。
 - `18-schema-contract-redesign-no-type-sniffing-no-sugar.md` — **契约重设计中禁类型嗅探与语法糖复发**：类型嗅探（`type === 'crud'`）与 sugar（顶层 `columns`/`options` 兼容层）是同一架构失败的两个症状——在 renderer 命令式设计集成而非在 schema 声明式设计协议。破坏性重设计下旧测试是迁移清单非验收标准；"让旧测试不改通过"驱动连环回摆（picker v3 实施期三次回摆实录）。含声明/身份判别式 + 契约回摆四驱动力表 + 决策树。
 - `19-statemachine-throw-domain-error-code-directly.md` — **组件直接抛领域错误码，禁"先抛通用码再外层转码"**：通用码无通用消费方（唯一消费方是转码层自己）+ StateMachine 无共享基类 = 转码是纯 boilerplate，裸奔实体则跨域错误码不一致。正确形态：StateMachine 的 `illegal()` 直抛领域码，Guard/Processor 转码层退役。含三判据反模式判定 + 自检清单。全局修复计划 `2026-09-07-2200-1`。
+- `20-mechanical-violations-script-baseline-gating.md` — **机械类违规须脚本基线门控而非抽样审计**：抽样对机械可判定违规零遗漏性缺陷（r1/r2「执行多轮仍存在问题」）——确定性清剿五要素（全量扫描脚本 / CAT 分级 / 基线快照 + 单向收紧 strict 门控 / anti-fake-green 自证 / 白名单唯一豁免 + 批注账），脚本绿 = 闭环。含 r3 CAT 终态对账实录（CAT-1 335→0 / CAT-2 204→0 / CAT-3 390→0 / CAT-4 1700→0、白名单 27 文件四要素、`--self-test` 13/13）+ 与 lesson 07（门控运维面）/17（发现面 vs 清剿面）划界 + 三段自检清单。
+- `21-standard-codification-before-conformance-audit.md` — **规范成文先于符合性审计**：标准不成文 → finding 无判定准绳 → 修复无授权（F15 后端消息 Non-Goal 反事实实录）。方案三步（权威 owner doc 成文 + 判定冲突唯一权威声明 / 成文时点快照冻结防真相源漂移[lesson 13] / 检查清单冻结后才开审计[M0.5 先例]）。含 r3 零争议实录（`i18n-compliance.md` 承载裁定 → MI.2~MI.6 + M1.x DIM-I 维零标准争议复判）+ 开工前三问（标准在哪/谁裁决/冲突以谁为准）+ 与 lesson 12/20 划界。
 
 > **2026-08-28 提升裁决（ai-check-r2 M0.7 自审）**：M0 阶段执行后沉淀方法学——三路交叉审计范式入课为 `17`。
 
 > **2026-08-20 提升裁决（plan `2026-08-20-1255-2` G.1，requirement-compliance mission MG）**：roadmap 点名两类必入——`12` 文档化简化滥用 + `13` 需求基线陈旧；mission 证据高频候选 5 项逐一裁决——config-gate 认定范式（跨 ≥10 切片复现）入课为 `14`、xbiz XScript 编排下沉（M4.64+R1.89 双案平台机制约束）入课为 `15`、死常量/死列激活与 dangling dict 值设计预防**划界归并 lesson 10**（"声明但无写点"同族，已扩边界注记）、owner doc 表述过时未随实现更新**划界归并 lesson 13**（审计快照型陈旧案例族，已收录 payroll.md 案）。
 
 > **2026-08-28 提升裁决（ai-check-r2 M0.7 自审 + M5.3 收口预演）**：M0 阶段执行后沉淀方法学——三路交叉审计范式入课为 `17`。M5.3 closure audit CG1-CG5 主会话全通过，CG6 successor 触发条件登记（子代理通道恢复 / 人工裁决）。
+
+> **2026-09-11 提升裁决（ai-check-r3 MV.3，plan `2026-09-11-0906-3`，roadmap 点名义务）**：roadmap MV.3 行点名两类必入——「机械类违规须脚本基线门控而非抽样审计」入课为 `20`（r3 M0.2/M0.3/MI.x 主线实绩：`tools/check-hardcoded-cjk.mjs` + `docs/audits/cjk-baseline.md` 单向收紧 + CAT 终态四条对账链，lesson 17 的发现面/本课清剿面、lesson 07 的建设期/运维面互补划界）+「规范成文先于符合性审计」入课为 `21`（M0.1 反事实对照：F15 Non-Goal 根因 = 标准不成文；`docs/architecture/i18n-compliance.md` 唯一权威 + M0.5 清单冻结先例，与 lesson 12 关闭载体判别式/lesson 13 快照冻结防御划界互链）。同族划界：两条新课不重写 lesson 01–19 既有案例，互链仅限本索引行与新课正文反向引用。
