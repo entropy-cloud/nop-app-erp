@@ -120,7 +120,7 @@
 
 | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|
-| MV.1 **全量回归**：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test` 全 reactor 零新增失败（对照 M0.3 基线行登记的预存失败清单）+ compliance checker 不高于 M0.3 快照（合法新增 baseline-raise）+ `tools/check-hardcoded-cjk.mjs --strict` 全绿 + `i18n-coverage-checker.sh` 全绿；known-good-baselines 登记终态行 | `todo` | `docs/testing/known-good-baselines.md` | MI.9 + M2.9 | `closure-audit-prompt`（独立子代理） |
+| MV.1 **全量回归**：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test` 全 reactor 零新增失败（对照 M0.3 基线行登记的预存失败清单）+ compliance checker 不高于 M0.3 快照（合法新增 baseline-raise）+ `tools/check-hardcoded-cjk.mjs --strict` 全绿 + `i18n-coverage-checker.sh` 全绿；known-good-baselines 登记终态行 | `done`（plan `2026-09-11-0457-2` 三 Phase 执行项与退出标准全 `[x]`：五命令门全量实跑——install 156/156 SUCCESS + 全 reactor `mvn test` 4084/0/0/1 零新增失败 + checker exit 0 R2b=242/R2c=1543≤机器块/R12a=71 + CJK report CAT1..4=0/0/0/0 + strict PASS + i18n PASS；`ai-check-r3-mv1` 终态行登记 known-good-baselines 表尾与三对照行交叉一致；独立收官审计 `passes closure audit` 零 Blocking（回执 plan `## Closure`）；R1b/R1d 预存漂移（源 M2.5 `48b57cd06`）按 mission-driver 回填交接协议 successor: m29-r1b-r1d-baseline-adjudication 登记在案，本计划零新增漂移，不阻塞本项翻转——步骤 4b 沿 M2.9 收口先例） | `docs/testing/known-good-baselines.md` | MI.9 + M2.9 | `closure-audit-prompt`（独立子代理） |
 | MV.2 **索引终态校验**：全部 finding 到达 `fixed` / `not-a-problem` / `deferred`（deferred 计数与逐条理由显式报告）+ 五维 × 21 核对单元覆盖矩阵完整 + 跨轮 `ai-check-index.md` 状态机连续（ID 冲突按 §3.1 `-r3` 后缀） | `todo` | `ai-check-index.md` | MV.1 | `closure-audit-prompt` |
 | MV.3 **方法学沉淀**：「机械类违规须脚本基线门控而非抽样审计」+「规范成文先于符合性审计」模式入 `docs/lessons/` | `todo` | `docs/lessons/README.md` | MV.2 | none |
 
