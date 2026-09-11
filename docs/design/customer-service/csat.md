@@ -159,6 +159,8 @@ SELECT
 FROM ErpCsSurvey s
 JOIN ErpCsTicket t ON t.id = s.ticketId
 WHERE s.respondedAt IS NOT NULL
+
+> **实现注记（P1-CK-cs-002 修复，plan 2026-09-11-2350-1）**：看板与报表双站点聚合已按本节语义过滤 `respondedAt IS NOT NULL`，并按评分列分项计数（csat/nps/ces 可独立缺失，各维度用各自非空评分数为分母）；`surveyCount` = 已响应调查数。
 GROUP BY DATE_TRUNC('month', t.createdDate)
 ORDER BY month DESC
 

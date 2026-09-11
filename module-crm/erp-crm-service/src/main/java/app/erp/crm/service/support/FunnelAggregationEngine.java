@@ -130,6 +130,11 @@ public class FunnelAggregationEngine {
             BigDecimal revenue = nvl(lead.getExpectedRevenue());
 
             if (ErpCrmConstants.DOC_STATUS_CONVERTED.equals(status)) {
+                // P1-CK-crm-002：won 仅计 OPPORTUNITY（convertToCustomer 链原 LEAD + 新建 OPPORTUNITY
+                // 双 CONVERTED 双额，LEAD 型不计入消除双计；对齐设计「已转化商机」口径）
+                if (!ErpCrmConstants.LEAD_TYPE_OPPORTUNITY.equals(lead.getLeadType())) {
+                    continue;
+                }
                 totalWon++;
                 totalRevenue = totalRevenue.add(revenue);
                 // 销售周期：首条 ConvLog.changedAt → 末条（赢单）changedAt，回退到 lead 字段不可得时跳过

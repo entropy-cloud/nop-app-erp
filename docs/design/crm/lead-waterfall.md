@@ -94,6 +94,7 @@ ErpCrmLostReason（丢单原因）: name
      totalOpportunities = 期间内首次变为 OPPORTUNITY 的线索数
      totalWon = 期间内 docStatus=CONVERTED 且 isWonStage=true 的线索数
      totalLost = 期间内 docStatus=LOST 的线索数
+     > **实现注记（P1-CK-crm-002 修复，plan 2026-09-11-2350-1）**：doLose/doCancel/markLeadConverted 补写 ConvLog（from=to=当前 stage 的期间事件留痕），使「期间内有 ConvLog」圈定覆盖丢失/取消/转化事件；totalWon/totalRevenue 仅计 leadType=OPPORTUNITY（消转化链双计）。哨兵日志使销售周期（首→转化时刻）与末端阶段停留时长的度量值语义微调（更贴近真实终态时点）。
      totalRevenue = SUM(CONVERTED 线索的 expectedRevenue)
      avgSalesCycleDays = AVG(CONVERTED 线索的 cycleDays)
   

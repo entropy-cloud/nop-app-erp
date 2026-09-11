@@ -157,11 +157,16 @@ public class ErpCrmLeadProcessor {
             lead.setLostReasonDesc(lostReasonDesc);
         }
         leadDao().updateEntity(lead);
+        // P1-CK-crm-002：丢失事件写 ConvLog（from=to=当前 stage，阶段轴无迁移、仅作期间事件留痕），
+        // 使 refreshFunnel 的「期间内有 ConvLog」圈定覆盖丢失事件，漏斗 totalLost/lostRevenue 不再漏计
+        writeConvLog(lead, lead.getStageId(), lead.getStageId(), context);
     }
 
     protected void doCancel(ErpCrmLead lead, IServiceContext context) {
         lead.setDocStatus(stateMachine.cancelTargetStatus());
         leadDao().updateEntity(lead);
+        // P1-CK-crm-002：取消事件同上留痕
+        writeConvLog(lead, lead.getStageId(), lead.getStageId(), context);
     }
 
     /**

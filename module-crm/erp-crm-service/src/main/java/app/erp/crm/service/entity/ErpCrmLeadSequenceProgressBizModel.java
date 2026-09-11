@@ -235,9 +235,11 @@ public class ErpCrmLeadSequenceProgressBizModel
     }
 
     /**
-     * 计算从当前步起向前连续逾期的步骤数。
-     * 单步 due 时间 = startedAt + 累计 dueDays[0..stepIndex] + grace。从 currentIndex 向 0 反向扫描，
-     * 第一个未逾期步骤即终止。
+     * 计算当前进度窗的连续逾期深度（P1-CK-crm2-001 修正，plan 2026-09-11-2350-1 Phase 2）。
+     * 单步 due 时间 = startedAt + 累计 dueDays[0..stepIndex] + grace（到期时刻随 index 单调递增）。
+     * 已完成步骤（index < currentIndex）无 per-step 完成时间戳、不可回溯判定其历史是否逾期——
+     * 语义收敛为「当前步逾期深度」：先判当前步，当前步未逾期 → 0（按期推进零误报）；当前步已逾期
+     * 才向更早步反序累计连续逾期数。数据模型限制下最接近 owner doc sales-sequence.md §3 的可计算口径。
      */
     protected int countConsecutiveOverdueSteps(ErpCrmLeadSequenceProgress progress,
                                                 List<ErpCrmSequenceStep> steps,
@@ -246,22 +248,27 @@ public class ErpCrmLeadSequenceProgressBizModel
             return 0;
         }
         int currentIndex = progress.getCurrentStepIndex() != null ? progress.getCurrentStepIndex() : 0;
-        int count = 0;
-        long cumulativeDays = 0;
-        // 反向扫描：从 currentIndex 起向前累计
-        for (int i = 0; i <= currentIndex && i < steps.size(); i++) {
+        int lastIndex = Math.min(currentIndex, steps.size() - 1);
+        // 预计算累计 dueDays[0..i]（到期时刻单调递增）
+        long[] cumulative = new long[lastIndex + 1];
+        long acc = 0;
+        for (int i = 0; i <= lastIndex; i++) {
             ErpCrmSequenceStep step = steps.get(i);
             if (step.getDueDays() != null) {
-                cumulativeDays += step.getDueDays();
+                acc += step.getDueDays();
             }
-            LocalDateTime dueAt = progress.getStartedAt().toLocalDateTime().plusDays(cumulativeDays + grace);
+            cumulative[i] = acc;
+        }
+        // 反序扫描：当前步未逾期即 0；已逾期才向更早步累计
+        int count = 0;
+        for (int i = lastIndex; i >= 0; i--) {
+            LocalDateTime dueAt = progress.getStartedAt().toLocalDateTime().plusDays(cumulative[i] + grace);
             if (now.isAfter(dueAt)) {
                 count++;
             } else {
                 break;
             }
         }
-        // count 从 0..currentIndex 累计，取末段连续逾期
         return count;
     }
 

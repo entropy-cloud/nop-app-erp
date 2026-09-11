@@ -109,6 +109,8 @@
 | priority | 应用优先级（数值越小越优先） | — |
 | productId | 适用产品（→ErpMdProduct，可空，空=全局规则） | — |
 | productCategory | 适用产品品类（可空） | — |
+
+> **实现注记（P1-CK-crm2-002 修复，plan 2026-09-11-2350-1）**：productCategory 匹配已落地——调用方经 `ErpMdMaterial.category → ErpMdMaterialCategory.code` 解析类别 code 传入引擎，规则 productCategory 非空时须与产品类别 code 相等（上下文缺失 fail-closed 不命中）。**customerCategory 维度显式降级**：`ErpMdPartner` 无客户类别列（语义最近似的 customerGroup 不同一），该维度无数据承载不可实施；`ErpCrmPriceRule.view.xml` 已隐藏 customerCategory 编辑列防误配置。partner 类别数据模型落地时随批实施（Deferred）。
 | customerId | 适用客户（→ErpMdPartner，可空） | — |
 | customerCategory | 适用客户类别（可空） | — |
 | minQuantity | 最小数量（阶梯折扣的下限） | — |

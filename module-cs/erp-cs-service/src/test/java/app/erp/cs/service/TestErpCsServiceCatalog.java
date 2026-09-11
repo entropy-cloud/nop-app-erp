@@ -403,6 +403,113 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         });
     }
 
+    // ===================== P1-CK-cs-003：目录建单 SLA 闭环（plan 2026-09-11-2350-1 Phase 7） =====================
+
+    @Test
+    public void testCatalogTicketComputesSlaDeadline() {
+        // 目录项带 slaPolicyId → 建单时即按该策略计算 deadline（UC-CS-10 ④；修复前 enrichAfterCreate
+        // 双空守卫被预填 slaPolicyId 跳过 → deadline 恒 null → 永不超时升级/resolve 恒达标）
+        seedCustomer(PARTNER_ID, "ACME");
+        seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
+        String catalogItemId = seedCatalogItem("6006", "SLA 计时项", TICKET_TYPE_ID, SLA_POLICY_ID, true);
+
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("subject", "SLA 计时");
+        formData.put("customerId", PARTNER_ID);
+
+        ApiResponse<?> resp = rpc(mutation, "ErpCsServiceCatalogItem__createFromCatalog",
+                Map.of("catalogItemId", catalogItemId, "formData", formData));
+        assertEquals(0, resp.getStatus(), "createFromCatalog 应成功");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> data = (Map<String, Object>) resp.getData();
+        String ticketId = String.valueOf(data.get("id"));
+        ErpCsTicket ticket = daoProvider.daoFor(ErpCsTicket.class).getEntityById(ticketId);
+        assertEquals(SLA_POLICY_ID, ticket.getSlaPolicyId(), "slaPolicyId = 目录项策略");
+        if (ticket.getDeadlineDateTime() == null) {
+            throw new AssertionError("目录工单应计算 SLA deadline（修复前恒 null）");
+        }
+        assertTrue(ticket.getDeadlineDateTime().toLocalDateTime()
+                .isAfter(java.time.LocalDateTime.now().minusMinutes(1)), "deadline 在当前时间之后");
+    }
+
+    @Test
+    public void testPayPerTicketEntitlementNotDoubleConsumedOnCatalog() {
+        // 纯计次权益（无 slaPolicyId）+ 目录项无策略：目录路径已扣 1 次，enrichAfterCreate 的
+        // matchAndAttachSla 不得再扣（修复前 usedTickets 0→2 双计；plan 以 catalogItemId 列守卫）
+        seedCustomer(PARTNER_ID, "ACME");
+        seedTicketType(TICKET_TYPE_ID);
+        String catalogItemId = seedCatalogItem("6007", "计次项无策略", TICKET_TYPE_ID, null, true);
+        // 内联种子：slaPolicyId 显式 null（类 helper 硬编码 SLA_POLICY_ID，本测试无该策略行）
+        ormTemplate.runInSession(() -> {
+            ErpCsEntitlement e = daoProvider.daoFor(ErpCsEntitlement.class).newEntity();
+            e.orm_propValueByName("id", "8302");
+            e.setCode("ENT-PPD-8302");
+            e.setPartnerId(PARTNER_ID);
+            e.setServiceType(ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET);
+            e.setStartDate(java.time.LocalDate.now().minusDays(1));
+            e.setEndDate(java.time.LocalDate.now().plusDays(30));
+            e.setMaxTickets(10);
+            e.setUsedTickets(0);
+            e.setIsActive(Boolean.TRUE);
+            daoProvider.daoFor(ErpCsEntitlement.class).saveEntity(e);
+        });
+
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("subject", "计次建单");
+        formData.put("customerId", PARTNER_ID);
+
+        ApiResponse<?> resp = rpc(mutation, "ErpCsServiceCatalogItem__createFromCatalog",
+                Map.of("catalogItemId", catalogItemId, "formData", formData));
+        assertEquals(0, resp.getStatus(), "createFromCatalog 应成功: " + resp);
+        ErpCsEntitlement entitlement = daoProvider.daoFor(ErpCsEntitlement.class).getEntityById(8302L);
+        assertEquals(1, entitlement.getUsedTickets(), "计次权益仅扣 1 次（修复前双计 2 次）");
+    }
+
+    @Test
+    public void testCatalogTicketCodeFollowsCodeRule() {
+        // 移除显式 "TK-"+millis 编号 → codeRule TK{YYYYMM}{SEQ4} 兜底（避免同毫秒 UK 碰撞 + 格式对齐 UC-CS-01 ⑥）
+        seedCustomer(PARTNER_ID, "ACME");
+        seedTicketType(TICKET_TYPE_ID);
+        String catalogItemId = seedCatalogItem("6008", "编号规则项", TICKET_TYPE_ID, null, true);
+
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("subject", "编号规则");
+        formData.put("customerId", PARTNER_ID);
+
+        ApiResponse<?> resp = rpc(mutation, "ErpCsServiceCatalogItem__createFromCatalog",
+                Map.of("catalogItemId", catalogItemId, "formData", formData));
+        assertEquals(0, resp.getStatus(), "createFromCatalog 应成功");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> data = (Map<String, Object>) resp.getData();
+        String ticketId = String.valueOf(data.get("id"));
+        ErpCsTicket ticket = daoProvider.daoFor(ErpCsTicket.class).getEntityById(ticketId);
+        assertTrue(ticket.getCode().matches("TK\\d{10}"),
+                "目录工单编号应遵循 TK{YYYYMM}{SEQ4} 规则，实际=" + ticket.getCode());
+    }
+
+
+    @org.junit.jupiter.api.BeforeEach
+    public void seedCsTicketCodeRule() {
+        seedCodeRule();
+    }
+
+    private void seedCodeRule() {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<io.nop.sys.dao.entity.NopSysCodeRule> dao =
+                    daoProvider.daoFor(io.nop.sys.dao.entity.NopSysCodeRule.class);
+            io.nop.sys.dao.entity.NopSysCodeRule rule = new io.nop.sys.dao.entity.NopSysCodeRule();
+            rule.setName("cs-ticket-code");
+            rule.setDisplayName("客服工单TK编号规则");
+            rule.setCodePattern("TK{@year}{@month}{@csTicketMonthSeq:4}");
+            rule.setSeqName("default");
+            rule.setCreatedBy("system");
+            rule.setCreateTime(new java.sql.Timestamp(io.nop.api.core.time.CoreMetrics.currentTimeMillis()));
+            rule.setUpdatedBy("system");
+            rule.setUpdateTime(new java.sql.Timestamp(io.nop.api.core.time.CoreMetrics.currentTimeMillis()));
+            dao.saveEntity(rule);
+        });
+    }
+
     private void seedSlaPolicy(String id, String ticketTypeId) {
         seedTicketType(ticketTypeId);
         ormTemplate.runInSession(() -> {

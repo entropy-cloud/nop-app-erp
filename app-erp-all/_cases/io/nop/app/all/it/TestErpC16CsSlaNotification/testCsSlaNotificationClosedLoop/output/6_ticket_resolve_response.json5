@@ -14,7 +14,7 @@
     "source_label": null,
     "assignedToId": "it-c16-agent",
     "slaPolicyId": "9001",
-    "deadlineDateTime": "@var:ErpCsTicket@deadlineDateTime",
+    "deadlineDateTime": "*",
     "isSlaCompleted": true,
     "startDateTime": "*",
     "endDateTime": null,

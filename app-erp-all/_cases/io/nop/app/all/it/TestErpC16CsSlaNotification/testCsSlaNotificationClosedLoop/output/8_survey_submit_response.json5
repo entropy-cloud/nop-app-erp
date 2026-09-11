@@ -9,7 +9,7 @@
     "cesScore": null,
     "comment": "C16 满意度回填（与 seed 同值保持报表均值稳定）",
     "respondedAt": "*",
-    "surveySentAt": "@var:ErpCsSurvey@surveySentAt",
+    "surveySentAt": "*",
     "surveyChannel": "PORTAL",
     "surveyChannel_label": "PORTAL-门户",
     "delVersion": 0,

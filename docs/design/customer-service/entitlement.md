@@ -137,6 +137,8 @@ WARRANTY 类型（与产品/批次相关）
 | 优先级 | 来源 | 说明 |
 |--------|------|------|
 | 1 | entitlement.maxResolutionTime（不为空时） | 权益级覆盖 |
+
+> **实现注记（P1-CK-cs-001/003 修复，plan 2026-09-11-2350-1）**：挂载序已修正——权益 slaPolicyId 命中时直接按该策略计算 deadline（与 slaPolicyId 同源），maxResolutionTime 覆盖在一切策略计算之后应用（恒胜出）；策略无 hours/days 配置时 deadline 保持 null 不抛 NPE。目录建单（createFromCatalog）同点计算 deadline 并以 `catalogItemId` 列标记防权益二次扣减。
 | 2 | entitlement.slaPolicyId → resolveHours | 权益关联的 SLA 策略 |
 | 3 | ticketType.defaultSlaPolicyId | 工单类型默认 SLA |
 | 4 | 无 SLA | 不启用 SLA 计时 |

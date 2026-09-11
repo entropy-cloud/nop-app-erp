@@ -8,6 +8,7 @@ import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdOrganization;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.sal.dao.entity.ErpSalQuotation;
+import io.nop.api.core.annotations.autotest.EnableSnapshot;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
@@ -66,7 +67,7 @@ public class TestErpCrmLeadConversion extends JunitAutoTestCase {
     @Inject
     IGraphQLEngine graphQLEngine;
 
-    @Test
+        @Test
     public void testFullConversionChain() {
         ormTemplate.runInSession(() -> {
             seedCurrency();
@@ -139,7 +140,7 @@ public class TestErpCrmLeadConversion extends JunitAutoTestCase {
         assertEquals(quotation.getCode(), convertedOpp.getRelatedBillCode(), "商机弱指针 relatedBillCode=报价单号");
     }
 
-    @Test
+        @Test
     public void testLoseWithoutReasonRejected() {
         ormTemplate.runInSession(() -> {
             seedStage(STAGE_NEW, "STG-NEW", "新线索", 10, 20);
@@ -261,7 +262,7 @@ public class TestErpCrmLeadConversion extends JunitAutoTestCase {
                 "ErpMdPartner 无 leadId（核心零污染）");
     }
 
-    @Test
+        @Test
     public void testCancel() {
         ormTemplate.runInSession(() -> {
             seedStage(STAGE_NEW, "STG-NEW", "新线索", 10, 20);

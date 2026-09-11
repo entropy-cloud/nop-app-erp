@@ -41,30 +41,40 @@ public class ErpCsTicketMatchAndAttachSlaProcessor {
         // 权益集成（plan 2026-07-07-1430-1 §Phase 1 Decision）：config-gated
         // 与 SLA 匹配同点装配（"为工单装配服务级别"语义一致，避免双触发）。
         ErpCsEntitlement matched = matchAndConsumeEntitlement(ticket, context);
-        if (matched != null) {
-            // 权益级 SLA 覆盖优先：entitlement.slaPolicyId 覆盖工单类型默认
-            if (matched.getSlaPolicyId() != null) {
-                ticket.setSlaPolicyId(matched.getSlaPolicyId());
-            }
-            applyEntitlementSlaOverride(ticket, matched);
-            // 权益无独立 deadlineDateTime 列，沿用 SLA 策略 deadline 计算路径
-        }
 
-        ErpCsSlaPolicy policy = SlaPolicyMatcher.match(daoProvider, ticket);
-        if (policy == null) {
-            // 无匹配策略：不挂策略，deadlineDateTime 留空
-            dao().updateEntity(ticket);
-            return ticket;
+        // P1-CK-cs-001 修正挂载序（plan 2026-09-11-2350-1 Phase 5）：
+        // 生效策略单一化——权益 slaPolicyId 命中时直接按该策略计算 deadline（来源一致），
+        // 无权益策略时回退 matcher 匹配结果。
+        ErpCsSlaPolicy effectivePolicy = null;
+        if (matched != null && matched.getSlaPolicyId() != null) {
+            ticket.setSlaPolicyId(matched.getSlaPolicyId());
+            effectivePolicy = loadPolicy(matched.getSlaPolicyId());
+        } else {
+            ErpCsSlaPolicy policy = SlaPolicyMatcher.match(daoProvider, ticket);
+            if (policy != null) {
+                ticket.setSlaPolicyId(policy.getId());
+                effectivePolicy = policy;
+            }
         }
-        // 权益未覆盖 slaPolicyId 时取 SLA 策略匹配结果
-        if (ticket.getSlaPolicyId() == null) {
-            ticket.setSlaPolicyId(policy.getId());
+        // deadline 按生效策略计算；calculate 返回 null（策略无 hours/days 配置）时跳过写入
+        // 保持 null，不再 Timestamp.valueOf(null) 裸 NPE
+        if (effectivePolicy != null) {
+            LocalDateTime deadline = SlaDeadlineCalculator.calculate(CoreMetrics.currentDateTime(), effectivePolicy);
+            if (deadline != null) {
+                ticket.setDeadlineDateTime(Timestamp.valueOf(deadline));
+            }
         }
-        LocalDateTime deadline = SlaDeadlineCalculator.calculate(CoreMetrics.currentDateTime(), policy);
-        ticket.setDeadlineDateTime(Timestamp.valueOf(deadline));
-        // priority 变更重算时保留原 startDateTime（plan Phase 1 item 3）
+        // 权益 maxResolutionTime 覆盖最终权益（恒胜出，entitlement.md §三 优先级 1）——
+        // 置于一切策略计算之后，不再被策略 deadline 覆写
+        if (matched != null) {
+            applyEntitlementSlaOverride(ticket, matched);
+        }
         dao().updateEntity(ticket);
         return ticket;
+    }
+
+    private ErpCsSlaPolicy loadPolicy(String policyId) {
+        return daoProvider.daoFor(ErpCsSlaPolicy.class).getEntityById(policyId);
     }
 
     /**
@@ -76,6 +86,11 @@ public class ErpCsTicketMatchAndAttachSlaProcessor {
      */
     private ErpCsEntitlement matchAndConsumeEntitlement(ErpCsTicket ticket, IServiceContext context) {
         if (!ErpCsConfigs.isEntitlementCheckEnabled() || entitlementBiz == null) {
+            return null;
+        }
+        // P1-CK-cs-003：目录建单工单的权益扣减已在 createFromCatalog 落地（catalogItemId 列标记），
+        // enrichAfterCreate 自动挂载路径不得二次扣减（修复前纯计次权益 usedTickets 双计）
+        if (ticket.getCatalogItemId() != null) {
             return null;
         }
         ErpCsEntitlement matched = entitlementBiz.matchForCustomer(ticket.getCustomerId());

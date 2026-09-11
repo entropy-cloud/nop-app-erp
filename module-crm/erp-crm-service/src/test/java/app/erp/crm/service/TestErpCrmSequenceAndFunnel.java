@@ -74,6 +74,8 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
     IErpCrmLeadSequenceProgressBiz progressBiz;
     @Inject
     IErpCrmEventBiz eventBiz;
+    @Inject
+    app.erp.crm.biz.IErpCrmLeadBiz leadBiz;
 
     @Test
     public void testSequenceAssignAdvanceComplete() {
@@ -284,6 +286,49 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
     }
 
     @Test
+    public void testOnTimeAdvanceDoesNotMisreportOverdue() {
+        // P1-CK-crm2-001 反向用例（plan 2026-09-11-2350-1 Phase 2）：按期推进到第 5 步不应误报逾期。
+        // dueDays=[1,1,1,10,10]、grace=2、startedAt=10 天前、currentIndex=4：
+        //   旧正向扫描：due[0..2]=3/4/5 天 < 10 → 计 3 ≥ max-overdue-steps → 误报；
+        //   修复后反向扫描：当前步 due[4]=1+1+1+10+10+2=25 天 > 10 → 当步未逾期 → 0。
+        String leadId = "6010";
+        ormTemplate.runInSession(() -> {
+            seedStages();
+            seedLostReasons();
+            seedSequence(SEQ_ID, "SEQ-ONTIME", ErpCrmConstants.SEQUENCE_TEMPLATE_NEW_LEAD);
+            seedStep("6671", SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
+            ((ErpCrmSequenceStep) daoProvider.daoFor(ErpCrmSequenceStep.class).getEntityById("6671")).setDueDays(1);
+            seedStep("6672", SEQ_ID, 2, "EMAIL", ErpCrmConstants.STEP_COMPLETION_EMAIL_OPENED, false);
+            ((ErpCrmSequenceStep) daoProvider.daoFor(ErpCrmSequenceStep.class).getEntityById("6672")).setDueDays(1);
+            seedStep("6673", SEQ_ID, 3, "MEETING", ErpCrmConstants.STEP_COMPLETION_MEETING_HELD, false);
+            ((ErpCrmSequenceStep) daoProvider.daoFor(ErpCrmSequenceStep.class).getEntityById("6673")).setDueDays(1);
+            seedStep("6674", SEQ_ID, 4, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
+            ((ErpCrmSequenceStep) daoProvider.daoFor(ErpCrmSequenceStep.class).getEntityById("6674")).setDueDays(10);
+            seedStep("6675", SEQ_ID, 5, "EMAIL", ErpCrmConstants.STEP_COMPLETION_EMAIL_OPENED, false);
+            ((ErpCrmSequenceStep) daoProvider.daoFor(ErpCrmSequenceStep.class).getEntityById("6675")).setDueDays(10);
+            seedAssignmentRule(RULE_ID, SEQ_ID, "LEAD_SOURCE", "{\"sourceId\":[101]}", 10);
+
+            ErpCrmLead lead = newLead(leadId, "LEAD-ONTIME-001", ErpCrmConstants.LEAD_TYPE_LEAD,
+                    ErpCrmConstants.DOC_STATUS_NEW);
+            lead.setSourceId("101");
+            daoProvider.daoFor(ErpCrmLead.class).saveEntity(lead);
+        });
+        assertEquals(0, assignSequence(leadId).getStatus());
+
+        ormTemplate.runInSession(() -> {
+            ErpCrmLeadSequenceProgress p = reloadActiveProgress(leadId);
+            p.setStartedAt(Timestamp.valueOf(CoreMetrics.currentDateTime().minusDays(10)));
+            p.setCurrentStepIndex(4);
+            daoProvider.daoFor(ErpCrmLeadSequenceProgress.class).updateEntity(p);
+        });
+
+        List<Map<String, Object>> overdue = ormTemplate.runInSession(session -> progressBiz.scanOverdueSteps(new io.nop.core.context.ServiceContextImpl()));
+        boolean misreported = overdue.stream()
+                .anyMatch(row -> String.valueOf(row.get("leadId")).equals(leadId));
+        assertFalse(misreported, "按期推进到第 5 步（当前步未到期）不应误报逾期");
+    }
+
+    @Test
     public void testGetSequencePerformance() {
         String leadId = "6007";
         ormTemplate.runInSession(() -> {
@@ -383,6 +428,53 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         assertEquals(funnelReloaded.getId(), view.get("funnelId"));
         assertNotNull(view.get("stages"), "stages 数组已生成");
         assertEquals(3, ((List<?>) view.get("stages")).size(), "3 阶段可视化");
+    }
+
+    @Test
+    public void testFunnelCapturesTerminalEventsAndWonSingleCount() {
+        // P1-CK-crm-002（plan 2026-09-11-2350-1 Phase 3）：
+        // 场景 1（期间圈定闭合）：lead 六月 moveStage、七月 lose（丢失事件无六月日志）→ 七月漏斗应计 totalLost=1
+        //   （修复前 refreshFunnel 以「期间内有 ConvLog」圈定 → 七月无该 lead 日志 → totalLost 漏计为 0）。
+        // 场景 2（won 消双计）：convertToCustomer 链的 LEAD 型 CONVERTED + OPPORTUNITY 型 CONVERTED 同期并存
+        //   → totalWon 应仅计 OPPORTUNITY（=1）、totalRevenue 单计（修复前双计 2/2000）。
+        String leadLost = "6014";
+        String leadOrig = "6015";
+        String leadOpp = "6016";
+        ormTemplate.runInSession(() -> {
+            seedStages();
+            seedLostReasons();
+            // 场景 1：OPPORTUNITY 六月推进、七月丢失（种子 QUALIFIED，由真实 lose mutation 完成迁移）
+            ErpCrmLead lost = newLead(leadLost, "OPP-FN-LS2", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+                    ErpCrmConstants.DOC_STATUS_QUALIFIED, new BigDecimal("500"), 50, REASON_PRICE);
+            daoProvider.daoFor(ErpCrmLead.class).saveEntity(lost);
+            saveConvLog("7101", leadLost, null, STAGE_NEW, java.time.LocalDateTime.of(2026, 6, 5, 9, 0));
+            saveConvLog("7102", leadLost, STAGE_NEW, STAGE_QUALIFIED, java.time.LocalDateTime.of(2026, 6, 20, 9, 0));
+            // 场景 2：转化链双记录（原 LEAD CONVERTED + 新建 OPPORTUNITY CONVERTED，同额 revenue）
+            ErpCrmLead orig = newLead(leadOrig, "LEAD-FN-ORIG", ErpCrmConstants.LEAD_TYPE_LEAD,
+                    ErpCrmConstants.DOC_STATUS_CONVERTED, new BigDecimal("1000"), 100, null);
+            ErpCrmLead opp = newLead(leadOpp, "OPP-FN-ORIG", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+                    ErpCrmConstants.DOC_STATUS_CONVERTED, new BigDecimal("1000"), 100, null);
+            daoProvider.daoFor(ErpCrmLead.class).saveEntity(orig);
+            daoProvider.daoFor(ErpCrmLead.class).saveEntity(opp);
+            saveConvLog("7103", leadOrig, null, STAGE_NEW, java.time.LocalDateTime.now().minusDays(3));
+            saveConvLog("7104", leadOpp, null, STAGE_NEW, java.time.LocalDateTime.now().minusDays(3));
+        });
+
+        // 场景 1：当前月漏斗（丢失事件期间 = lose mutation 的 ConvLog.changedAt 所在月）——
+        // 经真实 lose mutation 触发（修复后 doLose 写当月 ConvLog）；六月 moveStage 日志落在上月不圈定
+        String lostReasonId = REASON_PRICE;
+        ormTemplate.runInSession(session -> leadBiz.lose(leadLost, lostReasonId, "当月丢失", new io.nop.core.context.ServiceContextImpl()));
+        LocalDate now = io.nop.api.core.time.CoreMetrics.today();
+        LocalDate periodStart = now.withDayOfMonth(1);
+        LocalDate periodEnd = now.withDayOfMonth(now.lengthOfMonth());
+        assertEquals(0, refreshFunnel(periodStart, periodEnd, null, null, null).getStatus());
+        ErpCrmLeadFunnel periodFunnel = reloadFunnel(periodStart, periodEnd, null, null, null);
+        assertNotNull(periodFunnel);
+        assertEquals(1, periodFunnel.getTotalLost(), "当月丢失事件应入当月漏斗（期间圈定闭合）");
+
+        // 场景 2：won 仅计 OPPORTUNITY
+        assertEquals(1, periodFunnel.getTotalWon(), "转化链双记录仅 OPPORTUNITY 计 won");
+        assertEquals(0, periodFunnel.getTotalRevenue().compareTo(new BigDecimal("1000")), "won revenue 单计 1000");
     }
 
     @Test

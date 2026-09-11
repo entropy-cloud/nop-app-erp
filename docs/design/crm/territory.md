@@ -243,4 +243,5 @@
   - `territoryId=null` → 公司级（聚合所有 `territoryId/teamId/ownerId` 维度的配额行）；
   - `territoryId≠null` 且 `teamId/ownerId=null` → 区域级（聚合该区域子树所有团队/个人配额行）；
   - 三段（目标/预测/实际）同屏聚合通过 `getTerritoryPipeline` @BizQuery 入口暴露。
+  > **实现注记（P1-CK-crm-001 修复，plan 2026-09-11-2350-1）**：三段口径统一——公司级（territoryId=null）预测/实际段聚合全部行（对齐配额段全行语义）；实际段仅计 leadType=OPPORTUNITY（convertToCustomer 链双记录消双计）并要求期间内有 ConvLog 事件（丢失/转化自该计划起写 ConvLog，近义期间归因，精确转化时间轴归 P2-CK-crm2-003 successor）；预测段经 periodLabel → ForecastPeriod.id 两步期间过滤。
 - **显式值优先规则**：若该层级已直接配置配额行（非空 `quotaAmount`），优先返回该显式值；否则向下聚合子节点配额行求和。

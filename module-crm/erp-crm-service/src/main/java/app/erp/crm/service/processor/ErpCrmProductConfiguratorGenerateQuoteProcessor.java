@@ -179,8 +179,28 @@ public class ErpCrmProductConfiguratorGenerateQuoteProcessor {
         String ctxCurrency = readString(ctx, "currencyId");
         BigDecimal basePrice = readBigDecimal(ctx, "basePrice");
         LocalDate now = CoreMetrics.today();
+        String productCategory = resolveProductCategoryCode(productId);
         List<ErpCrmPriceRule> activeRules = loadActivePriceRules(productId, customerId, ctxCurrency);
-        return priceRuleEngine.resolvePrice(productId, customerId, quantity, ctxCurrency, now, basePrice, activeRules);
+        return priceRuleEngine.resolvePrice(productId, customerId, productCategory,
+                quantity, ctxCurrency, now, basePrice, activeRules);
+    }
+
+    /**
+     * P1-CK-crm2-002：解析产品类别 code 供类别限定价格规则匹配（ErpMdMaterial.categoryId
+     * → to-one category → ErpMdMaterialCategory.code）。产品/类别不存在或无类别时返回 null
+     * （引擎 fail-closed：类别限定规则不命中）。单产品单次读取，无 N+1。
+     */
+    protected String resolveProductCategoryCode(String productId) {
+        if (productId == null) {
+            return null;
+        }
+        app.erp.md.dao.entity.ErpMdMaterial material =
+                daoProvider.daoFor(app.erp.md.dao.entity.ErpMdMaterial.class).getEntityById(productId);
+        if (material == null || material.getCategoryId() == null) {
+            return null;
+        }
+        app.erp.md.dao.entity.ErpMdMaterialCategory category = material.getCategory();
+        return category != null ? category.getCode() : null;
     }
 
     protected List<ErpCrmPriceRule> loadActivePriceRules(String productId, String customerId, String currencyId) {

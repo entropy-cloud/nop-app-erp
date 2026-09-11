@@ -136,6 +136,70 @@ public class TestPriceRuleEngine extends BaseTestCase {
         assertFalse(result.isMatched(), "customerId 不匹配 → 不命中");
     }
 
+    // ===================== P1-CK-crm2-002：productCategory 维度（plan 2026-09-11-2350-1 Phase 1） =====================
+
+    @Test
+    public void testCategoryScopedRuleNotMatchWithoutCategoryContext() {
+        // 缺陷复现（P1-CK-crm2-002，7 参旧签名=无类别上下文）：类别限定规则（productCategory=SERVER、
+        // productId 空）当前 ruleMatchesProduct 对 productId 空恒真 → 退化为全局规则误命中。
+        // 修复后：规则类别非空而上下文类别缺失 → fail-closed 不命中。
+        ErpCrmPriceRule categoryRule = newRule("PROMOTIONAL", 1);
+        categoryRule.setProductCategory("SERVER");
+        categoryRule.setPriceOverride(BigDecimal.valueOf(700));
+        PriceRuleEngine.PriceResult result = engine.resolvePrice(PRODUCT_ID, null,
+                BigDecimal.TEN, CURRENCY_ID, TODAY, BigDecimal.valueOf(1000), List.of(categoryRule));
+        assertFalse(result.isMatched(), "类别限定规则在无类别上下文时不应命中（退化为全局=缺陷）");
+    }
+
+    @Test
+    public void testCategoryScopedRuleMatchesOnlySameCategory() {
+        // 类别限定规则（productId 空、productCategory=SERVER）不应退化为全局规则
+        ErpCrmPriceRule categoryRule = newRule("PROMOTIONAL", 1);
+        categoryRule.setProductCategory("SERVER");
+        categoryRule.setPriceOverride(BigDecimal.valueOf(700));
+
+        // 同类别 → 命中
+        PriceRuleEngine.PriceResult hit = engine.resolvePrice(PRODUCT_ID, null, "SERVER",
+                BigDecimal.TEN, CURRENCY_ID, TODAY, BigDecimal.valueOf(1000), List.of(categoryRule));
+        assertTrue(hit.isMatched(), "同类别产品应命中类别限定规则");
+        // 不同类别 → 不命中（修复前恒命中=退化为全局）
+        PriceRuleEngine.PriceResult miss = engine.resolvePrice(PRODUCT_ID, null, "LAPTOP",
+                BigDecimal.TEN, CURRENCY_ID, TODAY, BigDecimal.valueOf(1000), List.of(categoryRule));
+        assertFalse(miss.isMatched(), "不同类别产品不应命中类别限定规则");
+        // 上下文无类别信息 → 不命中（fail-closed，防止类别限定规则误伤未知类别产品）
+        PriceRuleEngine.PriceResult noCtx = engine.resolvePrice(PRODUCT_ID, null, null,
+                BigDecimal.TEN, CURRENCY_ID, TODAY, BigDecimal.valueOf(1000), List.of(categoryRule));
+        assertFalse(noCtx.isMatched(), "上下文无类别时类别限定规则不命中");
+    }
+
+    @Test
+    public void testGlobalRuleUnaffectedByCategoryDimension() {
+        // 双空规则（productId/productCategory 均空）仍为全局规则
+        ErpCrmPriceRule global = newRule("PROMOTIONAL", 1);
+        global.setPriceOverride(BigDecimal.valueOf(850));
+        assertTrue(engine.resolvePrice(PRODUCT_ID, null, "SERVER",
+                BigDecimal.TEN, CURRENCY_ID, TODAY, BigDecimal.valueOf(1000), List.of(global)).isMatched(),
+                "全局规则与类别维度正交");
+        assertTrue(engine.resolvePrice(PRODUCT_ID, null, null,
+                BigDecimal.TEN, CURRENCY_ID, TODAY, BigDecimal.valueOf(1000), List.of(global)).isMatched(),
+                "全局规则在无类别上下文时仍命中");
+    }
+
+    @Test
+    public void testProductAndCategoryBothScopedRequireBothMatch() {
+        // productId 与 productCategory 同时限定 → 双条件都须满足
+        ErpCrmPriceRule both = newRule("PROMOTIONAL", 1);
+        both.setProductId(PRODUCT_ID);
+        both.setProductCategory("SERVER");
+        both.setPriceOverride(BigDecimal.valueOf(600));
+        assertTrue(engine.resolvePrice(PRODUCT_ID, null, "SERVER",
+                BigDecimal.TEN, CURRENCY_ID, TODAY, BigDecimal.valueOf(1000), List.of(both)).isMatched(),
+                "产品与类别均匹配 → 命中");
+        assertFalse(engine.resolvePrice(PRODUCT_ID, null, "LAPTOP",
+                BigDecimal.TEN, CURRENCY_ID, TODAY, BigDecimal.valueOf(1000), List.of(both)).isMatched(),
+                "产品匹配但类别不符 → 不命中");
+    }
+
     @Test
     public void testDiscountPercentApplied() {
         ErpCrmPriceRule r = newRule("PROMOTIONAL", 1);

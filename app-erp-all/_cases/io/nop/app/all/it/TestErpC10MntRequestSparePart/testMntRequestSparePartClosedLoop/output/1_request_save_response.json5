@@ -16,7 +16,7 @@
     "createdBy": "autotest-ref",
     "createTime": "*",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpMntRequest@updateTime",
+    "updateTime": "*",
     "acceptedBy": null,
     "completedBy": null,
     "completedAt": null,

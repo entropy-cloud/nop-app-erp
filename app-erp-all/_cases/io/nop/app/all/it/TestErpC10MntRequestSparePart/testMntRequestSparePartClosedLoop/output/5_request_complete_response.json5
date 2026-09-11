@@ -13,7 +13,7 @@
     "assignedTo": 2,
     "acceptedBy": null,
     "completedBy": null,
-    "completedAt": "@var:ErpMntRequest@completedAt",
+    "completedAt": "*",
     "remark": null,
     "delVersion": 0,
     "version": 3,

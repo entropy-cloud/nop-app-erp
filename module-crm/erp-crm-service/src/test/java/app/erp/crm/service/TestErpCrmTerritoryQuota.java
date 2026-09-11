@@ -1,6 +1,8 @@
 package app.erp.crm.service;
 
 import app.erp.crm.dao.entity.ErpCrmForecast;
+import app.erp.crm.dao.entity.ErpCrmForecastPeriod;
+import app.erp.crm.dao.entity.ErpCrmLeadConvLog;
 import app.erp.crm.dao.entity.ErpCrmLead;
 import app.erp.crm.dao.entity.ErpCrmQuota;
 import app.erp.crm.dao.entity.ErpCrmTerritory;
@@ -414,7 +416,19 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
                     ErpCrmConstants.QUOTA_PERIOD_QUARTERLY, 2026, periodLabel,
                     new BigDecimal("10000"), false);
 
-            // Forecast：预测段
+            // Forecast：预测段（P1-CK-crm-001 期间过滤契约：期间 label 须可解析——补种期间行）
+            ErpCrmForecastPeriod period = daoProvider.daoFor(ErpCrmForecastPeriod.class).newEntity();
+            period.setId("9999");
+            period.setCode("PER-9999");
+            period.setOrgId(ORG_ID);
+            period.setPeriodType("QUARTERLY");
+            period.setPeriodStart(java.time.LocalDate.of(2026, 7, 1));
+            period.setPeriodEnd(java.time.LocalDate.of(2026, 9, 30));
+            period.setLabel(periodLabel);
+            period.setStatus(ErpCrmConstants.FORECAST_PERIOD_STATUS_OPEN);
+            period.setIsCurrent(Boolean.TRUE);
+            daoProvider.daoFor(ErpCrmForecastPeriod.class).saveEntity(period);
+
             ErpCrmForecast forecast = new ErpCrmForecast();
             forecast.setId("9621");
             forecast.setOrgId(ORG_ID);
@@ -438,6 +452,14 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
             lead.setTerritoryId(territoryId);
             lead.setExpectedRevenue(new BigDecimal("4000"));
             daoProvider.daoFor(ErpCrmLead.class).saveEntity(lead);
+
+            // P1-CK-crm-001 期间归因契约：CONVERTED lead 须有期间内 ConvLog 事件方计入实际段
+            ErpCrmLeadConvLog convLog = daoProvider.daoFor(ErpCrmLeadConvLog.class).newEntity();
+            convLog.setId("9641");
+            convLog.setLeadId("9631");
+            convLog.setOrgId(ORG_ID);
+            convLog.setChangedAt(java.sql.Timestamp.valueOf(java.time.LocalDateTime.of(2026, 8, 15, 10, 0)));
+            daoProvider.daoFor(ErpCrmLeadConvLog.class).saveEntity(convLog);
         });
 
         ApiResponse<?> resp = graphQLEngine.executeRpc(graphQLEngine.newRpcContext(

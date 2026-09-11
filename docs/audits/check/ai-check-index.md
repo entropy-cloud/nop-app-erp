@@ -493,8 +493,8 @@
 | P3-CK-hr2-024 | P3 | D5/D7 | ck-hr-attendance-payroll.md | 排班调换 submit/approve 边界：无同日期校验（跨日交换语义未定义）+ 同 assignment 多 PENDING 双批准无守卫 | 新增 | open |  |
 | P3-CK-hr2-025 | P3 | D7 | ck-hr-attendance-payroll.md | 休假余额并发扣减竞态——approve 读派生 used 无锁，两笔并发 approve 均过校验超额审批 | 新增 | open |  |
 | P3-CK-hr2-026 | P3 | D6/D8 | ck-hr-attendance-payroll.md | convertToFormal 部分冲突清单静默丢弃 + 个税跳档告警为有效税率近似且仅检升档 | 新增 | open |  |
-| P1-CK-crm-001 | P1 | D6/D8 | ck-crm-lead.md | getTerritoryPipeline 管道三段聚合口径混乱——公司级实际/预测段只计 territoryId IS NULL 的记录 + 实际段无 leadType 过滤（convertToCustomer 链同笔生意双计）+ 实际/预测段无期间过滤 | 新增 | open |  |
-| P1-CK-crm-002 | P1 | D6/D8 | ck-crm-lead.md | 漏斗聚合 won/lost 期间口径系统性失真——doLose/markLeadConverted 不写 ConvLog，期间内唯一动作是丢失/转化的线索从该期漏斗中消失；totalWon/totalRevenue 无 leadType 过滤双计 | 新增 | open |  |
+| P1-CK-crm-001 | P1 | D6/D8 | ck-crm-lead.md | getTerritoryPipeline 管道三段聚合口径混乱——公司级实际/预测段只计 territoryId IS NULL 的记录 + 实际段无 leadType 过滤（convertToCustomer 链同笔生意双计）+ 实际/预测段无期间过滤 | 新增 | fixed | 已修（plan 2026-09-11-2350-1 Phase 4：accumulatePipeline 公司级全行 + leadType=OPPORTUNITY 过滤 + 预测段 periodLabel→periodId 两步过滤 + 实际段 ConvLog 期间归因；测试 testCompanyPipelineAllRowsOpportunityOnlyPeriodScoped 红→绿） |
+| P1-CK-crm-002 | P1 | D6/D8 | ck-crm-lead.md | 漏斗聚合 won/lost 期间口径系统性失真——doLose/markLeadConverted 不写 ConvLog，期间内唯一动作是丢失/转化的线索从该期漏斗中消失；totalWon/totalRevenue 无 leadType 过滤双计 | 新增 | fixed | 已修（plan 2026-09-11-2350-1 Phase 3：doLose/doCancel/markLeadConverted 补写 ConvLog（from=to 哨兵事件留痕）+ computeHeader won 仅计 OPPORTUNITY 消双计；测试 testFunnelCapturesTerminalEventsAndWonSingleCount 红→绿；TestErpCrmLeadConversion 3 快照重录） |
 | P2-CK-crm-003 | P2 | D8 | ck-crm-lead.md | convertToCustomer 新建商机不透传 territoryId/campaignId——转化后商机在区域管道/区域预测中失明 | 新增 | open |  |
 | P2-CK-crm-004 | P2 | D6 | ck-crm-lead.md | QuotaRollupCalculator.rollup 层级覆盖语义按平面求和——中间层显式覆盖值与其子明细行并存时上级聚合双计 | 新增 | open |  |
 | P2-CK-crm-005 | P2 | D5/D6 | ck-crm-lead.md | distributeAnnualQuota 无重复分配幂等守卫 + 均分尾差不守恒——重复调用生成重复子行使聚合翻倍，Σ子行≠年度总额且无末行吸收 | 新增 | open |  |
@@ -512,8 +512,8 @@
 | P3-CK-crm-017 | P3 | D1 | ck-crm-lead.md | getCreatedOpportunity 只读查询标注 @BizMutation——查询走写事务路径 | 新增 | open |  |
 | P3-CK-crm-018 | P3 | D10/D9 | ck-crm-lead.md | countCompletedEvents leadId=null 退化为全系统事件计数 + findAllByQuery().size() 计数模式 | 新增 | open |  |
 | P3-CK-crm-019 | P3 | D10/D5 | ck-crm-lead.md | 查重「默认仅提示」实际零提示——checkAndNotify 返回的候选列表被调用方丢弃，无日志无事件 | 新增 | open |  |
-| P1-CK-crm2-001 | P1 | D6 | ck-crm-cpq-forecast.md | countConsecutiveOverdueSteps 前向扫描把已按期完成的步骤计为逾期——按期推进到第 3 步以后的序列进度系统性误报逾期并派发提醒 | 新增 | open |  |
-| P1-CK-crm2-002 | P1 | D6/D5 | ck-crm-cpq-forecast.md | PriceRuleEngine 完全忽略 productCategory/customerCategory 维度——类别限定规则退化为全局规则，对所有产品/客户错误匹配定价 | 新增 | open |  |
+| P1-CK-crm2-001 | P1 | D6 | ck-crm-cpq-forecast.md | countConsecutiveOverdueSteps 前向扫描把已按期完成的步骤计为逾期——按期推进到第 3 步以后的序列进度系统性误报逾期并派发提醒 | 新增 | fixed | 已修（plan 2026-09-11-2350-1 Phase 2：countConsecutiveOverdueSteps 反序扫描当前步逾期深度语义，按期推进零误报；测试 testOnTimeAdvanceDoesNotMisreportOverdue 红→绿） |
+| P1-CK-crm2-002 | P1 | D6/D5 | ck-crm-cpq-forecast.md | PriceRuleEngine 完全忽略 productCategory/customerCategory 维度——类别限定规则退化为全局规则，对所有产品/客户错误匹配定价 | 新增 | fixed | 已修（plan 2026-09-11-2350-1 Phase 1：resolvePrice 8 参重载 + ruleMatchesProduct productCategory 判定（MaterialCategory.code 对齐、上下文缺失 fail-closed）；customerCategory 显式降级（ErpMdPartner 无列，view.xml 隐藏列 + cpq.md 注记，Deferred 在案）；TestPriceRuleEngine +4 测试） |
 | P2-CK-crm2-003 | P2 | D6/D8，关联 P1-CK-crm-001/002 | ck-crm-cpq-forecast.md | 预测准确率局部实现——实际关闭段按 expectedCloseDate 代理口径而非转化时间、closePeriod 不做期末终刷、team/territory/company 维度准确率行永不生成 | 新增 | open |  |
 | P2-CK-crm2-004 | P2 | D4/D6 | ck-crm-cpq-forecast.md | ForecastRecalcJob 每次运行只重算一个 OPEN 期间（setLimit(1) 无排序）——设计要求「重算所有 OPEN 期间」，月度+季度并行期间下部分期间永不被刷新 | 新增 | open |  |
 | P2-CK-crm2-005 | P2 | D5/D8 | ck-crm-cpq-forecast.md | advanceStep 不校验事件与进度的线索归属——任一其他线索的已完成事件可推进本线索序列步骤 | 新增 | open |  |
@@ -524,6 +524,7 @@
 | P2-CK-crm2-010 | P2 | D7 | ck-crm-cpq-forecast.md | LeadSequenceProgress 无 (leadId, status) 唯一键——并发 assign/switch 产生双活跃进度行；Forecast 缺设计声明的 period×维度 UK（并发重复面本体复用 P2-MA4-013(a)） | 新增 | open |  |
 | P2-CK-crm2-011 | P2 | D2/D7/D4，同型 P3-CK-crm-015 族 | ck-crm-cpq-forecast.md | ForecastRecalcJob 直调 biz 无事务包装（清旧+重建非原子）+ 顶层失败仅 LOG.error 无告警通道 | 新增 | open |  |
 | P2-CK-crm2-012 | P2 | D5/D3，同型 P1-CK-pur-003/P2-CK-crm-007 族 | ck-crm-cpq-forecast.md | 切片实体 CRUD update 无已审守卫——ForecastPeriod 状态/期间可经 update_ 直改绕过 closePeriod/freeze 语义 | 同型 P1-CK-pur-003 族 |fixed | F1.3：统一基类接入自动生效（同型 P1-CK-pur-003 族，全域守卫惰性/激活由列存在性决定） |
+| P2-CK-crm-027 | P2 | D8（执行期新立，plan 2026-09-11-2350-1 Phase 4） | ck-crm-cpq-forecast.md | refreshForecast 公司行重复写——单次 refresh 对 territoryId=null 公司行写入两条完全相同行（DBG 实证 period=5900 terr=null commit=3000 ×2），公司级管道/预测汇总读数双计；区域行无此现象（leaf-exact 去重路径不同） | 新增（执行期 DEBUG 实证，plan Phase 4 测试设计触发） | open | 归 F3.5 crm P2 簇（本计划测试改用区域级管道避开混杂，读侧修复随本 finding 一并处置） |
 | P3-CK-crm2-013 | P3 | D6 | ck-crm-cpq-forecast.md | ownerTeam putIfAbsent 首见优先 + loadOpportunities 无排序——owner 商机跨团队时团队归属不确定，团队 rollup 口径漂移 | 新增 | open |  |
 | P3-CK-crm2-014 | P3 | D8 | ck-crm-cpq-forecast.md | 声明字段/死配置族——Forecast.currencyId/expectedClosedRevenue、Accuracy.calculatedBy、Period.isCurrent、Sequence.isDefault、Step.isMandatory 永不写入/消费；3 个 CPQ/序列 config 键零消费 | 新增 | open |  |
 | P3-CK-crm2-015 | P3 | D4，同型 cron 键漂移家族 | ck-crm-cpq-forecast.md | forecast-recalc + sequence-overdue 两个 job.yaml 内外层 cron 键不一致——启用需同时配 3 键，description 声明的门控键与 trigger 实际消费键不同 | 新增 | open |  |
@@ -532,9 +533,9 @@
 | P3-CK-crm2-018 | P3 | D6 | ck-crm-cpq-forecast.md | getSequencePerformance 度量语义漂移——stepDropOffRate 实为序列级跳过率（非设计步骤级流失率）；avgCompletionDays 整天截断 | 新增 | open |  |
 | P3-CK-crm2-019 | P3 | D5 | ck-crm-cpq-forecast.md | 序列 mutation 无 lead 终态守卫 + 空步骤序列可分配但永不可完成 + switchSequence 错误码语义漂移 + loadDefaultRule 无排序任取 | 新增 | open |  |
 | P3-CK-crm2-020 | P3 | D6 | ck-crm-cpq-forecast.md | quotation code 毫秒时间戳并发碰撞 + currencyId 缺失误用 ERR_CPQ_NO_PRICE_MATCHED 错误码 | 新增 | open |  |
-| P1-CK-cs-001 | P1 | D6/D8 | ck-cs.md | matchAndAttachSla 权益级 SLA 覆盖被策略匹配无条件覆写 + deadline 与 slaPolicyId 来源错配 + 无 hours/days 策略 NPE | 新增 | open |  |
-| P1-CK-cs-002 | P1 | D6 | ck-cs.md | CSAT/NPS 聚合分母包含未响应调查（评分 null 按 0 填充）——看板与报表双站点均分系统性偏低，E2E 数值断言无法捕获 | 新增 | open |  |
-| P1-CK-cs-003 | P1 | D8/D6 | ck-cs.md | 目录建单（createFromCatalog）永不计算 SLA deadline——目录工单全链路无 SLA 计时/超时升级/违约统计；权益扣减在特定配置下双计；编号绕过 TK 月序列且毫秒碰撞 | 新增 | open |  |
+| P1-CK-cs-001 | P1 | D6/D8 | ck-cs.md | matchAndAttachSla 权益级 SLA 覆盖被策略匹配无条件覆写 + deadline 与 slaPolicyId 来源错配 + 无 hours/days 策略 NPE | 新增 | fixed | 已修（plan 2026-09-11-2350-1 Phase 5：matchAndAttachSla 挂载序重写——权益 slaPolicyId 直接按该策略算 deadline（同源）+ maxResolutionTime 恒胜出 + calculate null 安全跳过；TestErpCsTicketSlaCsat +3 测试红→绿） |
+| P1-CK-cs-002 | P1 | D6 | ck-cs.md | CSAT/NPS 聚合分母包含未响应调查（评分 null 按 0 填充）——看板与报表双站点均分系统性偏低，E2E 数值断言无法捕获 | 新增 | fixed | 已修（plan 2026-09-11-2350-1 Phase 6：dashboard/report 双站点聚合 notNull(respondedAt) 过滤 + csat/nps/ces 分项计数，surveyCount=已响应数；testAgentCsatBreakdownExcludesUnrespondedSurveys 红→绿 + 快照重录） |
+| P1-CK-cs-003 | P1 | D8/D6 | ck-cs.md | 目录建单（createFromCatalog）永不计算 SLA deadline——目录工单全链路无 SLA 计时/超时升级/违约统计；权益扣减在特定配置下双计；编号绕过 TK 月序列且毫秒碰撞 | 新增 | fixed | 已修（plan 2026-09-11-2350-1 Phase 7：createFromCatalog 按生效策略计算 deadline 写入 ticketData + 权益 maxResolutionTime 覆盖 + catalogItemId 列守卫防二次扣减 + 移除显式 millis code 交 cs-ticket-code 规则；TestErpCsServiceCatalog +3 测试红→绿 + 快照重录） |
 | P2-CK-cs-004 | P2 | D3/D8 | ck-cs.md | 重开（reopen）后 SLA 升级链断裂——isSlaCompleted 不重置，超时扫描把重开工单永久排除 | 新增 | open |  |
 | P2-CK-cs-005 | P2 | D5 | ck-cs.md | matchAndAttachSla 手动 mutation 无幂等守卫——重复调用重复匹配并重复扣减权益 | 新增 | open |  |
 | P2-CK-cs-006 | P2 | D4/D2 | ck-cs.md | cs.entitlement-expiry / cs.fulfillment-approval-request 通知模板种子缺失——生产种子下权益到期提醒与履行审批请求 notify 全部静默丢弃 | 新增 | open |  |

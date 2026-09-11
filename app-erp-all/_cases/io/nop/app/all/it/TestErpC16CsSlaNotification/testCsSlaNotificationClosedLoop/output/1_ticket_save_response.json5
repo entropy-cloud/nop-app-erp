@@ -10,7 +10,7 @@
     "priority": "HIGH",
     "priority_label": "HIGH-高",
     "slaPolicyId": "9001",
-    "deadlineDateTime": "@var:ErpCsTicket@deadlineDateTime",
+    "deadlineDateTime": "*",
     "isSlaCompleted": false,
     "progress": 0,
     "status": "NEW",

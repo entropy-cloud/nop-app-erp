@@ -13,6 +13,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.ast.GraphQLOperationType;
 import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
@@ -30,6 +31,7 @@ import static io.nop.graphql.core.ast.GraphQLOperationType.query;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * CRM 销售预测 territory 级 rollup 矩阵测试（plan 2026-08-14-2304-1 RC-R1.25）。
@@ -177,6 +179,85 @@ public class TestErpCrmForecastTerritoryRollup extends JunitAutoTestCase {
     }
 
     // ---------- seed helpers ----------
+
+    @Test
+    public void testCompanyPipelineAllRowsOpportunityOnlyPeriodScoped() {
+        // P1-CK-crm-001（plan 2026-09-11-2350-1 Phase 4）公司级管道三段口径：
+        // ① 实际段含已分配商机（修复前 isNull(territoryId) 过滤漏计绝大多数已分配转化）；
+        // ② 实际段仅计 OPPORTUNITY（LEAD 型 CONVERTED 不双计）；
+        // ③ 预测段期间过滤：pipeline("2026-11") 不应取到 10 月行（修复前 forecast 无期间过滤 → 误报 3000）。
+        String leadId = "5921";
+        ormTemplate.runInSession(() -> {
+            seedStage(STAGE_QUALIFIED, "STG-Q", "已验证", 10, 50);
+            seedPeriod(PERIOD_ID, "2026-10", LocalDate.of(2026, 10, 1), LocalDate.of(2026, 10, 31),
+                    ErpCrmConstants.FORECAST_PERIOD_STATUS_OPEN);
+            seedTerritory(TERRITORY_T1, "T-ROOT-PC", "区域T1", null,
+                    ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/T-ROOT-PC", false);
+            // 已分配 CONVERTED 商机（10 月）——实际段主体（修复前 isNull 过滤漏计）
+            seedOpportunity(leadId, "OPP-PC-C1", "userT1", null, TERRITORY_T1, 100,
+                    new BigDecimal("800"), LocalDate.of(2026, 10, 15), ErpCrmConstants.DOC_STATUS_CONVERTED);
+            // LEAD 型 CONVERTED（转化链原线索，异额 999）——不应计入
+            ErpCrmLead leadOrig = new ErpCrmLead();
+            leadOrig.setId("5922");
+            leadOrig.setCode("LEAD-PC-O");
+            leadOrig.setOrgId(ORG_ID);
+            leadOrig.setLeadType(ErpCrmConstants.LEAD_TYPE_LEAD);
+            leadOrig.setDocStatus(ErpCrmConstants.DOC_STATUS_CONVERTED);
+            leadOrig.setTerritoryId(null);
+            leadOrig.setExpectedRevenue(new BigDecimal("999"));
+            leadOrig.setStageId(STAGE_QUALIFIED);
+            daoProvider.daoFor(ErpCrmLead.class).saveEntity(leadOrig);
+            // 单期间（10 月）forecast T1 区域行金额 = 3000（分配 QUALIFIED 商机 → 区域行，leaf-exact 先例）
+            seedOpportunity("5923", "OPP-PC-F10", "userT1", null, TERRITORY_T1, 90,
+                    new BigDecimal("3000"), LocalDate.of(2026, 10, 15), ErpCrmConstants.DOC_STATUS_QUALIFIED);
+            // 10 月转化 ConvLog（期间归因事件）
+            app.erp.crm.dao.entity.ErpCrmLeadConvLog log =
+                    daoProvider.daoFor(app.erp.crm.dao.entity.ErpCrmLeadConvLog.class).newEntity();
+            log.setId("7301");
+            log.setLeadId(leadId);
+            log.setOrgId(ORG_ID);
+            log.setFromStageId(null);
+            log.setToStageId(STAGE_QUALIFIED);
+            log.setChangedAt(java.sql.Timestamp.valueOf(java.time.LocalDateTime.of(2026, 10, 5, 9, 0)));
+            daoProvider.daoFor(app.erp.crm.dao.entity.ErpCrmLeadConvLog.class).saveEntity(log);
+        });
+        assertEquals(0, refreshForecast(PERIOD_ID).getStatus(), "10 月 forecast 应成功");
+
+        // 区域级管道（T1 子树）断言三段口径；公司级 forecast 行存在既有重复写缺陷
+        // （单次 refresh 写两条相同公司行，已登记 ai-check-index 新 finding 归 F3.5 批），
+        // 故期间过滤与金额断言用区域级（T1 子树行无重复——既有 countTerritoryForecasts 先例）。
+        Map<String, Object> pipeline = territoryPipeline(TERRITORY_T1, "2026-10");
+        // ①+② 实际段 = 已分配 OPPORTUNITY 800（修复前：isNull 过滤漏计已分配 → 0）
+        Map<String, Object> actual = (Map<String, Object>) pipeline.get("actual");
+        assertNotNull(actual, "actual 段存在");
+        Object actualRaw = actual.get("actualRevenue");
+        assertTrue(actualRaw instanceof Number, "actualRevenue 应为数值，实际=" + actualRaw);
+        assertAmountEquals(new BigDecimal("800"),
+                new BigDecimal(String.valueOf((Number) actualRaw)),
+                "实际段 = 已分配 OPPORTUNITY 800（isNull 过滤修复 + LEAD 型不双计）");
+        assertEquals(1, ((Number) actual.get("convertedCount")).intValue(), "convertedCount 仅计 OPPORTUNITY 1 笔");
+        // ③ 预测段期间过滤：10 月取 T1 行 3000；11 月不取到 10 月行（修复前误报 3000）
+        Map<String, Object> forecastOct = (Map<String, Object>) pipeline.get("forecast");
+        assertNotNull(forecastOct, "10 月 forecast 段存在");
+        assertAmountEquals(new BigDecimal("3000"),
+                new BigDecimal(String.valueOf((Number) forecastOct.get("commitAmount"))),
+                "10 月管道预测段 commit = T1 行 3000");
+        Map<String, Object> pipelineNov = territoryPipeline(TERRITORY_T1, "2026-11");
+        Map<String, Object> forecastNov = (Map<String, Object>) pipelineNov.get("forecast");
+        assertNotNull(forecastNov, "11 月 forecast 段存在");
+        assertAmountEquals(new BigDecimal("0"),
+                new BigDecimal(String.valueOf((Number) forecastNov.get("commitAmount"))),
+                "11 月管道预测段 commit = 0（期间过滤排除 10 月行）");
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> territoryPipeline(String territoryId, String periodLabel) {
+        ApiResponse<?> resp = graphQLEngine.executeRpc(graphQLEngine.newRpcContext(
+                query, "ErpCrmQuota__getTerritoryPipeline",
+                ApiRequest.build(Map.of("territoryId", territoryId, "periodLabel", periodLabel))));
+        assertEquals(0, resp.getStatus(), "getTerritoryPipeline 应成功");
+        return (Map<String, Object>) resp.getData();
+    }
 
     private void seedStage(String id, String code, String name, int sequence, int defaultProbability) {
         IEntityDao<ErpCrmStage> dao = daoProvider.daoFor(ErpCrmStage.class);

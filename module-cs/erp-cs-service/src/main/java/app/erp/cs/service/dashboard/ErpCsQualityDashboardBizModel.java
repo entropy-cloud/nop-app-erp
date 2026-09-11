@@ -230,6 +230,9 @@ public class ErpCsQualityDashboardBizModel {
                 SurveyAgg sa = t.getId() == null ? null : surveyByTicket.get(t.getId());
                 if (sa != null) {
                     a.surveyCount += sa.count;
+                    a.csatCount += sa.csatCount;
+                    a.npsCount += sa.npsCount;
+                    a.cesCount += sa.cesCount;
                     a.csatSum += sa.csatSum;
                     a.npsSum += sa.npsSum;
                     a.cesSum += sa.cesSum;
@@ -242,9 +245,9 @@ public class ErpCsQualityDashboardBizModel {
                 r.put("agentId", a.agentId);
                 r.put("ticketCount", a.ticketCount);
                 r.put("surveyCount", a.surveyCount);
-                r.put("avgCsat", avg(a.surveyCount, a.csatSum));
-                r.put("avgNps", avg(a.surveyCount, a.npsSum));
-                r.put("avgCes", avg(a.surveyCount, a.cesSum));
+                r.put("avgCsat", avg(a.csatCount, a.csatSum));
+                r.put("avgNps", avg(a.npsCount, a.npsSum));
+                r.put("avgCes", avg(a.cesCount, a.cesSum));
                 rows.add(r);
             }
             return rows;
@@ -311,6 +314,9 @@ public class ErpCsQualityDashboardBizModel {
         }
         QueryBean q = new QueryBean();
         q.addFilter(in("ticketId", ticketIds));
+        // P1-CK-cs-002（plan 2026-09-11-2350-1 Phase 6）：仅已响应调查入聚合（csat.md §4.3
+        // 「WHERE s.respondedAt IS NOT NULL」），未响应不再按 0 填充拉低均分
+        q.addFilter(io.nop.api.core.beans.FilterBeans.notNull("respondedAt"));
         List<ErpCsSurvey> surveys = daoProvider.daoFor(ErpCsSurvey.class).findAllByQuery(q);
         Map<String, SurveyAgg> map = new HashMap<>();
         for (ErpCsSurvey s : surveys) {
@@ -320,9 +326,19 @@ public class ErpCsQualityDashboardBizModel {
             }
             SurveyAgg a = map.computeIfAbsent(tId, k -> new SurveyAgg());
             a.count++;
-            a.csatSum += nz(s.getCsatScore());
-            a.npsSum += nz(s.getNpsScore());
-            a.cesSum += nz(s.getCesScore());
+            // 分项计数：csat/nps/ces 可独立缺失，各维度用各自非空评分数为分母
+            if (s.getCsatScore() != null) {
+                a.csatCount++;
+                a.csatSum += s.getCsatScore();
+            }
+            if (s.getNpsScore() != null) {
+                a.npsCount++;
+                a.npsSum += s.getNpsScore();
+            }
+            if (s.getCesScore() != null) {
+                a.cesCount++;
+                a.cesSum += s.getCesScore();
+            }
         }
         return map;
     }
@@ -393,6 +409,9 @@ public class ErpCsQualityDashboardBizModel {
         final String agentId;
         int ticketCount = 0;
         int surveyCount = 0;
+        int csatCount = 0;
+        int npsCount = 0;
+        int cesCount = 0;
         long csatSum = 0L;
         long npsSum = 0L;
         long cesSum = 0L;
@@ -404,6 +423,9 @@ public class ErpCsQualityDashboardBizModel {
 
     private static class SurveyAgg {
         int count = 0;
+        int csatCount = 0;
+        int npsCount = 0;
+        int cesCount = 0;
         long csatSum = 0L;
         long npsSum = 0L;
         long cesSum = 0L;

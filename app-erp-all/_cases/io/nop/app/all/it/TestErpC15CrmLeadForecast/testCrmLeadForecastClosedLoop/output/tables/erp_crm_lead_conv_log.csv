@@ -1,3 +1,4 @@
 _chgType,ID,LEAD_ID,ORG_ID,FROM_STAGE_ID,TO_STAGE_ID,CHANGED_AT,CHANGED_BY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
 A,100001,100000,2,1,2,@var:ErpCrmLeadConvLog@changedAt,autotest,,0,0,autotest-ref,*,autotest-ref,*
 A,100002,100000,2,2,9001,@var:ErpCrmLeadConvLog@changedAt_1,autotest,,0,0,autotest-ref,*,autotest-ref,*
+A,100004,100000,2,9001,9001,@var:ErpCrmLeadConvLog@changedAt_2,autotest,,0,0,autotest-ref,*,autotest-ref,*

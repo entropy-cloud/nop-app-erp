@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 15 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 242 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1544 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1551 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -483,7 +483,9 @@ R1c: 0
 R1d: 15
 R2a: 34
 R2b: 242
-R2c: 1544
+R2c: 1551
+> **R2c 上调注记（plan 2026-09-11-2350-1，2026-09-12）**：R2c 1544 → **1551**（+7）。新增站点（全部同域/合法只读聚合，文件头族 A/U20 豁免登记）：
+> ① `ErpCrmConversionProcessor.java:133,140`（ConvLog 留痕 newEntity/saveEntity，P1-CK-crm-002）；② `QuotaRollupCalculator.java` forecastPeriodDao/convLogDao helper（:302,:306，管道期间过滤与实际段归因，P1-CK-crm-001）；③ `ErpCsTicketMatchAndAttachSlaProcessor.java:77` loadPolicy（生效策略单一化，P1-CK-cs-001）；④ `ErpCsServiceCatalogItemCreateFromCatalogProcessor.java:126` 策略加载（目录建单 deadline 计算，P1-CK-cs-003）；⑤ 同文件剩余 +1 为上述 helper 内多处调用展开计数。
 > **R2c 上调注记（plan 2026-09-11-1530-1，2026-09-11）**：R2c 1543 → **1544**（+1）。新增站点 =
 > `module-hr/erp-hr-service/src/main/java/app/erp/hr/service/processor/ErpHrSalaryGenerateBankFileProcessor.java`
 > `loadEmployeesById`（P1-CK-hr2-002 银行文件五列格式修复：按 employeeId 集合批量读取员工 bankAccountId/fullName，

@@ -5,6 +5,7 @@ import app.erp.cs.dao.entity.ErpCsSurvey;
 import app.erp.cs.dao.entity.ErpCsTeam;
 import app.erp.cs.dao.entity.ErpCsTicket;
 import app.erp.cs.service.ErpCsConstants;
+import io.nop.api.core.annotations.autotest.EnableSnapshot;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.time.CoreMetrics;
@@ -230,6 +231,38 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
         return id;
     }
 
+    @Test
+    public void testAgentCsatBreakdownExcludesUnrespondedSurveys() {
+        // P1-CK-cs-002（plan 2026-09-11-2350-1 Phase 6）：未响应调查（respondedAt=null、评分 null）
+        // 不入分母——agent-002 两条工单：1 条已响应 csat=5 + 1 条未响应 → surveyCount=1、avgCsat=5.00
+        // （修复前：未响应按 0 填充 → surveyCount=2、avgCsat=2.50）
+        LocalDate today = CoreMetrics.today();
+        ormTemplate.runInSession(() -> {
+            String t1 = seedClosedTicketAssigned("9530", "TK-CSAT-R", true, 60, today, "agent-002");
+            seedSurvey("9702", t1, 5, 9, 4);
+            String t2 = seedClosedTicketAssigned("9531", "TK-CSAT-U", true, 60, today, "agent-002");
+            IEntityDao<ErpCsSurvey> dao = daoProvider.daoFor(ErpCsSurvey.class);
+            ErpCsSurvey pending = dao.newEntity();
+            pending.orm_propValueByName("id", "9703");
+            pending.setTicketId(t2);
+            // 未响应：respondedAt=null、评分全空
+            dao.saveEntity(pending);
+        });
+
+        List<Map<String, Object>> rows = dashboardBiz.getAgentCsatBreakdown(null, null, CTX);
+        boolean found = false;
+        for (Map<String, Object> r : rows) {
+            if ("agent-002".equals(r.get("agentId"))) {
+                found = true;
+                assertEquals(1, r.get("surveyCount"), "仅已响应调查计入分母");
+                BigDecimal avgCsat = (BigDecimal) r.get("avgCsat");
+                assertNotNull(avgCsat, "avgCsat 非空");
+                assertEquals(0, avgCsat.compareTo(new BigDecimal("5.00")), "avgCsat=5.00（未响应不拉低均分）");
+            }
+        }
+        assertTrue(found, "应包含 agent-002");
+    }
+
     private void seedSurvey(String id, String ticketId, Integer csat, Integer nps, Integer ces) {
         IEntityDao<ErpCsSurvey> dao = daoProvider.daoFor(ErpCsSurvey.class);
         ErpCsSurvey s = new ErpCsSurvey();
@@ -238,6 +271,8 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
         s.setCsatScore(csat);
         s.setNpsScore(nps);
         s.setCesScore(ces);
+        // P1-CK-cs-002：有评分即已响应（respondedAt 为聚合分母过滤键）；固定时刻保快照确定性
+        s.setRespondedAt(java.sql.Timestamp.valueOf(java.time.LocalDateTime.of(2026, 7, 1, 12, 0)));
         dao.saveEntity(s);
     }
 }

@@ -216,17 +216,19 @@ public class ErpCsReportBizModel {
                 if (a == null) continue;
                 SurveyAggregator sa = e.getValue();
                 a.surveyCount += sa.count;
+                a.csatCount += sa.csatCount;
+                a.npsCount += sa.npsCount;
                 a.csatSum = a.csatSum.add(sa.csatSum);
                 a.npsSum = a.npsSum.add(sa.npsSum);
             }
             Map<String, String> typeNames = resolveTicketTypeNames(agg.keySet());
             List<Map<String, Object>> rows = new ArrayList<>(agg.size());
             for (TicketAggregator a : agg.values()) {
-                BigDecimal avgCsat = a.surveyCount > 0
-                        ? a.csatSum.divide(new BigDecimal(a.surveyCount), 2, RoundingMode.HALF_UP)
+                BigDecimal avgCsat = a.csatCount > 0
+                        ? a.csatSum.divide(new BigDecimal(a.csatCount), 2, RoundingMode.HALF_UP)
                         : null;
-                BigDecimal avgNps = a.surveyCount > 0
-                        ? a.npsSum.divide(new BigDecimal(a.surveyCount), 2, RoundingMode.HALF_UP)
+                BigDecimal avgNps = a.npsCount > 0
+                        ? a.npsSum.divide(new BigDecimal(a.npsCount), 2, RoundingMode.HALF_UP)
                         : null;
                 Map<String, Object> r = new LinkedHashMap<>();
                 r.put("ticketTypeId", a.ticketTypeId);
@@ -255,6 +257,8 @@ public class ErpCsReportBizModel {
         if (ticketIds.isEmpty()) return Collections.emptyMap();
         QueryBean q = new QueryBean();
         q.addFilter(in("ticketId", ticketIds));
+        // P1-CK-cs-002（plan 2026-09-11-2350-1 Phase 6）：仅已响应调查入聚合 + 分项计数
+        q.addFilter(io.nop.api.core.beans.FilterBeans.notNull("respondedAt"));
         List<ErpCsSurvey> surveys = daoProvider.daoFor(ErpCsSurvey.class).findAllByQuery(q);
         Map<String, SurveyAggregator> map = new HashMap<>();
         for (ErpCsSurvey s : surveys) {
@@ -262,8 +266,16 @@ public class ErpCsReportBizModel {
             if (tId == null) continue;
             SurveyAggregator a = map.computeIfAbsent(tId, k -> new SurveyAggregator());
             a.count++;
-            a.csatSum = a.csatSum.add(nz(s.orm_propValueByName("csatScore")));
-            a.npsSum = a.npsSum.add(nz(s.orm_propValueByName("npsScore")));
+            Object csat = s.orm_propValueByName("csatScore");
+            if (csat != null) {
+                a.csatCount++;
+                a.csatSum = a.csatSum.add(nz(csat));
+            }
+            Object nps = s.orm_propValueByName("npsScore");
+            if (nps != null) {
+                a.npsCount++;
+                a.npsSum = a.npsSum.add(nz(nps));
+            }
         }
         return map;
     }
@@ -309,6 +321,8 @@ public class ErpCsReportBizModel {
         int slaCompletedCount = 0;
         int slaBreachedCount = 0;
         int surveyCount = 0;
+        int csatCount = 0;
+        int npsCount = 0;
         BigDecimal csatSum = BigDecimal.ZERO;
         BigDecimal npsSum = BigDecimal.ZERO;
 
@@ -319,6 +333,8 @@ public class ErpCsReportBizModel {
 
     private static class SurveyAggregator {
         int count = 0;
+        int csatCount = 0;
+        int npsCount = 0;
         BigDecimal csatSum = BigDecimal.ZERO;
         BigDecimal npsSum = BigDecimal.ZERO;
     }

@@ -1,5 +1,6 @@
 package app.erp.cs.service;
 
+import app.erp.cs.dao.entity.ErpCsEntitlement;
 import app.erp.cs.dao.entity.ErpCsSlaPolicy;
 import app.erp.cs.dao.entity.ErpCsSurvey;
 import app.erp.cs.dao.entity.ErpCsTicket;
@@ -355,6 +356,93 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
         q.setLimit(1);
         List<ErpCsSurvey> list = daoProvider.daoFor(ErpCsSurvey.class).findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    // ===================== P1-CK-cs-001：SLA 挂载序修正（plan 2026-09-11-2350-1 Phase 5） =====================
+
+    @Test
+    public void testEntitlementMaxResolutionTimeWinsOverPolicy() {
+        // 通用策略 resolveHours=48（可被 matcher 命中）+ 权益 maxResolutionTime=30 分钟
+        // → 权益覆盖恒胜出（entitlement.md §三 优先级 1）；修复前策略 deadline 无条件覆写权益覆盖
+        seedSlaPolicy("SLA-OVR", TICKET_TYPE_ID, 48, null, false);
+        String entId = "8901";
+        ormTemplate.runInSession(() -> {
+            ErpCsEntitlement e = daoProvider.daoFor(ErpCsEntitlement.class).newEntity();
+            e.orm_propValueByName("id", entId);
+            e.setCode("ENT-OVR");
+            e.setPartnerId(CUSTOMER_ID);
+            e.setServiceType(ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET);
+            e.setStartDate(java.time.LocalDate.now().minusDays(1));
+            e.setEndDate(java.time.LocalDate.now().plusDays(30));
+            e.setIsActive(Boolean.TRUE);
+            e.setMaxResolutionTime(30);
+            daoProvider.daoFor(ErpCsEntitlement.class).saveEntity(e);
+        });
+        String ticketId = seedTicket("TK-SLA-OVR", ErpCsConstants.TICKET_STATUS_NEW, null);
+
+        LocalDateTime before = CoreMetrics.currentDateTime();
+        rpcOk(mutation, "ErpCsTicket__matchAndAttachSla", args("ticketId", ticketId));
+        ErpCsTicket t = reload(ticketId);
+        assertNotNull(t.getDeadlineDateTime(), "deadline 已写入");
+        // deadline ≈ now + 30 分钟（权益覆盖），而非策略 48 小时
+        assertTrue(t.getDeadlineDateTime().toLocalDateTime().isAfter(before.plusMinutes(28)),
+                "deadline 应为权益覆盖 +30 分钟（修复前被策略 48h 覆写）");
+        assertTrue(t.getDeadlineDateTime().toLocalDateTime().isBefore(before.plusMinutes(32)),
+                "deadline 应为权益覆盖 +30 分钟");
+    }
+
+    @Test
+    public void testEntitlementPolicyDeadlineSameSource() {
+        // 权益 slaPolicyId=PX（resolveHours=2）+ 通用策略 PY（resolveHours=48）
+        // → slaPolicyId 与 deadline 同源（都来自 PX）；修复前 deadline 按 PY 48h 计算（来源错配）
+        String px = seedSlaPolicyReturnId("SLA-ENT-PX", TICKET_TYPE_ID, 2, null, false);
+        seedSlaPolicy("SLA-ENT-PY", TICKET_TYPE_ID, 48, null, false);
+        String entId = "8902";
+        ormTemplate.runInSession(() -> {
+            ErpCsEntitlement e = daoProvider.daoFor(ErpCsEntitlement.class).newEntity();
+            e.orm_propValueByName("id", entId);
+            e.setCode("ENT-SRC");
+            e.setPartnerId(CUSTOMER_ID);
+            e.setServiceType(ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET);
+            e.setStartDate(java.time.LocalDate.now().minusDays(1));
+            e.setEndDate(java.time.LocalDate.now().plusDays(30));
+            e.setIsActive(Boolean.TRUE);
+            e.setSlaPolicyId(px);
+            daoProvider.daoFor(ErpCsEntitlement.class).saveEntity(e);
+        });
+        String ticketId = seedTicket("TK-SLA-SRC", ErpCsConstants.TICKET_STATUS_NEW, null);
+
+        LocalDateTime before = CoreMetrics.currentDateTime();
+        rpcOk(mutation, "ErpCsTicket__matchAndAttachSla", args("ticketId", ticketId));
+        ErpCsTicket t = reload(ticketId);
+        assertEquals(px, t.getSlaPolicyId(), "slaPolicyId = 权益策略 PX");
+        assertNotNull(t.getDeadlineDateTime(), "deadline 已写入");
+        // deadline ≈ now + 2h（按权益策略 PX resolveHours 计算，与 slaPolicyId 同源）
+        assertTrue(t.getDeadlineDateTime().toLocalDateTime().isAfter(before.plusMinutes(110)),
+                "deadline 应按权益策略 PX 的 2 小时（修复前按 PY 48h 错配）");
+        assertTrue(t.getDeadlineDateTime().toLocalDateTime().isBefore(before.plusMinutes(130)),
+                "deadline 应按权益策略 PX 的 2 小时");
+    }
+
+    @Test
+    public void testPolicyWithoutHoursDaysKeepsDeadlineNull() {
+        // 策略无 resolveHours/resolveDays → calculate 返回 null → deadline 保持 null 不抛 NPE
+        // （修复前 Timestamp.valueOf(null) 裸 NPE）
+        seedSlaPolicy("SLA-EMPTY", TICKET_TYPE_ID, null, null, false);
+        String ticketId = seedTicket("TK-SLA-EMPTY", ErpCsConstants.TICKET_STATUS_NEW, null);
+
+        rpcOk(mutation, "ErpCsTicket__matchAndAttachSla", args("ticketId", ticketId));
+        ErpCsTicket t = reload(ticketId);
+        assertNotNull(t.getSlaPolicyId(), "策略已挂载");
+        assertNull(t.getDeadlineDateTime(), "无 hours/days 配置时 deadline 保持 null（不抛 NPE）");
+    }
+
+
+    private String seedSlaPolicyReturnId(String code, String ticketTypeId, Integer resolveHours,
+                                         Integer resolveDays, boolean isWorkingDays) {
+        String id = String.valueOf(8000 + Math.abs(code.hashCode()) % 1000);
+        seedSlaPolicy(code, ticketTypeId, resolveHours, resolveDays, isWorkingDays);
+        return id;
     }
 
     private String seedTicket(String code, String status, LocalDateTime deadline) {

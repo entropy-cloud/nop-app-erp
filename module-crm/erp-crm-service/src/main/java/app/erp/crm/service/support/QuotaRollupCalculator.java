@@ -1,6 +1,8 @@
 package app.erp.crm.service.support;
 
 import app.erp.crm.dao.entity.ErpCrmForecast;
+import app.erp.crm.dao.entity.ErpCrmForecastPeriod;
+import app.erp.crm.dao.entity.ErpCrmLeadConvLog;
 import app.erp.crm.dao.entity.ErpCrmLead;
 import app.erp.crm.dao.entity.ErpCrmQuota;
 import app.erp.crm.dao.entity.ErpCrmTerritory;
@@ -178,18 +180,32 @@ public class QuotaRollupCalculator {
             acc.quotaPeriodType = quota.getPeriodType();
         }
 
-        // 预测段：聚合 ErpCrmForecast 按 territoryId（子树）
+        // 预测段：聚合 ErpCrmForecast 按 territoryId（子树）。
+        // P1-CK-crm-001 ①：公司级（territoryId=null）聚合全部行（对齐配额段 rollup(null) 全行语义，
+        // 三段口径统一）；③ 期间过滤：periodLabel → ErpCrmForecastPeriod.id 集 → in(periodId, ids)
+        // （Forecast 无 periodLabel 列，经期间表两步解析）。
         Set<String> subtreeIds = new HashSet<>();
         if (territoryId != null) {
             collectSubtreeIds(territoryId, subtreeIds);
         }
         QueryBean forecastQuery = new QueryBean();
-        if (territoryId == null) {
-            forecastQuery.addFilter(isNull("territoryId"));
-        } else if (!subtreeIds.isEmpty()) {
-            forecastQuery.addFilter(in("territoryId", subtreeIds));
-        } else {
-            forecastQuery.addFilter(eq("territoryId", territoryId));
+        if (territoryId != null) {
+            if (!subtreeIds.isEmpty()) {
+                forecastQuery.addFilter(in("territoryId", subtreeIds));
+            } else {
+                forecastQuery.addFilter(eq("territoryId", territoryId));
+            }
+        }
+        if (periodLabel != null) {
+            List<String> periodIds = new ArrayList<>();
+            for (ErpCrmForecastPeriod p : forecastPeriodDao().findAllByQuery(
+                    new QueryBean().addFilter(eq("label", periodLabel)))) {
+                periodIds.add(p.getId());
+            }
+            if (periodIds.isEmpty()) {
+                return acc;
+            }
+            forecastQuery.addFilter(in("periodId", periodIds));
         }
         for (ErpCrmForecast f : forecastDao().findAllByQuery(forecastQuery)) {
             acc.commitAmount = acc.commitAmount.add(nvl(f.getCommitAmount()));
@@ -199,15 +215,37 @@ public class QuotaRollupCalculator {
             acc.opportunityCount += f.getOpportunityCount() != null ? f.getOpportunityCount() : 0;
         }
 
-        // 实际段：聚合 territoryId 子树内已 CONVERTED 商机 expectedRevenue
+        // 实际段：已 CONVERTED 商机 expectedRevenue。
+        // P1-CK-crm-001 ②：leadType=OPPORTUNITY 过滤（convertToCustomer 链原 LEAD + 新建 OPPORTUNITY
+        // 双 CONVERTED 双额，仅计商机消除双计）；① 公司级聚合全部行；③ 期间过滤 = 期间内有 ConvLog
+        // 事件（丢失/转化事件自 plan 2026-09-11-2350-1 Phase 3 起写 ConvLog）——近义口径，精确转化
+        // 时间轴归 P2-CK-crm2-003 successor。
         QueryBean actualQuery = new QueryBean();
         actualQuery.addFilter(eq("docStatus", ErpCrmConstants.DOC_STATUS_CONVERTED));
-        if (territoryId == null) {
-            actualQuery.addFilter(isNull("territoryId"));
-        } else if (!subtreeIds.isEmpty()) {
-            actualQuery.addFilter(in("territoryId", subtreeIds));
-        } else {
-            actualQuery.addFilter(eq("territoryId", territoryId));
+        actualQuery.addFilter(eq("leadType", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY));
+        if (territoryId != null) {
+            if (!subtreeIds.isEmpty()) {
+                actualQuery.addFilter(in("territoryId", subtreeIds));
+            } else {
+                actualQuery.addFilter(eq("territoryId", territoryId));
+            }
+        }
+        if (periodLabel != null) {
+            java.time.LocalDate pStart = parsePeriodLabelStart(periodLabel);
+            java.time.LocalDate pEnd = parsePeriodLabelEnd(periodLabel);
+            QueryBean logQuery = new QueryBean();
+            logQuery.addFilter(io.nop.api.core.beans.FilterBeans.ge("changedAt", java.sql.Timestamp.valueOf(pStart.atStartOfDay())));
+            logQuery.addFilter(io.nop.api.core.beans.FilterBeans.le("changedAt", java.sql.Timestamp.valueOf(pEnd.atTime(23, 59, 59))));
+            List<String> activeLeadIds = new ArrayList<>();
+            for (ErpCrmLeadConvLog lg : convLogDao().findAllByQuery(logQuery)) {
+                if (lg.getLeadId() != null) {
+                    activeLeadIds.add(lg.getLeadId());
+                }
+            }
+            if (activeLeadIds.isEmpty()) {
+                return acc;
+            }
+            actualQuery.addFilter(in("id", activeLeadIds));
         }
         for (ErpCrmLead lead : leadDao().findAllByQuery(actualQuery)) {
             acc.actualRevenue = acc.actualRevenue.add(nvl(lead.getExpectedRevenue()));
@@ -258,6 +296,38 @@ public class QuotaRollupCalculator {
 
     protected IEntityDao<ErpCrmTerritory> territoryDao() {
         return daoProvider.daoFor(ErpCrmTerritory.class);
+    }
+
+    protected IEntityDao<ErpCrmForecastPeriod> forecastPeriodDao() {
+        return daoProvider.daoFor(ErpCrmForecastPeriod.class);
+    }
+
+    protected IEntityDao<ErpCrmLeadConvLog> convLogDao() {
+        return daoProvider.daoFor(ErpCrmLeadConvLog.class);
+    }
+
+    /** periodLabel（月度 yyyy-MM / 季度 yyyy-Qn，对齐 formatPeriodLabel）→ 期间首日。 */
+    static java.time.LocalDate parsePeriodLabelStart(String periodLabel) {
+        String[] parts = periodLabel.split("-");
+        int year = Integer.parseInt(parts[0]);
+        if (parts[1].startsWith("Q")) {
+            int q = Integer.parseInt(parts[1].substring(1));
+            return java.time.LocalDate.of(year, q * 3 - 2, 1);
+        }
+        return java.time.LocalDate.of(year, Integer.parseInt(parts[1]), 1);
+    }
+
+    /** periodLabel → 期间末日。 */
+    static java.time.LocalDate parsePeriodLabelEnd(String periodLabel) {
+        String[] parts = periodLabel.split("-");
+        int year = Integer.parseInt(parts[0]);
+        if (parts[1].startsWith("Q")) {
+            int q = Integer.parseInt(parts[1].substring(1));
+            java.time.LocalDate end = java.time.LocalDate.of(year, q * 3, 1);
+            return end.withDayOfMonth(end.lengthOfMonth());
+        }
+        java.time.LocalDate start = parsePeriodLabelStart(periodLabel);
+        return start.withDayOfMonth(start.lengthOfMonth());
     }
 
     // ---------- 管道累加器（返回 DTO 的中间结构）----------

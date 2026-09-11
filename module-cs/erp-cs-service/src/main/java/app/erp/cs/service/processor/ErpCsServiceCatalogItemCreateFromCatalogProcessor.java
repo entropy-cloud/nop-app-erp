@@ -57,7 +57,10 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
         // 权益匹配 + 扣减（建单前）：config-gated，与 ErpCsTicketBizModel.matchAndAttachSla 同语义
         // 但不调 matchAndAttachSla（避免 save→update 同事务 SAVING 实体冲突），
         // 而是在 save 前把权益级 slaPolicyId 覆盖写入 ticketData，save 一次性落地。
-        applyEntitlementToTicketData(ticketData, context);
+        // P1-CK-cs-003（plan 2026-09-11-2350-1 Phase 7）：同点按最终生效策略计算 SLA deadline
+        // 写入 ticketData（目录工单不再恒无计时），并应用权益 maxResolutionTime 最终权益覆盖。
+        ErpCsEntitlement matchedEntitlement = applyEntitlementToTicketData(ticketData, context);
+        computeAndAttachDeadline(ticketData, matchedEntitlement);
 
         // 经 IErpCsTicketBiz.save 走标准 CRUD 管道（code 自动生成、审批状态默认值等）
         ErpCsTicket ticket = ticketBiz.save(ticketData, context);
@@ -80,14 +83,14 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
      * config-gated by {@link ErpCsConfigs#isEntitlementCheckEnabled}。
      * 无权益时按 {@link ErpCsConfigs#isAllowNoEntitlement} 放行或抛 {@link ErpCsErrors#ERR_ENTITLEMENT_NONE_ACTIVE}。
      */
-    private void applyEntitlementToTicketData(Map<String, Object> ticketData, IServiceContext context) {
+    private ErpCsEntitlement applyEntitlementToTicketData(Map<String, Object> ticketData, IServiceContext context) {
         if (!ErpCsConfigs.isEntitlementCheckEnabled() || entitlementBiz == null) {
-            return;
+            return null;
         }
         Object customerIdObj = ticketData.get("customerId");
         String customerId = customerIdObj == null ? null : String.valueOf(customerIdObj);
         if (customerId == null) {
-            return;
+            return null;
         }
         ErpCsEntitlement matched = entitlementBiz.matchForCustomer(customerId);
         if (matched == null) {
@@ -96,7 +99,7 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
                         .param(ErpCsErrors.ARG_PARTNER_ID, customerId);
             }
             // 放行：无权益工单由客服手动跟进
-            return;
+            return null;
         }
         // 权益级 slaPolicyId 覆盖目录项默认
         if (matched.getSlaPolicyId() != null) {
@@ -104,6 +107,44 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
         }
         // 扣减（PAY_PER_TICKET 增计，其他类型仅记日志）
         entitlementBiz.consumeEntitlement(matched.getId(), context);
+        return matched;
+    }
+
+    /**
+     * P1-CK-cs-003：目录建单 SLA deadline 计算（UC-CS-10 ④；修复前预填 slaPolicyId 使
+     * enrichAfterCreate 双空守卫跳过 → 目录工单 deadline 恒 null → 永不超时升级/resolve 恒达标）。
+     * 生效策略 = 权益 slaPolicyId 覆盖目录项默认（applyEntitlementToTicketData 已写入 ticketData）；
+     * calculate 返回 null（策略无 hours/days 配置）时不写 deadline；权益 maxResolutionTime
+     * 非空时最终权益覆盖（entitlement.md §三 优先级 1）。
+     */
+    private void computeAndAttachDeadline(Map<String, Object> ticketData, ErpCsEntitlement matched) {
+        Object slaPolicyIdObj = ticketData.get("slaPolicyId");
+        if (slaPolicyIdObj == null) {
+            return;
+        }
+        app.erp.cs.dao.entity.ErpCsSlaPolicy policy =
+                daoProvider.daoFor(app.erp.cs.dao.entity.ErpCsSlaPolicy.class)
+                        .getEntityById(String.valueOf(slaPolicyIdObj));
+        if (policy == null) {
+            LOG.warn("catalog-sla-policy-missing (deadline skipped): slaPolicyId={}", slaPolicyIdId(slaPolicyIdObj));
+            return;
+        }
+        java.time.LocalDateTime deadline = app.erp.cs.service.entity.SlaDeadlineCalculator.calculate(
+                io.nop.api.core.time.CoreMetrics.currentDateTime(), policy);
+        if (deadline != null) {
+            ticketData.put("deadlineDateTime", java.sql.Timestamp.valueOf(deadline));
+        }
+        if (matched != null) {
+            Integer overrideMinutes = app.erp.cs.service.entity.EntitlementMatcher.resolveSlaOverrideMinutes(matched);
+            if (overrideMinutes != null && overrideMinutes > 0) {
+                ticketData.put("deadlineDateTime", java.sql.Timestamp.valueOf(
+                        io.nop.api.core.time.CoreMetrics.currentDateTime().plusMinutes(overrideMinutes)));
+            }
+        }
+    }
+
+    private String slaPolicyIdId(Object obj) {
+        return String.valueOf(obj);
     }
 
     private ErpCsServiceCatalogItem requireCatalogItem(String catalogItemId, IServiceContext context) {
@@ -189,8 +230,9 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
      */
     private Map<String, Object> buildTicketData(ErpCsServiceCatalogItem item, Map<String, Object> formData) {
         Map<String, Object> data = new LinkedHashMap<>();
-        // code 为必填字段（domain=orderCode 不自动生成），此处按时间戳生成唯一码
-        data.put("code", "TK-" + io.nop.api.core.time.CoreMetrics.currentTimeMillis());
+        // P1-CK-cs-003：code 不再显式生成——xmeta biz:codeRule=cs-ticket-code（TK{YYYYMM}{SEQ4}）
+        // fill-when-absent 兜底（TestErpCsTicketCreateEnrichment 断言先例）；显式毫秒码绕过规则
+        // 且同毫秒并发撞 UK_CS_TICKET_CODE_ORG
         // 目录项默认值
         if (item.getTicketTypeId() != null) {
             data.put("ticketTypeId", item.getTicketTypeId());

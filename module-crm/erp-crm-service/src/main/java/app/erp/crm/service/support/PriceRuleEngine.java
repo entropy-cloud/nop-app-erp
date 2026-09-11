@@ -45,6 +45,18 @@ public class PriceRuleEngine {
     public PriceResult resolvePrice(String productId, String customerId, BigDecimal quantity,
                                     String currencyId, LocalDate now,
                                     BigDecimal basePrice, List<ErpCrmPriceRule> activeRules) {
+        return resolvePrice(productId, customerId, null, quantity, currencyId, now, basePrice, activeRules);
+    }
+
+    /**
+     * 带产品类别上下文的匹配入口（P1-CK-crm2-002）。
+     *
+     * @param productCategory 产品类别上下文（调用方经 ErpMdMaterial.category→ErpMdMaterialCategory.code 解析；
+     *                        可空——规则 productCategory 非空而上下文缺失时 fail-closed 不命中）
+     */
+    public PriceResult resolvePrice(String productId, String customerId, String productCategory,
+                                    BigDecimal quantity, String currencyId, LocalDate now,
+                                    BigDecimal basePrice, List<ErpCrmPriceRule> activeRules) {
         LocalDate today = now != null ? now : CoreMetrics.currentDate();
         BigDecimal qty = quantity != null ? quantity : BigDecimal.ONE;
 
@@ -53,7 +65,7 @@ public class PriceRuleEngine {
         }
         List<ErpCrmPriceRule> filtered = new ArrayList<>();
         for (ErpCrmPriceRule rule : activeRules) {
-            if (!ruleMatchesProduct(rule, productId)) {
+            if (!ruleMatchesProduct(rule, productId, productCategory)) {
                 continue;
             }
             if (!ruleMatchesCustomer(rule, customerId)) {
@@ -83,8 +95,21 @@ public class PriceRuleEngine {
     }
 
     protected boolean ruleMatchesProduct(ErpCrmPriceRule rule, String productId) {
-        // productId 为空=全局规则；非空须精确匹配
-        return rule.getProductId() == null || Objects.equals(rule.getProductId(), productId);
+        return ruleMatchesProduct(rule, productId, null);
+    }
+
+    protected boolean ruleMatchesProduct(ErpCrmPriceRule rule, String productId, String productCategory) {
+        // productId 非空须精确匹配
+        if (rule.getProductId() != null && !Objects.equals(rule.getProductId(), productId)) {
+            return false;
+        }
+        // P1-CK-crm2-002：productCategory 维度（plan 2026-09-11-2350-1 Phase 1）——规则类别非空时
+        // 须与上下文类别相等；上下文类别缺失（调用方未能解析）fail-closed 不命中，防类别限定规则
+        // 退化为全局规则错误匹配。customerCategory 维度显式降级（ErpMdPartner 无类别列，见 cpq.md）。
+        if (rule.getProductCategory() != null) {
+            return rule.getProductCategory().equals(productCategory);
+        }
+        return true;
     }
 
     protected boolean ruleMatchesCustomer(ErpCrmPriceRule rule, String customerId) {

@@ -2,6 +2,7 @@ package app.erp.crm.service.processor;
 
 import app.erp.crm.biz.IErpCrmStageBiz;
 import app.erp.crm.dao.entity.ErpCrmLead;
+import app.erp.crm.dao.entity.ErpCrmLeadConvLog;
 import app.erp.crm.dao.entity.ErpCrmStage;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.ErpCrmErrors;
@@ -120,6 +121,23 @@ public class ErpCrmConversionProcessor {
         lead.setRelatedBillCode(relatedBillCode);
         lead.setDocStatus(stateMachine.convertTargetStatus());
         leadDao().updateEntity(lead);
+        // P1-CK-crm-002：转化事件写 ConvLog（from=to=当前 stage），使漏斗期间圈定覆盖转化事件
+        writeConversionConvLog(lead, context);
+    }
+
+    /**
+     * 转化事件 ConvLog 留痕（镜像 {@code ErpCrmLeadProcessor#writeConvLog}；本类无 stage 轴迁移，
+     * from=to=当前 stage 仅作期间事件标记）。无 stage 的 lead 写 null 轴日志（仅承载期间归属）。
+     */
+    protected void writeConversionConvLog(ErpCrmLead lead, IServiceContext context) {
+        ErpCrmLeadConvLog log = daoProvider.daoFor(ErpCrmLeadConvLog.class).newEntity();
+        log.setLeadId(lead.getId());
+        log.setOrgId(lead.getOrgId());
+        log.setFromStageId(lead.getStageId());
+        log.setToStageId(lead.getStageId());
+        log.setChangedAt(io.nop.api.core.time.CoreMetrics.currentTimestamp());
+        log.setChangedBy(context != null ? context.getUserId() : null);
+        daoProvider.daoFor(ErpCrmLeadConvLog.class).saveEntity(log);
     }
 
     // ---------- step：校验 ----------

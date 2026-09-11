@@ -19,7 +19,7 @@
     "createdBy": "autotest-ref",
     "createTime": "*",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpMntSparePartUsage@updateTime",
+    "updateTime": "*",
     "approvedBy": null,
     "approvedAt": null,
     "postedAt": null,
