@@ -128,7 +128,7 @@
 
 | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|
-| MG.1 **新失败模式沉淀**：可复用模式提升 `docs/lessons/` / `docs/skills/`（如 CJK 白名单裁决范式）；known-good-baselines 终态行复核；历史执行目录只读保留 | `todo` | `docs/logs/00-log-writing-guide.md` | MV.3 | none |
+| MG.1 **新失败模式沉淀**：可复用模式提升 `docs/lessons/` / `docs/skills/`（如 CJK 白名单裁决范式）；known-good-baselines 终态行复核；历史执行目录只读保留 | `done`（plan `2026-09-11-1425-1` 三 Phase 执行项与 Exit Criteria 全 `[x]`：①新失败模式沉淀——MV.3 移交四项点名候选 + 机械枚举补充逐项三态裁决（R1b/R1d 三元断言入课 `22-closure-assertion-scope-full-gating-table.md` + `_cases` 快照外科变换入课 `23-*` + 姊妹会话并发干扰隔离入课 `24-*` + CJK 白名单裁决范式归并 lesson 20 边界扩展注记 + lesson 07 全表断言联动注记 + watch-only 六项登记计划 Deferred But Adjudicated + skills 零提升裁决），README 三行索引 + MG.1 提升裁决 blockquote，lessons 01–24 连续零孤儿；②known-good-baselines `ai-check-r3-mv1` 终态行四面对账逐值闭合零漂移（机器块↔人类可读表 19/19、披露↔0906-1 闭合承接、批注账四链求和 335/204/390/1700 + 白名单 27、MI 终态行交叉）；③执行目录 42 文件 inventory + 28 报告零缺零余 + `git status docs/audits/check/` 零删改只读核证；全 reactor `mvn test` 4084/0/0/1 与终态行逐位一致零新增失败；独立闭包审计 `passes closure audit` 零 Blocking（fresh-session task `ses_f6fd35fd2ffeTLJzT7VI2xu0Z3`，15/15 PASS，回执 plan `## Closure`）；纯裁决/沉淀面零生产代码/checker/seed/ORM/api.xml 改动，`verify: [test]` 门控按计划 Verification 节不适用（mvn test 为驱动步骤 3a 加成证据）；依 MV.3 步骤 4b 沿 MV.1/MV.2 收口先例翻转，独立结束审计回执已在案（Closure Audit Evidence 节）） | `docs/logs/00-log-writing-guide.md` | MV.3 | none |
 | MG.2 **状态回写**：本 roadmap 全部工作项 done；`docs/backlog/README.md` 行更新；`docs/logs/` 收尾日志 | `todo` | 本路线图 | MG.1 | none |
 
 ## 框架/平台复用

@@ -73,3 +73,5 @@ V.2 裁决中 R5 规则（`@Inject private`）从 0→1。这不是合法新增�
 - 裁决证据：plan `2026-07-31-1705-2` V.2（5 项 post-M0 漂移逐项裁决）+ plan `2026-07-31-1330-1` G.1（0 漂移收敛）
 - 关联 lesson：本失败的「裁决法」已提升为 skill `docs/skills/compliance-baseline-drift-adjudication-prompt.md`
 - 关联速查：`docs/context/project-context.md` §已知失败模式（plan `-1330-1` G.4 内联摘要）
+
+> **2026-09-11 边界扩展注记（ai-check-r3 MG.1，plan `2026-09-11-1425-1`）**：本课决策树第 2 步「跑 checker」由 lesson 22（`22-closure-assertion-scope-full-gating-table.md`）升级为「跑**全表** checker」——R1b/R1d 漂移（M2.5 commit `48b57cd06` 引入，穿越 M2.5~MV.1 多轮「仅断言 R2b/R2c/R12a 三元」收尾未被捕获，M2.9 全表同跑才暴露、`2026-09-11-0906-1` 闭合）实证：只复核历史漂移维度的门控收尾会让新维度漂移整轮漏网。本课运维面（per-site 分类 + 双写同步）不变，断言范围纪律见 lesson 22。本注记不重写正文。
