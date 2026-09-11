@@ -53,7 +53,10 @@ public class ErpInvSerialNumberBizModel extends AbstractErpCrudBizModel<ErpInvSe
         sn.setStatus(ErpInvDaoConstants.SERIAL_STATUS_OUT);
         sn.setOutBillType(outBillType);
         sn.setOutBillCode(outBillCode);
-        dao().updateEntity(sn);
+        // R1b Fix（plan 2026-09-11-0906-1 裁决）：经基类 updateEntity(entity, null, context) 收敛，
+        // 其 daoUpdateEntity 委托 IEntityDao 同名单参方法，本实体无 meta 过滤/
+        // 数据权限/脏 UK 属性，管道守卫全为 no-op，行为保持。
+        updateEntity(sn, null, context);
         return sn;
     }
 
@@ -62,6 +65,10 @@ public class ErpInvSerialNumberBizModel extends AbstractErpCrudBizModel<ErpInvSe
         q.addFilter(eq("serialNo", serialNo));
         q.addFilter(eq("materialId", materialId));
         q.addOrderField("id", true);
+        // R1d baseline-raise（plan 2026-09-11-0906-1 裁决 14→15）：同域只读内部辅助查询
+        // （serialNo+materialId 唯一键 + id desc 取首行），对齐基线内 14 条已裁决条目形态——
+        // 经 dao().findAllByQuery 绕过 findList 管道，避免向出库翻转写路径引入 objMeta 过滤校验/
+        // 数据权限行过滤/maxPageSize 截断等配置敏感面。
         List<ErpInvSerialNumber> list = dao().findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);
     }
