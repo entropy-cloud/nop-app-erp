@@ -17,7 +17,7 @@
 | R1a | dao().saveEntity (BizModel) | 🔴 高 | 0 |
 | R1b | dao().updateEntity (BizModel) | 🔴 高 | 0 |
 | R1c | dao().getEntityById (BizModel) | 🔴 高 | 0 |
-| R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
+| R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 15 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 242 |
 | R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1543 |
@@ -480,7 +480,7 @@ roadmap 横切 §6「域迁移不改 DAO 引用面形状，R2c 等计数预期�
 R1a: 0
 R1b: 0
 R1c: 0
-R1d: 14
+R1d: 15
 R2a: 34
 R2b: 242
 R2c: 1543
@@ -760,3 +760,14 @@ checker 复跑全 19 规则 actual ≤ 机器块（R2b=242≤242 / R2c=1542≤15
 checker 复跑（2026-09-11，M2.9 Phase 3）：exit 0，R2c=**1543**≤1543（机器块与本人类可读表双写同步上调），R2b=242/R2a=34/R2d=38/R3=5/R6=2/R10=14/R12a=71/R12b=66/R12c=42 逐值=机器块。
 
 **同跑披露（归独立裁决 successor，非本注记处置面）**：checker 全表同跑实测 **R1b=1**（`ErpInvSerialNumberBizModel.java:56` `dao().updateEntity(sn)`）> 机器块 0、**R1d=15**（同文件 `dao().findAllByQuery(q)` 新站点）> 机器块 14——漂移源同为 M2.5 commit `48b57cd06`（机器块冻结点 `060ddab0a` 之后引入），M2.5~M2.8 各批收尾仅断言 R2b/R2c/R12a 三元未复核全表，属 `project-context.md §已知失败模式「Compliance 基线漂移」`复发实例。按 M2.9 plan Non-Goal 6（不开 R2c 以外新基线裁决面）移交独立基线裁决计划（Fix `updateEntity(sn, null, context)` 或 per-site baseline-raise，二选一由该计划裁决）并登记为 M2.9 收官阻塞；本注记仅登记 R2c 上调，不放宽 R1b/R1d。
+
+## R1d 基线上调注记 + R1b Fix（plan 2026-09-11-0906-1，M2.5 漂移独立基线裁决）
+
+`2026-09-11-0906-1`（m29-r1b-r1d-baseline-adjudication）闭合 M2.9 收官登记的 successor：R1b/R1d 两站点逐站点裁决。漂移源 = M2.5 commit `48b57cd06`（plan `2026-09-10-0705-3`，P2-CK-inv-012-r3 `markOutbound` 出库翻转 writer），`git log -S` 实证单一引入批次，`git diff 48b57cd06^..HEAD` 全树恰两站点、无第三站点。**per-site 裁决**（对齐 `2026-07-27-0823-1` R1d 范式 + `2026-09-11-0457-1` Phase 3 单站点框架）：
+
+| # | 站点（file:line） | 规则 | 裁决 | 合法性分类 |
+|---|------------------|------|------|-----------|
+| 1 | `module-inventory/erp-inv-service/.../entity/ErpInvSerialNumberBizModel.java:56`（原 L56 `dao().updateEntity(sn)`） | R1b | **Fix**（已落地） | 机械收敛：`dao().updateEntity(sn)` → 基类 `updateEntity(sn, null, context)`（`markOutbound` 签名已携带 `IServiceContext context`）。平台源码实证（nop-biz `CrudBizModel.updateEntity`）：helper 链 = `checkMetaFilter` + `checkUniqueForUpdate`（仅脏 UK 属性——脏属性为 status/outBillType/outBillCode 非 serialNo）+ `checkDataAuth` + `daoUpdateEntity`（= `dao().updateEntity(entity)` 同一底层调用）+ `afterEntityChange`（基类空实现）——本实体无 posted/approveStatus 列（ORM `app-erp-inventory.orm.xml` ErpInvSerialNumber 实体），状态锁 prepare 钩子不在该路径且对本实体惰性，管道守卫全 no-op，行为严格保持。R1b 为 🔴 零基线规则，raise 0→1 默认否决；不写 `dao().updateEntity(sn, null, context)` 因 `IEntityDao` 无三参重载（checker Fix 锚 `updateEntity(entity, null, context)` 即基类 helper；全仓合规先例 `ErpCtDocumentBizModel:101` 等同型）。`TestErpInvSerialNumberOutboundGuard` 4 方法经真实 `IGraphQLEngine` RPC 断言原样保持绿 = 行为不变式运行时证明。 |
+| 2 | `module-inventory/erp-inv-service/.../entity/ErpInvSerialNumberBizModel.java:65`（私有 `findSerial` 唯一键查询 helper，serialNo+materialId + id desc 取首行） | R1d | **baseline-raise**（14→**15**） | 同域（inv）只读内部辅助查询 + 站点裁决注释，对齐基线内 14 条已裁决条目形态（`2026-07-27-0823-1`：同域只读内部辅助查询、每处代码注释明示理由）。Fix (i) `findList(q, null, context)` 否决理由：平台源码实证 `prepareFindPageQuery` 链 = `checkAllowQuery`（objMeta 过滤字段校验/可排序校验）+ `AuthHelper.appendFilter`（数据权限行过滤追加）+ objMeta filter/orderBy 叠加 + **`maxPageSize` limit 截断** + `transformFilter`/`resolveBizExpr` 元数据变换——等价性仅在当前配置（无数据权限规则/元数据不标记非可查询）下成立，属配置敏感面而非机械收敛，将其引入出库翻转写路径（stock-move complete 同事务调用）存在配置漂移下的静默行为面；对齐 Non-Goal「不借机改 `markOutbound` 业务语义」。残留风险：R1d 基线永久多接受 1 条同域 helper 查询（站点注释已明示理由，形态与既有 14 条一致）。 |
+
+checker 复跑（2026-09-11，本计划 Phase 3）：exit 0，R1b=**0**=0（Fix 回落）/ R1d=**15**≤15（机器块与本人类可读表双写同步上调）/ R2b=242 / R2c=1543 / R2a=34 / R2d=38 / R3=5 / R6=2 / R10=14 / R12a=71 / R12b=66 / R12c=42 逐值 ≤ 机器块，全 19 规则零裸漂移，CI red 消除。
