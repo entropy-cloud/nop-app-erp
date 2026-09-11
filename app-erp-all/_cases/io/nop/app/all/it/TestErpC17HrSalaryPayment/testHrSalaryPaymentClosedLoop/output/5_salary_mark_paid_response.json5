@@ -23,8 +23,8 @@
     "approveStatus": "APPROVED",
     "approveStatus_label": "APPROVED-已通过",
     "performanceFactor": null,
-    "actualWorkDays": 22.00,
-    "requiredWorkDays": 22.00,
+    "actualWorkDays": 23.00,
+    "requiredWorkDays": 23.00,
     "totalOvertimeHours": 0.00,
     "unpaidLeaveDays": 0.00,
     "cumulativeData": "******",
@@ -36,14 +36,14 @@
     "delVersion": 0,
     "version": 4,
     "createdBy": "autotest-ref",
-    "createTime": "*",
+    "createTime": "@var:ErpHrSalary@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "*",
+    "updateTime": "@var:ErpHrSalary@updateTime_5",
     "approvedBy": "0",
     "approvedAt": "@var:ErpHrSalary@approvedAt",
     "businessDate": "@var:ErpHrSalary@businessDate_1",
     "posted": true,
-    "nopFlowId": "@var:NopWfInstance@wfId"
+    "nopFlowId": "@var:ErpHrSalary@nopFlowId"
   },
   "status": 0
 }

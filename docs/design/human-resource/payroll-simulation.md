@@ -137,6 +137,11 @@ HR 选择"创建模拟"
 ```
 
 > 🟢 Odoo Payroll "Comparison Report" 差异报表。
+>
+> **实现注记（P1-CK-hr2-005 修复，plan 2026-09-11-1530-1）**：对比布局中「应发合计/社保(个人)/公积金(个人)/个税/
+> 实发合计」5 个派生行的读取映射已修复——`readSalaryField` 原 switch 仅覆盖 8 个输入项、5 个派生字段落 default
+> 恒返回 0（模拟值恒 0、差额 = 负的当期值）；现 BizModel 与 Processor 双副本统一委托
+> `AbstractErpHrSalarySimulationProcessor.readSalaryItem` 单一真相源（覆盖全部 13 项）。
 
 ### 3.3 异常值告警
 

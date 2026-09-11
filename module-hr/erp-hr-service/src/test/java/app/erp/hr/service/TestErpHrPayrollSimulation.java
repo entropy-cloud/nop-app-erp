@@ -10,6 +10,7 @@ import app.erp.hr.dao.entity.ErpHrSalarySimulationItemAdjustment;
 import app.erp.hr.dao.entity.ErpHrSocialInsuranceBase;
 import app.erp.hr.dao.entity.ErpHrSocialInsuranceConfig;
 import app.erp.hr.dao.entity.ErpHrTaxConfig;
+import io.nop.api.core.annotations.autotest.EnableSnapshot;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
@@ -154,7 +155,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         assertEquals(ErpHrErrors.ERR_HR_SIMULATION_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 
-    @Test
+        @Test
     public void testComparisonThreeColumns() {
         String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
@@ -404,7 +405,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         assertEquals(simulation.getId(), traced.get(0).getId());
     }
 
-    @Test
+        @Test
     public void testConvertToFormalDuplicateConflict() {
         String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);

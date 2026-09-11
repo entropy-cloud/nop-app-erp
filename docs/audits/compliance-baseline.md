@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 15 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 242 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1543 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1544 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -483,7 +483,12 @@ R1c: 0
 R1d: 15
 R2a: 34
 R2b: 242
-R2c: 1543
+R2c: 1544
+> **R2c 上调注记（plan 2026-09-11-1530-1，2026-09-11）**：R2c 1543 → **1544**（+1）。新增站点 =
+> `module-hr/erp-hr-service/src/main/java/app/erp/hr/service/processor/ErpHrSalaryGenerateBankFileProcessor.java`
+> `loadEmployeesById`（P1-CK-hr2-002 银行文件五列格式修复：按 employeeId 集合批量读取员工 bankAccountId/fullName，
+> 单查询防 N+1）。合法性：同域（hr）Processor 只读批量聚合，族 A/U20 豁免登记注释在文件头；镜像
+> `AbstractErpHrSalaryProcessor.findActiveEmployees` 既有同型站点。
 R2d: 38
 R3: 5
 R4: 0

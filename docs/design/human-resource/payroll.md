@@ -150,6 +150,8 @@
     └─► 公司承担 = Σ(基数 × 公司比例) 如 pension_er + medical_er + ... + maternity_er
 ```
 
+> **读取实现注记（P1-CK-hr2-004 修复，plan 2026-09-11-1530-1）**：「当前有效基数/配置」按核算期有效区间过滤落地——`effectiveFrom = null` 视为无限过去、`effectiveTo = null` 视为无限未来，区间与核算月相交即命中；同险种多行命中取 `effectiveFrom` 最新一行（年调 7 月插新行、旧行保留不删的并存形态不再重复计扣）；基数行同过滤并按 `effectiveFrom` 最新取用（`SocialInsuranceCalculator`）。
+
 ---
 
 ## 三、公积金计算
@@ -331,6 +333,21 @@
 > 🟢 AureusERP `salary.php` 薪酬计算逻辑。
 > ⚪ 中国薪酬流程惯例：HR prepare → finance review → manager approve → payment。
 
+> **出勤比例实现注记（P1-CK-hr2-001 修复，plan 2026-09-11-1530-1）**：「出勤比例 = 实际出勤日 / 应出勤日」落地口径——
+> ① 应出勤日 = 核算月周一至周五工作日数（config `erp-hr.required-work-days` > 0 时覆盖；无法定节假日日历为
+> documented simplification，节假日多的月份可经 config 校准），替代原硬编码 22（短月全员系统性少发已修）；
+> ② 有薪假（ANNUAL/MARRIAGE/MATERNITY/FUNERAL/COMPENSATORY，APPROVED 且期间完全包含）计入实际出勤日豁免折算
+> （§6.1「年假有薪」）；③ `erp-hr.deduct-unpaid-leave=true` 时无薪假（SICK/PERSONAL）从缺勤折减中豁免、仅由
+> 显式扣减单次扣除（修复前缺勤折减 + 显式扣减双扣）；=false（默认）维持缺勤即折减。豁免/加回量取
+> `durationDays`（工作日口径假设）：跨核算期假期不参与豁免、durationDays 含休息日可能多补（cap 到应出勤日兜底）——
+> 两项为 documented simplification，跨期假期运营场景确认时改按考勤行口径（Deferred）。
+> ④ 无考勤记录整月兜底 = 全额发放（新员工/未铺考勤语义，维持）；零打卡但配了豁免项不会超过全额。
+
+> **发放执行实现注记（P1-CK-hr2-002/003 修复，plan 2026-09-11-1530-1）**：步骤 4 已落地——`generateBankFile`
+> 批量发放逐条镜像 `markPaid` 过账序列（`tryPostPayment` 280 凭证 + F1.2 去重守卫 → PAID 翻转），文件格式对齐
+> §7.2 五列；`runPayroll` 批量核算逐员工失败隔离（单员工缺合同/社保/税务配置跳过并告警 `hr.salary-calculation-skipped`，
+> UC-HR-04），失败清单仅日志与通知可见、返回结构维持 `List<ErpHrSalary>`。
+
 ### 5.3 ErpHrSalary 扩展字段
 
 补充 `README.md` §ErpHrSalary 未列字段：
@@ -450,7 +467,7 @@
 
 ## 七、银行文件生成（ErpHrPayrollBankFile）
 
-> **Deferred**：`ErpHrPayrollBankFileBizModel` 为 CrudBizModel 桩（18 行，零状态机 mutation）。`bankFileId` 关联与本节 §7.3 生成流程（`paymentStatus=PENDING 且 approveStatus=APPROVED` → 生成银行文件 → 标记 PAID）为**目标行为，未接入**。`status` 字段 dict 值 `GENERATED/UPLOADED/CONFIRMED` 为**预留死状态**——本期零 `setStatus` writer，无上传/确认 mutation。**Successor**：config-gated 银行文件生成/上传确认流接入时实现 setStatus writer + 状态迁移守卫。
+> **Deferred（勘误 2026-09-11，plan 2026-09-11-1530-1）**：`bankFileId` 关联与 §7.3 生成流程**已接入**（`generateBankFile` mutation：可发放薪酬查询 → 逐条 280 过账 + PAID 翻转 → BankFile 落库 + bankFileId 回填，P1-CK-hr2-002）。仍未接入：`status` 字段 `UPLOADED/CONFIRMED` 两值仍为预留死状态（仅 `GENERATED` 有 writer）、无上传/确认 mutation。**Successor**：config-gated 银行文件上传确认流接入时实现 setStatus writer + 状态迁移守卫；§7.3「按员工工资卡所在银行分组」未落地（现 bankId 入参即目标银行单文件语义，混合批次分组需求出现时立项）。
 
 ### 7.1 实体
 
@@ -476,6 +493,9 @@
 ```
 
 > ⚪ 各银行格式不同（招行/工行/建行），通过 fileFormat 区分模板。
+>
+> **实现注记（P1-CK-hr2-002，plan 2026-09-11-1530-1）**：CSV 格式已按本节五列落地（`序号,账号,户名,金额,用途`，
+> 账号取员工 `bankAccountId`、户名取 `fullName`，批量单查询防 N+1；缺账号写空串不阻塞出文件）。
 
 ### 7.3 生成流程
 
@@ -545,7 +565,7 @@
 | businessType | 借方 | 贷方 | 触发时机 |
 |-------------|------|------|---------|
 | SALARY（计提） | 管理费用-工资/制造费用-工资 | 应付职工薪酬 | approveStatus → APPROVED（由 `approve` action 委托 `ErpHrSalaryPostApprovalProcessor` 触发，金额=应发合计；RC-R1.89 已实现） |
-| SALARY_PAYMENT（发放） | 应付职工薪酬 | 银行存款 | paymentStatus → PAID（由 `markPaid` 触发，金额=实发净额） |
+| SALARY_PAYMENT（发放） | 应付职工薪酬 | 银行存款 | paymentStatus → PAID（由 `markPaid` 单笔或 `generateBankFile` 批量发放任一路径触发，金额=实发净额；勘误 2026-09-11 对齐 §5.2 步骤 4——批量路径原缺 280 过账已由 plan 2026-09-11-1530-1 补齐） |
 | SOCIAL_INSURANCE_ER（社保公司） | 管理费用-社保 | 应付职工薪酬-社保 | approveStatus → APPROVED 时联动计提（金额=approve 时重算的公司承担社保，D1；RC-R1.89 已实现） |
 | HOUSING_FUND_ER（公积金公司） | 管理费用-公积金 | 应付职工薪酬-公积金 | approveStatus → APPROVED 时联动计提（金额=approve 时重算的公司承担公积金，D1；RC-R1.89 已实现） |
 

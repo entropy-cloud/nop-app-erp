@@ -148,7 +148,17 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
     }
 
     protected BigDecimal readSalaryField(ErpHrSalary salary, String fieldName) {
-        if (fieldName == null) {
+        return readSalaryItem(salary, fieldName);
+    }
+
+    /**
+     * 薪酬项目字段读取单一真相源（P1-CK-hr2-005）：覆盖 SALARY_ITEM_CODES 全部 13 项——
+     * 8 个输入项 + grossSalary/socialInsurance/housingFund/taxAmount/netSalary 5 个派生字段。
+     * 修复前派生字段落 default 分支恒返回 0，getComparison 对比视图合计/扣款五行数据错误。
+     * BizModel 与 Processor 双副本统一委托本方法（P3-CK-hr2-019 副本分叉的该面单点收敛）。
+     */
+    public static BigDecimal readSalaryItem(ErpHrSalary salary, String fieldName) {
+        if (fieldName == null || salary == null) {
             return BigDecimal.ZERO;
         }
         switch (fieldName) {
@@ -168,6 +178,16 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
                 return nz(salary.getOtherAllowance());
             case "otherDeductions":
                 return nz(salary.getOtherDeductions());
+            case "grossSalary":
+                return nz(salary.getGrossSalary());
+            case "socialInsurance":
+                return nz(salary.getSocialInsurance());
+            case "housingFund":
+                return nz(salary.getHousingFund());
+            case "taxAmount":
+                return nz(salary.getTaxAmount());
+            case "netSalary":
+                return nz(salary.getNetSalary());
             default:
                 return BigDecimal.ZERO;
         }

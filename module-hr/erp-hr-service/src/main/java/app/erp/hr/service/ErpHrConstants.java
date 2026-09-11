@@ -268,6 +268,10 @@ public interface ErpHrConstants {
     /** 无薪假是否扣减基本工资（默认 false 向后兼容）。 */
     String CONFIG_DEDUCT_UNPAID_LEAVE = "erp-hr.deduct-unpaid-leave";
 
+    // ---- 出勤折算配置项（P1-CK-hr2-001，payroll.md §5.2）----
+    /** 月应出勤日覆盖值（默认 0 = 按核算月周一至周五工作日自动推导）。 */
+    String CONFIG_REQUIRED_WORK_DAYS = "erp-hr.required-work-days";
+
     // ---- 考勤来源 ----
     String ATTENDANCE_SOURCE_CARD = "CARD";
     /** 手工补卡来源标记（RC-R1.7，P1-RC-014）：设备故障时 HR 经 makeUpClockIn/makeUpClockOut 补录，

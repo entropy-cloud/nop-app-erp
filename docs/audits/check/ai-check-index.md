@@ -431,7 +431,7 @@
 | P3-CK-qa-023 | P3 | D8 | ck-quality.md | notifyCustomers 仅簿记不派发——「客户通知」无任何系统通知通道（notify 子系统未接入），notifyCustomer=true 纯声明 | 新增 | open |  |
 | P3-CK-qa-024 | P3 | D10/D5，带复用注记 P2-RC-040 | ck-quality.md | InspectionTemplateMatcher 对 materialId=null 的调用退化为「任意 active 模板 limit 1（最旧 id）」——无物料业务单据复制到无关模板行 | 新增 | open |  |
 | P3-CK-qa-025 | P3 | D6/D10 | ck-quality.md | NCR quantity 兜底 ONE——lotQuantity/sampleQuantity 均空时拒收数量记 1；SPC 失控 NCR quantity 恒 1 | 新增 | open |  |
-| P1-CK-hr-001 | P1 | D8 | ck-hr-org.md | 部门/职位删除无任何引用守卫——含在职员工的部门/有编制的职位删除后 Employee/Recruitment/子部门悬挂引用静默产生（子部门提升为根节点、树结构静默重组） | 新增 | open |  |
+| P1-CK-hr-001 | P1 | D8 | ck-hr-org.md | 部门/职位删除无任何引用守卫——含在职员工的部门/有编制的职位删除后 Employee/Recruitment/子部门悬挂引用静默产生（子部门提升为根节点、树结构静默重组） | 新增 | fixed | 已修在位（r3 M1.10 复核 HEAD f40b4bbae：defaultPrepareDelete 5 守卫 + 5 错误码；plan 2026-09-11-1530-1 Phase 1 HEAD 120cebea8 复验 `ErpHrDepartmentBizModel:54` / `ErpHrPositionBizModel:41` 守卫在位 + `TestErpHrDepartmentPositionDeleteGuard` 8/8 全绿——lesson-11 回填缺口清账） |
 | P2-CK-hr-002 | P2 | D8 | ck-hr-org.md | 调动跨组织时员工 orgId 不随目标部门同步——orgId 与部门失配并沿续签合同扩散 | 新增 | open |  |
 | P2-CK-hr-003 | P2 | D9/D8，同型 P2-CK-fin2-007/P2-CK-mfg-007 orgId 族（并入） | ck-hr-org.md | findDepartmentTree 双表全量加载 + 硬编码 limit 5000 静默截断 + 无 orgId 隔离 + empCount 无雇佣状态口径 | 新增 | open |  |
 | P2-CK-hr-004 | P2 | D5/D3，同型 P1-CK-pur-003 族 | ck-hr-org.md | 通用 CRUD update 无状态守卫——HIRED 招聘单/终态合同/员工雇佣状态（可直写 RESIGNED 绕过状态机前提）可被通用 mutation 改写 | 同型 P1-CK-pur-003 族 |fixed | F1.3：统一基类接入自动生效（同型 P1-CK-pur-003 族，全域守卫惰性/激活由列存在性决定） |
@@ -467,11 +467,11 @@
 | P3-CK-mnt-017 | P3 | D9 | ck-maintenance.md | 报表/看板无界加载 + `setLimit(5000)` 截断致逾期误报 | 新增 | open |  |
 | P3-CK-mnt-018 | P3 | D8 | ck-maintenance.md | visit cancel 对已确认备件消耗零动作 + 报修-访问一对一硬绑定——作废语义未裁决的两组残留 | 新增 | open |  |
 | P3-CK-mnt-019 | P3 | D7，复用注记 P1-MA2-086 | ck-maintenance.md | 并发幂等的 UK 兜底因 orgId=null 失效——`(code, orgId)` UK 对 NULL orgId 不去重（多数 DB NULL≠NULL） | 新增 | open |  |
-| P1-CK-hr2-001 | P1 | D6 | ck-hr-attendance-payroll.md | 出勤折算分母恒为硬编码 22 且有薪假按缺勤扣薪——不足 22 个打卡日的月份全员基本工资被折减、带薪年假双路径扣款 | 新增 | open |  |
-| P1-CK-hr2-002 | P1 | D8 | ck-hr-attendance-payroll.md | generateBankFile 批量发放翻 PAID 不触发 SALARY_PAYMENT(280) 凭证——银行文件路径发放的薪酬应付职工薪酬永不冲减 | 新增 | open |  |
-| P1-CK-hr2-003 | P1 | D6/D10 | ck-hr-attendance-payroll.md | runPayroll 无逐员工失败隔离——任一员工缺合同/社保基数/税务配置即整批回滚，与 UC-HR-04「跳过并告警」明确分歧 | 新增 | open |  |
-| P1-CK-hr2-004 | P1 | D6 | ck-hr-attendance-payroll.md | SocialInsuranceCalculator 完全忽略 effectiveFrom/effectiveTo 有效期——年调后同城同险种多行配置重复计扣、基数历史行任取 | 新增 | open |  |
-| P1-CK-hr2-005 | P1 | D6 | ck-hr-attendance-payroll.md | getComparison 对比视图的合计/扣款五行恒返回 0——SALARY_ITEM_CODES 含 5 个派生字段 readSalaryField 不处理 | 新增 | open |  |
+| P1-CK-hr2-001 | P1 | D6 | ck-hr-attendance-payroll.md | 出勤折算分母恒为硬编码 22 且有薪假按缺勤扣薪——不足 22 个打卡日的月份全员基本工资被折减、带薪年假双路径扣款 | 新增 | fixed | 已修（plan 2026-09-11-1530-1 Phase 4：requiredDays 按月推导/config `erp-hr.required-work-days` 覆盖 + 带薪假豁免 + 无薪假防双扣；测试 `TestErpHrPayrollEngine` 4 新方法 + `_cases` 5 快照重录金额锚点逐值不变） |
+| P1-CK-hr2-002 | P1 | D8 | ck-hr-attendance-payroll.md | generateBankFile 批量发放翻 PAID 不触发 SALARY_PAYMENT(280) 凭证——银行文件路径发放的薪酬应付职工薪酬永不冲减 | 新增 | fixed | 已修（plan 2026-09-11-1530-1 Phase 5：generateBankFile 接线 tryPostPayment 280（复用 F1.2 去重守卫）+ 文件格式 §7.2 五列；测试扩展断言 280 凭证 + 五列 + 快照重录） |
+| P1-CK-hr2-003 | P1 | D6/D10 | ck-hr-attendance-payroll.md | runPayroll 无逐员工失败隔离——任一员工缺合同/社保基数/税务配置即整批回滚，与 UC-HR-04「跳过并告警」明确分歧 | 新增 | fixed | 已修（plan 2026-09-11-1530-1 Phase 6：runPayroll 逐员工 try/catch 隔离 + hr.salary-calculation-skipped 告警（UC-HR-04）；返回契约 List 不变；测试 testRunPayrollSkipsMisconfiguredEmployeeWithAlert） |
+| P1-CK-hr2-004 | P1 | D6 | ck-hr-attendance-payroll.md | SocialInsuranceCalculator 完全忽略 effectiveFrom/effectiveTo 有效期——年调后同城同险种多行配置重复计扣、基数历史行任取 | 新增 | fixed | 已修（plan 2026-09-11-1530-1 Phase 3：findBase/findConfigs/findHousingFundConfig 有效期过滤（null 开区间）+ 同险种取最新；测试 3 新方法含失效行排除/多行去重/最新基数） |
+| P1-CK-hr2-005 | P1 | D6 | ck-hr-attendance-payroll.md | getComparison 对比视图的合计/扣款五行恒返回 0——SALARY_ITEM_CODES 含 5 个派生字段 readSalaryField 不处理 | 新增 | fixed | 已修（plan 2026-09-11-1530-1 Phase 2：readSalaryItem 单源静态 + 双副本委托补 5 派生字段；测试 TestErpHrSalarySimulationFieldReader + TestErpHrSalarySimulationProcessorFieldReader） |
 | P2-CK-hr2-006 | P2 | D7/D8 | ck-hr-attendance-payroll.md | tryPostPayment 无去重守卫叠加凭证 REQUIRES_NEW 先行提交——markPaid 外层回滚后重试产生重复 280 发放凭证 | 新增 |fixed | F1.2：tryPostPayment 补 alreadyPosted 去重守卫（镜像计提链）；TestErpHrSalaryPostingChain 守卫短路断言 |
 | P2-CK-hr2-007 | P2 | D5，同型 P1-CK-pur-003 族——并入 P2-CK-hr-004 家族 hr2 站点 | ck-hr-attendance-payroll.md | salary/attendance/leave/simulation 全实体通用 CRUD 无守卫——ErpHrSalary__update_ 可直写 approveStatus=APPROVED 绕过整条计提链、直写 paymentStatus=PAID 绕过 280 凭证 | 同型 P1-CK-pur-003 族 | open |  |
 | P2-CK-hr2-008 | P2 | D5 | ck-hr-attendance-payroll.md | 休假余额守卫对「无余额记录」静默跳过——与 getBalance 同数据相反结论（守卫放行 vs 余额显示负数） | 新增 | open |  |

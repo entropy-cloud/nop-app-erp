@@ -41,6 +41,11 @@ public class PayrollCalculator {
     private static final BigDecimal DEFAULT_OVERTIME_HOURLY_RATE = new BigDecimal("50");
     /** 月标准工作日（用于出勤比例计算）。 */
     private static final BigDecimal DEFAULT_REQUIRED_WORK_DAYS = new BigDecimal("22");
+    /** 有薪假类型（shift-scheduling.md §6.1「年假有薪」+ 婚/产/丧/调休中国实务有薪；P1-CK-hr2-001）。 */
+    private static final List<String> PAID_LEAVE_TYPES =
+            List.of("ANNUAL", "MARRIAGE", "MATERNITY", "FUNERAL", "COMPENSATORY");
+    /** 无薪假类型（既有 documented simplification：SICK 病假工资折算不建模）。 */
+    private static final List<String> UNPAID_LEAVE_TYPES = List.of("SICK", "PERSONAL");
 
     @Inject
     IDaoProvider daoProvider;
@@ -64,18 +69,29 @@ public class PayrollCalculator {
 
         int scale = ErpHrConfigs.salaryRoundingScale();
 
-        // 1. 出勤数据
+        // 1. 出勤数据（P1-CK-hr2-001：requiredDays 按月推导/config 覆盖；带薪假豁免折算；
+        //    无薪假 config-on 时从缺勤折减中豁免，由显式扣减单次扣除）
         AttendanceSummary attendance = summarizeAttendance(employeeId, periodStart, periodEnd);
         BigDecimal requiredDays = attendance.requiredDays != null ? attendance.requiredDays : DEFAULT_REQUIRED_WORK_DAYS;
         // 无考勤记录视为全勤（合同月薪全额发放），避免新员工/无打卡数据时工资为 0
         BigDecimal actualDays = (attendance.actualDays == null || attendance.actualDays.signum() <= 0)
                 ? requiredDays : attendance.actualDays;
+
+        BigDecimal unpaidLeaveDays = attendance.unpaidLeaveDays != null ? attendance.unpaidLeaveDays : BigDecimal.ZERO;
+        boolean deductUnpaid = ErpHrConfigs.deductUnpaidLeave() && unpaidLeaveDays.signum() > 0;
+        // 豁免面：带薪假（ANNUAL/MARRIAGE/MATERNITY/FUNERAL/COMPENSATORY，shift-scheduling.md §6.1
+        // 「年假有薪」）不折减基本工资；config-on 时无薪假加回（缺勤折减豁免），净效果 = 仅显式扣一次
+        BigDecimal exemptDays = nz(attendance.paidLeaveDays);
+        if (deductUnpaid) {
+            exemptDays = exemptDays.add(unpaidLeaveDays);
+        }
+        actualDays = actualDays.add(exemptDays).min(requiredDays);
+
         BigDecimal attendanceRatio = requiredDays.signum() == 0 ? BigDecimal.ONE
                 : actualDays.divide(requiredDays, 6, RoundingMode.HALF_UP);
 
         // 1b. 无薪假扣减（config-gated，默认 false 向后兼容）
-        BigDecimal unpaidLeaveDays = attendance.unpaidLeaveDays != null ? attendance.unpaidLeaveDays : BigDecimal.ZERO;
-        if (ErpHrConfigs.deductUnpaidLeave() && unpaidLeaveDays.signum() > 0) {
+        if (deductUnpaid) {
             // 按比例扣减基本工资：basicSalary × (1 − unpaidLeaveDays / requiredDays)
             BigDecimal deductionRatio = unpaidLeaveDays.divide(requiredDays.signum() == 0 ? BigDecimal.ONE : requiredDays,
                     6, RoundingMode.HALF_UP);
@@ -304,10 +320,60 @@ public class PayrollCalculator {
             }
         }
         summary.actualDays = presentDays;
-        summary.requiredDays = DEFAULT_REQUIRED_WORK_DAYS;
+        // P1-CK-hr2-001：应出勤日按核算月周一至周五工作日推导（config erp-hr.required-work-days 可覆盖；
+        // 无法定节假日日历为 documented simplification），替代原硬编码 22（payroll.md §5.2 出勤比例语义）
+        summary.requiredDays = deriveRequiredWorkDays(periodStart, periodEnd);
         summary.overtimeHours = overtimeHours;
+        summary.paidLeaveDays = sumPaidLeaveDays(employeeId, periodStart, periodEnd);
         summary.unpaidLeaveDays = sumUnpaidLeaveDays(employeeId, periodStart, periodEnd);
         return summary;
+    }
+
+    /**
+     * 应出勤日推导（P1-CK-hr2-001）：config `erp-hr.required-work-days` > 0 时取覆盖值；
+     * 否则取核算月内周一至周五天数。
+     */
+    static BigDecimal deriveRequiredWorkDays(LocalDate periodStart, LocalDate periodEnd) {
+        int override = ErpHrConfigs.requiredWorkDaysOverride();
+        if (override > 0) {
+            return BigDecimal.valueOf(override);
+        }
+        BigDecimal days = BigDecimal.ZERO;
+        for (LocalDate d = periodStart; !d.isAfter(periodEnd); d = d.plusDays(1)) {
+            java.time.DayOfWeek dow = d.getDayOfWeek();
+            if (dow != java.time.DayOfWeek.SATURDAY && dow != java.time.DayOfWeek.SUNDAY) {
+                days = days.add(BigDecimal.ONE);
+            }
+        }
+        return days;
+    }
+
+    /**
+     * 汇总有薪假天数（P1-CK-hr2-001）：APPROVED 状态的有薪类型休假落入核算期间的天数，
+     * 计入 actualDays 豁免出勤折算（shift-scheduling.md §6.1「年假有薪」）。durationDays
+     * 视为工作日口径；跨核算期假期（未完全包含）不参与豁免——documented simplification。
+     */
+    BigDecimal sumPaidLeaveDays(String employeeId, LocalDate periodStart, LocalDate periodEnd) {
+        return sumApprovedLeaveDays(employeeId, PAID_LEAVE_TYPES, periodStart, periodEnd);
+    }
+
+    private BigDecimal sumApprovedLeaveDays(String employeeId, List<String> leaveTypes,
+                                            LocalDate periodStart, LocalDate periodEnd) {
+        IEntityDao<ErpHrLeaveRequest> dao = daoProvider.daoFor(ErpHrLeaveRequest.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("employeeId", employeeId));
+        q.addFilter(eq("status", ErpHrConstants.LEAVE_STATUS_APPROVED));
+        q.addFilter(in("leaveType", leaveTypes));
+        q.addFilter(ge("startDate", periodStart));
+        q.addFilter(le("endDate", periodEnd));
+        List<ErpHrLeaveRequest> leaves = dao.findAllByQuery(q);
+        BigDecimal sum = BigDecimal.ZERO;
+        for (ErpHrLeaveRequest lr : leaves) {
+            if (lr.getDurationDays() != null) {
+                sum = sum.add(lr.getDurationDays());
+            }
+        }
+        return sum;
     }
 
     /**
@@ -315,21 +381,7 @@ public class PayrollCalculator {
      * 视 SICK/PERSONAL 为无薪假（config-gated by erp-hr.deduct-unpaid-leave）。
      */
     BigDecimal sumUnpaidLeaveDays(String employeeId, LocalDate periodStart, LocalDate periodEnd) {
-        IEntityDao<ErpHrLeaveRequest> dao = daoProvider.daoFor(ErpHrLeaveRequest.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("employeeId", employeeId));
-        q.addFilter(eq("status", ErpHrConstants.LEAVE_STATUS_APPROVED));
-        q.addFilter(in("leaveType", List.of("SICK", "PERSONAL")));
-        q.addFilter(ge("startDate", periodStart));
-        q.addFilter(le("endDate", periodEnd));
-        List<ErpHrLeaveRequest> unpaidLeaves = dao.findAllByQuery(q);
-        BigDecimal sum = BigDecimal.ZERO;
-        for (ErpHrLeaveRequest lr : unpaidLeaves) {
-            if (lr.getDurationDays() != null) {
-                sum = sum.add(lr.getDurationDays());
-            }
-        }
-        return sum;
+        return sumApprovedLeaveDays(employeeId, UNPAID_LEAVE_TYPES, periodStart, periodEnd);
     }
 
     static BigDecimal nz(BigDecimal v) {
@@ -341,5 +393,6 @@ public class PayrollCalculator {
         BigDecimal requiredDays;
         BigDecimal overtimeHours;
         BigDecimal unpaidLeaveDays;
+        BigDecimal paidLeaveDays;
     }
 }

@@ -10,6 +10,7 @@ import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.payroll.PayrollCalculator;
+import app.erp.hr.service.processor.AbstractErpHrSalarySimulationProcessor;
 import app.erp.hr.service.processor.ErpHrSalarySimulationAdjustItemProcessor;
 import app.erp.hr.service.processor.ErpHrSalarySimulationApplyBatchAdjustmentProcessor;
 import app.erp.hr.service.processor.ErpHrSalarySimulationConvertToFormalProcessor;
@@ -514,29 +515,8 @@ public class ErpHrSalarySimulationBizModel extends AbstractErpCrudBizModel<ErpHr
     }
 
     BigDecimal readSalaryField(ErpHrSalary salary, String fieldName) {
-        if (fieldName == null) {
-            return BigDecimal.ZERO;
-        }
-        switch (fieldName) {
-            case "basicSalary":
-                return nz(salary.getBasicSalary());
-            case "positionAllowance":
-                return nz(salary.getPositionAllowance());
-            case "performanceBonus":
-                return nz(salary.getPerformanceBonus());
-            case "overtimePay":
-                return nz(salary.getOvertimePay());
-            case "mealAllowance":
-                return nz(salary.getMealAllowance());
-            case "transportAllowance":
-                return nz(salary.getTransportAllowance());
-            case "otherAllowance":
-                return nz(salary.getOtherAllowance());
-            case "otherDeductions":
-                return nz(salary.getOtherDeductions());
-            default:
-                return BigDecimal.ZERO;
-        }
+        // P1-CK-hr2-005：委托单一真相源（覆盖全部 13 项含 5 派生字段），镜像 Processor 侧副本
+        return AbstractErpHrSalarySimulationProcessor.readSalaryItem(salary, fieldName);
     }
 
     String buildSimulationCode(int year, int month) {

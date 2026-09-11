@@ -179,4 +179,13 @@ public interface ErpHrConfigs {
                 ErpHrConstants.CONFIG_DEDUCT_UNPAID_LEAVE, DEFAULT_DEDUCT_UNPAID_LEAVE);
         return v == null ? DEFAULT_DEDUCT_UNPAID_LEAVE : v;
     }
+
+    /** 月应出勤日覆盖值默认关闭（0 = 按核算月周一至周五工作日自动推导，P1-CK-hr2-001）。 */
+    int DEFAULT_REQUIRED_WORK_DAYS_OVERRIDE = 0;
+
+    static int requiredWorkDaysOverride() {
+        Integer v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_REQUIRED_WORK_DAYS, DEFAULT_REQUIRED_WORK_DAYS_OVERRIDE);
+        return v == null ? DEFAULT_REQUIRED_WORK_DAYS_OVERRIDE : v;
+    }
 }

@@ -283,6 +283,11 @@ HR 选择轮换模板 + 轮换组
     └─► 薪资计算时按休假类型（年假有薪/事假无薪）处理扣款
 ```
 
+> **薪资联动实现注记（P1-CK-hr2-001 修复，plan 2026-09-11-1530-1）**：「年假有薪」已落地为出勤折算豁免——
+> 有薪假集合 = {ANNUAL, MARRIAGE, MATERNITY, FUNERAL, COMPENSATORY}（APPROVED 且期间完全包含）计入实际出勤日、
+> 不折减基本工资；无薪假（SICK/PERSONAL）维持 `erp-hr.deduct-unpaid-leave` 门控（默认缺勤即折减，开启后显式单次扣除）。
+> 详见 `payroll.md` §5.2 出勤比例实现注记。
+
 ### 6.2 休假取消联动
 
 ```
