@@ -165,7 +165,18 @@ public class ErpApsSchedulingEngine {
     public SchedulingResult scheduleBackward(List<ErpApsOperationOrder> orders,
                                              List<ErpApsConstraint> maintenanceConstraints,
                                              LocalDateTime defaultEarliestStart) {
-        return scheduleBackward(orders, maintenanceConstraints, null, defaultEarliestStart);
+        return scheduleBackward(orders, maintenanceConstraints, null, null, defaultEarliestStart);
+    }
+
+    /**
+     * P1-CK-aps-002（plan 2026-09-12-0400-1 Phase 5）：后向排产 frozen 预填重载——
+     * 既有 PLANNED 工序时段进时间轴（与 FORWARD/insertRushOrder 口径统一）。
+     */
+    public SchedulingResult scheduleBackward(List<ErpApsOperationOrder> orders,
+                                             List<ErpApsConstraint> maintenanceConstraints,
+                                             List<ErpApsOperationOrder> frozenPlanned,
+                                             LocalDateTime defaultEarliestStart) {
+        return scheduleBackward(orders, maintenanceConstraints, null, frozenPlanned, defaultEarliestStart);
     }
 
     /**
@@ -174,9 +185,11 @@ public class ErpApsSchedulingEngine {
     public SchedulingResult scheduleBackward(List<ErpApsOperationOrder> orders,
                                              List<ErpApsConstraint> maintenanceConstraints,
                                              List<ErpApsOpRouting> routings,
+                                             List<ErpApsOperationOrder> frozenPlanned,
                                              LocalDateTime defaultEarliestStart) {
         SchedulingResult result = new SchedulingResult();
         Map<String, WorkCenterTimeline> timelines = buildTimelines(maintenanceConstraints);
+        seedFrozenPlanned(timelines, frozenPlanned);
         Map<String, OpChain> chainByWorkOrder = new HashMap<>();
 
         List<ErpApsOperationOrder> sorted = sortByBackward(orders);
@@ -262,8 +275,23 @@ public class ErpApsSchedulingEngine {
                                         List<ErpApsOpRouting> routings,
                                         Set<String> bottleneckMachineIds,
                                         LocalDateTime defaultEarliestStart) {
+        return scheduleToc(orders, maintenanceConstraints, routings, null, bottleneckMachineIds,
+                defaultEarliestStart);
+    }
+
+    /**
+     * P1-CK-aps-002（plan 2026-09-12-0400-1 Phase 5）：TOC frozen 预填重载——既有 PLANNED 工序
+     * 时段进时间轴（对齐 FORWARD/insertRushOrder/CTP snapshotTimelines 口径）。
+     */
+    public SchedulingResult scheduleToc(List<ErpApsOperationOrder> orders,
+                                        List<ErpApsConstraint> maintenanceConstraints,
+                                        List<ErpApsOpRouting> routings,
+                                        List<ErpApsOperationOrder> frozenPlanned,
+                                        Set<String> bottleneckMachineIds,
+                                        LocalDateTime defaultEarliestStart) {
         SchedulingResult result = new SchedulingResult();
         Map<String, WorkCenterTimeline> timelines = buildTimelines(maintenanceConstraints);
+        seedFrozenPlanned(timelines, frozenPlanned);
         Map<String, OpChain> chainByWorkOrder = new HashMap<>();
         LocalDateTime floor = floor(defaultEarliestStart);
         Set<String> bottlenecks = bottleneckMachineIds == null ? Set.of() : bottleneckMachineIds;

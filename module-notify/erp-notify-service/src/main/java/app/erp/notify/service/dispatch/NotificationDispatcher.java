@@ -75,6 +75,20 @@ public class NotificationDispatcher {
      * @return 派发结果通知实例集合（站内消息；合并命中时为既有实例）
      */
     public List<ErpSysNotification> dispatch(ErpSysNotificationTemplate template, Map<String, Object> context) {
+        List<ErpSysNotification> notifications = prepare(template, context);
+        Set<String> channels = parseChannelSet(template.getChannelSet());
+        // P1-CK-notify-001（plan 2026-09-12-0400-1 Phase 6）：外发留在 dispatch 内的历史形态仅供
+        // 兼容；NotifyProcessor 主路径改为 persist 后调 dispatchExternalChannels（外发晚于持久化）。
+        dispatchExternal(notifications, channels);
+        return notifications;
+    }
+
+    /**
+     * 仅渲染 + 解析接收人 + 频控合并（不外发）。P1-CK-notify-001 最小形态：调用方先持久化返回的
+     * 通知实例，再调 {@link #dispatchExternal}——外发严格晚于持久化，消除「先于 saveEntity 的
+     * 不可逆副作用」。
+     */
+    public List<ErpSysNotification> prepare(ErpSysNotificationTemplate template, Map<String, Object> context) {
         String subject = renderTemplate(template.getId(), template.getSubjectTpl(), context);
         String body = renderTemplate(template.getId(), template.getBodyTpl(), context);
 
@@ -85,18 +99,30 @@ public class NotificationDispatcher {
             return Collections.emptyList();
         }
 
-        Set<String> channels = parseChannelSet(template.getChannelSet());
-
         List<ErpSysNotification> notifications = new ArrayList<>();
         for (String userId : recipients) {
-            ErpSysNotification n = mergeOrPersist(template, userId, subject, body, context, channels);
+            ErpSysNotification n = mergeOrPersist(template, userId, subject, body, context,
+                    parseChannelSet(template.getChannelSet()));
             notifications.add(n);
         }
+        return notifications;
+    }
 
+    /**
+     * 对已构建通知实例派发外发通道（EMAIL/SMS；IN_APP 即站内消息本身无需外发）。
+     * 由调用方在持久化之后调用（P1-CK-notify-001 时序契约）。
+     */
+    public void dispatchExternal(List<ErpSysNotification> notifications, Set<String> channels) {
         for (ErpSysNotification n : notifications) {
             dispatchExternalChannels(n, channels);
         }
-        return notifications;
+    }
+
+    /**
+     * P1-CK-notify-001：解析模板通道集（公开给 NotifyProcessor 在外发阶段复用）。
+     */
+    public Set<String> parseChannels(ErpSysNotificationTemplate template) {
+        return parseChannelSet(template.getChannelSet());
     }
 
     private Set<String> parseChannelSet(String channelSet) {

@@ -64,6 +64,13 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
 
         // 币种取自关联合同（发票 CURRENCY_ID NOT NULL）
         String currencyId = resolveCurrencyId(agreement);
+        // P1-CK-ct-004（plan 2026-09-12-0400-1 Phase 1）：独立协议（无合同关联）→ currencyId 可解析失败，
+        // 领域错误码显式拒绝（修复前 null 撞发票头 NOT NULL 裸崩）；币种缺省解析归 Deferred（owner doc 裁决）
+        if (currencyId == null) {
+            throw new NopException(ErpCtErrors.ERR_CT_SETTLEMENT_CURRENCY_UNRESOLVED)
+                    .param(ErpCtErrors.ARG_SETTLEMENT_ID, settlement.getId())
+                    .param("agreementId", agreement != null ? agreement.getId() : settlement.getRebateAgreementId());
+        }
         // 贷项行 materialId/uoMId 取自关联合同首行及其主物料（返利为金额型；发票行 MATERIAL_ID/UO_M_ID NOT NULL）
         String materialId = resolveMaterialId(agreement);
         String uomId = resolveUoMId(materialId);

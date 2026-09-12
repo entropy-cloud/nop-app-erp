@@ -15,6 +15,7 @@ import app.erp.b2b.service.spi.IErpB2bEdiProvider;
 import app.erp.b2b.service.spi.model.ParsedPayload;
 import app.erp.b2b.service.spi.model.ParsedPayload.ParsedLine;
 import io.nop.api.core.beans.query.QueryBean;
+import java.util.List;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -156,9 +157,16 @@ public class ErpB2bAsnHandleInboundWebhookProcessor {
             // 代码映射：partnerId + MATERIAL + externalCode → internalCode
             String internalMaterial = codeMappingResolver.resolveInbound(
                     profile.getPartnerId(), ErpB2bConstants.MAPPING_TYPE_MATERIAL, parsedLine.getSupplierPartNo());
-            // internalMaterial 为物料 code 字符串，实际 materialId 需查 ErpMdMaterial。
-            // 本期保留 code 值到 supplierPartNo + 映射结果到 remark 供后续处理。
-            line.setRemark(internalMaterial);
+            // P1-CK-b2b-001（plan 2026-09-12-0400-1 Phase 2）：internalCode 反查 ErpMdMaterial 写入
+            // materialId（design asn-processing.md §4.2）——修复前映射结果仅写 remark，materialId
+            // 恒 null 使行级匹配死代码且 createReceiveFromAsn 必抛守卫错。未命中时 materialId 保持
+            // null + remark 保留解析值作待映射标记（任务化流程归 Deferred）。
+            String materialId = resolveMaterialIdByCode(internalMaterial);
+            if (materialId != null) {
+                line.setMaterialId(materialId);
+            } else {
+                line.setRemark(internalMaterial);
+            }
 
             line.setShippedQty(parsedLine.getShippedQty());
             line.setQuantity(parsedLine.getQuantity());
@@ -225,5 +233,18 @@ public class ErpB2bAsnHandleInboundWebhookProcessor {
 
     private IEntityDao<ErpB2bAsn> dao() {
         return daoProvider.daoFor(ErpB2bAsn.class);
+    }
+
+    /** 物料 code → ErpMdMaterial.id 反查（未命中返回 null）。 */
+    protected String resolveMaterialIdByCode(String materialCode) {
+        if (materialCode == null) {
+            return null;
+        }
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", materialCode));
+        q.setLimit(1);
+        List<app.erp.md.dao.entity.ErpMdMaterial> materials =
+                daoProvider.daoFor(app.erp.md.dao.entity.ErpMdMaterial.class).findAllByQuery(q);
+        return materials.isEmpty() ? null : materials.get(0).getId();
     }
 }

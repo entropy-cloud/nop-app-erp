@@ -58,10 +58,18 @@ public class ErpCtRebateAgreementRunAccrualProcessor {
         Set<String> alreadyAccruedCodes = loadAccruedBillCodes(agreementId);
 
         if (Objects.equals(agreement.getAccrualMethod(), ErpCtConstants.ACCRUAL_METHOD_PERIOD_END)) {
-            // 期末一次性：聚合期间全部新增发票金额，一次性喂入
-            BigDecimal periodTotal = sumPeriodInvoices(agreement, periodStart, periodEnd, alreadyAccruedCodes);
-            if (periodTotal.signum() != 0) {
-                rebateEngine.accruePeriodEnd(agreement, periodTotal, context);
+            // P1-CK-ct-001（plan 2026-09-12-0400-1 Phase 1）：PERIOD_END 改逐发票消费——
+            // 修复前聚合一次性喂入且 sourceBillCode=PERIOD-伪码与发票 code 去重键不匹配
+            // （重跑基数线性翻倍）；现逐张喂 accrue（sourceBillCode=发票 code）：
+            // ① 幂等由 loadAccruedBillCodes 发票 code 去重天然获得；
+            // ② 期末总额语义由 telescoping 保持（Σ delta_i = expected(期末累计) − 0，
+            //    独立审查已证 tier 跨档/负 delta/固定额档均不破坏恒等式）。
+            for (Object invoice : findPeriodInvoices(agreement, periodStart, periodEnd)) {
+                String code = invoiceCode(invoice);
+                if (alreadyAccruedCodes.contains(code)) {
+                    continue;
+                }
+                rebateEngine.accrue(agreement, invoiceAmount(invoice), billTypeFor(agreement), code, context);
             }
         } else {
             // PROGRESSIVE：逐张已过账发票即时计提
@@ -108,26 +116,25 @@ public class ErpCtRebateAgreementRunAccrualProcessor {
         q.addFilter(eq("posted", true));
         q.addFilter(ge("businessDate", from));
         q.addFilter(le("businessDate", to));
+        List invoices;
         if (Objects.equals(agreement.getRebateType(), ErpCtConstants.REBATE_TYPE_PURCHASE)) {
             q.addFilter(eq("supplierId", agreement.getPartnerId()));
-            return daoProvider.daoFor(ErpPurInvoice.class).findAllByQuery(q);
+            invoices = daoProvider.daoFor(ErpPurInvoice.class).findAllByQuery(q);
         } else {
             q.addFilter(eq("customerId", agreement.getPartnerId()));
-            return daoProvider.daoFor(ErpSalInvoice.class).findAllByQuery(q);
+            invoices = daoProvider.daoFor(ErpSalInvoice.class).findAllByQuery(q);
         }
-    }
-
-    protected BigDecimal sumPeriodInvoices(ErpCtRebateAgreement agreement, LocalDate from, LocalDate to,
-                                           Set<String> alreadyAccrued) {
-        BigDecimal total = BigDecimal.ZERO;
-        for (Object invoice : findPeriodInvoices(agreement, from, to)) {
+        // P1-CK-ct-002（plan 2026-09-12-0400-1 Phase 1）：排除返利结算贷项发票
+        // （code=CT-REBATE-*，与 postSettlement 生成侧前缀约定对偶）——已付返利不得回吸累计基数
+        List result = new java.util.ArrayList();
+        for (Object invoice : invoices) {
             String code = invoiceCode(invoice);
-            if (alreadyAccrued.contains(code)) {
+            if (code != null && code.startsWith("CT-REBATE-")) {
                 continue;
             }
-            total = total.add(invoiceAmount(invoice));
+            result.add(invoice);
         }
-        return total;
+        return result;
     }
 
     protected BigDecimal invoiceAmount(Object invoice) {

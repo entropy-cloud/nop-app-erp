@@ -91,7 +91,8 @@ public class ErpCtVolumeDiscountBizModel extends AbstractErpCrudBizModel<ErpCtVo
             if (from != null && qty.compareTo(from) < 0) {
                 continue;
             }
-            if (to != null && qty.compareTo(to) >= 0) {
+            // P1-CK-ct-003（plan 2026-09-12-0400-1 Phase 1）：toQty 含上界（owner doc「截止数量（含）」）
+            if (to != null && qty.compareTo(to) > 0) {
                 continue;
             }
             return band;
@@ -122,12 +123,13 @@ public class ErpCtVolumeDiscountBizModel extends AbstractErpCrudBizModel<ErpCtVo
     }
 
     /**
-     * [newFrom, newTo) 与 [exFrom, exTo) 是否相交（半开区间，null 上限=无穷）。
+     * [newFrom, newTo] 与 [exFrom, exTo] 是否相交（闭区间，P1-CK-ct-003 同步：null 上限=无穷；
+     * 共享边界点判重叠——相邻配置须 from=to+1）。
      */
     protected boolean overlaps(BigDecimal newFrom, BigDecimal newTo, BigDecimal exFrom, BigDecimal exTo) {
-        // 相交条件：newFrom < exTo(or ∞) && exFrom < newTo(or ∞)
-        boolean newStartsBeforeExEnd = exTo == null || newFrom.compareTo(exTo) < 0;
-        boolean exStartsBeforeNewEnd = newTo == null || exFrom.compareTo(newTo) < 0;
+        // 相交条件：newFrom <= exTo(or ∞) && exFrom <= newTo(or ∞)
+        boolean newStartsBeforeExEnd = exTo == null || newFrom.compareTo(exTo) <= 0;
+        boolean exStartsBeforeNewEnd = newTo == null || exFrom.compareTo(newTo) <= 0;
         return newStartsBeforeExEnd && exStartsBeforeNewEnd;
     }
 

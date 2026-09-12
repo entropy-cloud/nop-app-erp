@@ -31,6 +31,10 @@ import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.isNull;
+import static io.nop.api.core.beans.FilterBeans.or;
+import static io.nop.api.core.beans.FilterBeans.and;
+
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.gt;
 import static io.nop.api.core.beans.FilterBeans.in;
@@ -76,6 +80,19 @@ public class ErpApsSchedulingProcessor {
 
     // ---------- 编排 ----------
 
+
+    /**
+     * P1-CK-aps-002（plan 2026-09-12-0400-1 Phase 5）：加载既有 PLANNED/IN_PROGRESS 工序作
+     * frozen 预填（时间轴感知既有占用，增量排产不再与预留 pre-check 冲突整轮回滚）。
+     * 对齐 insertRushOrder loadPlannedInWindow 与 CTP snapshotTimelines 口径。
+     */
+    protected List<ErpApsOperationOrder> loadFrozenPlanned(String scheduleId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(in("status", java.util.Arrays.asList(
+                ErpApsConstants.OP_STATUS_PLANNED, ErpApsConstants.OP_STATUS_IN_PROGRESS)));
+        return opOrderDao().findAllByQuery(q);
+    }
+
     protected SchedulingResult run(ErpApsSchedule schedule, String mode, IServiceContext context) {
         List<ErpApsOperationOrder> pending = loadPendingOrders(schedule);
         List<ErpApsConstraint> maintenance = loadMaintenanceConstraints(schedule);
@@ -91,7 +108,8 @@ public class ErpApsSchedulingProcessor {
         request.setMode(mode);
         request.setOrders(pending);
         request.setMaintenanceConstraints(maintenance);
-        request.setFrozenPlanned(null);
+        // P1-CK-aps-002：既有 PLANNED/IN_PROGRESS 工序预填时间轴（增量排产能动避让既有占用）
+        request.setFrozenPlanned(loadFrozenPlanned(schedule.getId()));
         request.setRoutings(routings);
         request.setBufferMinutes(buffer);
         request.setHorizonStart(horizonStart);
@@ -127,7 +145,7 @@ public class ErpApsSchedulingProcessor {
         request.setMode(IApsSchedulingSolver.MODE_TOC);
         request.setOrders(pending);
         request.setMaintenanceConstraints(maintenance);
-        request.setFrozenPlanned(null);
+        request.setFrozenPlanned(loadFrozenPlanned(schedule.getId()));
         request.setRoutings(routings);
         request.setBufferMinutes(buffer);
         request.setHorizonStart(horizonStart);
@@ -171,12 +189,21 @@ public class ErpApsSchedulingProcessor {
         // UNSCHEDULABLE 与 DRAFT 同池重试（RC-R1.87 自愈语义：路由/停机恢复后重排自动翻回 PLANNED）
         q.addFilter(in("status", java.util.Arrays.asList(
                 ErpApsConstants.OP_STATUS_DRAFT, ErpApsConstants.OP_STATUS_UNSCHEDULABLE)));
-        if (schedule.getHorizonStart() != null) {
-            q.addFilter(ge("earliestStartDateT", schedule.getHorizonStart()));
+        // P1-CK-aps-001（plan 2026-09-12-0400-1 Phase 5）：horizon 过滤 NULL-aware——
+        // 主建单路径不写 earliestStartDateT（NULL 行在 ge/le 下恒假被整体漏排）；NULL 行进入待排集，
+        // 由引擎 effectiveEarliestStart 三级兜底（earliest→planned→floor）接手（scheduling.md §2.1）。
+        // 语义：仅排除「非 NULL 且落在 horizon 外」的工序。
+        io.nop.api.core.beans.TreeBean nullAware;
+        if (schedule.getHorizonStart() != null && schedule.getHorizonEnd() != null) {
+            nullAware = and(
+                    ge("earliestStartDateT", schedule.getHorizonStart()),
+                    le("earliestStartDateT", schedule.getHorizonEnd()));
+        } else if (schedule.getHorizonStart() != null) {
+            nullAware = ge("earliestStartDateT", schedule.getHorizonStart());
+        } else {
+            nullAware = le("earliestStartDateT", schedule.getHorizonEnd());
         }
-        if (schedule.getHorizonEnd() != null) {
-            q.addFilter(le("earliestStartDateT", schedule.getHorizonEnd()));
-        }
+        q.addFilter(or(isNull("earliestStartDateT"), nullAware));
         return opOrderDao().findAllByQuery(q);
     }
 

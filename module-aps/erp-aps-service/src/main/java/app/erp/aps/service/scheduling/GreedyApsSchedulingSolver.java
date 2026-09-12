@@ -29,12 +29,12 @@ public class GreedyApsSchedulingSolver implements IApsSchedulingSolver {
                 request.getHorizonStart(), request.getHorizonEnd(), request.getRoutingEffectiveDate());
         if (MODE_BACKWARD.equals(request.getMode())) {
             return engine.scheduleBackward(request.getOrders(), request.getMaintenanceConstraints(),
-                    request.getRoutings(), request.getDefaultEarliestStart());
+                    request.getRoutings(), request.getFrozenPlanned(), request.getDefaultEarliestStart());
         }
         if (MODE_TOC.equals(request.getMode())) {
             Set<String> bottlenecks = resolveBottlenecks(request);
             SchedulingResult result = engine.scheduleToc(request.getOrders(), request.getMaintenanceConstraints(),
-                    request.getRoutings(), bottlenecks, request.getDefaultEarliestStart());
+                    request.getRoutings(), request.getFrozenPlanned(), bottlenecks, request.getDefaultEarliestStart());
             result.setMachineLoadRates(request.getMachineLoadRates() == null
                     ? Map.of() : request.getMachineLoadRates());
             result.getBottleneckMachineIds().addAll(bottlenecks);

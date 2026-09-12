@@ -177,3 +177,66 @@ VALUES
    'ROLE', '{"roles":["生产计划员"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
    '业务提醒样例（设备恢复→计划员重新计算生产计划，拉取模型下次排产执行自然恢复）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
 
+INSERT INTO erp_sys_notification_template
+  (ID, NOTIFICATION_TYPE, NAME, CHANNEL_SET, SUBJECT_TPL, BODY_TPL,
+   RECIPIENT_RESOLVER, RECIPIENT_CONFIG, MERGE_WINDOW_SECONDS, MERGE_STRATEGY, STATUS,
+   REMARK, DEL_VERSION, VERSION, CREATED_BY, CREATE_TIME, UPDATED_BY, UPDATE_TIME)
+VALUES
+  -- ==================== P1-CK-log-002/notify-002 模板补齐（plan 2026-09-12-0400-1 Phase 4） ====================
+
+  -- log.gateway-dead-letter（P1-CK-log-002/notify-002 模板补齐，plan 2026-09-12-0400-1 Phase 4）。接收人=发货员/物流主管（USER_LIST ${submitterUserId} 插值；角色路由待角色基础设施）。
+  (7210, 'log.gateway-dead-letter', '网关死信告警', 'IN_APP',
+   '发运单 ${shipmentCode} 网关推送失败进入死信',
+   '发运单 ${shipmentCode}（ID ${shipmentId}）网关重试耗尽进入死信：${errorMessage}。死信悬挂不可自动恢复，请人工介入排查网关配置。',
+   'USER_LIST', '{"userIds":["${submitterUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '网关死信告警', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+
+  -- log.freight-posting-failure（P1-CK-log-002/notify-002 模板补齐，plan 2026-09-12-0400-1 Phase 4）。接收人=发货员（USER_LIST ${submitterUserId} 插值）。
+  (7211, 'log.freight-posting-failure', '运费过账失败告警', 'IN_APP',
+   '运单 ${shipmentCode} 运费过账失败',
+   'DELIVERED 运单 ${shipmentCode}（ID ${shipmentId}）运费过账失败：${errorMessage}。运费结算悬挂 PENDING，请人工排查并重试。',
+   'USER_LIST', '{"userIds":["${submitterUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '运费过账失败告警', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+
+  -- aps.workorder-no-routing（P1-CK-log-002/notify-002 模板补齐，plan 2026-09-12-0400-1 Phase 4）。接收人=计划员（ROLE 计划员路由待角色基础设施，暂 USER_LIST 管理员）。
+  (7212, 'aps.workorder-no-routing', '工单无路由告警', 'IN_APP',
+   '工单 ${workOrderCode} 无有效路由',
+   '工单 ${workOrderCode}（ID ${workOrderId}）未找到有效工艺路由，已跳过排产。请维护工艺路线后重排。',
+   'USER_LIST', '{"userIds":["${submitterUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '工单无路由告警', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+
+  -- aps.operation-workcenter-missing（P1-CK-log-002/notify-002 模板补齐，plan 2026-09-12-0400-1 Phase 4）。接收人=计划员（同上）。
+  (7213, 'aps.operation-workcenter-missing', '工序缺工作中心告警', 'IN_APP',
+   '工序 ${operationName} 无工作中心',
+   '工单 ${workOrderCode} 工序 ${operationName}（序号 ${sequence}）未找到可用工作中心，已跳过。请维护工作中心后重排。',
+   'USER_LIST', '{"userIds":["${submitterUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '工序缺工作中心告警', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+
+  -- aps.dispatch-material-shortage（P1-CK-log-002/notify-002 模板补齐，plan 2026-09-12-0400-1 Phase 4）。接收人=计划员（同上）。
+  (7214, 'aps.dispatch-material-shortage', '派工缺料告警', 'IN_APP',
+   '工单 ${workOrderCode} 派工缺料',
+   '工单 ${workOrderCode} 派工时物料不足，已登记缺料。请检查库存或调整齐套策略。',
+   'USER_LIST', '{"userIds":["${submitterUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '派工缺料告警', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+
+  -- crm.sequence-overdue（P1-CK-log-002/notify-002 模板补齐，plan 2026-09-12-0400-1 Phase 4）。接收人=序列负责人（USER_LIST ${ownerUserId} 插值）。
+  (7215, 'crm.sequence-overdue', '序列逾期提醒', 'IN_APP',
+   '线索序列连续逾期 ${overdueStepCount} 步',
+   '线索（ID ${leadId}）序列进度（ID ${progressId}）当前第 ${currentStepIndex} 步，连续逾期 ${overdueStepCount} 步，请跟进。',
+   'USER_LIST', '{"userIds":["${submitterUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '序列逾期提醒', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+
+  -- hr.contract-expiry（P1-CK-log-002/notify-002 模板补齐，plan 2026-09-12-0400-1 Phase 4）。接收人=HR（USER_LIST ${hrUserId} 插值；角色路由待角色基础设施）。
+  (7216, 'hr.contract-expiry', '合同到期预警', 'IN_APP',
+   '员工合同即将到期',
+   '员工（ID ${employeeId}）合同 ${contractCode} 将于 ${expiryDate} 到期，请及时办理续签。',
+   'USER_LIST', '{"userIds":["${submitterUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '合同到期预警', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+
+  -- cs.entitlement-expiry（P1-CK-log-002/notify-002 模板补齐，plan 2026-09-12-0400-1 Phase 4）。接收人=客户经理（USER_LIST ${ownerUserId} 插值；角色路由待角色基础设施）。
+  (7217, 'cs.entitlement-expiry', '服务权益到期提醒', 'IN_APP',
+   '客户服务权益即将到期',
+   '客户（ID ${partnerId}）服务权益 ${entitlementCode} 将于 ${endDate} 到期，请联系客户续购。',
+   'USER_LIST', '{"userIds":["${submitterUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '服务权益到期提醒', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
+

@@ -45,7 +45,9 @@ public class ErpSysNotificationNotifyProcessor {
                 LOG.warn("notify: business event [{}] has no ACTIVE template, config-gated silent skip", eventType);
                 return Collections.emptyList();
             }
-            List<ErpSysNotification> result = dispatcher.dispatch(template, context);
+            // P1-CK-notify-001（plan 2026-09-12-0400-1 Phase 6）：先持久化、后外发——
+            // 修复前外发先于 saveEntity 执行（EMAIL/SMS 不可逆副作用早于落库）
+            List<ErpSysNotification> result = dispatcher.prepare(template, context);
             IEntityDao<ErpSysNotification> dao = daoProvider.daoFor(ErpSysNotification.class);
             for (ErpSysNotification n : result) {
                 if (n.getId() == null) {
@@ -54,6 +56,7 @@ public class ErpSysNotificationNotifyProcessor {
                     dao.updateEntity(n);
                 }
             }
+            dispatcher.dispatchExternal(result, dispatcher.parseChannels(template));
             return result;
         } catch (Exception e) {
             // 通知是 best-effort 关注点：任何失败（模板缺失/渲染失败/接收人解析失败/落库失败）

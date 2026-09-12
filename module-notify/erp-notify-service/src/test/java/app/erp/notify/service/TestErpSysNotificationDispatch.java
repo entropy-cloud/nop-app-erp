@@ -49,6 +49,8 @@ public class TestErpSysNotificationDispatch extends JunitAutoTestCase {
     IOrmTemplate ormTemplate;
     @Inject
     IGraphQLEngine graphQLEngine;
+    @Inject
+    app.erp.notify.service.dispatch.NotificationDispatcher dispatcher;
 
     @Test
     public void testNotifyPersistsInAppAndRendered() {
@@ -194,6 +196,33 @@ public class TestErpSysNotificationDispatch extends JunitAutoTestCase {
         q.addFilter(eq("notificationType", eventType));
         q.addOrderField("createTime", true);
         return daoProvider.daoFor(ErpSysNotification.class).findAllByQuery(q);
+    }
+
+    // ===================== P1-CK-notify-001（plan 2026-09-12-0400-1 Phase 6） =====================
+
+    @Test
+    public void testPrepareDoesNotDispatchExternal() {
+        // prepare() 仅构建+合并（不外发）；dispatchExternal() 单独外发——
+        // 时序契约 = 调用方持久化后外发（修复前 dispatch 内 id==null 即外发，先于落库）
+        seedTemplate(7002L, "p1-notify-email", "邮件主题 ${orderCode}", "邮件正文 ${orderCode}",
+                ErpNotifyConstants.RESOLVER_USER_LIST,
+                "{\"userIds\":[\"" + USER_2 + "\"]}",
+                "EMAIL", ErpNotifyConstants.MERGE_NONE, 0);
+
+        ErpSysNotificationTemplate template = findTemplate("p1-notify-email");
+        List<ErpSysNotification> prepared = dispatcher.prepare(template, Map.of("orderCode", "PO-1"));
+
+        assertEquals(1, prepared.size(), "prepare 应构建 1 条通知");
+        // prepare 阶段：实例尚未持久化（id==null）且外发未发生（EMAIL 默认 Noop，但外发循环也未进入）
+        org.junit.jupiter.api.Assertions.assertNull(prepared.get(0).getId(),
+                "prepare 不落库——持久化义务在调用方（persist→dispatchExternal 时序契约）");
+    }
+
+    private ErpSysNotificationTemplate findTemplate(String eventType) {
+        io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+        q.addFilter(io.nop.api.core.beans.FilterBeans.eq("notificationType", eventType));
+        return daoProvider.daoFor(ErpSysNotificationTemplate.class).findAllByQuery(q).stream()
+                .findFirst().orElse(null);
     }
 
     private void seedTemplate(Long id, String notificationType, String subjectTpl, String bodyTpl,

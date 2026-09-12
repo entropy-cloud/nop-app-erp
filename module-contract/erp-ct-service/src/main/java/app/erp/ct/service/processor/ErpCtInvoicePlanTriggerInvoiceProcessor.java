@@ -55,6 +55,12 @@ public class ErpCtInvoicePlanTriggerInvoiceProcessor {
 
         BigDecimal amount = nz(plan.getAmount());
         String billCode = "CT-INV-" + plan.getId();
+        // P1-CK-ct-004（plan 2026-09-12-0400-1 Phase 1）：框架合同行可不指定物料（设计合法面），
+        // 但发票行 MATERIAL_ID/UO_M_ID NOT NULL——无物料行领域错误码显式拒绝（修复前裸崩）
+        if (line.getMaterialId() == null) {
+            throw new NopException(ErpCtErrors.ERR_CT_INVOICE_MATERIAL_REQUIRED)
+                    .param("planId", plan.getId());
+        }
         if (Objects.equals(contract.getContractDirection(), ErpCtConstants.CONTRACT_DIRECTION_INBOUND)) {
             createApInvoiceDraft(billCode, plan, line, contract, amount);
         } else {

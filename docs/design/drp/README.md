@@ -101,7 +101,9 @@ drp 域有 3 个 dict 文件物理归属 `module-drp/erp-drp-meta/.../erp-inv/`�
 
 ## 关键业务规则
 
-1. **净需求计算**：`netRequirement = max(0, safetyStock + forecastDemand - currentStock + allocatedQty - onOrderQty)`。结果为 0 或负时表示库存充足，不产生补货建议。
+1. **净需求计算**：`netRequirement = max(0, safetyStock + forecastDemand - currentStock + allocatedQty - onOrderQty)
+
+> **实现注记（P1-CK-drp-001/002/003 修复，plan 2026-09-12-0400-1）**：① currentStock = 在手总量 totalQuantity（修复前 availableQuantity 致 reserved 双计/locked 多扣）；locked 质检锁定不参与净需求公式（residual）；② 在途调拨白名单 DRAFT/CONFIRMED/APPROVED + CONFIRMED 且关联 move 已 DONE 的实路径排除（DONE writer 当前缺席为前瞻性防御，linkage 落地时生效）；③ 在途采购按收货仓库（头级 warehouseId）+ 组织过滤——头级 warehouseId 可空的 PO 不计入任何仓在途。SimulationDrpEngine fork 同步。`。结果为 0 或负时表示库存充足，不产生补货建议。
    - **forecastDemand 来源**：消费制造域 `ErpMfgForecast`（头 status=APPROVED）下的 `ErpMfgForecastLine` 行——按 `materialId + 目标 warehouseId + 区间相交` 聚合 `forecastQty`；warehouseId 为 null 的产品级预测不进入 DRP 仓级消费（由 MRP 消费）。config-gated `erp-drp.forecast-consume-enabled`（默认 true；关闭或无匹配预测时 forecastDemand=0）。
 2. **补货类型决策**：若 `warehouse.distributionCenterId` 存在（有上级分销中心），优先走仓间调拨（sourceWarehouseId = distributionCenterId）；否则走采购（supplierId = preferredSupplierId）。
 3. **补货量调整**：netRequirement 向上取整到 `orderMultiple` 倍数，生成 `suggestedQty`。

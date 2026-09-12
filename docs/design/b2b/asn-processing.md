@@ -500,3 +500,5 @@ ErpPurReceive (sourceBillType = "B2B_ASN", sourceBillCode = "ASN-001")
 - `architecture/b2b-integration.md`（集成层契约）
 - `architecture/integration-pattern.md`（Webhook + HMAC 验签）
 - `quality/inspection-integration.md`（质检触发）
+
+> **实现注记（P1-CK-b2b-001 修复，plan 2026-09-12-0400-1）**：webhook 入站 parseToAsn 已落地 materialId 解析——resolveInbound 内部 code → ErpMdMaterial 按 code 反查 id 写入 AsnLine.materialId；未命中保持 null + remark 保留解析值（待映射标记）。「系统创建待映射任务」归 Deferred。

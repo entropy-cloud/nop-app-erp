@@ -555,10 +555,10 @@
 | P3-CK-cs-020 | P3 | D5/D6 | ck-cs.md | submitSurvey 全空评分仍标记 COMPLETED + 调查链接有效期（30 天/expire-days）不校验 | 新增 | open |  |
 | P3-CK-cs-021 | P3 | D10 | ck-cs.md | SurveyTokenGenerator 令牌前缀误用类名字面量——"ErpCsConstants-" 前缀无业务语义且长度贴边 | 新增 | open |  |
 | P3-CK-cs-022 | P3 | D1/D4 | ck-cs.md | findSlaWarnings 在 @BizQuery 内派发通知副作用且无 warningSentAt 去重 | 新增 | open |  |
-| P1-CK-ct-001 | P1 | D6/D8 | ck-contract.md | PERIOD_END runAccrual 非幂等——重复运行把期间发票全额重复累加进返利基数并重复计提 | 新增 | open |  |
-| P1-CK-ct-002 | P1 | D8 | ck-contract.md | 返利贷项发票被后续 runAccrual 当作负数发票重复计入——已结算返利反噬累计基数（双重扣减） | 新增 | open |  |
-| P1-CK-ct-003 | P1 | D6 | ck-contract.md | tier 区间上界排他 vs 设计「截止数量/金额（含）」——边界命中落空：返利整档归零、量折扣静默回退原价 | 新增 | open |  |
-| P1-CK-ct-004 | P1 | D10/D5 | ck-contract.md | 发票生成路径对 nullable 合同数据无守卫——独立协议结算/无物料合同行触发时撞 NOT NULL 列裸崩 | 新增 | open |  |
+| P1-CK-ct-001 | P1 | D6/D8 | ck-contract.md | PERIOD_END runAccrual 非幂等——重复运行把期间发票全额重复累加进返利基数并重复计提 | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 1：PERIOD_END 改逐发票消费 sourceBillCode=发票 code（幂等由计提行去重获得），期末总额 telescoping 保持；测试 testPeriodEndAccrualIdempotent 红→绿） |
+| P1-CK-ct-002 | P1 | D8 | ck-contract.md | 返利贷项发票被后续 runAccrual 当作负数发票重复计入——已结算返利反噬累计基数（双重扣减） | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 1：findPeriodInvoices 排除 CT-REBATE- 前缀贷项；测试 testCreditMemoExcludedFromAccrualBase 红→绿） |
+| P1-CK-ct-003 | P1 | D6 | ck-contract.md | tier 区间上界排他 vs 设计「截止数量/金额（含）」——边界命中落空：返利整档归零、量折扣静默回退原价 | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 1：matchTier/matchBand 含上界 + validateNoOverlap 闭区间同步（两控制点 + 校验三处）；TestRebateTierBoundary + TestVolumeDiscountBandBoundary 红→绿；既有 testVolumeDiscountResolve 种子按新约定 100→101 重录） |
+| P1-CK-ct-004 | P1 | D10/D5 | ck-contract.md | 发票生成路径对 nullable 合同数据无守卫——独立协议结算/无物料合同行触发时撞 NOT NULL 列裸崩 | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 1：postSettlement 币种守卫 ERR_CT_SETTLEMENT_CURRENCY_UNRESOLVED + triggerInvoice 无物料守卫 ERR_CT_INVOICE_MATERIAL_REQUIRED；测试 testStandaloneAgreementSettlementCurrencyGuard/testTriggerInvoiceMateriallessLineGuard 红→绿） |
 | P2-CK-ct-005 | P2 | D3 | ck-contract.md | approveTermination 无合同状态再守卫——PENDING 期间合同经 amend/expire 漂移后，法务批准可把任意状态（含 EXPIRED 终态）改成 TERMINATED | 新增 | open |  |
 | P2-CK-ct-006 | P2 | D3 | ck-contract.md | rejectAmend 无「amend 来源」判别——全新 DRAFT 合同可直接一键 ACTIVE，绕过审批链/签署/法务全部门控 | 新增 | open |  |
 | P2-CK-ct-007 | P2 | D3/D5 | ck-contract.md | 手工 expire 无 endDate 到达守卫——未到期合同可提前 EXPIRED，成为绕过 terminate 法务门控的捷径 | 新增 | open |  |
@@ -579,7 +579,7 @@
 | P3-CK-ct-022 | P3 | D5 安全 | ck-contract.md | webhook HMAC 密钥硬编码仓库常量且不可配置——签章链（可触发合同 signVersion 生效）鉴别基础弱 | 新增 | open |  |
 | P3-CK-ct-023 | P3 | D4/D9 | ck-contract.md | approval-timeout 扫描窗无排序饿死——SCAN_LIMIT 200 无 addOrderField，超量 PENDING 时子集不确定 | 新增 | open |  |
 | P3-CK-ct-024 | P3 | D4 | ck-contract.md | 5 个死配置键——rebate-enabled/rebate-auto-settle（owner doc 承诺默认 true 自动结算）/rebate-accrual-method/settlement-mode/progressive-retro-topup 零消费 | 新增 | open |  |
-| P1-CK-b2b-001 | P1 | D8，跨 D6 | ck-b2b.md | AsnLine.materialId 全链零 writer——webhook 入站把代码映射结果写入 remark 而非 materialId：逐行物料匹配与超量校验对 webhook 路径为死代码 + createReceiveFromAsn 对 webhook 路径必抛守卫错（自动收货链末端断裂），集成测试经直 seed 遮蔽 | 新增 | open |  |
+| P1-CK-b2b-001 | P1 | D8，跨 D6 | ck-b2b.md | AsnLine.materialId 全链零 writer——webhook 入站把代码映射结果写入 remark 而非 materialId：逐行物料匹配与超量校验对 webhook 路径为死代码 + createReceiveFromAsn 对 webhook 路径必抛守卫错（自动收货链末端断裂），集成测试经直 seed 遮蔽 | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 2：parseToAsn resolveInbound→ErpMdMaterial 反查写 materialId（未命中 remark 待映射标记）；测试 testWebhookResolvesMaterialIdToAsnLine 红→绿） |
 | P2-CK-b2b-002 | P2 | D2 | ck-b2b.md | 解析失败错误路径的 EdiDoc 防重键塌缩为 (formatId, ASN_INBOUND, NULL)——同格式第二次解析失败被误判 ALREADY_PROCESSED：真实解析错误被掩蔽 + 后续失败报文 rawPayload 审计永久丢失 | 新增 | open |  |
 | P2-CK-b2b-003 | P2 | D8，orgId 隔离族写侧形态 | ck-b2b.md | EdiDoc/Asn/EdiLog 全链 orgId 零 writer——R1.28 webhook 并发幂等的 UK 兜底因 NULL 不去重而失效 + 24h 上线监控 org 锚点与 Doc orgId 永不相交（有 orgId 的伙伴监控恒盲区） | 新增 | open |  |
 | P2-CK-b2b-004 | P2 | D4 | ck-b2b.md | `erp-b2b.enabled` 主开关定义后全域零消费——owner doc 以「config-gated OFF 默认」作为 EDI 出站自动化整体 Deferred 的首要论据，代码层不存在该门 | 新增 | open |  |
@@ -595,9 +595,9 @@
 | P3-CK-b2b-014 | P3 | D5 | ck-b2b.md | webhook 不校验伙伴档案状态与生效性——SUSPENDED/TERMINATED 伙伴仍可推送建 ASN；payload 无大小上限（错误码已定义未用） | 新增 | open |  |
 | P3-CK-b2b-015 | P3 | D6 | ck-b2b.md | matchPurchaseOrder 缺日期校验与通知链 + createReceiveFromAsn vendorId 来源与 owner doc 漂移 | 新增 | open |  |
 | P3-CK-b2b-016 | P3 | D9 | ck-b2b.md | createOutbound 仅取首个适用 Provider + parseToAsn 逐行查映射表 N+1 | 新增 | open |  |
-| P1-CK-drp-001 | P1 | D6，跨 D8 | ck-drp.md | 净需求公式可用量双计——currentStock 取 available（已扣 reserved+locked），allocatedQty 再加回 reserved：reserved 计两次、locked 多扣一次，净需求系统性虚高 → 过量补货 | 新增 | open |  |
-| P1-CK-drp-002 | P1 | D6，跨 D8 | ck-drp.md | 在途调拨量不过滤 DONE 完成单——已完成调拨货物已入 currentStock 仍永久计入 onOrderQty：供给双计 → 净需求系统性低估，DRP 释放的调拨单自身完成后即成为永久幻影供给（释放闭环自噬） | 新增 | open |  |
-| P1-CK-drp-003 | P1 | D6，跨 D8 | ck-drp.md | 未到货采购量不过滤收货仓库与组织——仓库 A 的净需求计入发往仓库 B 的在途采购：跨仓在途污染 → 欠补；orgId 亦未过滤（跨组织混算） | 新增 | open |  |
+| P1-CK-drp-001 | P1 | D6，跨 D8 | ck-drp.md | 净需求公式可用量双计——currentStock 取 available（已扣 reserved+locked），allocatedQty 再加回 reserved：reserved 计两次、locked 多扣一次，净需求系统性虚高 → 过量补货 | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 3：sumAvailable 改 totalQuantity（currentStock=在手总量，reserved 单次计入）+ SimulationDrpEngine fork 同步；测试 testReservedNotDoubleCountedInNetRequirement 红→绿） |
+| P1-CK-drp-002 | P1 | D6，跨 D8 | ck-drp.md | 在途调拨量不过滤 DONE 完成单——已完成调拨货物已入 currentStock 仍永久计入 onOrderQty：供给双计 → 净需求系统性低估，DRP 释放的调拨单自身完成后即成为永久幻影供给（释放闭环自噬） | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 3：inboundTransferQty 白名单 DRAFT/CONFIRMED/APPROVED + CONFIRMED+move-DONE 实路径排除（前瞻性防御，linkage 无 writer 注记在案）；测试 testDoneTransferExcludedFromOnOrder） |
+| P1-CK-drp-003 | P1 | D6，跨 D8 | ck-drp.md | 未到货采购量不过滤收货仓库与组织——仓库 A 的净需求计入发往仓库 B 的在途采购：跨仓在途污染 → 欠补；orgId 亦未过滤（跨组织混算） | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 3：unreceivedPurchaseQty 补 warehouseId + orgId 过滤；测试 testCrossWarehousePurchaseNotCountedInOnOrder 红→绿） |
 | P2-CK-drp-004 | P2 | D3，跨 D8 | ck-drp.md | resetToDraft 行级联与设计偏差——仅清 SUGGESTED 行：①APPROVED 行在 DRAFT 计划下仍可释放（释放无 plan 状态守卫，终点靠 advanceToExecuted 断言兜底回滚、错误码误导）；②重跑后新行 lineNo 从 10 起与存续行重复；③totalReplenishmentQty 置 null 抹掉已释放事实 | 新增 | open |  |
 | P2-CK-drp-005 | P2 | D5，跨 D3 | ck-drp.md | approveLine 单行批准不回填 approvedQty——正建议量行经 approveLine + releaseLine 生成 0 数量调拨单/采购单（P2-RC-069「0 值释放」家族的加重控制点：不再限于 net≤0 行） | 新增 | open |  |
 | P2-CK-drp-006 | P2 | D6，跨 D8 | ck-drp.md | 安全库存三级优先链（override > calculated > parameter）未接入 runDrp——DrpEngine 直接读 ErpDrpParameter.safetyStock，findEffectiveSafetyStock 生产零消费（仅 BizQuery 暴露） | 新增 | open |  |
@@ -616,7 +616,7 @@
 | P3-CK-drp-019 | P3 | D6，跨 D4 | ck-drp.md | 仿真 LEAD_TIME 参数变体三处就绪零消费——dict/UK/resolveLeadTimeOverride 全在，SimulationDrpEngine fork 只消费 SAFETY_STOCK/REPLENISHMENT_QTY：用户配置 LEAD_TIME 覆盖静默无效 | 新增 | open |  |
 | P3-CK-drp-020 | P3 | D10 | ck-drp.md | not-found 误码族 + O-11 错误码群零使用——requireVersion 报 ALREADY_PROMOTED、requireScenario 报 NO_BASELINE_PLAN、requireCalc 报 METHOD_UNSUPPORTED；另有 8 个已定义错误码全域零使用 | 新增 | open |  |
 | P1-CK-log-001 | P1 | D8 | ck-logistics.md | onDelivered 的 post 返回 null（幂等命中）分支不 markSettled——DELIVERED 运单运费结算永久悬挂 PENDING 且无告警（P1-CK-fin-003 logistics 传导站点） | 新增 |fixed | 并入 F1.1 引擎层修复（幂等命中返回 id → markSettled 生效），prj 传导回归佐证 |
-| P1-CK-log-002 | P1 | D4/D2，B1 族 | ck-logistics.md | G4 告警闭环的两个事件模板种子缺失——log.gateway-dead-letter 与 log.freight-posting-failure 经 notify 静默跳过，死信/过账失败悬挂不可感知 | 新增 | open |  |
+| P1-CK-log-002 | P1 | D4/D2，B1 族 | ck-logistics.md | G4 告警闭环的两个事件模板种子缺失——log.gateway-dead-letter 与 log.freight-posting-failure 经 notify 静默跳过，死信/过账失败悬挂不可感知 | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 4：三库种子补 log.gateway-dead-letter 7210 + log.freight-posting-failure 7211（对齐 log.draft-escalation 7201 范式，独立 INSERT 头+终结符）；logistics owner doc 注记 G4 闭环完整） |
 | P2-CK-log-003 | P2 | D5 | ck-logistics.md | webhook HMAC 密钥取承运商公开编码 carrier.getCode()——签名校验无真实认证强度，凭证基础设施（CarrierConfig.credentials/apiSecret）零消费 | 新增 | open |  |
 | P2-CK-log-004 | P2 | D8 | ck-logistics.md | findShipmentByTrackingNo 不按 carrierId 收窄——跨承运商运单号碰撞时 A 承运商 webhook 推进 B 承运商运单并触发其运费过账 | 新增 | open |  |
 | P2-CK-log-005 | P2 | D8 | ck-logistics.md | 交付状态回写无数量 rollup——单一 Shipment DELIVERED 直接把销售订单 deliveryStatus 写成 DELIVERED，覆盖 sales 出库审核的 PARTIAL 语义 | 新增 | open |  |
@@ -626,8 +626,8 @@
 | P2-CK-log-009 | P2 | D5，同型 P1-CK-pur-003 族 | ck-logistics.md | CRUD update 无已审守卫——Shipment status/freightSettlementStatus/trackingNo、Carrier gatewayId/isActive、CarrierConfig credentials 等可经 update_ 直改 | 新增 | open |  |
 | P3-CK-log-010 | P3 | D4 | ck-logistics.md | README 配置点 4 键零消费——erp-log.enabled / async-dispatch / log-retention-days / gateway-timeout-secs 声明后无任何 main 代码读取 | 新增 | open |  |
 | P3-CK-log-011 | P3 | D3/D10 | ck-logistics.md | 杂项：posted 列零 writer 但列表页展示（恒 false）+ freightSettlementStatus 创建无 PENDING 初始化（NULL）+ not-found 误用非法迁移错误码 + parsePayload 无类型防御 | 新增 | open |  |
-| P1-CK-aps-001 | P1 | D6/D10 | ck-aps.md | loadPendingOrders 按 earliestStartDateT 过滤排除 NULL——主建单路径不写 earliestStartDateT，有展望期的排产方案对自动工序整体漏排且无任何冲突报告 | 新增 | open |  |
-| P1-CK-aps-002 | P1 | D7/D6 | ck-aps.md | run() 全量排产不感知既有 PLANNED 工序时段/产能预留——引擎时间轴仅含维护约束，增量排产的 persist 预留 pre-check 必然冲突并整轮回滚 | 新增 | open |  |
+| P1-CK-aps-001 | P1 | D6/D10 | ck-aps.md | loadPendingOrders 按 earliestStartDateT 过滤排除 NULL——主建单路径不写 earliestStartDateT，有展望期的排产方案对自动工序整体漏排且无任何冲突报告 | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 5：loadPendingOrders horizon 过滤 NULL-aware（or(isNull, 界内)）；测试 testNullEarliestOpsScheduledUnderHorizon 红→绿） |
+| P1-CK-aps-002 | P1 | D7/D6 | ck-aps.md | run() 全量排产不感知既有 PLANNED 工序时段/产能预留——引擎时间轴仅含维护约束，增量排产的 persist 预留 pre-check 必然冲突并整轮回滚 | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 5：run/runToc 加载既有 PLANNED/IN_PROGRESS 作 frozenPlanned 预填 + 引擎 scheduleToc/scheduleBackward 增 frozen 参数与消费（FORWARD/TOC/BACKWARD 口径统一）；测试 testIncrementalRunDoesNotConflictWithPlannedOps 红→绿） |
 | P2-CK-aps-003 | P2 | D8 | ck-aps.md | 产能预留生命周期不完整——cancel()/complete()/updateSchedule()/doDispatch() 均不释放预留，ghost 预留行只增不减并持续收缩可排产能 | 新增 | open |  |
 | P2-CK-aps-004 | P2 | D5/D6 | ck-aps.md | updateSchedule（甘特拖拽 mutation）零产能校验、零状态守卫、零预留同步——设计规则 8「拖拽需后端产能校验」无实现但 mutation 已暴露 | 新增 | open |  |
 | P2-CK-aps-005 | P2 | D6 | ck-aps.md | 前向排产排序键 (priority, latestEndDateT, sequence) 下同工单优先级乱序时前置工序约束失效——后序工序可先于前序工序排定（finish-before-start 倒挂） | 新增 | open |  |
@@ -637,8 +637,8 @@
 | P3-CK-aps-009 | P3 | D4 | ck-aps.md | README 配置点 4 键零消费——default-scheduling-mode / priority-rule / time-bucket-minutes / auto-reschedule-on-insert 声明后 main 代码零读取 | 新增 | open |  |
 | P3-CK-aps-010 | P3 | D4，同型 cron 键漂移家族 | ck-aps.md | 两个 job.yaml 的 cronExpr 键与 bean 内层空值跳过键不同名——`<key>.cron-expr` vs `<key>-cron` | 新增 | open |  |
 | P3-CK-aps-011 | P3 | D10/D8 | ck-aps.md | 杂项：buildTimelines 对约束空时间无守卫（NPE）+ 物料齐套/ATP 聚合无 orgId 过滤（跨组织口径混合）+ ATP 公式与设计 §7.1 漂移 | 新增 | open |  |
-| P1-CK-notify-001 | P1 | D7/D2 | ck-notify.md | 外发通道在调用方事务内、通知持久化之前派发——EMAIL/SMS 不可逆副作用先于 commit 与 saveEntity 执行，与 README 自述「txn().afterCommit」不符 | 新增 | open |  |
-| P1-CK-notify-002 | P1 | D4/D2 | ck-notify.md | 模板种子与已接线事件类型系统性失同步——8+ 个已派发事件无 ACTIVE 模板且无任何对账机制，静默跳过设计使漂移不可见（cs 先例已实际发生） | 新增 | open |  |
+| P1-CK-notify-001 | P1 | D7/D2 | ck-notify.md | 外发通道在调用方事务内、通知持久化之前派发——EMAIL/SMS 不可逆副作用先于 commit 与 saveEntity 执行，与 README 自述「txn().afterCommit」不符 | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 6：dispatcher 职责拆分 prepare/dispatchExternal + NotifyProcessor 持久化后外发（时序契约）；测试 testPrepareDoesNotDispatchExternal 绿） |
+| P1-CK-notify-002 | P1 | D4/D2 | ck-notify.md | 模板种子与已接线事件类型系统性失同步——8+ 个已派发事件无 ACTIVE 模板且无任何对账机制，静默跳过设计使漂移不可见（cs 先例已实际发生） | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 4：三库种子补 8 行（log×2/aps×3/crm/hr/cs，ID 7210-7217）；对账机制 Deferred 带触发条件） |
 | P2-CK-notify-003 | P2 | D6 | ck-notify.md | 频控合并不覆盖外发通道——merge 命中后仍对同一实例再次发送邮件/短信，每次合并增量外发一次 | 新增 | open |  |
 | P2-CK-notify-004 | P2 | D5/D10 | ck-notify.md | markRead 输入边界——不存在通知也写孤儿已读行 + 无接收人身份校验（任意登录用户可按 id 标记他人通知已读） | 新增 | fixed | 状态继承（M2.7 协调注记，plan 2026-09-10-1141-2）：INSTANCE_NOT_FOUND 接线 markRead not-found 拒绝（孤儿已读行面）+ assertActorAllowed 身份校验（越权面）双控制点收口——TestErpSysNotificationReadIdentity |
 | P2-CK-notify-005 | P2 | D5 | ck-notify.md | EMAIL/SMS 通道无收件地址载体——EmailMessage/SmsMessage 只设 subject/text，收件人解析只产出 userId，启用外发后邮件无法投递 | 新增 | open |  |

@@ -245,6 +245,37 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
     }
 
     @SuppressWarnings("unchecked")
+    // ===================== P1-CK-b2b-001（plan 2026-09-12-0400-1 Phase 2） =====================
+
+    @Test
+    public void testWebhookResolvesMaterialIdToAsnLine() {
+        // webhook 入站把映射结果解析为 materialId 写入 AsnLine（修复前写 remark、materialId 恒 null：
+        // matchPurchaseOrder 行级匹配死代码 + createReceiveFromAsn 必抛守卫错）
+        String partnerId = seedPartner();
+        seedPartnerProfile("PARTNER-ASN-9", partnerId, "webhook-secret-9");
+        // 物料 code = 供应商编码（resolveInbound 无映射行时回退 externalCode）
+        String materialId = ormTemplate.runInSession(session -> {
+            app.erp.md.dao.entity.ErpMdMaterial material = new app.erp.md.dao.entity.ErpMdMaterial();
+            material.setCode("SUP-PART-001");
+            material.setName("测试物料-SUP-PART-001");
+            material.setMaterialType("FINISHED_PRODUCT");
+            material.setUoMId("1");
+            material.setStatus("ACTIVE");
+            daoProvider.daoFor(app.erp.md.dao.entity.ErpMdMaterial.class).saveEntity(material);
+            return material.getId();
+        });
+
+        String payload = UBL_DESPATCH_ADVICE_XML;
+        String sig = hmacSha256(payload, "webhook-secret-9");
+        String asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE",
+                "PARTNER-ASN-9", sig, "EVT-009", payload, CTX));
+
+        List<ErpB2bAsnLine> lines = findAsnLines(asnId);
+        assertEquals(1, lines.size());
+        assertEquals(materialId, lines.get(0).getMaterialId(),
+                "webhook 路径 AsnLine.materialId 应解析写入（修复前恒 null）");
+    }
+
     private List<ErpB2bAsnLine> findAsnLines(String asnId) {
         IEntityDao<ErpB2bAsnLine> dao = daoProvider.daoFor(ErpB2bAsnLine.class);
         QueryBean q = new QueryBean();

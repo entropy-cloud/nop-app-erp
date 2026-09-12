@@ -129,6 +129,16 @@ public interface ErpCtErrors {
             "返利结算单 {settlementId} 当前状态={currentStatus}，不允许过账（仅 DRAFT 可过账）",
             ARG_SETTLEMENT_ID, ARG_CURRENT_STATUS);
 
+    // P1-CK-ct-004（plan 2026-09-12-0400-1 Phase 1）：独立协议（无合同关联）结算的币种来源守卫
+    ErrorCode ERR_CT_SETTLEMENT_CURRENCY_UNRESOLVED = ErrorCode.define("erp.err.ct.settlement-currency-unresolved",
+            "返利结算单 {settlementId} 的协议 {agreementId} 未关联合同，无法解析开票币种：请补合同关联后重试",
+            ARG_SETTLEMENT_ID, "agreementId");
+
+    // P1-CK-ct-004（plan 2026-09-12-0400-1 Phase 1）：无物料合同行开票守卫
+    ErrorCode ERR_CT_INVOICE_MATERIAL_REQUIRED = ErrorCode.define("erp.err.ct.invoice-material-required",
+            "开票计划 {planId} 关联的合同行未指定物料/产品（框架合同行可不指定物料，但开票需要）：请补物料后重试",
+            "planId");
+
     // --- 电子签章（plan 2026-07-04-2200-2，design e-signature.md） ---
 
     ErrorCode ERR_CT_SIGNATURE_PROVIDER_NOT_REGISTERED = ErrorCode.define("erp.err.ct.signature-provider-not-registered",

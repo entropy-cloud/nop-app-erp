@@ -100,6 +100,8 @@
 | id/rebateAgreementId | 标准 |
 | fromAmount | 起始金额（含） |
 | toAmount | 截止金额（含，null 无上限） |
+
+> **实现注记（P1-CK-ct-001/002/003/004 修复，plan 2026-09-12-0400-1）**：① PERIOD_END 计提改逐发票消费（sourceBillCode=发票 code，幂等由计提行去重天然获得；期末总额语义由 telescoping 保持——Σ delta = expected(期末累计)−0）；② 计提基数排除返利贷项发票（code=CT-REBATE-*，已付返利不回吸基数）；③ tier/band 上界**含**（`<=`/`> to` 跳过），validateNoOverlap 同步闭区间判定（共享边界点=重叠，相邻配置须 from=to+1）；④ 独立协议（contractId=null）结算 → ERR_CT_SETTLEMENT_CURRENCY_UNRESOLVED 拒绝（币种缺省解析归 Deferred）；无物料合同行 triggerInvoice → ERR_CT_INVOICE_MATERIAL_REQUIRED 拒绝。
 | rebatePercent | 返利比例（0~100） |
 | rebateAmount | 可选：固定返利金额（优先于比例计算） |
 

@@ -11,6 +11,7 @@ import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.md.dao.entity.ErpMdUoM;
 import app.erp.pur.dao.entity.ErpPurInvoice;
+import io.nop.api.core.annotations.autotest.EnableSnapshot;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
@@ -147,9 +148,9 @@ public class TestErpCtContractRebate extends JunitAutoTestCase {
         String[] setup = setupActiveContract("PURCHASE", "INBOUND");
         String contractLineId = setup[1];
 
-        // 建区间带：[0,100) 0%，[100,500) 5%
+        // 建区间带：[0,100] 0%，[101,500] 5%（P1-CK-ct-003 闭区间语义：次档 from=to+1）
         saveDiscountBand(contractLineId, new BigDecimal("0"), new BigDecimal("100"), new BigDecimal("0"));
-        saveDiscountBand(contractLineId, new BigDecimal("100"), new BigDecimal("500"), new BigDecimal("5"));
+        saveDiscountBand(contractLineId, new BigDecimal("101"), new BigDecimal("500"), new BigDecimal("5"));
 
         // qty=50 → 命中 [0,100) 0% → 折后价=原价
         Map<?, ?> r1 = (Map<?, ?>) executeRpc(GraphQLOperationType.query, "ErpCtVolumeDiscount__resolveDiscount",
@@ -439,6 +440,115 @@ public class TestErpCtContractRebate extends JunitAutoTestCase {
         Map<?, ?> r = (Map<?, ?>) executeRpc(GraphQLOperationType.mutation, "ErpCtInvoicePlan__save",
                 ApiRequest.build(Map.of("data", data))).getData();
         return toLongId(r);
+    }
+
+    // ===================== P1-CK-ct-001/002/003/004（plan 2026-09-12-0400-1 Phase 1） =====================
+
+    @Test
+    public void testPeriodEndAccrualIdempotent() {
+        // P1-CK-ct-001：PERIOD_END 重复 runAccrual 不得翻倍基数
+        // （修复前 loadAccruedBillCodes 集合只含 PERIOD- 伪码，发票 code 去重永不命中）
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String partnerId = setup[2];
+        String currencyId = setup[3];
+        String agreementId = createRebateAgreement(partnerId, setup[0], "PURCHASE", "PERIOD_END");
+        createRebateTier(agreementId, new BigDecimal("0"), new BigDecimal("1000000"), new BigDecimal("0"));
+        createRebateTier(agreementId, new BigDecimal("1000000"), new BigDecimal("5000000"), new BigDecimal("2"));
+        createPostedApInvoice("REB-PI-PE", partnerId, currencyId, new BigDecimal("1200000"));
+
+        executeRpc(GraphQLOperationType.mutation, "ErpCtRebateAgreement__runAccrual",
+                ApiRequest.build(Map.of("agreementId", agreementId, "asOfDate", CoreMetrics.currentDate().toString())));
+        ErpCtRebateAgreement ag = daoProvider.daoFor(ErpCtRebateAgreement.class).getEntityById(agreementId);
+        assertEquals(0, new BigDecimal("1200000").compareTo(ag.getTotalAccumulatedAmount()), "首跑累计=1.2M");
+        List<ErpCtRebateAccrual> first = findAccruals(agreementId);
+
+        executeRpc(GraphQLOperationType.mutation, "ErpCtRebateAgreement__runAccrual",
+                ApiRequest.build(Map.of("agreementId", agreementId, "asOfDate", CoreMetrics.currentDate().toString())));
+        ag = daoProvider.daoFor(ErpCtRebateAgreement.class).getEntityById(agreementId);
+        assertEquals(0, new BigDecimal("1200000").compareTo(ag.getTotalAccumulatedAmount()),
+                "重跑累计仍=1.2M（修复前翻倍 2.4M）");
+        List<ErpCtRebateAccrual> second = findAccruals(agreementId);
+        assertEquals(first.size(), second.size(), "重跑零新增计提行");
+        BigDecimal sum = BigDecimal.ZERO;
+        for (ErpCtRebateAccrual a : second) {
+            sum = sum.add(a.getAccruedRebate());
+        }
+        assertEquals(0, new BigDecimal("24000").compareTo(sum), "计提总额恒 24000（修复前 48000）");
+    }
+
+    @Test
+    public void testCreditMemoExcludedFromAccrualBase() {
+        // P1-CK-ct-002：返利贷项发票（CT-REBATE- 前缀）不参与计提基数
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String partnerId = setup[2];
+        String currencyId = setup[3];
+        String agreementId = createRebateAgreement(partnerId, setup[0], "PURCHASE", "PROGRESSIVE");
+        createRebateTier(agreementId, new BigDecimal("0"), null, new BigDecimal("2"));
+        createPostedApInvoice("REB-PI-CM", partnerId, currencyId, new BigDecimal("800000"));
+        createPostedApInvoice("CT-REBATE-TEST-1", partnerId, currencyId, new BigDecimal("-300000"));
+
+        executeRpc(GraphQLOperationType.mutation, "ErpCtRebateAgreement__runAccrual",
+                ApiRequest.build(Map.of("agreementId", agreementId, "asOfDate", CoreMetrics.currentDate().toString())));
+        ErpCtRebateAgreement ag = daoProvider.daoFor(ErpCtRebateAgreement.class).getEntityById(agreementId);
+        assertEquals(0, new BigDecimal("800000").compareTo(ag.getTotalAccumulatedAmount()),
+                "累计=800K（贷项 -300K 不回吸基数；修复前 500K）");
+    }
+
+    @Test
+    public void testStandaloneAgreementSettlementCurrencyGuard() {
+        // P1-CK-ct-004：独立协议（contractId=null）结算 → 领域错误码显式拒绝（修复前 currencyId=null 撞 NOT NULL 裸崩）
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String partnerId = setup[2];
+        String currencyId = setup[3];
+        // 独立协议（contractId=null 设计合法面）经 dao 直建（GraphQL save 对显式 null 关联受限）
+        String agreementId = ormTemplate.runInSession(session -> {
+            app.erp.contract.dao.entity.ErpCtRebateAgreement ag =
+                    daoProvider.daoFor(app.erp.contract.dao.entity.ErpCtRebateAgreement.class).newEntity();
+            ag.setCode("REB-AG-SA-" + System.nanoTime());
+            ag.setBusinessDate(java.time.LocalDate.of(2026, 6, 1));
+            ag.setPartnerId(partnerId);
+            ag.setRebateType("PURCHASE");
+            ag.setStartDate(java.time.LocalDate.of(2026, 1, 1));
+            ag.setEndDate(java.time.LocalDate.of(2027, 12, 31));
+            ag.setAccrualMethod("PROGRESSIVE");
+            ag.setStatus("ACTIVE");
+            daoProvider.daoFor(app.erp.contract.dao.entity.ErpCtRebateAgreement.class).saveEntity(ag);
+            return ag.getId();
+        });
+        createRebateTier(agreementId, new BigDecimal("0"), null, new BigDecimal("2"));
+        createPostedApInvoice("REB-PI-SA", partnerId, currencyId, new BigDecimal("800000"));
+        executeRpc(GraphQLOperationType.mutation, "ErpCtRebateAgreement__runAccrual",
+                ApiRequest.build(Map.of("agreementId", agreementId, "asOfDate", CoreMetrics.currentDate().toString())));
+        String settlementId = createSettlement(agreementId);
+
+        ApiResponse<?> resp = executeRpc(GraphQLOperationType.mutation, "ErpCtRebateSettlement__postSettlement",
+                ApiRequest.build(Map.of("settlementId", settlementId)));
+        assertNotEquals(0, resp.getStatus(), "独立协议结算应被守卫拒绝");
+        assertTrue(String.valueOf(resp.getCode()).contains("settlement-currency-unresolved"),
+                "应返回 ERR_CT_SETTLEMENT_CURRENCY_UNRESOLVED 领域码，实际=" + resp.getCode());
+    }
+
+    @Test
+    public void testTriggerInvoiceMateriallessLineGuard() {
+        // P1-CK-ct-004：合同行无物料 → triggerInvoice 领域错误码拒绝（修复前发票行 NOT NULL 裸崩）
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String contractId = setup[0];
+        String contractLineId = setup[1];
+
+        // 合同行 materialId 置空（框架合同可不指定物料——设计合法数据面）
+        ormTemplate.runInSession(() -> {
+            app.erp.contract.dao.entity.ErpCtContractLine line =
+                    daoProvider.daoFor(app.erp.contract.dao.entity.ErpCtContractLine.class).getEntityById(contractLineId);
+            line.setMaterialId(null);
+            daoProvider.daoFor(app.erp.contract.dao.entity.ErpCtContractLine.class).updateEntity(line);
+        });
+
+        String planId = saveInvoicePlan(contractLineId, new BigDecimal("1000"));
+        ApiResponse<?> resp = executeRpc(GraphQLOperationType.mutation, "ErpCtInvoicePlan__triggerInvoice",
+                ApiRequest.build(Map.of("planId", planId)));
+        assertNotEquals(0, resp.getStatus(), "无物料行触发应被守卫拒绝");
+        assertTrue(String.valueOf(resp.getCode()).contains("invoice-material-required"),
+                "应返回 ERR_CT_INVOICE_MATERIAL_REQUIRED 领域码，实际=" + resp.getCode());
     }
 
     private String createRebateAgreement(String partnerId, String contractId, String rebateType, String method) {

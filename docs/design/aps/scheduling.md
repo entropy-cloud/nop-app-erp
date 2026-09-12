@@ -36,6 +36,8 @@
 | plannedStartDateT | 计划开工时间 | APS 排产输出 |
 | plannedEndDateT | 计划完工时间 | APS 排产输出 = plannedStartDateT + totalDuration |
 | earliestStartDateT | 最早可开工时间 | 前向排产的起点约束（物料齐套/前置工序完工） |
+
+> **实现注记（P1-CK-aps-001/002 修复，plan 2026-09-12-0400-1）**：① horizon 过滤 NULL-aware——earliestStartDateT=NULL 的自动工序进入待排集（NULL 不被 ge/le 排除），引擎 effectiveEarliestStart 三级兜底接手；② run/runToc 构造请求时加载既有 PLANNED/IN_PROGRESS 工序作 frozenPlanned 预填时间轴（增量排产能动避让既有占用，不再触发预留 pre-check 冲突整轮回滚）——引擎 scheduleToc/scheduleBackward 已增 frozen 参数与消费（FORWARD/insertRushOrder/CTP 口径统一）。
 | latestEndDateT | 最晚必须完工时间 | 后向排产的终点约束（客户交期） |
 
 ### 1.2 工作中心时间片（ErpApsTimeSlot）

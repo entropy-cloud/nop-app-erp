@@ -153,6 +153,43 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
 
     // ==================== 辅助 ====================
 
+    // ===================== P1-CK-aps-001/002（plan 2026-09-12-0400-1 Phase 5） =====================
+
+    @Test
+    public void testNullEarliestOpsScheduledUnderHorizon() {
+        // P1-CK-aps-001：自动建单路径 earliestStartDateT=NULL + horizon 方案 → 应进待排集（修复前 ge/le 过滤整体漏排）
+        String scheduleId = createSchedule("SCH-NULL-AWR");
+        // earliestStartDateT 不写（NULL）——模拟主建单路径
+        Map<String, Object> d = baseOp("OP-NULL-AWR", "1", 1, MACHINE_A, 10, "10", "1", "10");
+        d.put("status", "DRAFT");
+        saveOp(d, "OP-NULL-AWR");
+
+        ApiResponse<?> r = runMutation("ErpApsOperationOrder__scheduleForward", ApiRequest.build(Map.of("scheduleId", scheduleId)));
+        assertEquals(0, r.getStatus(), "run 应成功");
+        Map<String, Object> result = (Map<String, Object>) r.getData();
+        assertTrue(((List<?>) result.get("scheduledOperationIds")).size() > 0,
+                "NULL earliest 工序应被排产（修复前 horizon 过滤整体漏排）");
+    }
+
+    @Test
+    public void testIncrementalRunDoesNotConflictWithPlannedOps() {
+        // P1-CK-aps-002：既有 PLANNED 工序 + 新 DRAFT 工序增量排产 → 不抛
+        // ERR_APS_CAPACITY_CONFLICT（修复前 frozen=null 引擎不感知占用 → pre-check 必冲突整轮回滚）
+        String scheduleId = createSchedule("SCH-INCR");
+        // 既有 PLANNED 工序占 2026-07-10 00:00-08:00（M-001）
+        createOpPlanned("OP-INCR-P1", "1", 1, MACHINE_A, 10, "10", "1", "10",
+                HORIZON_START.toString(), HORIZON_START.plusHours(8).toString());
+        // 新 DRAFT 工序同机（earliest=NULL → floor 从 horizonStart 起；frozen 预填后应避让排到 08:00 之后）
+        Map<String, Object> d = baseOp("OP-INCR-D2", "1", 2, MACHINE_A, 20, "10", "1", "10");
+        d.put("status", "DRAFT");
+        saveOp(d, "OP-INCR-D2");
+
+        ApiResponse<?> r = runMutation("ErpApsOperationOrder__scheduleForward", ApiRequest.build(Map.of("scheduleId", scheduleId)));
+        assertEquals(0, r.getStatus(), "增量 run 应成功（修复前 frozen=null 与既有 PLANNED 冲突整轮回滚）");
+        Map<String, Object> result = (Map<String, Object>) r.getData();
+        assertTrue(((List<?>) result.get("scheduledOperationIds")).size() >= 1, "新工序应被排产");
+    }
+
     private String createSchedule(String code) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);

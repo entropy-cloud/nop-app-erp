@@ -125,9 +125,12 @@ public class RebateEngine {
     }
 
     protected ErpCtRebateTier matchTier(List<ErpCtRebateTier> tiers, BigDecimal amount) {
+        // P1-CK-ct-003（plan 2026-09-12-0400-1 Phase 1）：toAmount 含上界（owner doc volume-discount.md
+        // 「toAmount 截止金额（含）」权威语义），修复前半开 `[from, to)` 使边界命中落空整档归零。
+        // 紧邻档（次档 from=前档 to）边界值归属 from 更大者（max fromAmount 匹配）。
         return tiers.stream()
                 .filter(t -> (t.getFromAmount() == null || amount.compareTo(t.getFromAmount()) >= 0)
-                        && (t.getToAmount() == null || amount.compareTo(t.getToAmount()) < 0))
+                        && (t.getToAmount() == null || amount.compareTo(t.getToAmount()) <= 0))
                 .max(Comparator.comparing(t -> t.getFromAmount() == null ? BigDecimal.ZERO : t.getFromAmount()))
                 .orElse(null);
     }

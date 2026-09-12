@@ -88,7 +88,7 @@ public class DrpDemandAggregator {
             ctx.parameter = param;
             ctx.currentStock = sumAvailable(param.getMaterialId(), param.getWarehouseId());
             ctx.allocatedQty = sumReserved(param.getMaterialId(), param.getWarehouseId());
-            ctx.onOrderQty = onOrderQty(param.getMaterialId(), param.getWarehouseId());
+            ctx.onOrderQty = onOrderQty(param.getMaterialId(), param.getWarehouseId(), plan.getOrgId());
             ctx.forecastDemand = forecastIndex.getOrDefault(forecastKey(param.getMaterialId(), param.getWarehouseId()),
                     BigDecimal.ZERO);
             result.add(ctx);
@@ -177,12 +177,11 @@ public class DrpDemandAggregator {
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", warehouseId));
         BigDecimal total = BigDecimal.ZERO;
+        // P1-CK-drp-001（plan 2026-09-12-0400-1 Phase 3）：currentStock 口径 = 在手总量 totalQuantity
+        // （设计公式字面 SS+F−T+R−O；reserved 经 allocatedQty 单次计入）。修复前读 availableQuantity
+        // （=T−R−L）再 +R → reserved 双计/locked 多扣，净需求虚高 R+L → 过量补货。
         for (ErpInvStockBalance b : daoProvider.<ErpInvStockBalance>daoFor(ErpInvStockBalance.class).findAllByQuery(q)) {
-            BigDecimal avail = b.getAvailableQuantity();
-            if (avail == null) {
-                avail = nz(b.getTotalQuantity()).subtract(nz(b.getReservedQuantity())).subtract(nz(b.getLockedQuantity()));
-            }
-            total = total.add(avail);
+            total = total.add(nz(b.getTotalQuantity()));
         }
         return total;
     }
@@ -198,21 +197,34 @@ public class DrpDemandAggregator {
         return total;
     }
 
-    private BigDecimal onOrderQty(String materialId, String warehouseId) {
+    private BigDecimal onOrderQty(String materialId, String warehouseId, String orgId) {
         BigDecimal total = BigDecimal.ZERO;
         total = total.add(inboundTransferQty(materialId, warehouseId));
-        total = total.add(unreceivedPurchaseQty(materialId, warehouseId));
+        total = total.add(unreceivedPurchaseQty(materialId, warehouseId, orgId));
         return total;
+    }
+
+    /** TRANSFER 关联 move 是否已 DONE（P1-CK-drp-002 实路径完成判定；linkage 无 writer 时恒 false）。 */
+    private boolean hasCompletedMove(String relatedBillCode) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("relatedBillType", "TRANSFER"));
+        q.addFilter(eq("relatedBillCode", relatedBillCode));
+        q.addFilter(eq("docStatus", "DONE"));
+        return !daoProvider.<app.erp.inv.dao.entity.ErpInvStockMove>daoFor(app.erp.inv.dao.entity.ErpInvStockMove.class).findAllByQuery(q).isEmpty();
     }
 
     private BigDecimal inboundTransferQty(String materialId, String warehouseId) {
         IEntityDao<ErpInvTransferOrder> orderDao = daoProvider.daoFor(ErpInvTransferOrder.class);
         IEntityDao<ErpInvTransferOrderLine> lineDao = daoProvider.daoFor(ErpInvTransferOrderLine.class);
 
+        // P1-CK-drp-002（plan 2026-09-12-0400-1 Phase 3）：在途白名单 = 未完成单（DONE 货已入
+        // currentStock 不得再计在途；DONE writer 当前缺席为前瞻性防御）。CONFIRMED 且关联 move 已
+        // DONE 的实路径同样排除（move-级完成判定，linkage 落地时生效）。
         QueryBean oq = new QueryBean();
         oq.addFilter(eq("toWarehouseId", warehouseId));
-        oq.addFilter(ne("docStatus", "CANCELLED"));
-        List<ErpInvTransferOrder> orders = orderDao.findAllByQuery(oq);
+        oq.addFilter(in("docStatus", java.util.Arrays.asList("DRAFT", "CONFIRMED", "APPROVED")));
+        List<ErpInvTransferOrder> orders = new ArrayList<>(orderDao.findAllByQuery(oq));
+        orders.removeIf(o -> hasCompletedMove(o.getCode()));
         if (orders.isEmpty()) {
             return BigDecimal.ZERO;
         }
@@ -232,12 +244,19 @@ public class DrpDemandAggregator {
         return total;
     }
 
-    private BigDecimal unreceivedPurchaseQty(String materialId, String warehouseId) {
+    private BigDecimal unreceivedPurchaseQty(String materialId, String warehouseId, String orgId) {
         IEntityDao<ErpPurOrder> orderDao = daoProvider.daoFor(ErpPurOrder.class);
         IEntityDao<ErpPurOrderLine> lineDao = daoProvider.daoFor(ErpPurOrderLine.class);
 
+        // P1-CK-drp-003（plan 2026-09-12-0400-1 Phase 3）：在途采购按收货仓库 + 组织过滤
+        // （修复前跨仓在途污染 → 欠补、跨组织混算）。头级 warehouseId 可空的 PO 不计入任何仓
+        // （owner doc 口径注记）。
         QueryBean oq = new QueryBean();
         oq.addFilter(ne("docStatus", "CANCELLED"));
+        oq.addFilter(eq("warehouseId", warehouseId));
+        if (orgId != null) {
+            oq.addFilter(eq("orgId", orgId));
+        }
         List<ErpPurOrder> orders = orderDao.findAllByQuery(oq);
         if (orders.isEmpty()) {
             return BigDecimal.ZERO;

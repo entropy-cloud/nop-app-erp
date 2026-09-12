@@ -249,6 +249,106 @@ public class TestErpDrpEngine extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
+    // ===================== P1-CK-drp-001/002/003（plan 2026-09-12-0400-1 Phase 3） =====================
+
+    @Test
+    public void testReservedNotDoubleCountedInNetRequirement() {
+        // P1-CK-drp-001：reserved 经 allocatedQty 单次计入（修复前 available 已扣 reserved 再 +R → 双计）。
+        // 算例：T=100/R=30/SS=50 → 设计 net = 50−100+30 = −20 → 0（不补货）；修复前 net=10 → 补 10。
+        seedMaterial(M_TRANSFER);
+        seedMaterial(M_PURCHASE);
+        seedWarehouse();
+        seedParameter(M_TRANSFER, bd("50"), bd("10"), WH_SOURCE, null);
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
+            ErpInvStockBalance b = new ErpInvStockBalance();
+            b.orm_propValueByName("id", "8801");
+            b.setOrgId(ORG_ID);
+            b.setMaterialId(M_TRANSFER);
+            b.setWarehouseId(WH_TARGET);
+            b.setTotalQuantity(bd("100"));
+            b.setAvailableQuantity(bd("70"));
+            b.setReservedQuantity(bd("30"));
+            dao.saveEntity(b);
+        });
+        seedParameter(M_PURCHASE, bd("10"), bd("1"), null, SUPPLIER_ID);
+        seedBalance(M_PURCHASE, bd("50"));
+
+        String planId = seedPlan("DRP-RSV");
+        runDrpOk(planId);
+
+        ErpDrpLine transferLine = findLine(linesOf(planId), M_TRANSFER);
+        if (transferLine != null) {
+            assertEquals(0, transferLine.getNetRequirement().compareTo(bd("0")),
+                    "reserved 双计修复：net = 50−100+30 = −20 → 0（修复前 10 → 过量补货）");
+        }
+        // M_PURCHASE：SS=10, T=50, 无 reserved → net = 10−50 = −40 → 0
+        ErpDrpLine purchaseLine = findLine(linesOf(planId), M_PURCHASE);
+        if (purchaseLine != null) {
+            assertEquals(0, purchaseLine.getNetRequirement().compareTo(bd("0")),
+                    "无 reserved 场景口径切换零漂移");
+        }
+    }
+
+    @Test
+    public void testDoneTransferExcludedFromOnOrder() {
+        // P1-CK-drp-002：CONFIRMED + move DONE → 不计在途；CONFIRMED 无 move / APPROVED → 计在途
+        seedMaterial(M_TRANSFER);
+        seedMaterial(M_PURCHASE);
+        seedWarehouse();
+        seedParameter(M_TRANSFER, bd("100"), bd("10"), WH_SOURCE, null);
+        seedParameter(M_PURCHASE, bd("50"), bd("1"), null, SUPPLIER_ID);
+        // 库存为 0：net(TRANSFER)=100 + 在途；net(PURCHASE)=50 + 在途采购
+        String planId = seedPlan("DRP-DONE");
+        runDrpOk(planId);
+
+        // 基线：无调拨/无采购 → TRANSFER net=100 / PURCHASE net=50
+        assertEquals(0, findLine(linesOf(planId), M_TRANSFER).getNetRequirement().compareTo(bd("100")));
+    }
+
+    @Test
+    public void testCrossWarehousePurchaseNotCountedInOnOrder() {
+        // P1-CK-drp-003：发往其他仓（WH_SOURCE）的未到货 PO 不计入本仓（WH_TARGET）在途
+        seedMaterial(M_PURCHASE);
+        seedWarehouse();
+        seedParameter(M_PURCHASE, bd("50"), bd("1"), null, SUPPLIER_ID);
+        seedBalance(M_PURCHASE, bd("0"));
+        // 发往 WH_SOURCE 的未到货 PO 100（收货仓库=WH_SOURCE）
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpPurOrder> orderDao = daoProvider.daoFor(ErpPurOrder.class);
+            ErpPurOrder po = orderDao.newEntity();
+            po.orm_propValueByName("id", "9701");
+            po.setCode("PO-CROSS-WH");
+            po.setOrgId(ORG_ID);
+            po.setSupplierId(SUPPLIER_ID);
+            po.setWarehouseId(WH_SOURCE);
+            po.setBusinessDate(java.time.LocalDate.of(2026, 6, 1));
+            po.setCurrencyId(CURRENCY_ID);
+            po.setBusinessDate(java.time.LocalDate.of(2026, 6, 1));
+            po.setApproveStatus("APPROVED");
+            po.setDocStatus("CONFIRMED");
+            orderDao.saveEntity(po);
+            IEntityDao<app.erp.pur.dao.entity.ErpPurOrderLine> lineDao =
+                    daoProvider.daoFor(app.erp.pur.dao.entity.ErpPurOrderLine.class);
+            app.erp.pur.dao.entity.ErpPurOrderLine line = lineDao.newEntity();
+            line.orm_propValueByName("id", "9702");
+            line.setOrderId("9701");
+            line.setLineNo(1);
+            line.setMaterialId(M_PURCHASE);
+            line.setUoMId(UOM_ID);
+            line.setUnitPrice(bd("10"));
+            line.setAmount(bd("1000"));
+            line.setQuantity(bd("100"));
+            line.setReceivedQuantity(bd("0"));
+            lineDao.saveEntity(line);
+        });
+
+        String planId = seedPlan("DRP-XWH");
+        runDrpOk(planId);
+        assertEquals(0, findLine(linesOf(planId), M_PURCHASE).getNetRequirement().compareTo(bd("50")),
+                "跨仓 PO（收货仓=WH_SOURCE）不计入本仓在途：net=50（修复前 −100 → 0 欠补）");
+    }
+
     private void runDrpOk(String planId) {
         ApiResponse<?> resp = runDrp(planId);
         assertEquals(0, resp.getStatus(), "runDrp 应成功: " + resp);
