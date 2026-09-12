@@ -134,12 +134,18 @@ public class ErpHrDepartmentBizModel extends AbstractErpCrudBizModel<ErpHrDepart
     @Override
     @BizQuery
     public List<Map<String, Object>> findDepartmentTree(@Optional @Name("keyword") String keyword, IServiceContext context) {
+        // P1-CK-hr-003（plan 2026-09-12-1000-1 Phase 1）：补 orgId 隔离 + 移除 limit 5000 截断
         QueryBean deptQuery = new QueryBean();
-        deptQuery.setLimit(5000);
+        String orgId = app.erp.common.org.ErpOrgContext.currentOrgId(context);
+        if (orgId != null) {
+            deptQuery.addFilter(eq("orgId", orgId));
+        }
         List<ErpHrDepartment> depts = findList(deptQuery, null, context);
 
         QueryBean empQuery = new QueryBean();
-        empQuery.setLimit(5000);
+        if (orgId != null) {
+            empQuery.addFilter(eq("orgId", orgId));
+        }
         List<ErpHrEmployee> emps = employeeBiz.findList(empQuery, null, context);
 
         Map<String, Integer> empCountByDept = new HashMap<>();

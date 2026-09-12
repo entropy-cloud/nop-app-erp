@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.time.CoreMetrics;
+import app.erp.common.org.ErpOrgContext;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -323,5 +324,12 @@ public class ErpMfgDashboardBizModel {
             return loadHours.signum() > 0 ? new BigDecimal("9999") : BigDecimal.ZERO;
         }
         return loadHours.divide(capacityHours, 4, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * P1-CK-mfg-007（plan 2026-09-12-1000-1 Phase 1）：null-skip 契约同 ast/mnt。
+     */
+    private String resolveOrgId(IServiceContext context) {
+        return ErpOrgContext.currentOrgId(context);
     }
 }

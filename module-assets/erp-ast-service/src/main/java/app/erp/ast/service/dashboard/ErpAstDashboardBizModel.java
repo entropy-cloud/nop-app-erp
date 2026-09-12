@@ -33,6 +33,7 @@ import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
+import app.erp.common.org.ErpOrgContext;
 import app.erp.common.service.DashboardUtil;
 
 /**
@@ -59,7 +60,7 @@ public class ErpAstDashboardBizModel {
                                                 IServiceContext context) {
         return ormTemplate.runInSession(session -> {
             String period = periodId != null ? periodId : currentPeriod();
-            List<ErpAstAsset> inServiceAssets = loadInServiceAssets();
+            List<ErpAstAsset> inServiceAssets = loadInServiceAssets(resolveOrgId(context));
             BigDecimal originalValue = BigDecimal.ZERO;
             BigDecimal accumulatedDepreciation = BigDecimal.ZERO;
             for (ErpAstAsset a : inServiceAssets) {
@@ -85,7 +86,7 @@ public class ErpAstDashboardBizModel {
     @BizQuery
     public List<Map<String, Object>> getAssetCategoryDistribution(IServiceContext context) {
         return ormTemplate.runInSession(session -> {
-            List<ErpAstAsset> assets = loadInServiceAssets();
+            List<ErpAstAsset> assets = loadInServiceAssets(resolveOrgId(context));
             Map<String, BigDecimal> netByCategory = new LinkedHashMap<>();
             for (ErpAstAsset a : assets) {
                 String cid = a.getCategoryId();
@@ -143,7 +144,7 @@ public class ErpAstDashboardBizModel {
     public List<Map<String, Object>> findDepreciationMissingAlert(IServiceContext context) {
         return ormTemplate.runInSession(session -> {
             String period = currentPeriod();
-            List<ErpAstAsset> inServiceAssets = loadInServiceAssets();
+            List<ErpAstAsset> inServiceAssets = loadInServiceAssets(resolveOrgId(context));
             Set<String> assetIdsWithDepreciation = loadAssetIdsWithExecutedDepreciationInPeriod(period);
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpAstAsset a : inServiceAssets) {
@@ -175,10 +176,22 @@ public class ErpAstDashboardBizModel {
         return map;
     }
 
-    private List<ErpAstAsset> loadInServiceAssets() {
+    /**
+     * P1-CK-ast-009（plan 2026-09-12-1000-1 Phase 1）：从 context 解析当前组织 id。
+     * null-skip 契约：scope 不可解析时返回 null → 查询不加 orgId 过滤，保护单组织基线零回归。
+     */
+    private String resolveOrgId(IServiceContext context) {
+        return ErpOrgContext.currentOrgId(context);
+    }
+
+    private List<ErpAstAsset> loadInServiceAssets(String orgId) {
         IEntityDao<ErpAstAsset> dao = daoProvider.daoFor(ErpAstAsset.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("status", ErpAstConstants.ASSET_STATUS_IN_SERVICE));
+        // P1-CK-ast-009：orgId 过滤（null-skip：scope 不可解析时不加过滤）
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+        }
         return dao.findAllByQuery(q);
     }
 

@@ -19,6 +19,7 @@ import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
+import app.erp.common.org.ErpOrgContext;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -361,5 +362,13 @@ public class ErpMntDashboardBizModel {
             if (v.getScheduleId() != null) ids.add(v.getScheduleId());
         }
         return ids;
+    }
+
+    /**
+     * P1-CK-mnt-008（plan 2026-09-12-1000-1 Phase 1）：从 context 解析当前组织 id。
+     * null-skip 契约：scope 不可解析时返回 null → 查询不加 orgId 过滤。
+     */
+    private String resolveOrgId(IServiceContext context) {
+        return ErpOrgContext.currentOrgId(context);
     }
 }
