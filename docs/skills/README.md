@@ -55,6 +55,8 @@
 | `requirement-compliance-audit-prompt.md` | 需求→实现符合性审计的五级追踪矩阵（L1 use-cases → L5 运行时）+ §4 三判据核验 + 方案 B 关闭项复查 + MR0/MR1 修复阶段方法路由（§5 保护区域双批准 / §11 批量裁决 + per-site 基线证据 + 生命周期回写）（mission `requirement-compliance` 入口） | doc↔code 文本一致性（已由 audit-remediation MA1-MA7 收口）、单一对象窄审计、单域行为扫描（用 behavioral-failure-mode-scan）、需求本身的修订（须人工批准） | L1 use-cases + L2 owner doc + L3 代码 + L4 测试 + L5 运行时 + `product-scope.md` + `arm-index.md` | methodology §6 的 9 段落报告骨架 + 五级追踪矩阵 + P1-RC-xxx finding + arm-index 衔接（薄壳指向 methodology 主体） |
 | `code-history-deferred-triangulation-audit-prompt.md` | 对**已经过多次审计、体量大、容易产生疏漏**的复杂项目（或其下一个切片）做**三路交叉审计**（代码 × 历史审计 × 历史 plan 的 deferred 触发条件扫描），重点发现**历史已识别但遗漏传染**与**触发条件已满足的 deferred 项**；**每次执行必须新建 `docs/audits/check/<YYYY-MM-DD-HHmm>-<mission-name>/` 子目录**避免多轮冲突 | 项目刚起步无历史审计记录；单对象窄审计；设计文档 vs 实现 drift；状态机图审查 | 该切片 owner doc + ORM 模型 + 实际手写代码 + `docs/audits/` 历史 + `docs/lessons/` 经验 + 最近 50 份 `docs/plans/` 的 Deferred / Successor / Non-Goal 段 | `<执行目录>/ck-<slice>.md`（5 段结构）+ `<执行目录>/<mission-name>-index.md`（本轮）+ 同步 `docs/audits/check/ai-check-index.md`（跨轮聚合）；**不修改代码**（修复走专门 plan） |
 | `audit-roadmap-authoring-workflow.md`（位于 `docs/skills/executions/`） | 拟制审计类 roadmap（"代码 × 历史 × Deferred"三路交叉审计 + 修复闭环）的**标准执行流**——5 阶段（需求识别 → roadmap 拟制 → 三路审计 → 修复闭环 → 验证收口）+ 与 Mission Driver 衔接；**§1.4 明确每次执行必须新子目录的隔离纪律** | 单对象窄审计；非审计类 roadmap（如业财功能 roadmap）；不熟悉 Mission Driver 运作 | 至少 `code-history-deferred-triangulation-audit-prompt` + `audit-remediation-roadmap-authoring-prompt` + `00-roadmap-authoring-guide.md` 已熟悉 | 按 5 阶段顺序执行 + 每阶段输入输出对齐示例 |
+| `frontend-page-ux-audit-prompt.md` | 对典型复杂页面/页面批量做 **10 维业务配置审计**（信息架构与导航 / 字段布局与分组 / 弹框与页面容器 / 控件选择 / 控件联动与数据流 / 表单配置 / 表格配置 / 反馈与状态 / 按钮与操作组织 / 国际化文案），含 P1 硬编码参数决策树、形式选择决策表（单表单 vs tabs vs wizard）、正面范式清单与量化阈值 | flux 统一配置层（CSS/主题/组件渲染/平台运行时约定）用 `flux-rendering-conformance-audit-prompt`；页面资产盘点（用 `2026-08-03-1000-frontend-complex-page-deep-analysis.md` 既有结论）；Java 行为质量（用 code-quality-audit）；需求符合性（用 requirement-compliance） | 目标页面集合、`_gen` 基线、ref-*.page.yaml、被调 BizModel 签名、目标域 ORM/XMeta、`flux-complex-pages.md`、既有 UX 审计基线（`2026-09-14-complex-page-ux-review.md`） | P1/P2/P3 分级 finding 清单（file:line + 量化证据 + 复用范式来源 + 维度标注）+ 最终裁决 |
+| `flux-rendering-conformance-audit-prompt.md` | flux 统一配置层合规审计（页面编写路径 / 静态门禁 `validate:flux` / 主题样式契约 / 组件与设计模式复用 / 渲染数据约定 / 表达式校验语法 / 运行时约束 / 跨仓修改纪律），flux-only 渲染下防绕过 flux 统一能力 | 业务配置（布局/分组/控件选择/列数/按钮分组）用 `frontend-page-ux-audit-prompt`；Java 行为质量（用 code-quality-audit）；flux 控件 bug 复现修复（到 nop-chaos-flux 按其测试流程 + 双批准） | 目标页面集合（view/page/flux.yaml）、静态门禁报告（`_tmp/flux-page-validation-report.json`）、flux-guide 相关篇目、渲染链路配置 | 按 F1-F8 分组的违规清单（file:line + 依据篇目 + 修复方向）+ 最终裁决 |
 
 ## 入门技能
 
@@ -86,6 +88,8 @@
 - `requirement-compliance-audit-prompt.md`
 - `code-history-deferred-triangulation-audit-prompt.md`
 - `audit-roadmap-authoring-workflow.md`（位于 `docs/skills/executions/`，执行流文档而非纯提示词）
+- `frontend-page-ux-audit-prompt.md`
+- `flux-rendering-conformance-audit-prompt.md`
 
 ## 关联文档
 
