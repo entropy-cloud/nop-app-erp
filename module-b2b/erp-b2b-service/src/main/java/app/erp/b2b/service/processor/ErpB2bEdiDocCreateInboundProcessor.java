@@ -8,6 +8,7 @@ import app.erp.b2b.service.ErpB2bErrors;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
+import app.erp.common.org.ErpOrgContext;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -39,6 +40,12 @@ public class ErpB2bEdiDocCreateInboundProcessor {
         doc.setCode("EDI-IN-" + CoreMetrics.currentTimeMillis());
         doc.setFormatId(format != null ? format.getId() : null);
         doc.setRelatedBillType(relatedBillType);
+        // P1-CK-b2b-003（plan 2026-09-12-1000-1 Phase 2）：补 orgId 写侧回填
+        String _orgId = app.erp.common.org.ErpOrgContext.currentOrgId(context);
+        if (_orgId != null) {
+            doc.setOrgId(_orgId);
+        }
+        // P1-CK-b2b-003（plan 2026-09-12-1000-1 Phase 2）：补 orgId 写侧回填
         doc.setRelatedBillCode(relatedBillCode);
         doc.setState(ErpB2bConstants.EDI_DOC_STATE_RECEIVED);
         doc.setBlockingLevel(ErpB2bConstants.BLOCKING_LEVEL_INFO);
