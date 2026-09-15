@@ -446,8 +446,8 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
             e.setCode("ENT-PPD-8302");
             e.setPartnerId(PARTNER_ID);
             e.setServiceType(ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET);
-            e.setStartDate(java.time.LocalDate.now().minusDays(1));
-            e.setEndDate(java.time.LocalDate.now().plusDays(30));
+            e.setStartDate(java.time.LocalDate.of(2026, 1, 1)); // 固定日期保快照确定性
+            e.setEndDate(java.time.LocalDate.of(2026, 12, 31)); // 固定日期保快照确定性
             e.setMaxTickets(10);
             e.setUsedTickets(0);
             e.setIsActive(Boolean.TRUE);
@@ -595,8 +595,8 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
             e.setCode("ENT-" + id);
             e.setPartnerId(partnerId);
             e.setServiceType(serviceType);
-            e.setStartDate(LocalDate.now().minusDays(10));
-            e.setEndDate(LocalDate.now().plusDays(daysUntilEnd));
+            e.setStartDate(LocalDate.of(2026, 1, 1)); // 固定日期保快照确定性
+            e.setEndDate(LocalDate.of(2026, 12, 31)); // 固定日期保快照确定性
             e.setMaxTickets(maxTickets);
             e.setUsedTickets(usedTickets);
             e.setIsActive(Boolean.TRUE);

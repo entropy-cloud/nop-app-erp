@@ -124,6 +124,8 @@ public class ErpB2bAsnHandleInboundWebhookProcessor {
         asn.setSourceEdiDocId(ediDoc.getId());
         asn.setPartnerId(profile.getPartnerId());
         asn.setRelatedBillType(ErpB2bConstants.RELATED_BILL_TYPE_PO_ORDER);
+        // P1-CK-b2b-003（plan 2026-09-12-1000-1 Phase 2）：补 orgId 写侧回填
+        asn.setOrgId(profile.getOrgId());
         asn.setRelatedBillCode(parsed.getRelatedBillCode());
         asn.setStatus(ErpB2bConstants.ASN_STATUS_RECEIVED);
         asn.setShipmentDate(CoreMetrics.today());

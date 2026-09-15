@@ -88,6 +88,10 @@ public class ErpHrEmployeeTransferEmployeeProcessor {
         warnIfLeaveConflict(employee.getId(), effectiveDate, context);
 
         employee.setDepartmentId(targetDept.getId());
+        // P1-CK-hr-002（plan 2026-09-12-1000-1 Phase 2）：跨组织调动时 orgId 随目标部门同步
+        if (targetDept.getOrgId() != null) {
+            employee.setOrgId(targetDept.getOrgId());
+        }
         if (targetPositionId != null) {
             employee.setPositionId(targetPositionId);
         }
