@@ -7,7 +7,7 @@
     "periodTo": "2026-07-31",
     "status": "COMPUTED",
     "status_label": "COMPUTED-已计算",
-    "totalReplenishmentQty": 140.0000,
+    "totalReplenishmentQty": 120.0000,
     "runAt": "*",
     "runBy": null,
     "orgId": "2",

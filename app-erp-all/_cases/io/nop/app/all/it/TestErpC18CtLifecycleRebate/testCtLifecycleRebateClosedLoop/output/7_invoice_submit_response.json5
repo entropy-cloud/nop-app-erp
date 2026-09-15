@@ -7,7 +7,7 @@
     "invoiceNo": "FAC-AR-2026-C18-001",
     "invoiceType": "VAT_SPECIAL",
     "invoiceType_label": "VAT_SPECIAL-增值税专用",
-    "businessDate": "@var:ErpCtContract@businessDate",
+    "businessDate": "@var:ErpSalInvoice@businessDate",
     "currencyId": "1",
     "exchangeRate": 1.00000000,
     "amountSource": 0.0000,

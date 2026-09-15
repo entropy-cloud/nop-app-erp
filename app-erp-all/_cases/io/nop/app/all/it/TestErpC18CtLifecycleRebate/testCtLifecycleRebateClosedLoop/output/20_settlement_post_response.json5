@@ -3,7 +3,7 @@
     "id": "@var:settlementId",
     "rebateAgreementId": "@var:agreementId",
     "orgId": "2",
-    "settlementDate": "@var:ErpFinVoucher@voucherDate",
+    "settlementDate": "@var:ErpCtContract@businessDate",
     "totalRebateAmount": null,
     "creditMemoBillType": "AR_INVOICE",
     "creditMemoBillCode": "@var:ErpSalInvoice@code_1",
@@ -18,7 +18,7 @@
     "createTime": "*",
     "updatedBy": "autotest-ref",
     "updateTime": "*",
-    "businessDate": "@var:ErpFinVoucher@voucherDate",
+    "businessDate": "@var:ErpCtContract@businessDate",
     "posted": false
   },
   "status": 0

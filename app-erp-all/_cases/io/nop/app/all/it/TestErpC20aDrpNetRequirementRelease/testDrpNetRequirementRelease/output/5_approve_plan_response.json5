@@ -7,7 +7,7 @@
     "periodTo": "2026-07-31",
     "status": "APPROVED",
     "status_label": "APPROVED-已批准",
-    "totalReplenishmentQty": 140.0000,
+    "totalReplenishmentQty": 120.0000,
     "runAt": "*",
     "runBy": null,
     "orgId": "2",

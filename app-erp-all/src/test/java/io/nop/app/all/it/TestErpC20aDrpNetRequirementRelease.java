@@ -8,6 +8,7 @@ import app.erp.inv.dao.entity.ErpInvTransferOrder;
 import app.erp.inv.dao.entity.ErpInvTransferOrderLine;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
+import io.nop.api.core.annotations.autotest.EnableSnapshot;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.autotest.NopTestProperty;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -74,9 +75,9 @@ public class TestErpC20aDrpNetRequirementRelease extends ErpIntegrationTestCase 
 
     // TRANSFER 行：MAT-001@WH-RAW —— net = 100 + 0 − 30 + 20 − 0 = 90（allocatedQty 加项）
     static final BigDecimal T_SAFETY = new BigDecimal("100");
-    static final BigDecimal T_CURRENT_STOCK = new BigDecimal("30");
+    static final BigDecimal T_CURRENT_STOCK = new BigDecimal("50"); // P1-CK-drp-001: totalQuantity 口径（修复前 availableQuantity=30）
     static final BigDecimal T_ALLOCATED = new BigDecimal("20");
-    static final BigDecimal T_NET = new BigDecimal("90");
+    static final BigDecimal T_NET = new BigDecimal("70"); // P1-CK-drp-001: 100−50+20=70（修复前 90，reserved 双计）
     // PURCHASE 行：MAT-002@WH-MAIN —— net = 50 + 0 − 0 + 0 − 0 = 50
     static final BigDecimal P_SAFETY = new BigDecimal("50");
     static final BigDecimal P_NET = new BigDecimal("50");
@@ -135,20 +136,20 @@ public class TestErpC20aDrpNetRequirementRelease extends ErpIntegrationTestCase 
         assertNotNull(pLine, "PURCHASE 行（MAT-002）应存在");
 
         // 层 1 锚点：净需求 = max(0, safetyStock + forecastDemand − currentStock + allocatedQty − onOrderQty)
-        // TRANSFER 行：allocatedQty=20 为加项 → 100 + 0 − 30 + 20 − 0 = 90（设计文档减项口径为勘误）
-        assertEquals(0, T_CURRENT_STOCK.compareTo(tLine.getCurrentStock()), "TRANSFER 行 currentStock=30");
+        // TRANSFER 行：allocatedQty=20 为加项 → 100 + 0 − 50 + 20 − 0 = 70（P1-CK-drp-001 修复后 totalQuantity 口径）
+        assertEquals(0, T_CURRENT_STOCK.compareTo(tLine.getCurrentStock()), "TRANSFER 行 currentStock=50（totalQuantity 口径）");
         assertEquals(0, T_ALLOCATED.compareTo(tLine.getAllocatedQty()), "TRANSFER 行 allocatedQty=20");
         assertEquals(0, BigDecimal.ZERO.compareTo(tLine.getOnOrderQty()), "TRANSFER 行 onOrderQty=0");
         assertEquals(0, BigDecimal.ZERO.compareTo(tLine.getForecastDemand()), "TRANSFER 行 forecastDemand=0");
-        assertEquals(0, T_NET.compareTo(tLine.getNetRequirement()), "TRANSFER 行净需求=90（allocatedQty 加项口径）");
-        assertEquals(0, T_NET.compareTo(tLine.getSuggestedQty()), "TRANSFER 行建议量=ceil(90/10)×10=90");
+        assertEquals(0, T_NET.compareTo(tLine.getNetRequirement()), "TRANSFER 行净需求=70（drp-001 修复后口径）");
+        assertEquals(0, T_NET.compareTo(tLine.getSuggestedQty()), "TRANSFER 行建议量=ceil(70/10)×10=70");
         assertEquals(ErpDrpConstants.REPLENISHMENT_TYPE_TRANSFER, tLine.getReplenishmentType());
         assertEquals(ErpDrpConstants.DRP_LINE_STATUS_SUGGESTED, tLine.getStatus());
         assertEquals(0, P_NET.compareTo(pLine.getNetRequirement()), "PURCHASE 行净需求=50");
         assertEquals(0, P_NET.compareTo(pLine.getSuggestedQty()), "PURCHASE 行建议量=50");
         assertEquals(ErpDrpConstants.REPLENISHMENT_TYPE_PURCHASE, pLine.getReplenishmentType());
-        assertEquals(0, new BigDecimal("140").compareTo(reload(ErpDrpPlan.class, planId).getTotalReplenishmentQty()),
-                "计划总补货量=90+50=140");
+        assertEquals(0, new BigDecimal("120").compareTo(reload(ErpDrpPlan.class, planId).getTotalReplenishmentQty()),
+                "计划总补货量=70+50=120（drp-001 修复后口径）");
         addVar("transferLineId", tLine.getId());
         addVar("purchaseLineId", pLine.getId());
 
