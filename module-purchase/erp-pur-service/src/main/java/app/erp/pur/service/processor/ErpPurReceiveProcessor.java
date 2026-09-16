@@ -198,13 +198,15 @@ public class ErpPurReceiveProcessor {
      * 累计入库数量 Σ &gt; 订单行数量 × (1 + 容差%)：严格模式（{@code erp-pur.match-strict-mode}=true）抛
      * {@link ErpPurErrors#ERR_RECEIVE_QTY_OVER_TOLERANCE} 拒绝审核，非严格模式 LOG.warn 放行。
      * {@code orderLineId == null} 的行（无订单关联独立入库）跳过；订单行数量为 0/null 按 0 基处理（Σ&gt;0 即超收）。
-     * 聚合口径继承 {@link #rollupOrderReceiveStatus} 现状：CANCELLED 但仍 APPROVED 的入库单计入 Σ。
+     * 聚合口径（P2-CK-pur-004 修正）：仅计入「生效」入库单（{@link #isReceiveEffective}——APPROVED 且未作废），
+     * 已作废入库单（docStatus=CANCELLED 但 approveStatus 仍 APPROVED）不计入 Σ。
      */
     protected void validateOverReceiptTolerance(ErpPurReceive receive, IServiceContext context) {
         String orderId = receive.getOrderId();
         if (orderId == null) {
             return;
         }
+        lockOrderForToleranceAggregation(orderId);
         List<ErpPurOrderLine> orderLines = loadOrderLines(orderId);
         if (orderLines.isEmpty()) {
             return;
@@ -390,6 +392,20 @@ public class ErpPurReceiveProcessor {
 
     // ---------- 库存触发 + 过账接线 + 冲销 ----------
 
+    /**
+     * P2-CK-pur-006：聚合前对订单头行（order 行记录，非 orderLine）加悲观锁（SELECT FOR UPDATE，
+     * {@code IEntityDao#lockEntity}）——同订单并发入库单在此互斥：后者等待前者提交后再聚合，
+     * READ COMMITTED 隔离下读到已提交入库量，超收容差校验不再双双误过。锁对象为 freshly-loaded
+     * 订单头（clean 实体，校验先于本流一切写）；{@code @BizMutation} 事务内执行（lockEntity 强校验）。
+     */
+    protected void lockOrderForToleranceAggregation(String orderId) {
+        IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
+        ErpPurOrder order = dao.getEntityById(orderId);
+        if (order != null) {
+            dao.lockEntity(order);
+        }
+    }
+
     protected ErpInvStockMove triggerIncomingMove(ErpPurReceive receive, IServiceContext context) {
         List<ErpPurReceiveLine> lines = loadLines(receive);
         StockMoveRequest request = stockMoveBuilder.build(receive, lines, context);
@@ -459,7 +475,11 @@ public class ErpPurReceiveProcessor {
         }
 
         Map<String, BigDecimal> receivedByOrderLine = new HashMap<>();
-        addLineQuantities(receivedByOrderLine, loadLines(currentReceive));
+        // P2-CK-pur-004：当前单自身行仅在仍生效（APPROVED 且未作废）时计入——cancel/reverseApprove 后置
+        // 重算时当前单已非生效态，贡献归零；approve 路径（postProcessApprove）行为不变。
+        if (isReceiveEffective(currentReceive)) {
+            addLineQuantities(receivedByOrderLine, loadLines(currentReceive));
+        }
         for (ErpPurReceive r : findApprovedReceives(orderId)) {
             if (r.getId().equals(currentReceive.getId())) {
                 continue;
@@ -488,6 +508,15 @@ public class ErpPurReceiveProcessor {
             rolled = ErpPurConstants.RECEIVE_STATUS_UNRECEIVED;
         }
         orderBiz.updateReceiveStatus(orderId, rolled, context);
+    }
+
+    /**
+     * P2-CK-pur-004：入库单聚合口径的「生效」判定——approveStatus=APPROVED 且 docStatus≠CANCELLED。
+     * cancel/reverseApprove 后置调 {@link #rollupOrderReceiveStatus} 时当前单不再计入。
+     */
+    protected boolean isReceiveEffective(ErpPurReceive receive) {
+        return Objects.equals(receive.getApproveStatus(), ErpPurConstants.APPROVE_STATUS_APPROVED)
+                && !Objects.equals(receive.getDocStatus(), ErpPurConstants.DOC_STATUS_CANCELLED);
     }
 
     protected void enforceInspectionGate(ErpPurReceive receive, IServiceContext context) {
@@ -567,7 +596,15 @@ public class ErpPurReceiveProcessor {
     protected List<ErpPurReceive> findApprovedReceives(String orderId) {
         QueryBean rq = new QueryBean();
         rq.addFilter(and(eq("orderId", orderId), eq("approveStatus", ErpPurConstants.APPROVE_STATUS_APPROVED)));
-        return new ArrayList<>(receiveDao().findAllByQuery(rq));
+        // P2-CK-pur-004：docStatus 的 xmeta 仅允许 eq/in 过滤（ErpPurOrderBizModel#existsActiveByRequisition 同注），
+        // 已作废（docStatus=CANCELLED 但 approveStatus 仍 APPROVED）的入库单经管道查后内存剔除，不参与聚合。
+        List<ErpPurReceive> result = new ArrayList<>();
+        for (ErpPurReceive r : receiveDao().findAllByQuery(rq)) {
+            if (!Objects.equals(r.getDocStatus(), ErpPurConstants.DOC_STATUS_CANCELLED)) {
+                result.add(r);
+            }
+        }
+        return result;
     }
 
     protected void addLineQuantities(Map<String, BigDecimal> map, List<ErpPurReceiveLine> lines) {

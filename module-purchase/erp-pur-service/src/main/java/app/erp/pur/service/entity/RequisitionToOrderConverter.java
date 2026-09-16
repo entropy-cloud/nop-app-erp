@@ -12,8 +12,6 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IDaoProvider;
 import jakarta.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -36,14 +34,12 @@ import java.util.List;
  *       {@code lineNo} 按组内重排（每组订单从 1 起，RC-R1.10 拆单后同请购行在各自订单内从 1 编号）；
  *       {@code unitPrice}=调用方按请购行原始 {@code lineNo} 提供（VARCHAR 存储）；金额族（{@code amount}={@code unitPrice}×{@code quantity}、
  *       {@code taxRate}/{@code taxAmount}/{@code amountWithTax}）由本组件计算，按 VARCHAR 写入（对齐采购域 VARCHAR 金额约定）。</li>
- *   <li>单价解析防护：{@code unitPrice} 空/非法格式抛 {@link ErpPurErrors#ERR_INVALID_UNIT_PRICE}。</li>
+ *   <li>解析防护：{@code unitPrice} 空/非法格式抛 {@link ErpPurErrors#ERR_INVALID_UNIT_PRICE}；{@code taxRate} 非法格式抛 {@link ErpPurErrors#ERR_INVALID_TAX_RATE}（空值=未提供，零税），P2-CK-pur-009 不再静默零税。</li>
  * </ul>
  *
  * <p>订单头金额族（{@code totalAmount}/{@code totalTaxAmount}/{@code totalAmountWithTax}）按行汇总（VARCHAR 写入）。
  */
 public class RequisitionToOrderConverter {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RequisitionToOrderConverter.class);
 
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -90,7 +86,7 @@ public class RequisitionToOrderConverter {
             line.setUnitPrice(price);
 
             String taxRate = request.getLineTaxRates().get(reqLine.getLineNo());
-            BigDecimal rate = parseTaxRate(taxRate);
+            BigDecimal rate = parseTaxRate(taxRate, reqLine);
             line.setTaxRate(rate);
 
             BigDecimal amount = price.multiply(reqLine.getQuantity());
@@ -127,15 +123,22 @@ public class RequisitionToOrderConverter {
         }
     }
 
-    private BigDecimal parseTaxRate(String taxRate) {
+    /**
+     * P2-CK-pur-009：税率解析严格性对齐 {@link #parseUnitPrice}——非法格式（非空且无法解析为数值，如 "13%"）
+     * 抛 {@link ErpPurErrors#ERR_INVALID_TAX_RATE}，不再静默按零税处理（金额正确性不受静默降级影响）。
+     * Decision（plan Phase 6）：空值保持 null→零税——调用方 lineTaxRates 可不传该项，空白=未提供语义，
+     * 抛错会破坏既有调用面与测试。
+     */
+    private BigDecimal parseTaxRate(String taxRate, ErpPurRequisitionLine reqLine) {
         if (StringHelper.isBlank(taxRate)) {
             return null;
         }
         try {
             return new BigDecimal(taxRate.trim());
         } catch (NumberFormatException e) {
-            LOG.warn("Requisition-to-order conversion encountered invalid tax rate format [{}], treating as zero tax rate", taxRate, e);
-            return null;
+            throw new NopException(ErpPurErrors.ERR_INVALID_TAX_RATE)
+                    .param(ErpPurErrors.ARG_LINE_TEXT, String.valueOf(reqLine.getLineNo()))
+                    .param(ErpPurErrors.ARG_TAX_RATE_TEXT, taxRate);
         }
     }
 

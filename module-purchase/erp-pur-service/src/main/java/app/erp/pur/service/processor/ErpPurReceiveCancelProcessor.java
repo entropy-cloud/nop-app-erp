@@ -49,6 +49,9 @@ public class ErpPurReceiveCancelProcessor extends AbstractCancelProcessor<ErpPur
         setDocStatus(receive, cancelledDocStatus());
         dao().updateEntity(receive);
         cancelLinkedInspections(receive, context);
+        // P2-CK-pur-004：作废后重算订单收货状态（当前单已非生效态，不再计入聚合），
+        // 修复「作废已审核入库单后订单 receiveStatus 陈旧保持 RECEIVED/PARTIAL」。
+        processor.rollupOrderReceiveStatus(receive, context);
         return receive;
     }
 

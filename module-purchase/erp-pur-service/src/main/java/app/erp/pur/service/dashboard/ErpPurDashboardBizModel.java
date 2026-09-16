@@ -180,10 +180,11 @@ public class ErpPurDashboardBizModel {
      */
     @BizQuery
     public List<Map<String, Object>> findThreeWayMatchDiffAlert(IServiceContext context) {
+        // P2-CK-pur-007：量纲与 ThreeWayMatcher#priceTolerancePercent 统一为百分比（默认 5 = 5%）。
+        // 0（或退化负值）= 零容差全量告警（与 matcher compareTo>0 语义一致），不再静默回退默认值。
         BigDecimal configured = AppConfig.var(
-                ErpPurConstants.CONFIG_MATCH_PRICE_TOLERANCE, new BigDecimal("0.05"));
-        final BigDecimal tolerance = (configured == null || configured.signum() <= 0)
-                ? new BigDecimal("0.05") : configured;
+                ErpPurConstants.CONFIG_MATCH_PRICE_TOLERANCE, new BigDecimal("5"));
+        final BigDecimal tolerance = configured != null ? configured : new BigDecimal("5");
         return ormTemplate.runInSession(session -> {
             List<ErpPurInvoice> invoices = loadActiveInvoicesInRange(null, null);
             IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
@@ -345,9 +346,11 @@ public class ErpPurDashboardBizModel {
             BigDecimal invPrice = il.getUnitPrice();
             BigDecimal orderPrice = receiveToOrderPrice.get(il.getReceiveLineId());
             if (invPrice == null || orderPrice == null || orderPrice.signum() == 0) continue;
+            // P2-CK-pur-007：与 ThreeWayMatcher#priceDiffPercent 同式（×100 百分比，HALF_UP 4 位）
             BigDecimal diff = invPrice.subtract(orderPrice).abs();
-            BigDecimal ratio = diff.divide(orderPrice, 4, BigDecimal.ROUND_HALF_UP);
-            if (ratio.compareTo(tolerance) > 0) {
+            BigDecimal percent = diff.multiply(BigDecimal.valueOf(100))
+                    .divide(orderPrice, 4, BigDecimal.ROUND_HALF_UP);
+            if (percent.compareTo(tolerance) > 0) {
                 return true;
             }
         }

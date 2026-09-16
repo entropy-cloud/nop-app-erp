@@ -161,6 +161,22 @@ public class PaymentSettler {
     // ---------- helpers ----------
 
     /**
+     * P2-CK-pur-005：付款单净核销额（全部 PaymentLine 之和，含反向负金额行）。
+     * cancel/reverseApprove 入口守卫用——净额≠0 表示存在未冲销核销，须先 reverseSettlement。
+     */
+    public BigDecimal sumNetSettledForPayment(String paymentId) {
+        return sumPaymentLines(paymentId);
+    }
+
+    /**
+     * P2-CK-pur-005：发票净核销额（该发票全部 PaymentLine 之和，含反向负金额行）。
+     * 发票 cancel 入口守卫用——净额≠0 表示存在未冲销核销，作废将使 paidAmount/paidStatus 派生态失真。
+     */
+    public BigDecimal sumNetSettledForInvoice(String invoiceId) {
+        return sumInvoiceLines(invoiceId);
+    }
+
+    /**
      * P2-CK-pur-015-r3：付款单侧 docStatus 守卫——已作废付款单拒绝核销/反核销
      * （与 r1 P2-CK-sal-010 统一批次设计：域内专用错误码 + CAT-2 传码）。
      */

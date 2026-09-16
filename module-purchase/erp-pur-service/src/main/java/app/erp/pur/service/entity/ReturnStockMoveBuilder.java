@@ -24,6 +24,10 @@ import java.util.List;
  * <p>幂等键 {@code (ERP_PUR_RETURN, return.code)} 由 {@code generateMove} 防重复触发。源仓=退货仓库，
  * 目的仓为空（出库）。单位成本取退货行单价（冲减存货估值口径与入库一致）。
  *
+ * <p>边界（P2-CK-pur-008）：全部行（含 {@code receiveLineId == null} 的无回链行）均生成出库请求；
+ * 无回链行不受退货数量上限校验（ReturnQtyValidator 仅校验回链行），数量兜底由 inventory 出库守卫
+ * {@code validateAvailable}（负库存默认禁用）承担。
+ *
  * <p>核算账套解析经 {@link IErpMdAcctSchemaBiz}（跨域只读经 I*Biz 管道）。
  */
 public class ReturnStockMoveBuilder {

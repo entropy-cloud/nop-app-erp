@@ -29,6 +29,11 @@ import static io.nop.api.core.beans.FilterBeans.ne;
  *
  * <p>权威：{@code docs/design/purchase/returns.md §退货数量限制}（超额退货：拒绝，提示最大可退数量）。
  *
+ * <p>边界（P2-CK-pur-008）：{@code receiveLineId == null} 的行（独立创建退货路径）不参与本上限校验，
+ * 库存充足性兜底由 inventory 域出库守卫承担（{@code ErpInvStockMoveProcessor#validateAvailable}，
+ * 负库存 config {@code erp-inv.allow-negative-stock} 默认 false 拒绝超量出库）；该 config 置 true 时
+ * 无兜底（config 本身语义），不在本校验器重复设防。
+ *
  * <p>Decision（见 plan Phase 1）：选择聚合查询（无 ORM 变更，保持 implementation-only），不在
  * {@code ErpPurReceiveLine} 加 {@code returnedQuantity} 列。残留风险：跨退货单并发超额由退货单自身
  * {@code version} 乐观锁 + 审核时重查聚合兜底。
@@ -45,6 +50,7 @@ public class ReturnQtyValidator {
      * @param lines       当前退货单行
      */
     public void validate(ErpPurReturn returnOrder, List<ErpPurReturnLine> lines) {
+        lockReceiveLinesForAggregation(lines);
         Map<String, BigDecimal> approvedReturned = sumApprovedReturnedByReceiveLine(returnOrder);
         for (ErpPurReturnLine line : lines) {
             String receiveLineId = line.getReceiveLineId();
@@ -81,7 +87,14 @@ public class ReturnQtyValidator {
                 eq("receiveId", current.getReceiveId()),
                 eq("approveStatus", ErpPurConstants.APPROVE_STATUS_APPROVED),
                 current.getId() != null ? ne("id", current.getId()) : eq("id", null)));
-        List<ErpPurReturn> approvedReturns = returnDao.findAllByQuery(rq);
+        // P2-CK-pur-004：docStatus 的 xmeta 仅允许 eq/in 过滤，已作废退货单（docStatus=CANCELLED 但
+        // approveStatus 仍 APPROVED）经内存剔除，不再占用可退量。
+        List<ErpPurReturn> approvedReturns = new java.util.ArrayList<>();
+        for (ErpPurReturn r : returnDao.findAllByQuery(rq)) {
+            if (!ErpPurConstants.DOC_STATUS_CANCELLED.equals(r.getDocStatus())) {
+                approvedReturns.add(r);
+            }
+        }
         if (approvedReturns.isEmpty()) {
             return result;
         }
@@ -99,6 +112,28 @@ public class ReturnQtyValidator {
             result.merge(rl.getReceiveLineId(), qty, BigDecimal::add);
         }
         return result;
+    }
+
+    /**
+     * P2-CK-pur-006：聚合前对被引用的入库行加悲观锁（SELECT FOR UPDATE）。去重 + 排序锁定，
+     * 消除两退货单按不同行序锁定的交叉死锁。并发退货单在此互斥：后者等待前者提交后再聚合
+     * 已审核退货量，可退量上限校验不再双双误过。javadoc L33 原声称「退货单自身 version 乐观锁兜底」
+     * 不成立（不同退货单是不同行，无共享行写），本锁点为实际互斥机制。
+     */
+    private void lockReceiveLinesForAggregation(List<ErpPurReturnLine> lines) {
+        IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
+        List<String> receiveLineIds = lines.stream()
+                .map(ErpPurReturnLine::getReceiveLineId)
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .sorted()
+                .collect(java.util.stream.Collectors.toList());
+        for (String id : receiveLineIds) {
+            ErpPurReceiveLine line = dao.getEntityById(id);
+            if (line != null) {
+                dao.lockEntity(line);
+            }
+        }
     }
 
     private BigDecimal loadReceivedQuantity(String receiveLineId) {

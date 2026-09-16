@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 15 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 242 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1553 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1555 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -39,6 +39,11 @@
 > R9（doReverseApprove 一致性）为**定性校验**（输出 ✓/✗ 清单，无数值计数），故不在上表参与数值门控；其输出仍由 checker 打印供人工查阅，CI 不对其做数值断言。
 
 ## R2c 增量注记
+
+**2026-09-16 per-site 裁决（plan `2026-09-16-1230-1` F3.6 批，1553→1555，+2 合法 baseline-raise）**：
+1. `ErpPurReceiveProcessor#lockOrderForToleranceAggregation` 新增 `daoFor(ErpPurOrder.class)`——pur-006 超收容差聚合前订单头悲观锁点（SELECT FOR UPDATE），族 A/U20 豁免已登记组件内的同域只读+锁操作；
+2. `ReturnQtyValidator#lockReceiveLinesForAggregation` 新增 `daoFor(ErpPurReceiveLine.class)`——pur-006 退货可退量聚合前入库行去重排序锁点，同上豁免登记（文件头注释在案）。
+两站点均为审计 finding（P2-CK-pur-006）修复所必需的锁机制引入，非绕管道；checker 实测 1555 ≤ 新基线。
 
 R2c=1108 较 `docs/plans/2026-07-16-2134-1-ddd-entity-methods-daofor-convergence.md` 历史快照（965）增长 **+143**，因后续 A2/A3/B1 等深化工作新增生产代码（含跨域写豁免登记的合法新增）。该 delta 已被本次基线吸收，后续以 1108 为回归门控起点。
 

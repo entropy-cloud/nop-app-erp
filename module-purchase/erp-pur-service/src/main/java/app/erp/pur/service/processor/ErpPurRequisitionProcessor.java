@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpPurRequisition）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
@@ -38,6 +40,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  */
 public class ErpPurRequisitionProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpPurRequisitionProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;
@@ -99,8 +103,19 @@ public class ErpPurRequisitionProcessor {
         List<ErpPurRequisitionLine> lines = loadLines(req);
         validateLinesNonEmptyForConversion(req, lines, context);
         Map<String, List<ErpPurRequisitionLine>> groups = groupLinesBySupplier(req, lines, context);
+        lockRequisitionForConversion(req);
         validateNotAlreadyConverted(req.getId(), context);
         return doConvertToOrders(req, groups, request, context);
+    }
+
+    /**
+     * P2-CK-pur-006：存在性幂等检查前对请购头加悲观锁（SELECT FOR UPDATE，{@code IEntityDao#lockEntity}）——
+     * 并发 convertToOrder 在此互斥：后者等待前者提交（订单已落库）后再执行 existsActiveByRequisition，
+     * READ COMMITTED 隔离下检查读到已提交订单，重复订单不再双双生成。锁对象为 requireRequisition
+     * 加载的请购头（clean 实体，转化流此点前全部为只读步骤）；{@code @BizMutation} 事务内执行。
+     */
+    protected void lockRequisitionForConversion(ErpPurRequisition req) {
+        requisitionDao().lockEntity(req);
     }
 
     // ---------- step：迁移校验 ----------

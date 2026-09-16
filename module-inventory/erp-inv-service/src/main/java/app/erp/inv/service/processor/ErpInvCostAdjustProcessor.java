@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpInvCostAdjust、ErpInvCostAdjustLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
@@ -40,6 +42,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>step 方法标记 protected，下游可逐个覆盖（产品化拓扑可变）。
  */
 public class ErpInvCostAdjustProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpInvCostAdjustProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;

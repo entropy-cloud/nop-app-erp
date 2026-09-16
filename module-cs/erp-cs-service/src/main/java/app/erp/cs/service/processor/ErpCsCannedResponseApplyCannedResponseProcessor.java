@@ -22,6 +22,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpCsCannedResponse）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
@@ -29,6 +31,8 @@ import java.util.Map;
  * 自包含预设应答渲染 + usageCount+1 + TicketAction NOTE 审计。下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
 public class ErpCsCannedResponseApplyCannedResponseProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpCsCannedResponseApplyCannedResponseProcessor.class);
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter DATETIME_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

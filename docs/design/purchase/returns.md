@@ -365,6 +365,11 @@ UNSUBMITTED
 3. **期间限制**：退货应在合理的业务周期内完成
 4. **状态限制**：原入库单必须已审核
 
+边界说明（P2-CK-pur-008）：设计允许独立创建退货单（行 `receiveLineId` 可空）。无回链行不受上述
+「退货数量限制」校验（该上限以入库行为聚合锚点），其数量兜底由 inventory 域出库守卫
+`validateAvailable` 承担（可用量不足拒绝出库；config `erp-inv.allow-negative-stock=true` 时无兜底，
+属该 config 自身语义）。
+
 ### 仓库/库位规则
 
 - 退货仓库默认为原入库仓库

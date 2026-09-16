@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ErpCtRebateSettlement postSettlement per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
@@ -37,6 +39,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
 public class ErpCtRebateSettlementPostSettlementProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpCtRebateSettlementPostSettlementProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;

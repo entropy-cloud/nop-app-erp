@@ -16,6 +16,8 @@ import jakarta.inject.Inject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinPostingException）=同域实体批量聚合，批量读写，写路径经编排层 Facade 事务边界承接。
 /**
@@ -24,6 +26,8 @@ import java.util.Objects;
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
 public class ErpFinPostingExceptionIgnoreProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpFinPostingExceptionIgnoreProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;

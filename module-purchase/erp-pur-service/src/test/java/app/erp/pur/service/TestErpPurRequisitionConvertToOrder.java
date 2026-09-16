@@ -175,6 +175,31 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
     }
 
     @Test
+    public void testConvertInvalidTaxRateRejected() {
+        // P2-CK-pur-009：非法税率串（"13%"）显式拒绝，不再静默按零税生成订单
+        ErpPurRequisition req = newApprovedRequisition("PR-TAX-001", SUPPLIER_ID);
+        ormTemplate.runInSession(() -> saveRequisitionWithLine(req, 1, SUPPLIER_ID, new BigDecimal("10")));
+
+        Map<String, Object> request = newRequest("5", "13%");
+        ApiResponse<?> bad = convertToOrder(req.getId(), request);
+        assertEquals(ErpPurErrors.ERR_INVALID_TAX_RATE.getErrorCode(), bad.getCode(),
+                "非法税率格式应返回 ERR_INVALID_TAX_RATE（修复前 LOG.warn 后静默零税）");
+    }
+
+    @Test
+    public void testConvertAbsentTaxRateKeepsZeroTax() {
+        // Decision（plan Phase 6）：空值=未提供语义，保持零税不抛错（与 parseUnitPrice 空抛错不对称是有意裁决）
+        ErpPurRequisition req = newApprovedRequisition("PR-TAX-002", SUPPLIER_ID);
+        ormTemplate.runInSession(() -> saveRequisitionWithLine(req, 1, SUPPLIER_ID, new BigDecimal("10")));
+
+        Map<String, Object> request = newRequest("5", null);
+        ApiResponse<?> resp = convertToOrder(req.getId(), request);
+        assertEquals(0, resp.getStatus(), "未提供税率转化成功");
+        ErpPurOrderLine line = loadOrderLines(firstIdOf(resp)).get(0);
+        assertEquals(0, BigDecimal.ZERO.compareTo(line.getTaxAmount()), "未提供税率 → taxAmount=0");
+    }
+
+    @Test
     public void testConvertedOrderThenApprove() {
         ErpPurRequisition req = newApprovedRequisition("PR-LINK-001", SUPPLIER_ID);
         ormTemplate.runInSession(() -> saveRequisitionWithLine(req, 1, SUPPLIER_ID, new BigDecimal("10")));

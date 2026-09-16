@@ -4,6 +4,7 @@ import app.erp.pur.dao.entity.ErpPurPayment;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.common.service.AbstractCancelProcessor;
+import app.erp.pur.service.entity.PaymentSettler;
 import app.erp.pur.service.posting.PurPaymentPostingDispatcher;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -22,10 +23,19 @@ public class ErpPurPaymentCancelProcessor extends AbstractCancelProcessor<ErpPur
     @Inject
     PurPaymentPostingDispatcher postingDispatcher;
 
+    @Inject
+    PaymentSettler settler;
+
     @Override
     public ErpPurPayment cancel(String id, IServiceContext context) {
         ErpPurPayment payment = requireEntity(id);
         processor.validateTransitionForCancel(payment, context);
+        // P2-CK-pur-005：存在净核销（含反向负行后净额≠0）拒绝作废——GL 凭证红冲后发票 paidAmount/paidStatus
+        // 派生态将失真；须先 reverseSettlement（returns.md §异常处理「需先撤回核销」拒绝语义）。
+        if (settler.sumNetSettledForPayment(id).signum() != 0) {
+            throw new NopException(ErpPurErrors.ERR_PAYMENT_SETTLED_EXISTS)
+                    .param(ErpPurErrors.ARG_PAYMENT_CODE, payment.getCode());
+        }
         String approveStatus = payment.getApproveStatus();
         if (approveStatus != null && Objects.equals(approveStatus, ErpPurConstants.APPROVE_STATUS_APPROVED)
                 && Boolean.TRUE.equals(payment.getPosted())) {

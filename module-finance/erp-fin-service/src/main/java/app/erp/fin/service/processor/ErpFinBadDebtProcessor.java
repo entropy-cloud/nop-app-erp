@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinArApItem、ErpFinBadDebt、ErpMdSubject）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
@@ -51,6 +53,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>事务边界：跟随 Facade {@code @BizMutation} 事务，本类不带 {@code @Transactional}。
  */
 public class ErpFinBadDebtProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpFinBadDebtProcessor.class);
 
     /** F2.2：坏账金额比较精度（对齐核销精度语义）。 */
     private static final BigDecimal BAD_DEBT_PRECISION = new BigDecimal("0.01");

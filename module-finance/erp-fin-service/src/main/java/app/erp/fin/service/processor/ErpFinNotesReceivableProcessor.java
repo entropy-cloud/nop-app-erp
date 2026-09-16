@@ -27,6 +27,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinNotesDiscount、ErpFinNotesReceivable、ErpMdCurrency）=跨域批量聚合（md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
@@ -39,6 +41,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>事务边界：跟随 Facade {@code @BizMutation} 事务，本类不带 {@code @Transactional}。
  */
 public class ErpFinNotesReceivableProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpFinNotesReceivableProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;

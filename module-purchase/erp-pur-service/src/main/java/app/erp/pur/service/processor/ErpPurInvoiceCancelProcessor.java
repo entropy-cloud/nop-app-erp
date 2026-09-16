@@ -4,6 +4,7 @@ import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.common.service.AbstractCancelProcessor;
+import app.erp.pur.service.entity.PaymentSettler;
 import app.erp.pur.service.posting.PurInvoicePostingDispatcher;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -22,10 +23,19 @@ public class ErpPurInvoiceCancelProcessor extends AbstractCancelProcessor<ErpPur
     @Inject
     PurInvoicePostingDispatcher postingDispatcher;
 
+    @Inject
+    PaymentSettler settler;
+
     @Override
     public ErpPurInvoice cancel(String id, IServiceContext context) {
         ErpPurInvoice invoice = requireEntity(id);
         processor.validateTransitionForCancel(invoice, context);
+        // P2-CK-pur-005：存在净核销拒绝作废——已部分/全额付款的发票作废将使应付派生态失真；
+        // 须先通过对应付款单 reverseSettlement（returns.md §异常处理「需先撤回核销」拒绝语义）。
+        if (settler.sumNetSettledForInvoice(id).signum() != 0) {
+            throw new NopException(ErpPurErrors.ERR_INVOICE_SETTLED_EXISTS)
+                    .param(ErpPurErrors.ARG_INVOICE_CODE, invoice.getCode());
+        }
         String approveStatus = invoice.getApproveStatus();
         boolean wasApproved = approveStatus != null
                 && Objects.equals(approveStatus, ErpPurConstants.APPROVE_STATUS_APPROVED);

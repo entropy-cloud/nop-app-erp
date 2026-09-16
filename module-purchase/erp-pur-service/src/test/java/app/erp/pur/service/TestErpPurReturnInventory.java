@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -96,6 +97,31 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
         // 入库 10 - 退货 4 = 6
         assertEquals(0, balance.getTotalQuantity().compareTo(new BigDecimal("6")),
                 "退货后余额 = 入库 10 - 退货 4 = 6");
+    }
+
+    @Test
+    public void testIndependentReturnExceedingStockRejectedByInventoryGuard() {
+        // P2-CK-pur-008：无回链行（receiveLineId=null）不受退货上限校验，兜底=inventory 出库守卫
+        // validateAvailable（负库存默认禁用）——超可用量（入库 10，退 999）出库拒绝
+        seedPeriodAndSubjects();
+        String[] receiveCtx = seedApprovedReceive("PR-INV-002", new BigDecimal("10"), new BigDecimal("5"));
+        String receiveId = receiveCtx[0];
+
+        String returnId = nextId();
+        String returnLineId = nextId();
+        ormTemplate.runInSession(session -> {
+            newReturn("RT-INV-002", returnId, receiveId);
+            newReturnLine(returnLineId, returnId, null, new BigDecimal("999"), new BigDecimal("5"));
+            return null;
+        });
+
+        ApiResponse<?> resp = approveReturn(returnId);
+        assertNotEquals(0, resp.getStatus(), "无回链行超量退货被 inventory 出库守卫拒绝（兜底链生效）");
+        assertEquals(app.erp.inv.service.ErpInvErrors.ERR_AVAILABLE_INSUFFICIENT.getErrorCode(), resp.getCode(),
+                "拒绝码 = 可用量不足（可用 10 < 需 999）");
+        // 库存未被扣减（拒绝路径零副作用）
+        assertEquals(0, new BigDecimal("10").compareTo(findBalance().getTotalQuantity()),
+                "拒绝路径库存保持入库量 10");
     }
 
     @Test

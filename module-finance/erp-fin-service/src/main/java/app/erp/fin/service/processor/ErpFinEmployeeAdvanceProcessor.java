@@ -20,10 +20,14 @@ import jakarta.inject.Inject;
 import java.util.Objects;
 
 import java.math.BigDecimal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinEmployeeAdvance）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 
 public class ErpFinEmployeeAdvanceProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpFinEmployeeAdvanceProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;

@@ -4,6 +4,7 @@ import app.erp.pur.dao.entity.ErpPurPayment;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.common.service.AbstractReverseApproveProcessor;
+import app.erp.pur.service.entity.PaymentSettler;
 import app.erp.pur.service.posting.PurPaymentPostingDispatcher;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -20,6 +21,9 @@ public class ErpPurPaymentReverseApproveProcessor extends AbstractReverseApprove
     @Inject
     PurPaymentPostingDispatcher postingDispatcher;
 
+    @Inject
+    PaymentSettler settler;
+
     @Override
     public ErpPurPayment reverseApprove(String id, IServiceContext context) {
         ErpPurPayment payment = requireEntity(id);
@@ -27,6 +31,11 @@ public class ErpPurPaymentReverseApproveProcessor extends AbstractReverseApprove
             return payment;
         }
         processor.validateTransitionForReverseApprove(payment, context);
+        // P2-CK-pur-005：存在净核销拒绝反审核（与 cancel 同守卫语义，先 reverseSettlement）。
+        if (settler.sumNetSettledForPayment(id).signum() != 0) {
+            throw new NopException(ErpPurErrors.ERR_PAYMENT_SETTLED_EXISTS)
+                    .param(ErpPurErrors.ARG_PAYMENT_CODE, payment.getCode());
+        }
         if (Boolean.TRUE.equals(payment.getPosted())) {
             postingDispatcher.reverse(payment);
             payment = dao().getEntityById(id);

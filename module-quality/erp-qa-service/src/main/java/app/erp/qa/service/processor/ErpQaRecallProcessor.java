@@ -12,6 +12,8 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpQaRecall）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
@@ -26,6 +28,8 @@ import jakarta.inject.Inject;
  * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  */
 public class ErpQaRecallProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpQaRecallProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;

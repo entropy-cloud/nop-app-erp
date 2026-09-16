@@ -135,7 +135,7 @@
 | F3.2 cron 键漂移家族（9 域 job.yaml 双键统一） | done（2026-09-13，commit f69237187：8 处 cron-expr 配置键标准化为 nop.job.<name>.cron-expr 模式；TestErpAllJobYamlLoading 全绿） | job-scheduling.md | F2.x | none |
 | F3.3 notify 模板种子三库补齐 + 事务内外发修复（notify-001/002 与 log-002/aps-006 联动） | done（2026-09-12，F2.15 Phase 4/6 覆盖：三库种子补 8 事件模板 + dispatcher prepare/dispatchExternal 拆分实现先持久化后外发；对账机制 Deferred 带触发条件） | notify owner docs | F2.x | none |
 | F3.4 currentUserId 宽 catch 全域族 + 死常量/死配置键清理 | done（2026-09-16，commit acf434cbc+后续：ast 7 Processor + aps 1 Processor 加 LOG.warn + LOG 字段；死常量/死配置键清理归 F3.5 域簇） | — | F2.x | none |
-| F3.5-F3.x 各域 P2 簇（md×5/pur×6/sal×16/inv×11/fin×10/fin2×5/fin3×5/fin4×8/mfg×6/mfg2×10/mfg3×7/ast×10/ast2×8/prj×7/qa×9/mnt×6/hr2×9/crm×6/crm2×10/cs×11/ct×13/b2b×8/drp×11/log×7/aps×6/notify×4/common×1——按域逐项或合并小簇，由执行时按索引余量展开追加） | todo | 各域 owner docs | F2.x | none |
+| F3.5-F3.x 各域 P2 簇（md×5/pur×6/sal×16/inv×11/fin×10/fin2×5/fin3×5/fin4×8/mfg×6/mfg2×10/mfg3×7/ast×10/ast2×8/prj×7/qa×9/mnt×6/hr2×9/crm×6/crm2×10/cs×11/ct×13/b2b×8/drp×11/log×7/aps×6/notify×4/common×1——按域逐项或合并小簇，由执行时按索引余量展开追加） | in progress（2026-09-16：md×5 done（plan `2026-09-16-1000-1`，commit 85d38b26c）；pur×6 done（plan `2026-09-16-1230-1`：pur-004 聚合 docStatus 过滤+cancel/reverseApprove 重算 rollup、pur-005 三入口净核销守卫、pur-006 三站点 lockEntity 悲观锁、pur-007 容差百分比量纲统一、pur-008 库存兜底边界登记、pur-009 税率显式拒绝；另 F3.4 残留 20 文件编译破损同批修复；module-purchase 361/0/0 全绿；独立草案审查五轮 + 结束审计见 plan `## Closure`） | 各域 owner docs | F2.x | none |
 | F3.y P3 波次（210 条，按域批量「小修+说明」处理，证伪项归档说明） | todo | 各域 owner docs | F3.5+ | none |
 
 ### MV — 全量回归验证

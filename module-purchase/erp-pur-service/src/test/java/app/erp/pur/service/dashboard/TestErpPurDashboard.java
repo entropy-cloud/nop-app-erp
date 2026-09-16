@@ -167,6 +167,42 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
     }
 
     @Test
+    public void testPriceWithinToleranceNotTriggered() {
+        // P2-CK-pur-007：默认 5（百分比）下 4% 价差不触发（修复前 ratio 口径 0.04 < 0.05 同样不触发，
+        // 本用例守护量纲统一后边界语义：percent 口径下 4 ≤ 5 不告警）
+        ormTemplate.runInSession(() -> {
+            seedSupplier("542", "S-PV2");
+            seedInvoice("642", "542", new BigDecimal("1000"), CoreMetrics.currentDate());
+            seedOrderLine("802", "702", new BigDecimal("100"));
+            seedReceiveLine("902", "802", "802");
+            seedInvoiceLine("1002", "642", "902", new BigDecimal("104"));
+        });
+        List<Map<String, Object>> alerts = dashboardBiz.findThreeWayMatchDiffAlert(CTX);
+        assertTrue(alerts.isEmpty(), "4% 价差 ≤ 默认 5% 容差 → 不触发");
+    }
+
+    @Test
+    public void testZeroPriceToleranceAlertsAnyDiff() {
+        // P2-CK-pur-007：0 = 零容差全量告警（与 matcher compareTo>0 语义一致，不再静默回退默认值）；
+        // 1% 价差在零容差下也触发
+        AppConfig.getConfigProvider().assignConfigValue(ErpPurConstants.CONFIG_MATCH_PRICE_TOLERANCE, "0");
+        try {
+            ormTemplate.runInSession(() -> {
+                seedSupplier("543", "S-PV3");
+                seedInvoice("643", "543", new BigDecimal("1000"), CoreMetrics.currentDate());
+                seedOrderLine("803", "703", new BigDecimal("100"));
+                seedReceiveLine("903", "803", "803");
+                seedInvoiceLine("1003", "643", "903", new BigDecimal("101"));
+            });
+            List<Map<String, Object>> alerts = dashboardBiz.findThreeWayMatchDiffAlert(CTX);
+            assertEquals(1, alerts.size(), "零容差下 1% 价差也触发（修复前 0 被静默回退 5% 而漏报）");
+            assertEquals("643", alerts.get(0).get("invoiceId"));
+        } finally {
+            AppConfig.getConfigProvider().assignConfigValue(ErpPurConstants.CONFIG_MATCH_PRICE_TOLERANCE, "5");
+        }
+    }
+
+    @Test
     public void testApOverdueAlertDisabledByDefault() {
         ormTemplate.runInSession(() -> {
             seedSupplier("551", "S-OVD");

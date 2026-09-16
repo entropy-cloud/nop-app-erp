@@ -42,6 +42,8 @@ public class ErpPurReceiveReverseApproveProcessor extends AbstractReverseApprove
         receive.setApprovedBy(null);
         receive.setApprovedAt(null);
         dao().updateEntity(receive);
+        // P2-CK-pur-004：反审核后重算订单收货状态（当前单已回 REJECTED，不再计入聚合）。
+        processor.rollupOrderReceiveStatus(receive, context);
         return receive;
     }
 

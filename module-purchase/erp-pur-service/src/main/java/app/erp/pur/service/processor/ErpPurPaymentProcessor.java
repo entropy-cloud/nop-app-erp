@@ -31,6 +31,8 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.le;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinAccountingPeriod、ErpMdSubject、ErpPurPayment）=跨域批量聚合（fin/md），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
@@ -45,6 +47,8 @@ import static io.nop.api.core.beans.FilterBeans.le;
  * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  */
 public class ErpPurPaymentProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpPurPaymentProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;

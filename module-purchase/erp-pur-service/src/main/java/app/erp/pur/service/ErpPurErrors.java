@@ -21,6 +21,7 @@ public interface ErpPurErrors {
     String ARG_SUPPLIER_ID = "supplierId";
     String ARG_LINE_TEXT = "lineText";
     String ARG_PRICE_TEXT = "priceText";
+    String ARG_TAX_RATE_TEXT = "taxRateText";
     String ARG_MOVE_CODE = "moveCode";
     String ARG_REQUISITION_ID = "requisitionId";
 
@@ -201,6 +202,20 @@ public interface ErpPurErrors {
     ErrorCode ERR_SETTLE_PAYMENT_CANCELLED = ErrorCode.define("erp.err.pur.settle-payment-cancelled",
             "付款单 {paymentCode} 已作废（当前单据状态={currentDocStatus}），不可核销或反核销",
             ARG_PAYMENT_CODE, ARG_CURRENT_DOC_STATUS);
+
+    // P2-CK-pur-005：cancel/reverseApprove 入口核销守卫（returns.md §异常处理「需先撤回核销」拒绝语义）
+    ErrorCode ERR_PAYMENT_SETTLED_EXISTS = ErrorCode.define("erp.err.pur.payment-settled-exists",
+            "付款单 {paymentCode} 存在未冲销的核销记录，请先执行反核销（reverseSettlement）后再作废或反审核",
+            ARG_PAYMENT_CODE);
+
+    ErrorCode ERR_INVOICE_SETTLED_EXISTS = ErrorCode.define("erp.err.pur.invoice-settled-exists",
+            "发票 {invoiceCode} 存在未冲销的核销记录，请先通过对应付款单执行反核销（reverseSettlement）后再作废",
+            ARG_INVOICE_CODE);
+
+    // P2-CK-pur-009：请购转订单税率解析严格性对齐单价（非法格式显式拒绝，不再静默零税）
+    ErrorCode ERR_INVALID_TAX_RATE = ErrorCode.define("erp.err.pur.invalid-tax-rate",
+            "第 {lineText} 行税率格式非法：{taxRateText}，无法解析为数值",
+            ARG_LINE_TEXT, ARG_TAX_RATE_TEXT);
 
     // --- 退货作用域错误码（消息文案绑定退货单参数，避免复用入库单/发票文案产生误导） ---
 
