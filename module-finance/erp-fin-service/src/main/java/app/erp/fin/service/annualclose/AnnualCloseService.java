@@ -17,6 +17,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
+import app.erp.common.org.ErpOrgContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -251,6 +252,11 @@ public class AnnualCloseService {
         java.time.LocalDate yearStart = java.time.LocalDate.of(year, 1, 1);
         java.time.LocalDate yearEnd = java.time.LocalDate.of(year, 12, 31);
         q.addFilter(and(ge("businessDate", yearStart), le("businessDate", yearEnd)));
+        // P1-CK-fin4-004（plan 2026-09-12-1000-1 Phase 3）：orgId 过滤（null-skip 契约）
+        String _orgId = app.erp.common.org.ErpOrgContext.currentOrgId(null);
+        if (_orgId != null) {
+            q.addFilter(eq("orgId", _orgId));
+        }
         BigDecimal sum = BigDecimal.ZERO;
         for (app.erp.fin.dao.entity.ErpFinArApItem i : dao.findAllByQuery(q)) {
             BigDecimal open = i.getOpenAmountFunctional();

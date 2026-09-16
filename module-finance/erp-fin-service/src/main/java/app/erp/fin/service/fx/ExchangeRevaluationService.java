@@ -18,6 +18,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
+import app.erp.common.org.ErpOrgContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -107,6 +108,11 @@ public class ExchangeRevaluationService {
         QueryBean q = new QueryBean();
         q.addFilter(notIn("status", Arrays.asList(
                 ErpFinConstants.AR_AP_STATUS_SETTLED, ErpFinConstants.AR_AP_STATUS_CANCELLED)));
+        // P1-CK-fin4-004（plan 2026-09-12-1000-1 Phase 3）：orgId 过滤（null-skip 契约）
+        String _orgId = app.erp.common.org.ErpOrgContext.currentOrgId(null);
+        if (_orgId != null) {
+            q.addFilter(eq("orgId", _orgId));
+        }
         if (functionalCurrencyId != null) {
             q.addFilter(ne("currencyId", functionalCurrencyId));
         }

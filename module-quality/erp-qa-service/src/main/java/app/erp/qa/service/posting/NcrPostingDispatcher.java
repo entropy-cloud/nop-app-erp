@@ -11,6 +11,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
+import app.erp.common.org.ErpOrgContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -122,6 +123,11 @@ public class NcrPostingDispatcher {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
+        // P1-CK-qa-011（plan 2026-09-12-1000-1 Phase 4）：orgId 过滤（null-skip 契约）
+        String _orgId = app.erp.common.org.ErpOrgContext.currentOrgId(null);
+        if (_orgId != null) {
+            q.addFilter(eq("orgId", _orgId));
+        }
         q.setLimit(1);
         List<ErpInvStockBalance> balances = dao.findAllByQuery(q);
         if (balances.isEmpty()) {

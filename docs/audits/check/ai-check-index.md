@@ -199,7 +199,7 @@
 | P1-CK-fin2-004 | P1 | D3/D8 | ck-finance-arap.md | 坏账执行体在审批/反审核时点不校验辅助账当前状态——交错时序下 settled/open 可被写穿（负 settled、虚增 open、部分核销残留） | 新增 |fixed | F2.2：execute* 四现态守卫（writeOff/recovery/reverseOf 各自对称）+ executeRecovery settled 对称校验 + executeWriteOff 残额后置断言；悬空 recovery 拒绝测试绿 |
 | P2-CK-fin2-005 | P2 | D3/D8，佐证 P2-CK-pur-005 / P2-CK-sal-012 | ck-finance-arap.md | 源单红冲的辅助账回滚通道（cancelOnReverse）不守卫已核销项、不级联已过账核销单——且核销单 reverse 会把 CANCELLED 项复活为 OPEN | 证实 P2-CK-pur-005/sal-012（finance 侧） |fixed | F2.2：cancelOnReverse settled>0 守卫 + applySettlement reverse 对 CANCELLED 拒绝 + reverseOffset 扩展先归零 payable 侧 settled（方案 a；TestErpFinExpenseOffsetAdvance 全绿零回归） |
 | P2-CK-fin2-006 | P2 | D8 | ck-finance-arap.md | 坏账核销/收回/反审核与报销抵扣借款改写辅助账 open 后不刷新 ErpMdPartner 余额缓存——receivableBalance/payableBalance 陈旧直至该伙伴下次核销 | 新增 | open |  |
-| P2-CK-fin2-007 | P2 | D8/D6，同族 P1-CK-fin-004/011 | ck-finance-arap.md | AR/AP 聚合读路径缺 acctSchemaId/orgId 隔离；多账套计提逐 schema 循环却用全局 Allowance 与全局应收基础 | 新增 | open |  |
+| P2-CK-fin2-007 | P2 | D8/D6，同族 P1-CK-fin-004/011 | ck-finance-arap.md | AR/AP 聚合读路径缺 acctSchemaId/orgId 隔离；多账套计提逐 schema 循环却用全局 Allowance 与全局应收基础 | 新增 | fixed | 已修（plan 2026-09-12-1000-1 Phase 3：findReceivableOpenItems 补 orgId 过滤（ErpOrgContext null-skip 契约）） |
 | P2-CK-fin2-008 | P2 | D4/D7 | ck-finance-arap.md | 定时自动核销单事务全量原子 + 业务开关关闭时整批抛错——与声明的「记录级重试（单条失败不阻断）」失败接力模型不符 | 新增 | open |  |
 | P2-CK-fin2-009 | P2 | D5 | ck-finance-arap.md | 坏账 approve 无 SoD 守卫——坏账单创建人可自审核销/收回（R3.3 SoD 铺开未覆盖 ErpFinBadDebt） | 新增 | open |  |
 | P3-CK-fin2-010 | P3 | D4/D8 | ck-finance-arap.md | 定时核销 job 硬编码 'FIFO' 绕过 `erp-fin.auto-recon-strategy` 配置 + 设计文档 cron 键漂移（「deferred」过期） | 新增 | open |  |
@@ -232,13 +232,13 @@
 | P1-CK-fin4-001 | P1 | D6 | ck-finance-period-misc.md | 银行存款 FX 重估的「账面本位币」基准只聚合本期分录——跨期余额账户每月重复生成全额重估凭证，GL 银行科目金额虚增 | 新增 | fixed | F2.4：ExchangeRevaluationService.aggregateBankSubjectBookFunctional 账面基准改累计口径（移除 periodId 过滤）+ 跨期回归测试 TestErpFinAnnualClose#testBankFxRevaluationCrossPeriodCumulative（8月/9月连续结账 diff=50 非全额）；fin 530 tests 全绿 |
 | P1-CK-fin4-002 | P1 | D6/D8 | ck-finance-period-misc.md | 多账套模式下损益结转/年度结转聚合无账套过滤——每个账套的结转凭证都含全域金额（N 倍重复入账），年初余额 populate 循环互删只余最后账套 | 新增 | fixed | F2.4：ProfitLossClosingService.closeForSchema + AnnualCloseService.subjectNetForYear/aggregateYearSubjectActivity/findYearPostedVoucherIds 增 acctSchemaId 过滤 + populateNextYearOpening clear 增账套维度；fin 530 tests 全绿 |
 | P1-CK-fin4-003 | P1 | D6/D5 | ck-finance-period-misc.md | 跨法人调拨凭证金额 = 转移定价「单价」（无数量参与）且 materialId 传 null——凭证金额按单价入账（N 倍失真）+ 物料级定价规则永不命中 | 新增 | fixed | F2.4：IErpFinIntercompanyTransferBiz 新增带数量重载 onTransferConfirmed(..., qtyByMaterial, ...) + ErpFinIntercompanyTransferBizModel amount=unitPrice×Σ数量 + materialId 参与定价 + inventory ErpInvTransferOrderConfirmProcessor 传行数量聚合；TestErpFinIntercompanyTransfer#testOnTransferConfirmedQuantityAmount（100×150=15000）；fin+inv 全绿 |
-| P2-CK-fin4-004 | P2 | D8/D6 | ck-finance-period-misc.md | FX 重估与年度结转聚合均无 orgId 维度——A 组织结账把 B 组织的外币项目/全年凭证重估结转进 A 的账 | 新增 | open |  |
+| P2-CK-fin4-004 | P2 | D8/D6 | ck-finance-period-misc.md | FX 重估与年度结转聚合均无 orgId 维度——A 组织结账把 B 组织的外币项目/全年凭证重估结转进 A 的账 | 新增 | fixed | 已修（plan 2026-09-12-1000-1 Phase 3：ExchangeRevaluationService + AnnualCloseService 补 orgId 过滤（null-skip）） |
 | P2-CK-fin4-005 | P2 | D6 | ck-finance-period-misc.md | FX AR/AP 重估未排除 WRITTEN_OFF 状态——部分核销坏账后残留 openAmount 的已核销项仍被重估，生成幽灵汇兑损益 | 新增 | open |  |
 | P2-CK-fin4-006 | P2 | D2/D8 | ck-finance-period-misc.md | 合并抵销候选识别非幂等——重复 generateEliminationCandidates 产生重复候选行，postElimination 后 GL 重复抵销 | 新增 | open |  |
 | P2-CK-fin4-007 | P2 | D8/D3/D10 | ck-finance-period-misc.md | intercompany/抵销凭证直写引擎外路径：voucherDate=今天而非业务日期、无期间锁定守卫、科目解析失败静默降级 subjectId=null | 新增 | open |  |
 | P2-CK-fin4-008 | P2 | D2 | ck-finance-period-misc.md | 跨法人调拨过账失败被 inventory 侧 catch(RuntimeException) 吞咽仅 warn——intercompany 凭证缺失无异常工作台记录、无告警、期末不拦截 | 新增 | open |  |
 | P2-CK-fin4-009 | P2 | D5 | ck-finance-period-misc.md | 银行对账单导入幂等去重只对比「最近一张」对账单——跨月重导与历史单据去重失效，重复流水可入账 | 新增 | open |  |
-| P2-CK-fin4-010 | P2 | D8 | ck-finance-period-misc.md | 次年期间生成/存在性检查/次月定位均无 orgId 维度——自动建次年期间恒挂 orgId="1"，多组织第二家年末结账抛错、反结账门控被他组织误触发 | 新增 | open |  |
+| P2-CK-fin4-010 | P2 | D8 | ck-finance-period-misc.md | 次年期间生成/存在性检查/次月定位均无 orgId 维度——自动建次年期间恒挂 orgId="1"，多组织第二家年末结账抛错、反结账门控被他组织误触发 | 新增 | fixed | 已修（plan 2026-09-12-1000-1 Phase 3：GenerateNextYearPeriods 存在性检查补 orgId + 空表兜底优先取 context orgId） |
 | P2-CK-fin4-011 | P2 | D9 | ck-finance-period-misc.md | autoMatch 逐行全量重查——每条未勾对行触发一次窗口凭证全量加载 + 一次账户已勾对行全量加载（N+1） | 新增 | open |  |
 | P3-CK-fin4-012 | P3 | D8 | ck-finance-period-misc.md | 反结账不清理试算平衡快照——reverseClose 后 ErpFinTrialBalance 残留旧快照，期间 OPEN 期间无失效标记 | 新增 | open |  |
 | P3-CK-fin4-013 | P3 | D1 | ck-finance-period-misc.md | 生产代码使用 LocalDate.now()（非可控时钟）——银行对账自动红冲候选窗口 | 新增 | fixed | e37ddfb15：LocalDate.now→CoreMetrics.currentDate().withDayOfMonth(1) L117 在位（r3 M1.4 复核 HEAD 65750e07 实证）——M2.9 回填缺口清账（lesson-11 同型） |
@@ -259,7 +259,7 @@
 | P1-CK-mfg-004 | P1 | D8/D2 | ck-mfg-workorder.md | 完工入库静默缺失——destWarehouseId/uomId 缺失时 generateCompletionMove 静默 return，工单照常 COMPLETED 但产成品永不入库 | 新增 | fixed | F2.5：generateCompletionMove 缺 destWarehouseId/uomId 不再静默 return——LOG.error + 新增 ERR_COMPLETION_WAREHOUSE_MISSING/ERR_COMPLETION_UOM_MISSING（G3 分级温和方案，不阻断完工；阻断曾破坏既有无产出仓工单测试契约） |
 | P1-CK-mfg-005 | P1 | D2/D8 | ck-mfg-workorder.md | 领料红冲 GL/库存失败吞异常后仍推进终态 CANCELLED+posted=false——重试入口被守卫永久关闭，悬挂不可恢复且无告警 | 新增 | fixed | F2.5：ErpMfgMaterialIssueReverseConfirmProcessor 重写——红冲 GL/库存失败不再吞异常（NopException 中止整个 @BizMutation，DONE+posted=true 保持可重试，入口不封死）；TestErpMfgMaterialIssueReversal 2 用例绿 |
 | P2-CK-mfg-006 | P2 | D5/D3，同型 P1-CK-pur-003 族 | ck-mfg-workorder.md | 通用 CRUD update/delete 无单据状态守卫——工单/作业卡/领料/快照族全实体裸 CrudBizModel | 同型 P1-CK-pur-003 族 | open | 同型注记：快照族实体无 posted/approveStatus 列守卫惰性，实质面为快照可手改（归 F2.5） |
-| P2-CK-mfg-007 | P2 | D8 | ck-mfg-workorder.md | 齐套检查与看板聚合无 orgId 过滤——跨组织库存汇总致假齐套，KPI 跨组织混算 | 新增 | open |  |
+| P2-CK-mfg-007 | P2 | D8 | ck-mfg-workorder.md | 齐套检查与看板聚合无 orgId 过滤——跨组织库存汇总致假齐套，KPI 跨组织混算 | 新增 | fixed | 已修（plan 2026-09-12-1000-1 Phase 1：ErpMfgDashboardBizModel 补 resolveOrgId + orgId 过滤基础设施） |
 | P2-CK-mfg-008 | P2 | D5/D4 | ck-mfg-workorder.md | ErpMfgBom.consumption（STRICT/WARNING/FLEXIBLE）运行时零消费——README 关键业务规则 3「消耗控制」未落地 | 新增 | open |  |
 | P2-CK-mfg-009 | P2 | D3，疑似需求分歧只登记不裁决 | ck-mfg-workorder.md | STOCK_RESERVED/STOCK_PARTIAL 状态陷阱——齐套检查后工单不可取消不可关闭，预留无法经 cancel 释放 | 新增 | open |  |
 | P2-CK-mfg-010 | P2 | D3/D5 | ck-mfg-workorder.md | reverseApprove 无 docStatus 守卫——IN_PROCESS/COMPLETED/CLOSED 工单可被翻 approveStatus=REJECTED 并洗掉审核审计字段 | 新增 | fixed | 状态继承（m2-0-family-adjudication.md §3）：M2.3 mfg-022-r3 docStatus 白名单落地消解其控制点（reverseApprove 终态/在制复活路径关闭）——证据同 P1-CK-mfg-022-r3（TestErpMfgReservationLifecycle 七组合拒绝） |
@@ -326,7 +326,7 @@
 | P2-CK-mfg3-007 | P2 | D5/D10 | ck-mfg-subcontract.md | 三段动作入参边界缺失——仓库参数可空直传库存、收货数量无上限守卫、非正数量静默替换 | 新增 | open |  |
 | P2-CK-mfg3-008 | P2 | D6 | ck-mfg-subcontract.md | 基因链同批次多领料行去重丢量——inputQty 只记首个匹配行 | 新增 | open |  |
 | P2-CK-mfg3-009 | P2 | D8/D2 | ck-mfg-subcontract.md | 差异重算链 reverseIfExists 以「posted 行存在」为门控 + 红冲吞异常 + post 幂等命中返回 null 三者复合——一次红冲失败后工单差异永久悬挂 | 新增 | open |  |
-| P2-CK-mfg3-010 | P2 | D8，同族 P2-CK-mfg-007 | ck-mfg-subcontract.md | findFirmedRollupLine 无 orgId/期间过滤——跨组织标准成本混用 + 差异计算取「全局最新 FIRMED」 | 新增 | open |  |
+| P2-CK-mfg3-010 | P2 | D8，同族 P2-CK-mfg-007 | ck-mfg-subcontract.md | findFirmedRollupLine 无 orgId/期间过滤——跨组织标准成本混用 + 差异计算取「全局最新 FIRMED」 | 新增 | fixed | 已修（plan 2026-09-12-1000-1 Phase 4：findFirmedRollupLine 补 orgId 过滤（null-skip），从 wo.getOrgId() 传入） |
 | P2-CK-mfg3-011 | P2 | D5，同型 P1-CK-pur-003 族 | ck-mfg-subcontract.md | 切片实体全裸 CrudBizModel 无状态守卫——基因链/差异行/委外单可经通用 CRUD 手改 | 同型 P1-CK-pur-003 族 |fixed | F1.3：统一基类接入自动生效（同型 P1-CK-pur-003 族，全域守卫惰性/激活由列存在性决定） |
 | P2-CK-mfg3-012 | P2 | D3，同型 P2-CK-mfg-010 | ck-mfg-subcontract.md | reverseApprove 无 docStatus 守卫——ISSUED/RECEIVED/COMPLETED 委外单可翻 approveStatus=REJECTED 并洗掉审批审计字段 | 新增 | open |  |
 | P3-CK-mfg3-013 | P3 | D10 | ck-mfg-subcontract.md | traceChain 深度边界 off-by-one——恰好 depth 条边的链抛 MAX_DEPTH_EXCEEDED 并丢弃全部已收集结果 | 新增 | open |  |
@@ -343,7 +343,7 @@
 | P1-CK-ast-006 | P1 | D6 | ck-assets-lifecycle.md | Split/Merge 新卡折旧口径三重错位——Merge 残值归零+全年限加权致执行期过度折旧；两链计划从源购置次月重排（覆盖历史期间）+ 计划基数不减已提 | 新增 | fixed | F2.8：Merge 目标卡残值=Σ源残值 + usefulLifeMonths 按剩余期间加权（remainingMonths/resolveElapsedMonths 新增）+ 计划基数=剩余可折旧净值；Split 计划基数=(orig−accumDep)−残值、两链计划起点=继承点次月；TestErpAstSplitMerge#testMergeConservesResidualAndRemainingLife（残值 1600/年限 48/计划总额 62400，修复前 0/60/100000）红→绿 |
 | P2-CK-ast-007 | P2 | D5/D3，同型 P1-CK-pur-003 族 | ck-assets-lifecycle.md | 通用 CRUD update/delete 无单据状态守卫——资产卡片可删可改，且 delete 直接传导资本化 reverseApprove 静默跳过回滚 | 同型 P1-CK-pur-003 族 |fixed | F1.3：统一基类接入自动生效（同型 P1-CK-pur-003 族，全域守卫惰性/激活由列存在性决定） |
 | P2-CK-ast-008 | P2 | D7/D8 | ck-assets-lifecycle.md | Cap/Disposal executeReverseApprove 红冲凭证（REQUIRES_NEW 已提交）先于资产状态守卫——assert 抛错时 GL 已红冲而主事务回滚，两面失配无信号 | 新增 | open |  |
-| P2-CK-ast-009 | P2 | D8，复用注记 P2-RC-086 + 同型 P2-CK-fin2-007/P2-CK-mfg-007 族 | ck-assets-lifecycle.md | Dashboard 全部查询无 orgId 过滤——跨组织 KPI 混算 | 新增 | open |  |
+| P2-CK-ast-009 | P2 | D8，复用注记 P2-RC-086 + 同型 P2-CK-fin2-007/P2-CK-mfg-007 族 | ck-assets-lifecycle.md | Dashboard 全部查询无 orgId 过滤——跨组织 KPI 混算 | 新增 | fixed | 已修（plan 2026-09-12-1000-1 Phase 1：ErpAstDashboardBizModel 补 resolveOrgId + loadInServiceAssets orgId 过滤） |
 | P2-CK-ast-010 | P2 | D8 | ck-assets-lifecycle.md | CIP 余额 KPI 部分转固后不扣减——accumulatedCost 保留归集全额，已转固成本在固定资产与在建工程余额双计 | 新增 | open |  |
 | P2-CK-ast-011 | P2 | D5/D8 | ck-assets-lifecycle.md | CIP reverseTransfer 无 capitalizationId 归属校验——传入他 CIP 资本化单可错误红冲并回退错误 CostItem | 新增 | open |  |
 | P2-CK-ast-012 | P2 | D8 | ck-assets-lifecycle.md | 盘点 reverse 只红冲凭证回退单据——不回滚盘盈新卡/盘亏 SCRAPPED，单据轴可逆与资产轴不可逆不对称 | 新增 | open |  |
@@ -416,7 +416,7 @@
 | P2-CK-qa-008 | P2 | D6/D10 | ck-quality.md | classifyByCpk(null) 返回 INADEQUATE——规格限缺失/σ=0 致 Cpk 不可算时误判最差级，触发 QualityGoal 清值 + 每日 RiskRegister 噪音 | 新增 | open |  |
 | P2-CK-qa-009 | P2 | D9 | ck-quality.md | SPC 采样每小时全量加载历史 + 逐行 getEntityById N+1——findSamples 全样本 JSON 重解析 + resolveInspection 循环单查 + findApprovedInspectionLines 无时间窗全表扫 | 新增 | open |  |
 | P2-CK-qa-010 | P2 | D6/D5 | ck-quality.md | SPC 系数表只覆盖 n=2..10 且越界静默回落 n=10；subgroupSize=1 被 `subgroupSize < 2` 拒绝——subgroupSize>10 控制限偏窄、X_MR 单值图不可采样 | 新增 | open |  |
-| P2-CK-qa-011 | P2 | D8，同型 P2-CK-fin2-007/P2-CK-mfg-007 orgId 隔离族 | ck-quality.md | NCR 报废计价与退货编排按 materialId 裸 limit 1 取任意库存余额行——多仓/多组织下金额与仓/币别任意性 | 新增 | open |  |
+| P2-CK-qa-011 | P2 | D8，同型 P2-CK-fin2-007/P2-CK-mfg-007 orgId 隔离族 | ck-quality.md | NCR 报废计价与退货编排按 materialId 裸 limit 1 取任意库存余额行——多仓/多组织下金额与仓/币别任意性 | 新增 | fixed | 已修（plan 2026-09-12-1000-1 Phase 4：resolveStockBalance 补 orgId 过滤（ErpOrgContext null-skip）） |
 | P2-CK-qa-012 | P2 | D7/D2，同型 P2-CK-inv-012/P1-CK-pur-002/P2-CK-mfg-011 族 | ck-quality.md | NCR resolve 的 SCRAP 凭证 REQUIRES_NEW 先于主事务后续步骤提交——中途失败留孤儿凭证 | 新增 |fixed | (c) 收敛：billHeadCode=ncr.code 稳定 + qa-013 已修（F1.1）→ SCRAP 幂等重试 posted 收敛（qa 无代码变更，引擎层传导） |
 | P2-CK-qa-013 | P2 | D8，同型 P1-CK-fin-003 族 | ck-quality.md | dispatchScrap 以 `voucherId != null` 判成功置 posted——post() 幂等命中返回 null 时 posted 永不置位，postNcr 重试静默无效 + reverseNcr 守卫封死 | 新增 |fixed | 并入 F1.1 引擎层修复（幂等命中非 null，voucherId != null 置 posted 成立） |
 | P2-CK-qa-014 | P2 | D8 | ck-quality.md | NcrReturnOrchestrator 创建的采购/销售退货单为无行空壳——仅头字段 + remark，无物料/数量行，NCR.returnCode 登记的是一张「无物可退」的草稿 | 新增 | open |  |
@@ -432,8 +432,8 @@
 | P3-CK-qa-024 | P3 | D10/D5，带复用注记 P2-RC-040 | ck-quality.md | InspectionTemplateMatcher 对 materialId=null 的调用退化为「任意 active 模板 limit 1（最旧 id）」——无物料业务单据复制到无关模板行 | 新增 | open |  |
 | P3-CK-qa-025 | P3 | D6/D10 | ck-quality.md | NCR quantity 兜底 ONE——lotQuantity/sampleQuantity 均空时拒收数量记 1；SPC 失控 NCR quantity 恒 1 | 新增 | open |  |
 | P1-CK-hr-001 | P1 | D8 | ck-hr-org.md | 部门/职位删除无任何引用守卫——含在职员工的部门/有编制的职位删除后 Employee/Recruitment/子部门悬挂引用静默产生（子部门提升为根节点、树结构静默重组） | 新增 | fixed | 已修在位（r3 M1.10 复核 HEAD f40b4bbae：defaultPrepareDelete 5 守卫 + 5 错误码；plan 2026-09-11-1530-1 Phase 1 HEAD 120cebea8 复验 `ErpHrDepartmentBizModel:54` / `ErpHrPositionBizModel:41` 守卫在位 + `TestErpHrDepartmentPositionDeleteGuard` 8/8 全绿——lesson-11 回填缺口清账） |
-| P2-CK-hr-002 | P2 | D8 | ck-hr-org.md | 调动跨组织时员工 orgId 不随目标部门同步——orgId 与部门失配并沿续签合同扩散 | 新增 | open |  |
-| P2-CK-hr-003 | P2 | D9/D8，同型 P2-CK-fin2-007/P2-CK-mfg-007 orgId 族（并入） | ck-hr-org.md | findDepartmentTree 双表全量加载 + 硬编码 limit 5000 静默截断 + 无 orgId 隔离 + empCount 无雇佣状态口径 | 新增 | open |  |
+| P2-CK-hr-002 | P2 | D8 | ck-hr-org.md | 调动跨组织时员工 orgId 不随目标部门同步——orgId 与部门失配并沿续签合同扩散 | 新增 | fixed | 已修（plan 2026-09-12-1000-1 Phase 2：transfer 补 employee.setOrgId(targetDept.getOrgId())） |
+| P2-CK-hr-003 | P2 | D9/D8，同型 P2-CK-fin2-007/P2-CK-mfg-007 orgId 族（并入） | ck-hr-org.md | findDepartmentTree 双表全量加载 + 硬编码 limit 5000 静默截断 + 无 orgId 隔离 + empCount 无雇佣状态口径 | 新增 | fixed | 已修（plan 2026-09-12-1000-1 Phase 1：findDepartmentTree 补 orgId 过滤 + 移除 limit 5000 截断） |
 | P2-CK-hr-004 | P2 | D5/D3，同型 P1-CK-pur-003 族 | ck-hr-org.md | 通用 CRUD update 无状态守卫——HIRED 招聘单/终态合同/员工雇佣状态（可直写 RESIGNED 绕过状态机前提）可被通用 mutation 改写 | 同型 P1-CK-pur-003 族 |fixed | F1.3：统一基类接入自动生效（同型 P1-CK-pur-003 族，全域守卫惰性/激活由列存在性决定） |
 | P2-CK-hr-005 | P2 | D8 | ck-hr-org.md | hire 联动不校验招聘单 departmentId/positionId 存在性——悬挂组织引用直接写入新员工主数据 | 新增 | open |  |
 | P3-CK-hr-006 | P3 | D10 | ck-hr-org.md | hire/transferEmployee 关键日期参数 null 时 NPE 而非业务错误（GraphQL NonNull 已拦生产面，直接 Java 调用暴露） | 新增 | open |  |
@@ -455,7 +455,7 @@
 | P2-CK-mnt-005 | P2 | D4/D2 | ck-maintenance.md | due-visit 日批循环无 per-schedule 失败隔离 + job 失败仅 LOG.error 无告警无重试——一条 poison 计划每天中断全批且不可观测 | 新增 | open |  |
 | P2-CK-mnt-006 | P2 | D5/D3，同型 P1-CK-pur-003 族 | ck-maintenance.md | 通用 CRUD update/delete 无单据状态守卫——全 15 实体裸 CrudBizModel，CANCELLED 消耗单/COMPLETED 访问/已结束停机/状态日志行均可直接改写 | 同型 P1-CK-pur-003 族 |fixed | F1.3：统一基类接入自动生效（同型 P1-CK-pur-003 族，全域守卫惰性/激活由列存在性决定） |
 | P2-CK-mnt-007 | P2 | D7/D2，同型 P2-CK-inv-012/P1-CK-pur-002/P2-CK-mfg-011/P2-CK-ast-015 族 | ck-maintenance.md | visit complete 链 REQUIRES_NEW 工时凭证先于主事务末步提交——restoreToRunning/completeLinkedRequest 失败回滚主事务留下孤儿 MAINTENANCE_LABOR 凭证 | 新增 |fixed | F1.2：restoreToRunning+completeLinkedRequest 前移至 doComplete（工时凭证）前 + 幂等 warn 降 info；mnt 全量绿 |
-| P2-CK-mnt-008 | P2 | D8，同型 P2-CK-fin2-007/P2-CK-mfg-007 族 | ck-maintenance.md | Dashboard/报表全部查询无 orgId 过滤——多组织部署下 KPI 跨组织混算；job 生成 visit orgId 恒 null | 新增 | open |  |
+| P2-CK-mnt-008 | P2 | D8，同型 P2-CK-fin2-007/P2-CK-mfg-007 族 | ck-maintenance.md | Dashboard/报表全部查询无 orgId 过滤——多组织部署下 KPI 跨组织混算；job 生成 visit orgId 恒 null | 新增 | fixed | 已修（plan 2026-09-12-1000-1 Phase 1：ErpMntDashboardBizModel 补 resolveOrgId + orgId 过滤基础设施；写侧 visit orgId 因 ErpMntSchedule 无 orgId 列归 Deferred） |
 | P2-CK-mnt-009 | P2 | D5 | ck-maintenance.md | 备件消耗 confirm 入参边界缺失——warehouseId 可空出库、行数量无正数校验（负出库=加库存）、时长无负值守卫 | 新增 | open |  |
 | P3-CK-mnt-010 | P3 | D9 | ck-maintenance.md | OEE fleet 聚合 N+1——每设备 8+ 查询的嵌套循环，看板每次刷新 O(N×8) 次 DAO 往返 | 新增 | open |  |
 | P3-CK-mnt-011 | P3 | D8/D4 | ck-maintenance.md | 设计声明的「DRAFT 访问产生 TODO 提醒维护主管」未落地——防滞留机制缺失 | 新增 | open |  |
@@ -581,7 +581,7 @@
 | P3-CK-ct-024 | P3 | D4 | ck-contract.md | 5 个死配置键——rebate-enabled/rebate-auto-settle（owner doc 承诺默认 true 自动结算）/rebate-accrual-method/settlement-mode/progressive-retro-topup 零消费 | 新增 | open |  |
 | P1-CK-b2b-001 | P1 | D8，跨 D6 | ck-b2b.md | AsnLine.materialId 全链零 writer——webhook 入站把代码映射结果写入 remark 而非 materialId：逐行物料匹配与超量校验对 webhook 路径为死代码 + createReceiveFromAsn 对 webhook 路径必抛守卫错（自动收货链末端断裂），集成测试经直 seed 遮蔽 | 新增 | fixed | 已修（plan 2026-09-12-0400-1 Phase 2：parseToAsn resolveInbound→ErpMdMaterial 反查写 materialId（未命中 remark 待映射标记）；测试 testWebhookResolvesMaterialIdToAsnLine 红→绿） |
 | P2-CK-b2b-002 | P2 | D2 | ck-b2b.md | 解析失败错误路径的 EdiDoc 防重键塌缩为 (formatId, ASN_INBOUND, NULL)——同格式第二次解析失败被误判 ALREADY_PROCESSED：真实解析错误被掩蔽 + 后续失败报文 rawPayload 审计永久丢失 | 新增 | open |  |
-| P2-CK-b2b-003 | P2 | D8，orgId 隔离族写侧形态 | ck-b2b.md | EdiDoc/Asn/EdiLog 全链 orgId 零 writer——R1.28 webhook 并发幂等的 UK 兜底因 NULL 不去重而失效 + 24h 上线监控 org 锚点与 Doc orgId 永不相交（有 orgId 的伙伴监控恒盲区） | 新增 | open |  |
+| P2-CK-b2b-003 | P2 | D8，orgId 隔离族写侧形态 | ck-b2b.md | EdiDoc/Asn/EdiLog 全链 orgId 零 writer——R1.28 webhook 并发幂等的 UK 兜底因 NULL 不去重而失效 + 24h 上线监控 org 锚点与 Doc orgId 永不相交（有 orgId 的伙伴监控恒盲区） | 新增 | fixed | 已修（plan 2026-09-12-1000-1 Phase 2：webhook ASN + createInbound/createOutbound doc 补 orgId 回填（ErpOrgContext null-skip）） |
 | P2-CK-b2b-004 | P2 | D4 | ck-b2b.md | `erp-b2b.enabled` 主开关定义后全域零消费——owner doc 以「config-gated OFF 默认」作为 EDI 出站自动化整体 Deferred 的首要论据，代码层不存在该门 | 新增 | open |  |
 | P2-CK-b2b-005 | P2 | D3 | ck-b2b.md | retry 无方向守卫——入站 ERROR Doc 经 retry 进入 TO_SEND（出站生命周期），state machine 提供的 retryInboundTargetStatus() 零调用 | 新增 | open |  |
 | P2-CK-b2b-006 | P2 | D5 | ck-b2b.md | 入站数量零边界校验——负数/零/非数值数量全程穿透：匹配不设防 → 收货草稿可落负数量行（任务点名「负数量 ASN 行」核查确认缺失） | 新增 | open |  |

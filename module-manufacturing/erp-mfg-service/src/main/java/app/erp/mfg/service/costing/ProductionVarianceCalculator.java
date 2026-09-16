@@ -114,7 +114,7 @@ public class ProductionVarianceCalculator {
             return new ArrayList<>();
         }
 
-        ErpMfgCostRollupLine stdLine = findFirmedRollupLine(productId);
+        ErpMfgCostRollupLine stdLine = findFirmedRollupLine(productId, wo.getOrgId());
         if (stdLine == null) {
             throw new NopException(ErpMfgErrors.ERR_VARIANCE_NO_STANDARD_COST)
                     .param(ErpMfgErrors.ARG_PRODUCT_ID, productId);
@@ -342,13 +342,17 @@ public class ProductionVarianceCalculator {
         return wo;
     }
 
-    private ErpMfgCostRollupLine findFirmedRollupLine(String productId) {
+    private ErpMfgCostRollupLine findFirmedRollupLine(String productId, String orgId) {
         if (ormTemplate != null) {
             ormTemplate.flushSession();
         }
         IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
-        List<ErpMfgCostRollup> firmedList = headerDao.findAllByQuery(
-                new QueryBean().addFilter(eq("status", ErpMfgConstants.COST_ROLLUP_STATUS_FIRMED)));
+        QueryBean rollupQ = new QueryBean().addFilter(eq("status", ErpMfgConstants.COST_ROLLUP_STATUS_FIRMED));
+        // P1-CK-mfg3-010（plan 2026-09-12-1000-1 Phase 4）：orgId 过滤（null-skip 契约）
+        if (orgId != null) {
+            rollupQ.addFilter(eq("orgId", orgId));
+        }
+        List<ErpMfgCostRollup> firmedList = headerDao.findAllByQuery(rollupQ);
         if (firmedList.isEmpty()) {
             return null;
         }

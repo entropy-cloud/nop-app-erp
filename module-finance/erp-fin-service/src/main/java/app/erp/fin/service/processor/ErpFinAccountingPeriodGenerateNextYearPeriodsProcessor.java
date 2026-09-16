@@ -40,6 +40,11 @@ public class ErpFinAccountingPeriodGenerateNextYearPeriodsProcessor {
         IEntityDao<ErpFinAccountingPeriod> dao = facade.daoProvider.daoFor(ErpFinAccountingPeriod.class);
         QueryBean existingQ = new QueryBean();
         existingQ.addFilter(eq("year", year));
+        // P1-CK-fin4-010（plan 2026-09-12-1000-1 Phase 3）：存在性检查补 orgId 过滤
+        String _ctxOrgId = app.erp.common.org.ErpOrgContext.currentOrgId(context);
+        if (_ctxOrgId != null) {
+            existingQ.addFilter(eq("orgId", _ctxOrgId));
+        }
         List<ErpFinAccountingPeriod> existing = dao.findAllByQuery(existingQ);
 
         if (!existing.isEmpty() && !facade.isPeriodGenerateSkipExisting()) {
@@ -52,7 +57,7 @@ public class ErpFinAccountingPeriodGenerateNextYearPeriodsProcessor {
                 .map(ErpFinAccountingPeriod::getMonth)
                 .filter(java.util.Objects::nonNull)
                 .collect(Collectors.toSet());
-        String orgId = existing.isEmpty() ? facade.resolveDefaultOrgId() : existing.get(0).getOrgId();
+        String orgId = existing.isEmpty() ? (_ctxOrgId != null ? _ctxOrgId : facade.resolveDefaultOrgId()) : existing.get(0).getOrgId();
 
         int created = 0;
         java.time.YearMonth ym = java.time.YearMonth.of(year, 1);

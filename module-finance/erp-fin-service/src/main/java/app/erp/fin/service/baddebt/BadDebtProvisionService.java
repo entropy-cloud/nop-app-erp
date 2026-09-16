@@ -20,6 +20,7 @@ import app.erp.fin.service.posting.SchemaPropagator;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
+import app.erp.common.org.ErpOrgContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -294,6 +295,11 @@ public class BadDebtProvisionService {
                 ErpFinConstants.AR_AP_STATUS_SETTLED,
                 ErpFinConstants.AR_AP_STATUS_CANCELLED,
                 ErpFinConstants.AR_AP_STATUS_WRITTEN_OFF)));
+        // P1-CK-fin2-007（plan 2026-09-12-1000-1 Phase 3）：orgId 过滤（null-skip 契约）
+        String orgId = app.erp.common.org.ErpOrgContext.currentOrgId(null);
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+        }
         return dao.findAllByQuery(q);
     }
 
