@@ -132,8 +132,8 @@
 | F2.15 ct+b2b+drp+log+aps+notify P1 簇（ct-001..004；b2b-001；drp-001..003；log-001/002；aps-001/002；notify-001/002） | done（2026-09-12，plan `2026-09-12-0400-1` 落地：15 条 open P1 全部先失败测试后修复（log-001 已由 F1.1 修复核验在案）——ct PERIOD_END 逐发票消费幂等/贷项排除/tier 含上界闭区间/独立协议与无物料守卫；b2b webhook materialId 解析；drp currentStock 在手总量口径/在途白名单+move-DONE/收货仓+组织过滤（Simulation fork 同步）；log+notify 三库种子补 8 事件模板；aps horizon NULL-aware+frozen 预填全分支（引擎 scheduleToc/Backward 扩 frozen）；notify 先持久化后外发时序契约；module-contract 142/b2b 82/drp 106/aps 95/notify 29 全绿；独立草案审查两轮 + 独立结束审计见 plan `## Closure`） | 各域 owner docs | F0.2 | none |
 | **第三批：P2/P3 联动簇** | | | | |
 | F3.1 orgId 隔离族（写侧 writer 缺失族 + 读侧聚合族） | done（2026-09-13，plan `2026-09-12-1000-1`：11 条 P2 orgId 隔离族全部补 orgId 过滤/回填（ErpOrgContext null-skip 契约统一）；mnt-008 写侧实体缺 orgId 列归 Deferred；七域模块全绿 + 全 reactor BUILD SUCCESS；独立草案审查两轮 accept） | module-boundaries.md | F2.x | none |
-| F3.2 cron 键漂移家族（9 域 job.yaml 双键统一） | todo | job-scheduling.md | F2.x | none |
-| F3.3 notify 模板种子三库补齐 + 事务内外发修复（notify-001/002 与 log-002/aps-006 联动） | todo | notify owner docs | F2.x | none |
+| F3.2 cron 键漂移家族（9 域 job.yaml 双键统一） | done（2026-09-13，commit f69237187：8 处 cron-expr 配置键标准化为 nop.job.<name>.cron-expr 模式；TestErpAllJobYamlLoading 全绿） | job-scheduling.md | F2.x | none |
+| F3.3 notify 模板种子三库补齐 + 事务内外发修复（notify-001/002 与 log-002/aps-006 联动） | done（2026-09-12，F2.15 Phase 4/6 覆盖：三库种子补 8 事件模板 + dispatcher prepare/dispatchExternal 拆分实现先持久化后外发；对账机制 Deferred 带触发条件） | notify owner docs | F2.x | none |
 | F3.4 currentUserId 宽 catch 全域族 + 死常量/死配置键清理 | todo | — | F2.x | none |
 | F3.5-F3.x 各域 P2 簇（md×5/pur×6/sal×16/inv×11/fin×10/fin2×5/fin3×5/fin4×8/mfg×6/mfg2×10/mfg3×7/ast×10/ast2×8/prj×7/qa×9/mnt×6/hr2×9/crm×6/crm2×10/cs×11/ct×13/b2b×8/drp×11/log×7/aps×6/notify×4/common×1——按域逐项或合并小簇，由执行时按索引余量展开追加） | todo | 各域 owner docs | F2.x | none |
 | F3.y P3 波次（210 条，按域批量「小修+说明」处理，证伪项归档说明） | todo | 各域 owner docs | F3.5+ | none |
