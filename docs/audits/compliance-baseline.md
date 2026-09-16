@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 15 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 242 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1558 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1559 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -39,6 +39,9 @@
 > R9（doReverseApprove 一致性）为**定性校验**（输出 ✓/✗ 清单，无数值计数），故不在上表参与数值门控；其输出仍由 checker 打印供人工查阅，CI 不对其做数值断言。
 
 ## R2c 增量注记
+
+**2026-09-17 per-site 裁决（plan `2026-09-17-0330-1` F3.8 批，1558→1559，+1 合法 baseline-raise）**：
+1. `ErpFinPostingExceptionRecorder#mergeIntoExistingPending` 新增 `daoFor(ErpFinPostingException.class)`——fin-014 PENDING 合并查询（新增独立方法；原 record 方法内 daoFor 站点保留）。保护区双批准后落地。
 
 **2026-09-17 per-site 裁决（plan `2026-09-17-0030-1` F3.7 批，1555→1558，+3 合法 baseline-raise）**：
 1. `ErpSalOrderBizModel#sumConvertedQuantityByQuotation` 新增 `daoFor(ErpSalOrderLine.class)`——sal-016 分批转订单累计口径的行聚合（@BizAction 域方法）；

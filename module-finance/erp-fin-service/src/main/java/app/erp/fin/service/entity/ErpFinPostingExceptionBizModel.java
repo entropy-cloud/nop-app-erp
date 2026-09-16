@@ -231,8 +231,8 @@ public class ErpFinPostingExceptionBizModel extends AbstractErpCrudBizModel<ErpF
                 ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRYING,
                 ErpFinConstants.POSTING_EXCEPTION_STATUS_MANUAL)));
         q.addFilter(io.nop.api.core.beans.FilterBeans.isNull("voucherId"));
-        List<ErpFinPostingException> all = dao.findAllByQuery(q);
-        return all.size();
+        // P2-CK-fin-012：聚合 COUNT（对齐方法注释宣称），修复全量实体载入 .size()。
+        return dao.countByQuery(q);
     }
 
     /**
@@ -318,14 +318,14 @@ public class ErpFinPostingExceptionBizModel extends AbstractErpCrudBizModel<ErpF
         IEntityDao<ErpFinVoucher> dao = daoProvider().daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(ge("createTime", since));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 
     private long countExceptionsSince(Timestamp since) {
         IEntityDao<ErpFinPostingException> dao = dao();
         QueryBean q = new QueryBean();
         q.addFilter(ge("occurrenceTime", since));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 
     private long countManualResolutionsSince(Timestamp since) {
@@ -333,7 +333,7 @@ public class ErpFinPostingExceptionBizModel extends AbstractErpCrudBizModel<ErpF
         QueryBean q = new QueryBean();
         q.addFilter(ge("occurrenceTime", since));
         q.addFilter(eq("resolution", ErpFinConstants.POSTING_EXCEPTION_RESOLUTION_MANUAL));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 
     private static double resolveDouble(String key, double defaultVal) {
@@ -356,25 +356,6 @@ public class ErpFinPostingExceptionBizModel extends AbstractErpCrudBizModel<ErpF
                     .param(ErpFinPostingErrors.ARG_CURRENT_STATUS, entity.getStatus());
         }
         return entity;
-    }
-
-    /** 从异常记录重建 PostingEvent（重试用）。 */
-    private PostingEvent rebuildEvent(ErpFinPostingException entity) {
-        PostingEvent event = new PostingEvent();
-        event.setTraceId(entity.getTraceId());
-        event.setBillHeadCode(entity.getBillHeadCode());
-        event.setBusinessType(parseBusinessType(entity.getBusinessType()));
-        event.setVoucherDate(entity.getVoucherDate());
-        event.setOrgId(entity.getOrgId());
-        event.setAcctSchemaId(entity.getAcctSchemaId());
-        event.setCurrencyId(entity.getCurrencyId());
-        event.setExchangeRate(entity.getExchangeRate() != null ? entity.getExchangeRate() : BigDecimal.ONE);
-        Map<String, Object> billData = ErpFinPostingExceptionRecorder.deserializeEventData(entity.getEventData());
-        if (billData == null) {
-            billData = new LinkedHashMap<>();
-        }
-        event.setBillData(billData);
-        return event;
     }
 
     private ErpFinBusinessType parseBusinessType(String name) {

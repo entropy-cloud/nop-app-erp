@@ -119,6 +119,15 @@ public class ErpFinVoucherBizModel extends AbstractErpCrudBizModel<ErpFinVoucher
                     .param(ErpFinErrors.ARG_VOUCHER_ID, voucherId)
                     .param(ErpFinErrors.ARG_CURRENT_STATUS, voucher.getDocStatus());
         }
+        // P2-CK-fin-015：业务凭证（有 BillR 业财回链）与红字凭证（REVERSAL 亦带回链）拒绝单边标记——
+        // 标记后 GL 排除式汇总移除该笔，但源单 posted=true 原样 + 辅助账开放，且后续源单反审核走
+        // reverse() 找不到可冲销凭证被 ERR_REVERSE_SOURCE_NOT_FOUND 永久阻断（posting.md 冲销机制
+        // 「双向闭环缺一不可」）。业务凭证走源单反审核；红字凭证拒绝防 GL 汇总翻符号；
+        // 无回链手工凭证保留标记式（state-machine.md L41 单边简化裁决范围）。
+        if (!loadBillLinks(voucherId).isEmpty()) {
+            throw new NopException(ErpFinErrors.ERR_REVERSE_VOUCHER_BILL_LINKED)
+                    .param(ErpFinErrors.ARG_VOUCHER_ID, voucherId);
+        }
         voucher.setIsReversed(true);
         updateEntity(voucher, null, context);
         return voucher;

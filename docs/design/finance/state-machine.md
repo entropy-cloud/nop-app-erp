@@ -45,7 +45,7 @@
 
 - **终态**：`已过账（POSTED）`。CANCELLED 为预留 dict 项（未启用迁移，非活跃终态）。
 - **已过账不可直接修改**：已影响总账，纠错只能红冲（原凭证置 `isReversed=true`）。
-- **红字凭证（已知简化，对齐实现）**：红冲在原凭证上置 `isReversed=true` 单边标记（保留 POSTED），不建立 `reversedVoucherId` 双向回链。归档凭证（已红冲原凭证）与活动凭证（POSTED + `isReversed=false`）的区分经 `isReversed` + `postingType` 联合判定。红冲闭环功能完整（含 `reverseVoucher` 与业财回链红冲）。`reversedVoucherId` 双向回链为 successor（报表需求驱动时实现）。
+- **红字凭证（已知简化，对齐实现）**：红冲在原凭证上置 `isReversed=true` 单边标记（保留 POSTED），不建立 `reversedVoucherId` 双向回链。归档凭证（已红冲原凭证）与活动凭证（POSTED + `isReversed=false`）的区分经 `isReversed` + `postingType` 联合判定。红冲闭环功能完整（含 `reverseVoucher` 与业财回链红冲）。`reversedVoucherId` 双向回链为 successor（报表需求驱动时实现）。路由注记（P2-CK-fin-015 纯增量细化，不改变上方「已知简化」裁决）：`reverseVoucher` 单边标记仅适用于**无业财回链的手工凭证**；业务/红字回链凭证（`ErpFinVoucherBillR` 存在回链）经守卫拒绝单边标记，须走源单反审核触发完整红冲闭环（`reverse()` 双向：红字凭证 + `cancelOnReverse` 辅助账取消 + posted 事件回写源单）。
 - **草稿废弃**：经 logical delete（`useLogicalDelete`）承载，不经状态迁移；CANCELLED dict 项保留为未来显式作废工作流的语义入口（successor）。
 
 ### 4. 异常路径

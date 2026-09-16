@@ -17,8 +17,15 @@ public class ErpPurInvoiceReverseApproveProcessor extends AbstractReverseApprove
     @Inject
     ErpPurInvoiceProcessor processor;
 
+    private static final org.slf4j.Logger LOG =
+            org.slf4j.LoggerFactory.getLogger(ErpPurInvoiceReverseApproveProcessor.class);
+
     @Inject
     PurInvoicePostingDispatcher postingDispatcher;
+
+    @Inject
+    @jakarta.annotation.Nullable
+    app.erp.fin.biz.IErpFinPostingExceptionBiz postingExceptionBiz;
 
     @Override
     public ErpPurInvoice reverseApprove(String id, IServiceContext context) {
@@ -33,10 +40,30 @@ public class ErpPurInvoiceReverseApproveProcessor extends AbstractReverseApprove
             invoice.setPosted(false);
             invoice.setPostedAt(null);
             invoice.setPostedBy(null);
+        } else {
+            // P2-CK-fin-006（purchase 对端）：无红冲出口联动作废 PENDING 过账异常（同 cancel 侧）。
+            ignorePendingPostingExceptions(invoice, context);
         }
         processor.doReverseApprove(invoice, context);
         processor.runCommitmentRestoreOnInvoiceReverseHook(invoice, true, context);
         return invoice;
+    }
+
+    private void ignorePendingPostingExceptions(ErpPurInvoice invoice, IServiceContext context) {
+        if (postingExceptionBiz == null) {
+            return;
+        }
+        try {
+            int ignored = postingExceptionBiz.ignorePendingByBill(invoice.getCode(),
+                    app.erp.fin.dao.ErpFinBusinessType.AP_INVOICE.name(), context);
+            if (ignored > 0) {
+                LOG.info("erp-pur-invoice-reverse-approve-pending-posting-ignored: invoiceCode={}, ignored={}",
+                        invoice.getCode(), ignored);
+            }
+        } catch (Exception e) {
+            LOG.warn("erp-pur-invoice-reverse-approve-pending-posting-ignore-failed (isolated, non-blocking): invoiceCode={}, reason={}",
+                    invoice.getCode(), e.getMessage());
+        }
     }
 
     @Override

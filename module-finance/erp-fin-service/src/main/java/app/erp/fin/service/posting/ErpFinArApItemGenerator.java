@@ -21,6 +21,8 @@ import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.isNull;
+import static io.nop.api.core.beans.FilterBeans.or;
 
 // 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinArApItem）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
@@ -73,7 +75,9 @@ public class ErpFinArApItemGenerator {
                 && isCompanyAccountPayment(event.getBillData())) {
             return null;
         }
-        if (existsItem(profile.sourceBillType, event.getBillHeadCode(), context)) {
+        // P2-CK-fin-011：查重带账套维度（acctSchemaId ORM mandatory 非空 + 引擎路径 generate 前
+        // setAcctSchemaId 非空）——多账套逐套生成辅助账项，修复仅首账套建项。
+        if (existsItem(profile.sourceBillType, event.getBillHeadCode(), event.getAcctSchemaId(), context)) {
             return null;
         }
 
@@ -132,6 +136,8 @@ public class ErpFinArApItemGenerator {
         if (profile == null) {
             return;
         }
+        // P2-CK-fin-011 Decision：取消方向不设账套过滤（findItems 3-arg 无账套变体）——
+        // 源单红冲是全账套事件，全账套取消语义更完整（多账套过滤反而留下悬挂辅助账项）。
         List<ErpFinArApItem> items = findItems(profile.sourceBillType, billHeadCode, context);
         for (ErpFinArApItem item : items) {
             // F2.2（P2-CK-fin2-005）：已核销守卫——settled>0 的项直接取消会留下核销悬挂
@@ -197,8 +203,9 @@ public class ErpFinArApItemGenerator {
         }
     }
 
-    protected boolean existsItem(String sourceBillType, String sourceBillCode, IServiceContext context) {
-        return !findItems(sourceBillType, sourceBillCode, context).isEmpty();
+    protected boolean existsItem(String sourceBillType, String sourceBillCode, String acctSchemaId,
+                                 IServiceContext context) {
+        return !findItems(sourceBillType, sourceBillCode, acctSchemaId, context).isEmpty();
     }
 
     /** 报销公司直付（paymentMode=COMPANY_ACCOUNT）：贷银行存款，不挂应付-员工辅助账。 */
@@ -207,6 +214,7 @@ public class ErpFinArApItemGenerator {
         return ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT.equals(mode);
     }
 
+    /** 无账套过滤变体（cancelOnReverse 全账套取消方向专用，P2-CK-fin-011 Decision）。 */
     protected List<ErpFinArApItem> findItems(String sourceBillType, String sourceBillCode, IServiceContext context) {
         if (StringHelper.isBlank(sourceBillCode)) {
             return java.util.Collections.emptyList();
@@ -214,6 +222,28 @@ public class ErpFinArApItemGenerator {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("sourceBillType", sourceBillType), eq("sourceBillCode", sourceBillCode)));
+        return dao.findAllByQuery(q);
+    }
+
+    /**
+     * P2-CK-fin-011：查重带账套维度（acctSchemaId 非空时精确过滤；null 时显式 NULL 通道
+     * or(eq(field,null), isNull(field))——eq(field,null) 非可靠 NULL 匹配，
+     * ErpFinVoucherTemplateRenderTemplateProcessor 先例；ORM acctSchemaId mandatory 下实际恒非空）。
+     */
+    protected List<ErpFinArApItem> findItems(String sourceBillType, String sourceBillCode,
+                                             String acctSchemaId, IServiceContext context) {
+        if (StringHelper.isBlank(sourceBillCode)) {
+            return java.util.Collections.emptyList();
+        }
+        IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
+        QueryBean q = new QueryBean();
+        if (acctSchemaId != null) {
+            q.addFilter(and(eq("sourceBillType", sourceBillType), eq("sourceBillCode", sourceBillCode),
+                    eq("acctSchemaId", acctSchemaId)));
+        } else {
+            q.addFilter(and(eq("sourceBillType", sourceBillType), eq("sourceBillCode", sourceBillCode),
+                    or(eq("acctSchemaId", null), isNull("acctSchemaId"))));
+        }
         return dao.findAllByQuery(q);
     }
 

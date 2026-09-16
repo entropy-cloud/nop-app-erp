@@ -96,7 +96,7 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
         assertNotNull(ex, "失败应在异常工作台留下 PENDING 记录（失败不静默）");
         assertEquals("erp.err.fin.posting.period-closed", ex.getErrorCode(), "异常记录含 ErrorCode");
         assertEquals(ErpFinConstants.POSTING_EXCEPTION_STATUS_PENDING, ex.getStatus(), "初始状态 PENDING");
-        assertEquals("resolveOpenPeriod", ex.getFailedStage(), "异常记录含失败阶段");
+        assertEquals("post", ex.getFailedStage(), "异常记录含失败阶段（fin-014 粗粒度通道归一）");
         assertNotNull(ex.getTraceId(), "异常记录含 traceId");
         assertNotNull(ex.getEventData(), "异常记录含原始事件数据（重试重建用）");
 

@@ -146,6 +146,9 @@ public class ErpFinPostingProcessor {
             return existing.getId();
         }
 
+        // P2-CK-fin-008：提升至 try 外声明——catch 恢复原账套需要可见性（多账套迭代失败后
+        // event 原停留最后迭代值，recordPostFailure 将带错账套落异常记录、重试从错账套重放）。
+        String originalSchemaId = event.getAcctSchemaId();
         try {
             // F1.4（P1-CK-fin-005）：账套 fail-closed 守卫——组织零账套行时 resolver 返回 null，
             // 修复前 SchemaPropagator 空列表 → 零凭证静默返回（无异常记录/告警的第三态）。
@@ -170,14 +173,13 @@ public class ErpFinPostingProcessor {
             List<VoucherFact> facts = timeStage("generateFacts", run,
                     () -> generateFacts(event, provider, primaryCtx, context));
             run.captureTemplate(facts);
-            timeStageVoid("resolveSubjects", run, () -> resolveSubjects(facts, context));
+            timeStageVoid("resolveSubjects", run, () -> resolveSubjects(facts, originalSchemaId, context));
 
             BigDecimal[] totals = timeStage("balanceTotals", run,
                     () -> balanceTotals(facts, context));
             timeStageVoid("assertBalanced", run, () -> assertBalanced(totals[0], totals[1], context));
 
             String primaryVoucherId = null;
-            String originalSchemaId = event.getAcctSchemaId();
             for (String schemaId : targetSchemas) {
                 if (alreadyPosted(event, schemaId, context)) {
                     LOG.info("skipping already-posted acct schema: traceId={}, billHeadCode={}, schemaId={}",
@@ -217,7 +219,7 @@ public class ErpFinPostingProcessor {
                     voucherCount, run.providerName, run.isFallback, run.templateDesc, run.timingsMillis());
             return primaryVoucherId;
         } catch (RuntimeException e) {
-            event.setAcctSchemaId(event.getAcctSchemaId());
+            event.setAcctSchemaId(originalSchemaId);
             // observability.md §5.1 指标 1（Counter）+ 指标 2（Timer）：失败路径埋点
             // （Timer 记录失败过账耗时，Counter 标记 result=failure；对齐 plan §5.1 metric 2 spec「单次过账端到端耗时」）
             postingMetrics.recordLatency(run.businessType, CoreMetrics.nanoTimeDiff(processBegin));
@@ -603,6 +605,16 @@ public class ErpFinPostingProcessor {
             ErpFinVoucherLine first = originalLines.get(0);
             ctx.setCurrencyId(first.getCurrencyId());
             ctx.setExchangeRate(first.getExchangeRate());
+            // P2-CK-fin-009：首行汇率 null 时回退任一非 null 行（原凭证多行多币种时防红冲行汇率
+            // 落 EXCHANGE_RATE_DEFAULT=1 失真）；全空保持既有回退语义（原凭证本身无汇率场景）。
+            if (ctx.getExchangeRate() == null) {
+                for (ErpFinVoucherLine ol : originalLines) {
+                    if (ol.getExchangeRate() != null) {
+                        ctx.setExchangeRate(ol.getExchangeRate());
+                        break;
+                    }
+                }
+            }
         }
         return ctx;
     }
@@ -626,7 +638,12 @@ public class ErpFinPostingProcessor {
         return facts;
     }
 
-    protected void resolveSubjects(List<VoucherFact> facts, IServiceContext context) {
+    /**
+     * P2-CK-fin-010：账套维度入参——传当前过账的原账套 id（facts 在源账套上下文生成，gl-mapping-rules.md
+     * §5.2 pre-translation 仅运行一次），使 acctSchemaId 精确规则（§3.3 R2/R4 类）按设计命中；
+     * 修复原 resolveAcctSchemaIdFromContext 恒 null 使精确规则全部跳过的 doc/code 漂移。
+     */
+    protected void resolveSubjects(List<VoucherFact> facts, String acctSchemaId, IServiceContext context) {
         if (facts.isEmpty()) {
             return;
         }
@@ -643,7 +660,7 @@ public class ErpFinPostingProcessor {
             }
             GlMappingDimensions dims = buildGlMappingDimensions(fact);
             String resolved = glMappingResolver.resolveSubjectCode(
-                    fact.getBusinessType(), fact.getAccountKey(), dims, resolveAcctSchemaIdFromContext());
+                    fact.getBusinessType(), fact.getAccountKey(), dims, acctSchemaId);
             if (resolved != null) {
                 fact.setSubjectCode(resolved);
             } else if (isStrictMode()) {
@@ -697,10 +714,6 @@ public class ErpFinPostingProcessor {
     }
 
     /** A1 辅助：当前过账上下文的 acctSchemaId（从首次 fact 推导；后续 translateFactsForSchema 不再调 resolver）。 */
-    protected String resolveAcctSchemaIdFromContext() {
-        return null; // 多账套通配匹配（acctSchemaId IS NULL 规则命中）；具体账套精确规则可选
-    }
-
     /** A1 辅助：是否启用 strict-mode（空匹配抛异常）。默认 false。 */
     protected boolean isStrictMode() {
         return AppConfig.var(CONFIG_GL_MAPPING_STRICT_MODE, false);
@@ -753,7 +766,9 @@ public class ErpFinPostingProcessor {
             if (mappedId != null && !mappedId.equals(f.getSubjectId())) {
                 ErpMdSubject targetSubject = targetSubjectCache.get(mappedId);
                 if (targetSubject == null) {
-                    targetSubject = daoProvider.daoFor(ErpMdSubject.class).getEntityById(mappedId);
+                    // P2-CK-fin-007：跨域科目读取走 I*Biz 管道（ICrudBiz.get，与 L662 resolveSubjects
+                    // 同范式），修复原 daoFor 直查越权 + 死变量并存。
+                    targetSubject = mdSubjectBiz.get(mappedId, true, context);
                     if (targetSubject != null) {
                         targetSubjectCache.put(mappedId, targetSubject);
                     }
@@ -810,6 +825,14 @@ public class ErpFinPostingProcessor {
             fact.setSubjectName(ol.getSubjectName());
             fact.setDcDirection(ol.getDcDirection());
             fact.setAmount(ol.getDcDirection() != null && Objects.equals(ol.getDcDirection(), DC_CREDIT) ? negCredit : negDebit);
+            // P2-CK-fin-009：红冲行复制源币双金额（取负），修复多币种红冲行 amountSource 被本位币
+            // 金额顶替（persistVoucher 对 null 回退）；null 保持既有回退语义。
+            if (ol.getAmountSource() != null) {
+                fact.setAmountSource(ol.getAmountSource().negate());
+            }
+            if (ol.getAmountFunctional() != null) {
+                fact.setAmountFunctional(ol.getAmountFunctional().negate());
+            }
             fact.setMemo(ol.getMemo());
             fact.setBusinessType(businessType.name());
             fact.setPartnerId(ol.getPartnerId());

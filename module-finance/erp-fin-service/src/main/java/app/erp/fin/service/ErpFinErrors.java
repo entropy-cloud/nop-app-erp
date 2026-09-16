@@ -308,6 +308,12 @@ public interface ErpFinErrors {
             "会计期间 {periodCode} 反结账原因必填（审计要求，RC-9 全程审计[操作人/原因]）",
             ARG_PERIOD_CODE);
 
+    // P2-CK-fin-015：reverseVoucher 对业务/红字凭证（有业财回链）拒绝单边标记——
+    // 标记后源单 posted 不回退、辅助账不取消、后续反审核被永久阻断；提示走源单反审核路径。
+    ErrorCode ERR_REVERSE_VOUCHER_BILL_LINKED = ErrorCode.define("erp.err.fin.reverse-voucher-bill-linked",
+            "凭证 {voucherId} 为业务/红字回链凭证，不可单边标记红冲；请通过源单反审核触发完整红冲闭环",
+            ARG_VOUCHER_ID);
+
     ErrorCode ERR_CLOSE_SUBJECT_NOT_CONFIGURED = ErrorCode.define("erp.err.fin.period-close.subject-not-configured",
             "期末结账所需科目/汇率未配置：配置键 {configKey}",
             ARG_CONFIG_KEY);

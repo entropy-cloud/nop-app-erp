@@ -23,8 +23,15 @@ public class ErpPurInvoiceCancelProcessor extends AbstractCancelProcessor<ErpPur
     @Inject
     PurInvoicePostingDispatcher postingDispatcher;
 
+    private static final org.slf4j.Logger LOG =
+            org.slf4j.LoggerFactory.getLogger(ErpPurInvoiceCancelProcessor.class);
+
     @Inject
     PaymentSettler settler;
+
+    @Inject
+    @jakarta.annotation.Nullable
+    app.erp.fin.biz.IErpFinPostingExceptionBiz postingExceptionBiz;
 
     @Override
     public ErpPurInvoice cancel(String id, IServiceContext context) {
@@ -45,10 +52,31 @@ public class ErpPurInvoiceCancelProcessor extends AbstractCancelProcessor<ErpPur
             invoice.setPosted(false);
             invoice.setPostedAt(null);
             invoice.setPostedBy(null);
+        } else {
+            // P2-CK-fin-006（purchase 对端，镜像 F3.7 sal-019）：无红冲出口联动作废 PENDING 过账异常
+            // （sweep 仅扫 PENDING，重放通道关闭）。失败隔离不阻断作废主流程。
+            ignorePendingPostingExceptions(invoice, context);
         }
         processor.doCancel(invoice, context);
         processor.runCommitmentRestoreOnInvoiceReverseHook(invoice, wasApproved, context);
         return invoice;
+    }
+
+    private void ignorePendingPostingExceptions(ErpPurInvoice invoice, IServiceContext context) {
+        if (postingExceptionBiz == null) {
+            return;
+        }
+        try {
+            int ignored = postingExceptionBiz.ignorePendingByBill(invoice.getCode(),
+                    app.erp.fin.dao.ErpFinBusinessType.AP_INVOICE.name(), context);
+            if (ignored > 0) {
+                LOG.info("erp-pur-invoice-cancel-pending-posting-ignored: invoiceCode={}, ignored={}",
+                        invoice.getCode(), ignored);
+            }
+        } catch (Exception e) {
+            LOG.warn("erp-pur-invoice-cancel-pending-posting-ignore-failed (isolated, non-blocking): invoiceCode={}, reason={}",
+                    invoice.getCode(), e.getMessage());
+        }
     }
 
     @Override

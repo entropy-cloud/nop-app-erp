@@ -4,6 +4,7 @@ import app.erp.fin.dao.entity.ErpFinPostingException;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.annotations.txn.TransactionPropagation;
+import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -11,6 +12,9 @@ import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
+
+import static io.nop.api.core.beans.FilterBeans.and;
+import static io.nop.api.core.beans.FilterBeans.eq;
 import io.nop.dao.api.IEntityDao;
 import io.nop.dao.txn.ITransactionTemplate;
 import io.nop.orm.IOrmTemplate;
@@ -44,6 +48,9 @@ import java.util.Map;
 public class ErpFinPostingExceptionRecorder {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpFinPostingExceptionRecorder.class);
+
+    /** P2-CK-fin-014：合并路径 MAX_RETRY 对齐 RetryProcessor/RetryHelper（≥3 升级 MANUAL）。 */
+    private static final int MAX_RETRY_FOR_MERGE = 3;
 
     @Inject
     IDaoProvider daoProvider;
@@ -91,6 +98,15 @@ public class ErpFinPostingExceptionRecorder {
                        String errorCode, String errorMessage, String failedStage,
                        LocalDate voucherDate, String orgId, String acctSchemaId,
                        String currencyId, BigDecimal exchangeRate, String eventData) {
+        // P2-CK-fin-014：同 (businessType, billHeadCode, postingType, 粗粒度通道) 已有 PENDING 时合并
+        // （刷新最新失败证据 + 递增既有 retryCount），不新增重复行——修复手动重试失败每次增生
+        // PENDING 扩大 sweep 并发面。粗粒度通道归一：run.currentStage 为细粒度管道阶段名
+        // （resolveProvider/generateFacts/persistVoucher_{schemaId}…），归一为 post/reverse 通道值；
+        // listener 失败（FAILED_STAGE_NOTIFY_*）自成通道不与引擎管道失败合并。
+        if (mergeIntoExistingPending(billHeadCode, businessType, postingType, errorCode, errorMessage,
+                failedStage, voucherDate, orgId, acctSchemaId, currencyId, exchangeRate, eventData)) {
+            return;
+        }
         String exceptionId = null;
         try {
             exceptionId = transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
@@ -103,7 +119,8 @@ public class ErpFinPostingExceptionRecorder {
                         entity.setPostingType(postingType);
                         entity.setErrorCode(errorCode);
                         entity.setErrorMessage(truncate(errorMessage, 500));
-                        entity.setFailedStage(failedStage);
+                        // P2-CK-fin-014：落库即存粗粒度通道值（首行/合并行口径一致，否则合并查询不命中）
+                        entity.setFailedStage(coarseChannel(postingType, failedStage));
                         entity.setVoucherDate(voucherDate);
                         entity.setOrgId(orgId);
                         entity.setAcctSchemaId(acctSchemaId);
@@ -128,8 +145,72 @@ public class ErpFinPostingExceptionRecorder {
                 failedStage, voucherDate, eventData);
     }
 
-    /**
-     * 派发过账异常告警通知（config-gated by {@code erp-fin.posting-exception-notify-enabled}）。
+    /** P2-CK-fin-014：粗粒度通道归一——引擎管道失败统一 post/reverse 通道值。 */
+    public static String coarseChannel(String postingType, String failedStage) {
+        if (failedStage != null && (failedStage.startsWith("NOTIFY_")
+                || failedStage.startsWith("notify-"))) {
+            return failedStage;
+        }
+        return ErpFinConstants.POSTING_TYPE_REVERSAL.equals(postingType) ? "reverse" : "post";
+    }
+
+    /** 合并进既有 PENDING（同 bill+type+postingType+粗粒度通道）；命中返回 true。 */
+    private boolean mergeIntoExistingPending(String billHeadCode, String businessType, String postingType,
+                                             String errorCode, String errorMessage, String failedStage,
+                                             LocalDate voucherDate, String orgId, String acctSchemaId,
+                                             String currencyId, BigDecimal exchangeRate, String eventData) {
+        final String[] existingIdHolder = new String[1];
+        final boolean[] manualEscalated = new boolean[1];
+        try {
+            Boolean merged = transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+                    ormTemplate.runInSession(session -> {
+                        IEntityDao<ErpFinPostingException> dao = daoProvider.daoFor(ErpFinPostingException.class);
+                        QueryBean q = new QueryBean();
+                        q.addFilter(and(eq("billHeadCode", billHeadCode), eq("businessType", businessType),
+                                eq("postingType", postingType),
+                                eq("failedStage", coarseChannel(postingType, failedStage)),
+                                eq("status", ErpFinConstants.POSTING_EXCEPTION_STATUS_PENDING)));
+                        ErpFinPostingException existing = dao.findAllByQuery(q).stream().findFirst().orElse(null);
+                        if (existing == null) {
+                            return false;
+                        }
+                        existing.setErrorCode(errorCode);
+                        existing.setErrorMessage(truncate(errorMessage, 500));
+                        existing.setFailedStage(coarseChannel(postingType, failedStage));
+                        existing.setEventData(truncate(eventData, 4000));
+                        existing.setOccurrenceTime(CoreMetrics.currentTimestamp());
+                        existing.setRetryCount((existing.getRetryCount() == null ? 0 : existing.getRetryCount()) + 1);
+                        if (existing.getRetryCount() >= MAX_RETRY_FOR_MERGE) {
+                            existing.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_MANUAL);
+                        }
+                        if (ErpFinConstants.POSTING_EXCEPTION_STATUS_MANUAL.equals(existing.getStatus())) {
+                            existingIdHolder[0] = existing.getId();
+                            manualEscalated[0] = true;
+                        }
+                        dao.updateEntity(existing);
+                        session.flush();
+                        return true;
+                    }));
+            if (Boolean.TRUE.equals(merged)) {
+                LOG.warn("erp-fin-posting-exception-merged-into-existing-pending: billHeadCode={}, businessType={}, channel={}",
+                        billHeadCode, businessType, coarseChannel(postingType, failedStage));
+                // P2-CK-fin-014（结束审计整改 #3）：G2 MAX_RETRY 升级 MANUAL 派发告警（posting-log.md
+                // 明文契约，对齐 sweep dispatchMaxRetryAlert 先例；复用 config-gated dispatchNotify 通道）。
+                if (manualEscalated[0]) {
+                    dispatchNotify(existingIdHolder[0], billHeadCode, businessType, postingType,
+                            errorCode, errorMessage, coarseChannel(postingType, failedStage), voucherDate, eventData);
+                }
+            }
+            return Boolean.TRUE.equals(merged);
+        } catch (Exception e) {
+            // 合并探查失败降级为新增行（不阻断原过账异常传播）
+            LOG.warn("erp-fin-posting-exception-merge-probe-failed (degraded): billHeadCode={}, reason={}",
+                    billHeadCode, e.getMessage());
+            return false;
+        }
+    }
+
+    /** 派发过账异常告警通知（config-gated by {@code erp-fin.posting-exception-notify-enabled}）。
      *
      * <p>在独立 REQUIRES_NEW 事务内执行 notify：避免外层正在回滚的主过账事务吞掉通知落库。
      * 通知失败降级（warn）不阻断主异常传播。
