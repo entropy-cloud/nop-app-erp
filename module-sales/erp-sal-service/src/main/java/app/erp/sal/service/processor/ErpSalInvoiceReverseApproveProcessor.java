@@ -31,6 +31,13 @@ public class ErpSalInvoiceReverseApproveProcessor extends AbstractReverseApprove
     @Inject
     ErpSalInvoiceApprovalStateMachine stateMachine;
 
+    @Inject
+    @jakarta.annotation.Nullable
+    app.erp.fin.biz.IErpFinPostingExceptionBiz postingExceptionBiz;
+
+    private static final org.slf4j.Logger LOG =
+            org.slf4j.LoggerFactory.getLogger(ErpSalInvoiceReverseApproveProcessor.class);
+
     @Override
     public ErpSalInvoice reverseApprove(String id, IServiceContext context) {
         ErpSalInvoice invoice = requireEntity(id);
@@ -46,6 +53,9 @@ public class ErpSalInvoiceReverseApproveProcessor extends AbstractReverseApprove
             invoice.setPosted(false);
             invoice.setPostedAt(null);
             invoice.setPostedBy(null);
+        } else {
+            // P2-CK-sal-019：无红冲出口联动作废 PENDING 过账异常（同 cancel 侧）。
+            ignorePendingPostingExceptions(invoice, context);
         }
         setApproveStatus(invoice, stateMachine.reverseApproveTargetStatus());
         setApprovedBy(invoice, null);
@@ -116,5 +126,23 @@ public class ErpSalInvoiceReverseApproveProcessor extends AbstractReverseApprove
     @Override
     protected String submittedStatus() {
         return ErpSalConstants.APPROVE_STATUS_SUBMITTED;
+    }
+
+    /** P2-CK-sal-019：失败隔离（对齐 RC-R1.85 容错范式），不阻断反审核主流程。 */
+    private void ignorePendingPostingExceptions(ErpSalInvoice invoice, IServiceContext context) {
+        if (postingExceptionBiz == null) {
+            return;
+        }
+        try {
+            int ignored = postingExceptionBiz.ignorePendingByBill(invoice.getCode(),
+                    app.erp.fin.dao.ErpFinBusinessType.AR_INVOICE.name(), context);
+            if (ignored > 0) {
+                LOG.info("erp-sal-invoice-reverse-approve-pending-posting-ignored: invoiceCode={}, ignored={}",
+                        invoice.getCode(), ignored);
+            }
+        } catch (Exception e) {
+            LOG.warn("erp-sal-invoice-reverse-approve-pending-posting-ignore-failed (isolated, non-blocking): invoiceCode={}, reason={}",
+                    invoice.getCode(), e.getMessage());
+        }
     }
 }

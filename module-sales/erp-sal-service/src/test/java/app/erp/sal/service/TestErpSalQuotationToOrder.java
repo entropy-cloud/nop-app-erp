@@ -186,6 +186,52 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
         assertEquals(0, reconversion.getStatus(), "原订单作废后可重新转化");
     }
 
+    /**
+     * P2-CK-sal-016：分批转订单守卫（quotation.md 规则 5）——已有关联订单但累计转化数量未达
+     * 报价总数量时放行（修复前存在任一活跃订单即拒绝）；累计 ≥ 总量后拒绝。
+     */
+    @Test
+    public void testPartialConvertedQuotationAllowsFurtherConvert() {
+        ErpSalQuotation quotation = newQuotation("SQ-PART-001", CUSTOMER_ID, "100",
+                LocalDate.of(2026, 7, 1), LocalDate.of(2026, 12, 31));
+        ormTemplate.runInSession(() -> {
+            seedActiveCustomer(CUSTOMER_ID, null);
+            saveQuotationWithLine(quotation, "10", "10");
+        });
+        fullApproveAndConfirm(quotation.getId());
+
+        // 直接落库一笔部分转化订单（qty=4，关联 quotationId）
+        String partialOrderId = ormTemplate.runInSession(session -> {
+            ErpSalOrder order = daoProvider.daoFor(ErpSalOrder.class).newEntity();
+            order.setCode("SO-PART-001");
+            order.setQuotationId(quotation.getId());
+            order.setCustomerId(CUSTOMER_ID);
+            order.setBusinessDate(LocalDate.of(2026, 7, 2));
+            order.setCurrencyId(CURRENCY_ID);
+            order.setDocStatus(ErpSalConstants.DOC_STATUS_ACTIVE);
+            order.setApproveStatus(ErpSalConstants.APPROVE_STATUS_UNSUBMITTED);
+            daoProvider.daoFor(ErpSalOrder.class).saveEntity(order);
+            ErpSalOrderLine line = daoProvider.daoFor(ErpSalOrderLine.class).newEntity();
+            line.setOrderId(order.getId());
+            line.setLineNo(1);
+            line.setMaterialId(MATERIAL_ID);
+            line.setUoMId("1");
+            line.setQuantity(new BigDecimal("4"));
+            line.setUnitPrice(new BigDecimal("10"));
+            line.setAmount(new BigDecimal("40"));
+            daoProvider.daoFor(ErpSalOrderLine.class).saveEntity(line);
+            return order.getId();
+        });
+
+        ApiResponse<?> first = convertToOrder(quotation.getId());
+        assertEquals(0, first.getStatus(),
+                "累计已转 4 < 报价总量 10 → 再转化放行（修复前被存在性守卫拒绝）");
+
+        ApiResponse<?> second = convertToOrder(quotation.getId());
+        assertEquals(ErpSalErrors.ERR_QUOTATION_ALREADY_CONVERTED.getErrorCode(), second.getCode(),
+                "累计已转 4+10=14 ≥ 报价总量 10 → 拒绝");
+    }
+
     @Test
     public void testConvertedOrderThenCreditCheckAndApprove() {
         ErpSalQuotation quotationSoft = newQuotation("SQ-SOFT-001", CUSTOMER_ID, "150",

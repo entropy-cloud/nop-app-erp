@@ -71,6 +71,11 @@ public final class ReturnCostStrategyResolver {
         return base;
     }
 
+    /**
+     * P2-CK-sal-009：current 成本按数量加权平均——余额表批次/库位/SKU 拆分多行时，原 setLimit(1)
+     * 取任一批次行 avgCost 源头行不确定（不同批次 avgCost 不同，GL TOTAL_COST 与库存 ledger 同源
+     * 但口径漂移）。加权 = Σ(avgCost×totalQty)/Σ(totalQty)，总量为零时回退任一非空 avgCost。
+     */
     private static BigDecimal findAvgCost(IDaoProvider daoProvider, String materialId, String warehouseId) {
         if (materialId == null || warehouseId == null) {
             return null;
@@ -78,11 +83,25 @@ public final class ReturnCostStrategyResolver {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("materialId", materialId), eq("warehouseId", warehouseId)));
-        q.setLimit(1);
+        BigDecimal weightedSum = BigDecimal.ZERO;
+        BigDecimal totalQty = BigDecimal.ZERO;
+        BigDecimal fallback = null;
         for (ErpInvStockBalance balance : dao.findAllByQuery(q)) {
-            return balance.getAvgCost();
+            BigDecimal avgCost = balance.getAvgCost();
+            if (avgCost == null) {
+                continue;
+            }
+            if (fallback == null) {
+                fallback = avgCost;
+            }
+            BigDecimal qty = balance.getTotalQuantity() == null ? BigDecimal.ZERO : balance.getTotalQuantity();
+            weightedSum = weightedSum.add(avgCost.multiply(qty));
+            totalQty = totalQty.add(qty);
         }
-        return null;
+        if (totalQty.signum() > 0) {
+            return weightedSum.divide(totalQty, 6, java.math.RoundingMode.HALF_UP);
+        }
+        return fallback;
     }
 
     private static BigDecimal nz(BigDecimal v) {

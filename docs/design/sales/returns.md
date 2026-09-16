@@ -162,7 +162,7 @@ UNSUBMITTED
 | 当前库存成本 | 使用退货入库时的库存成本 | 价格波动调整 |
 | 退货协议价 | 按退货协议约定的成本 | 双方协商 |
 
-> 实现注记（RC-R1.18 / P1-RC-026）：三策略由配置 `erp-sal.return-cost-method` 决定（默认 `original`）。`ReturnStockMoveBuilder.buildLines` 按配置分支设置库存移动单行 `unitCost`：`original` = 行 unitPrice（原出库成本）/ `current` = 库存域 `ErpInvStockBalance.avgCost`（按 materialId+warehouseId 查询；缺失回退 unitPrice + LOG.warn）/ `agreement` = 行 unitPrice（退货协议价语义）。`SalReturnPostingDispatcher.computeTotalCost` 经同一 `ReturnCostStrategyResolver` 同源消费，维持「库存 ledger totalCost 与 GL 凭证 TOTAL_COST 同源」不变量。非法配置值回退 `original`。
+> 实现注记（RC-R1.18 / P1-RC-026）：三策略由配置 `erp-sal.return-cost-method` 决定（默认 `original`）。`ReturnStockMoveBuilder.buildLines` 按配置分支设置库存移动单行 `unitCost`：`original` = 行 unitPrice（原出库成本）/ `current` = 库存域 `ErpInvStockBalance.avgCost`（按 materialId+warehouseId 查询，**批次/库位/SKU 拆分多行时按数量加权平均 Σ(avgCost×qty)/Σqty**，零量回退任一非空 avgCost——P2-CK-sal-009 口径；缺失回退 unitPrice + LOG.warn）/ `agreement` = 行 unitPrice（退货协议价语义）。`SalReturnPostingDispatcher.computeTotalCost` 经同一 `ReturnCostStrategyResolver` 同源消费，维持「库存 ledger totalCost 与 GL 凭证 TOTAL_COST 同源」不变量。非法配置值回退 `original`。
 
 ### 批次追溯
 

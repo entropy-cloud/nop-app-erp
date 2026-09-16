@@ -158,6 +158,31 @@ public class TestErpSalInvoiceApproval extends JunitAutoTestCase {
                 "创建人=审核人 → SoD 守卫应抛 ERR_SAL_APPROVER_IS_CREATOR");
     }
 
+    /**
+     * P2-CK-sal-013：withdrawApproval 仅提交人可操作（state-machine.md §2）——非提交人撤回拒绝
+     * （新码 ERR_WITHDRAW_NOT_SUBMITTER），提交人本人放行。
+     */
+    @Test
+    public void testWithdrawOnlySubmitterAllowed() {
+        ErpSalInvoice invoice = newInvoice("SI-WDR-001");
+        ormTemplate.runInSession(() -> {
+            seedActiveCustomer(CUSTOMER_ID);
+            saveInvoiceWithLine(invoice);
+        });
+        assertEquals(0, submit(invoice.getId()).getStatus(), "提交应成功 → SUBMITTED");
+        String creator = reload(invoice).getCreatedBy();
+
+        setApproverUserContext("other-user");
+        ApiResponse<?> bad = withdrawSubmit(invoice.getId());
+        assertEquals(app.erp.common.service.ErpCommonErrors.ERR_WITHDRAW_NOT_SUBMITTER.getErrorCode(), bad.getCode(),
+                "非提交人撤回应拒绝（修复前任何有权限者可撤回他人提交）");
+
+        setApproverUserContext(creator);
+        assertEquals(0, withdrawSubmit(invoice.getId()).getStatus(), "提交人本人撤回放行");
+        assertEquals(ErpSalConstants.APPROVE_STATUS_UNSUBMITTED, reload(invoice).getApproveStatus(),
+                "撤回 → UNSUBMITTED");
+    }
+
     private void setApproverUserContext(String userId) {
         UserContextImpl uc = new UserContextImpl();
         uc.setUserId(userId);

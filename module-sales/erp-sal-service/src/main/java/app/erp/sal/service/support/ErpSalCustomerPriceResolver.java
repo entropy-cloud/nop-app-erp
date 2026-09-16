@@ -124,6 +124,9 @@ public class ErpSalCustomerPriceResolver implements IErpMdCustomerPriceResolver 
 
     /**
      * 在指定清单下匹配最优行：skuId 优先 > materialId + 数量阶梯 + 行级期间。
+     * P2-CK-sal-008：多命中时按确定性 comparator 取优——skuId 专属命中 > materialId 通用命中 >
+     * 更窄数量阶梯（minQuantity 更大）> validFrom 更晚 > lineNo 兜底；修复原「迭代序第一条」的
+     * DB 返回顺序不确定性（sku 专属价可能被 material 通用价遮蔽）。
      */
     protected ErpSalPriceListLine matchLine(String priceListId, ErpMdMaterialSku sku,
                                             BigDecimal qty, LocalDate today,
@@ -144,11 +147,39 @@ public class ErpSalCustomerPriceResolver implements IErpMdCustomerPriceResolver 
             if (!lineMatchesPeriod(line, today)) {
                 continue;
             }
-            if (best == null) {
+            if (best == null || comparePriceLineCandidates(line, best) < 0) {
                 best = line;
             }
         }
         return best;
+    }
+
+    /** P2-CK-sal-008：候选行确定性比较（返回负值表示 a 优于 b）。 */
+    protected int comparePriceLineCandidates(ErpSalPriceListLine a, ErpSalPriceListLine b) {
+        // skuId 专属命中优先于 materialId 通用命中
+        boolean aSku = a.getSkuId() != null;
+        boolean bSku = b.getSkuId() != null;
+        if (aSku != bSku) {
+            return aSku ? -1 : 1;
+        }
+        // 更窄数量阶梯（minQuantity 更大）优先
+        BigDecimal aMin = a.getMinQuantity() == null ? BigDecimal.ZERO : a.getMinQuantity();
+        BigDecimal bMin = b.getMinQuantity() == null ? BigDecimal.ZERO : b.getMinQuantity();
+        int byMin = bMin.compareTo(aMin);
+        if (byMin != 0) {
+            return byMin;
+        }
+        // validFrom 更晚优先（更近生效的定价）
+        if (a.getValidFrom() != null && b.getValidFrom() != null) {
+            int byValidFrom = b.getValidFrom().compareTo(a.getValidFrom());
+            if (byValidFrom != 0) {
+                return byValidFrom;
+            }
+        }
+        // id 兜底（实体无 lineNo 列；id 字符串序保证稳定确定性）
+        String aId = a.getId() == null ? "" : a.getId();
+        String bId = b.getId() == null ? "" : b.getId();
+        return aId.compareTo(bId);
     }
 
     protected boolean lineMatchesSkuOrMaterial(ErpSalPriceListLine line, ErpMdMaterialSku sku) {

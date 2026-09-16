@@ -40,6 +40,8 @@ public class ErpSalDeliveryReverseApproveProcessor extends AbstractReverseApprov
         setApprovedBy(delivery, null);
         setApprovedAt(delivery, null);
         dao().updateEntity(delivery);
+        // P2-CK-sal-011：反审核后重算订单发货状态（当前单已回非生效态，不再计入聚合）。
+        processor.rollupOrderDeliveryStatus(delivery, context);
         return delivery;
     }
 

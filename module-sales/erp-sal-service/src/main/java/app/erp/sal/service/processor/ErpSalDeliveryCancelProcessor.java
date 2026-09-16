@@ -49,6 +49,9 @@ public class ErpSalDeliveryCancelProcessor extends AbstractCancelProcessor<ErpSa
         setDocStatus(delivery, cancelledDocStatus());
         dao().updateEntity(delivery);
         cancelLinkedInspections(delivery, context);
+        // P2-CK-sal-011：作废后重算订单发货状态（当前单已非生效态，不再计入聚合），
+        // 修复「作废已审核出库单后订单 deliveryStatus 陈旧保持 DELIVERED/PARTIAL」。
+        processor.rollupOrderDeliveryStatus(delivery, context);
         return delivery;
     }
 

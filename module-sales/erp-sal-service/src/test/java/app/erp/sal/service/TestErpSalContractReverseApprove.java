@@ -2,6 +2,7 @@ package app.erp.sal.service;
 
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.sal.dao.entity.ErpSalContract;
+import app.erp.sal.service.ErpSalErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
@@ -82,6 +83,37 @@ public class TestErpSalContractReverseApprove extends JunitAutoTestCase {
         assertEquals(0, rpc(mutation, "ErpSalContract__reverseApprove",
                 ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "反审核 → REJECTED");
         assertEquals(ErpSalConstants.APPROVE_STATUS_REJECTED, reload(id).getApproveStatus());
+    }
+
+    /**
+     * P2-CK-sal-014：INLINE approve SoD 守卫（state-machine.md §6 职责分离）——创建人自审被拒
+     * （经 ErpSalInlineSodGuard 桥复用 erp-common.sod-enabled 开关），非创建人放行。
+     */
+    @Test
+    public void testInlineApproveCreatorSelfApproveBlocked() {
+        ormTemplate.runInSession(() -> seedActiveCustomer(CUSTOMER_ID));
+        String id = ormTemplate.runInSession(session -> seedContract("CT-SOD-001",
+                ErpSalConstants.APPROVE_STATUS_UNSUBMITTED));
+        assertEquals(0, rpc(mutation, "ErpSalContract__submitForApproval",
+                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "提交 → SUBMITTED");
+
+        // 创建人自审：读落库 createdBy（use-user-id-for-audit-fields 覆写为测试用户），置 IUserContext 模拟
+        String creator = reload(id).getCreatedBy();
+        io.nop.auth.core.login.UserContextImpl uc = new io.nop.auth.core.login.UserContextImpl();
+        uc.setUserId(creator);
+        io.nop.api.core.auth.IUserContext.set(uc);
+        ApiResponse<?> bad = rpc(mutation, "ErpSalContract__approve",
+                ApiRequest.build(Map.of("id", String.valueOf(id))));
+        assertEquals(ErpSalErrors.ERR_SAL_APPROVER_IS_CREATOR.getErrorCode(), bad.getCode(),
+                "合同创建人自审应被 INLINE SoD 守卫拒绝（修复前放行）");
+
+        // 非创建人放行
+        io.nop.auth.core.login.UserContextImpl uc2 = new io.nop.auth.core.login.UserContextImpl();
+        uc2.setUserId(creator + "-x");
+        io.nop.api.core.auth.IUserContext.set(uc2);
+        assertEquals(0, rpc(mutation, "ErpSalContract__approve",
+                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "非创建人审核放行");
+        assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, reload(id).getApproveStatus());
     }
 
     // ---------- CANCELLED 守卫阻断（P1-MA2-057，Phase 3）----------

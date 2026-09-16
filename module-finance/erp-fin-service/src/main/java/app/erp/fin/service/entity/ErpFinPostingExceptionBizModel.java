@@ -49,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
@@ -140,6 +141,29 @@ public class ErpFinPostingExceptionBizModel extends AbstractErpCrudBizModel<ErpF
     @BizMutation
     public ErpFinPostingException retry(@Name("exceptionId") String exceptionId, IServiceContext context) {
         return retryProcessor.retry(exceptionId, context);
+    }
+
+    /**
+     * P2-CK-sal-019：按源单号批量放弃 PENDING 过账异常。逐条复用 {@link #ignoreProcessor#ignore}
+     * （PENDING-only 守卫 + IGNORED 放弃态告警派发）；resolution note 标记源单作废联动。
+     */
+    @Override
+    @BizMutation
+    public int ignorePendingByBill(@Name("billHeadCode") String billHeadCode,
+                                   @Name("businessType") String businessType,
+                                   IServiceContext context) {
+        IEntityDao<ErpFinPostingException> dao = daoProvider().daoFor(ErpFinPostingException.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(and(
+                eq("billHeadCode", billHeadCode),
+                eq("businessType", businessType),
+                eq("status", ErpFinConstants.POSTING_EXCEPTION_STATUS_PENDING)));
+        int ignored = 0;
+        for (ErpFinPostingException ex : dao.findAllByQuery(q)) {
+            ignoreProcessor.ignore(ex.getId(), "source-bill cancelled/reverse-approved (P2-CK-sal-019)", context);
+            ignored++;
+        }
+        return ignored;
     }
 
     @Override

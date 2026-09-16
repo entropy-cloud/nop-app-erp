@@ -47,6 +47,9 @@
                         .param("bizObjId", entity.id)
                         .param("action", "approve");
                 }
+                // P2-CK-sal-014：INLINE approve 补 SoD 守卫（state-machine.md §6 职责分离；INLINE
+                // 豁免面仅 requireCustomer/Lines 不含 SoD）。经 helper 桥复用 erp-common.sod-enabled 开关。
+                inject('app.erp.sal.service.support.ErpSalInlineSodGuard').assertApproverNotCreator(entity.createdBy, svcCtx);
                 const status = entity.approveStatus;
 
                 if (status !== 'SUBMITTED') {

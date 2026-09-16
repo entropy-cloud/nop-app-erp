@@ -36,6 +36,9 @@ public class ErpSalReceiptCancelProcessor extends AbstractCancelProcessor<ErpSal
     @Inject
     ErpSalReceiptDocumentStateMachine stateMachine;
 
+    @Inject
+    app.erp.sal.service.entity.ReceiptSettler receiptSettler;
+
     @Override
     public ErpSalReceipt cancel(String id, IServiceContext context) {
         ErpSalReceipt receipt = requireEntity(id);
@@ -49,6 +52,9 @@ public class ErpSalReceiptCancelProcessor extends AbstractCancelProcessor<ErpSal
             receipt.setPostedAt(null);
             receipt.setPostedBy(null);
         }
+        // P2-CK-sal-012：作废前反向核销全部核销行（发票 receivedStatus 随 recompute 回落，
+        // 防止作废后发票残留 RECEIVED 封锁合理退货）。
+        receiptSettler.reverseAllSettlements(receipt);
         setDocStatus(receipt, cancelledDocStatus());
         dao().updateEntity(receipt);
         return receipt;

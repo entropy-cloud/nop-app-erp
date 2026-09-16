@@ -145,6 +145,71 @@ public class TestErpSalReceiptSettlement extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
+    // ---------- P2-CK-sal-010：核销 docStatus 守卫（新方向拒绝） ----------
+
+    @Test
+    public void testCancelledInvoiceSettleRejected() {
+        ErpSalInvoice invoice = newApprovedInvoice("SI-SET-C1", new BigDecimal("113"));
+        invoice.setDocStatus(ErpSalConstants.DOC_STATUS_CANCELLED);
+        ErpSalReceipt receipt = newApprovedReceipt("SR-SET-C1", new BigDecimal("113"));
+        ormTemplate.runInSession(() -> {
+            seedActiveCustomer(CUSTOMER_ID);
+            daoProvider.daoFor(ErpSalInvoice.class).saveEntity(invoice);
+            daoProvider.daoFor(ErpSalReceipt.class).saveEntity(receipt);
+        });
+
+        ApiResponse<?> bad = settle(receipt.getId(), invoice.getId(), new BigDecimal("60"));
+        assertEquals(ErpSalErrors.ERR_SETTLE_INVOICE_CANCELLED.getErrorCode(), bad.getCode(),
+                "已作废发票核销应拒绝（state-machine.md §4，修复前放行推进 receivedStatus）");
+        assertEquals(0, BigDecimal.ZERO.compareTo(reloadInvoice(invoice).getReceivedAmount()),
+                "拒绝路径发票 receivedAmount 保持 0");
+    }
+
+    @Test
+    public void testCancelledReceiptSettleRejected() {
+        ErpSalInvoice invoice = newApprovedInvoice("SI-SET-C2", new BigDecimal("113"));
+        ErpSalReceipt receipt = newApprovedReceipt("SR-SET-C2", new BigDecimal("113"));
+        receipt.setDocStatus(ErpSalConstants.DOC_STATUS_CANCELLED);
+        ormTemplate.runInSession(() -> {
+            seedActiveCustomer(CUSTOMER_ID);
+            daoProvider.daoFor(ErpSalInvoice.class).saveEntity(invoice);
+            daoProvider.daoFor(ErpSalReceipt.class).saveEntity(receipt);
+        });
+
+        ApiResponse<?> bad = settle(receipt.getId(), invoice.getId(), new BigDecimal("60"));
+        assertEquals(ErpSalErrors.ERR_SETTLE_RECEIPT_CANCELLED.getErrorCode(), bad.getCode(),
+                "已作废收款单核销应拒绝");
+    }
+
+    // ---------- P2-CK-sal-012：作废/反审核自动反向核销 ----------
+
+    @Test
+    public void testCancelReceiptAutoReversesSettlements() {
+        ErpSalInvoice invoice = newApprovedInvoice("SI-SET-C3", new BigDecimal("113"));
+        ErpSalReceipt receipt = newApprovedReceipt("SR-SET-C3", new BigDecimal("113"));
+        ormTemplate.runInSession(() -> {
+            seedActiveCustomer(CUSTOMER_ID);
+            daoProvider.daoFor(ErpSalInvoice.class).saveEntity(invoice);
+            daoProvider.daoFor(ErpSalReceipt.class).saveEntity(receipt);
+        });
+
+        assertEquals(0, settle(receipt.getId(), invoice.getId(), new BigDecimal("113")).getStatus(),
+                "前置全额核销成功");
+        assertEquals(ErpSalConstants.RECEIVED_STATUS_RECEIVED, reloadInvoice(invoice).getReceivedStatus());
+
+        assertEquals(0, cancelReceipt(receipt.getId()).getStatus(), "已核销收款单作废（自动反向核销后放行）");
+        ErpSalInvoice inv = reloadInvoice(invoice);
+        assertEquals(0, BigDecimal.ZERO.compareTo(inv.getReceivedAmount()),
+                "作废后发票 receivedAmount 回 0（修复前残留 113 并封锁退货）");
+        assertEquals(ErpSalConstants.RECEIVED_STATUS_UNRECEIVED, inv.getReceivedStatus(),
+                "作废后发票 receivedStatus 回 UNRECEIVED");
+    }
+
+    private ApiResponse<?> cancelReceipt(String receiptId) {
+        return executeRpc(mutation, "ErpSalReceipt__cancel",
+                ApiRequest.build(Map.of("receiptId", receiptId)));
+    }
+
     private boolean hasNegativeLine(String receiptId, String invoiceId) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("receiptId", receiptId));

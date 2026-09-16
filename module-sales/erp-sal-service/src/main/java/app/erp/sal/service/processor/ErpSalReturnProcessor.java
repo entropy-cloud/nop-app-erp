@@ -546,7 +546,10 @@ public class ErpSalReturnProcessor {
         dQuery.addFilter(and(
                 in("id", deliveryIds),
                 eq("approveStatus", ErpSalConstants.APPROVE_STATUS_APPROVED)));
+        // P2-CK-sal-011：docStatus 的 xmeta 仅允许 eq/in 过滤，已作废出库单经内存剔除
+        //（approveStatus 保持 APPROVED 的 CANCELLED 单不再计入已发货量）。
         Set<String> approvedDeliveryIds = dDao.findAllByQuery(dQuery).stream()
+                .filter(d -> !Objects.equals(d.getDocStatus(), ErpSalConstants.DOC_STATUS_CANCELLED))
                 .map(ErpSalDelivery::getId)
                 .collect(Collectors.toSet());
 

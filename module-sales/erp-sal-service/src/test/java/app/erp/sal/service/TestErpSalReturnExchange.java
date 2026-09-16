@@ -775,6 +775,40 @@ public class TestErpSalReturnExchange extends JunitAutoTestCase {
         return false;
     }
 
+    /**
+     * P2-CK-sal-017：换货行税额价内税口径（对齐 recomputeLineAmount P1-RC-022）——
+     * taxRate=13、unitPrice=8、qty=3 → 净额 24，税额 = 24×0.13/1.13 = 2.7611（4dp HALF_UP），
+     * 含税 26.7611。修复前价外税公式 24×13% = 3.12 → 27.12 与订单/发票口径漂移。
+     */
+    @Test
+    public void testExchangeDeliveryTaxInclusiveFormula() {
+        seedPeriodAndSubjects();
+        String[] deliveryCtx = seedApprovedDelivery("SD-XC-TAX-001", new BigDecimal("10"));
+        String returnId = nextId();
+        ormTemplate.runInSession(session -> {
+            newReturn("RT-XC-TAX-001", returnId, deliveryCtx[0], ErpSalConstants.RETURN_TYPE_EXCHANGE);
+            newReturnLine(nextId(), returnId, deliveryCtx[1], new BigDecimal("3"), new BigDecimal("8"));
+            return null;
+        });
+        assertEquals(0, approveReturn(returnId).getStatus());
+
+        List<Map<String, Object>> lines = new ArrayList<>();
+        Map<String, Object> line = exchangeLine(MATERIAL2_ID, new BigDecimal("3"), new BigDecimal("8"));
+        line.put("taxRate", new BigDecimal("13"));
+        lines.add(line);
+        ApiResponse<?> resp = generateExchangeDelivery(returnId, lines);
+        assertEquals(0, resp.getStatus(), "generateExchangeDelivery 应成功");
+
+        ErpSalDelivery delivery = daoProvider.daoFor(ErpSalDelivery.class)
+                .getEntityById(reload(returnId).getExchangeDeliveryId());
+        assertEquals(0, new BigDecimal("24.0000").compareTo(delivery.getTotalAmount()),
+                "净额 = 3×8 = 24");
+        assertEquals(0, new BigDecimal("2.7611").compareTo(delivery.getTotalTaxAmount()),
+                "税额 = 24×0.13/1.13 = 2.7611（价内税，修复前 3.12）");
+        assertEquals(0, new BigDecimal("26.7611").compareTo(delivery.getTotalAmountWithTax()),
+                "含税合计 = 26.7611");
+    }
+
     private Map<String, Object> exchangeLine(String materialId, BigDecimal qty, BigDecimal unitPrice) {
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("materialId", materialId);

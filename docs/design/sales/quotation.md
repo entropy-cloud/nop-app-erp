@@ -39,7 +39,7 @@ DRAFT（草稿创建）
 
 ## 业务规则
 
-1. **报价有效期**：ErpSalQuotation.validTo 到期后系统自动标记 EXPIRED（通过 nop-job 每日扫描）。
+1. **报价有效期**：ErpSalQuotation.validTo 到期后报价失效。实现口径（P2-CK-sal-015 裁决，审计选项 c）：confirm/convert 时点懒拦截（`requireNotExpired`，过期报价拒绝确认/转订单）；EXPIRED 终态落库与每日批量扫描**未实现**（EXPIRED 状态载体需 ORM 状态字典/列变更，登记 Deferred——见 ai-check F3.7 计划 Deferred But Adjudicated）。
 2. **客户确认→转订单**：ACCEPTED 后销售员确认转订单，调用 `IErpSalOrderBiz` 创建 ErpSalOrder，报价单行转为订单行。
 3. **报价版本**：每次修改创建新版本（`isCurrentVersion` 标记），历史版本保留审计。
 4. **报价转 CRM 回链**：若报价单由 CRM 商机转化而来，报价单通过 `relatedBillType/relatedBillCode` 弱指针反查 CRM Lead。
@@ -58,5 +58,5 @@ DRAFT（草稿创建）
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `erp-sal.quotation-expiry-check-cron` | 0 0 2 * * * | 每日凌晨检查过期报价单 |
-| `erp-sal.quotation-auto-accept-threshold` | 0 | 低于此金额的报价单客户确认后自动转订单（不需人工确认） |
+| `erp-sal.quotation-expiry-check-cron` | 0 0 2 * * * | **未实现（Deferred）**：每日过期扫描 job 以 EXPIRED 状态载体（ORM 状态字典/列）落地为前置；当前过期拦截为懒拦截口径 |
+| `erp-sal.quotation-auto-accept-threshold` | 0 | **未实现（Deferred）**：低于此金额客户确认后自动转订单（accept 动作内自动转化的失败回滚语义需产品裁决后专项实现） |

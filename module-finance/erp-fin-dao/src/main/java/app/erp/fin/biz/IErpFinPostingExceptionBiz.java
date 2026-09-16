@@ -37,7 +37,17 @@ public interface IErpFinPostingExceptionBiz extends ICrudBiz<ErpFinPostingExcept
     /**
      * 忽略异常。标记 IGNORED，须填写处置说明。
      */
+    /**
+     * P2-CK-sal-019：按源单号批量放弃 PENDING 过账异常（sales cancel/reverseApprove 联动通道）——
+     * sweep 仅扫 PENDING，置 IGNORED 后重放通道关闭，修复「为已作废单据生成凭证」竞态。
+     *
+     * @return 忽略的异常记录数
+     */
     @BizMutation
+    int ignorePendingByBill(@Name("billHeadCode") String billHeadCode,
+                            @Name("businessType") String businessType,
+                            IServiceContext context);
+
     ErpFinPostingException ignore(@Name("exceptionId") String exceptionId,
                                   @Name("resolutionNote") String resolutionNote,
                                   IServiceContext context);

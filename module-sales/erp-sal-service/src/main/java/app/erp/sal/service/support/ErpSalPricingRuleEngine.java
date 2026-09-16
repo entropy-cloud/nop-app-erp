@@ -70,8 +70,14 @@ public class ErpSalPricingRuleEngine {
             return result;
         }
 
-        // 按 targetType 分组处理
+        // 按 targetType 分组处理。P2-CK-sal-007：非栈式语义 =「同类型排他、跨类型可叠加」
+        // （对齐类 javadoc 与 UC-SAL-11 叠加意图）——命中非栈式规则后仅排其 ruleType 的后续规则，
+        // 替代原无条件 break 全链终止。
+        java.util.Set<String> exclusiveTypes = new java.util.HashSet<>();
         for (ErpSalPricingRule rule : matched) {
+            if (exclusiveTypes.contains(rule.getRuleType())) {
+                continue;
+            }
             if (TARGET_TYPE_LINE.equals(rule.getTargetType())) {
                 applyLineRule(rule, result, now);
             } else if (TARGET_TYPE_ORDER.equals(rule.getTargetType())) {
@@ -79,7 +85,7 @@ public class ErpSalPricingRuleEngine {
             }
             result.getAppliedRules().add(rule);
             if (!Boolean.TRUE.equals(rule.getStackable())) {
-                break;
+                exclusiveTypes.add(rule.getRuleType());
             }
         }
 
@@ -143,6 +149,8 @@ public class ErpSalPricingRuleEngine {
 
     /**
      * 行级规则：PERCENT_DISCOUNT / PRICE_OVERRIDE / GIFT。
+     * P2-CK-sal-006：无任何行命中（referenceLine == null，触发物料不在订单）时跳过赠品行生成
+     * ——「买 A 赠 B」触发条件不满足，0 元赠品行会无谓占用库存与数量。
      */
     protected void applyLineRule(ErpSalPricingRule rule, EvaluationResult result, LocalDateTime now) {
         ErpSalOrderLine referenceLine = null;
@@ -158,14 +166,31 @@ public class ErpSalPricingRuleEngine {
                 applyPriceOverride(rule, line);
             }
         }
+        if (referenceLine == null) {
+            return;
+        }
         if (RULE_TYPE_GIFT.equals(rule.getRuleType()) && rule.getGiftMaterialId() != null) {
             addGiftLine(rule, result, referenceLine);
         }
     }
 
+    /**
+     * P2-CK-sal-005：行目标匹配补 materialCategoryId 维度——类目定向规则（如「家电类 9 折」）
+     * 不再全局命中所有行。materialId 与 materialCategoryId 同时非空时须同时命中；
+     * 类目解析经 {@code line.getMaterial().getCategoryId()}（对齐 ErpSalOrderBizModel.resolveMaterialCategoryId）。
+     */
     protected boolean lineMatchesRuleTarget(ErpSalPricingRule rule, ErpSalOrderLine line) {
-        if (rule.getMaterialId() != null) {
-            return Objects.equals(rule.getMaterialId(), line.getMaterialId());
+        if (rule.getMaterialId() != null
+                && !Objects.equals(rule.getMaterialId(), line.getMaterialId())) {
+            return false;
+        }
+        if (rule.getMaterialCategoryId() != null) {
+            if (line.getMaterial() == null) {
+                return false;
+            }
+            if (!Objects.equals(rule.getMaterialCategoryId(), line.getMaterial().getCategoryId())) {
+                return false;
+            }
         }
         return true;
     }

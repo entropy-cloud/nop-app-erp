@@ -19,6 +19,10 @@ public abstract class AbstractWithdrawApprovalProcessor<T extends OrmEntity> ext
         T entity = requireEntity(id);
         validateNotCancelled(entity, context);
         validateTransitionForWithdraw(entity, context);
+        // P2-CK-sal-013：仅提交人可撤回（state-machine.md §2「撤销提交约束：仅提交人可操作」）。
+        // 跨域共用骨架一点修（C8.2 全域盘点归后）；SoDGuard 同一 sod-enabled 总开关 + null 容忍。
+        SoDGuard.assertWithdrawerIsCreator(getCreatedBy(entity), currentUserId(),
+                ErpCommonErrors.ERR_WITHDRAW_NOT_SUBMITTER);
         beforeStateChange(entity, context);
         doWithdraw(entity, context);
         afterStateChange(entity, context);

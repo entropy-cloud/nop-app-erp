@@ -45,6 +45,14 @@ public interface IErpSalOrderBiz extends ICrudBiz<ErpSalOrder> {
     boolean existsActiveByQuotation(@Name("quotationId") String quotationId, IServiceContext context);
 
     /**
+     * P2-CK-sal-016：累计已转订单数量（关联非 CANCELLED 订单行 quantity 之和；头 quotationId 关联，
+     * 管道查后内存剔除 CANCELLED）。供报价分批转订单守卫（quotation.md 规则 5「一次报价多次采购」）。
+     */
+    @BizAction
+    java.math.BigDecimal sumConvertedQuantityByQuotation(@Name("quotationId") String quotationId,
+                                                         IServiceContext context);
+
+    /**
      * 回写源订单发货进度（由出库单审核后跨聚合调用）。
      */
     @BizAction

@@ -162,8 +162,24 @@ public class ErpSalQuotationProcessor {
         }
     }
 
+    /**
+     * P2-CK-sal-016：分批转订单守卫（quotation.md 规则 5「ACCEPTED 报价单可按客户分批转订单……
+     * 直到全部转完」）——累计已转数量（Σ 关联非 CANCELLED 订单行 quantity）≥ 报价总数量
+     * （Σ 报价行 quantity）且已转数量 > 0 时拒绝；部分转化放行。原「存在任一活跃订单即拒绝」
+     * 使规则 5 承诺的分批转化结构性不可达。混合 UoM 头级 Σ 为近似口径（Deferred 登记计划）。
+     */
     protected void validateNotAlreadyConverted(ErpSalQuotation quotation, IServiceContext context) {
-        if (orderBiz.existsActiveByQuotation(quotation.getId(), context)) {
+        java.math.BigDecimal converted = orderBiz.sumConvertedQuantityByQuotation(quotation.getId(), context);
+        if (converted.signum() <= 0) {
+            return;
+        }
+        java.math.BigDecimal totalQuoted = java.math.BigDecimal.ZERO;
+        for (app.erp.sal.dao.entity.ErpSalQuotationLine line : loadLines(quotation.getId())) {
+            if (line.getQuantity() != null) {
+                totalQuoted = totalQuoted.add(line.getQuantity());
+            }
+        }
+        if (converted.compareTo(totalQuoted) >= 0) {
             throw new NopException(ErpSalErrors.ERR_QUOTATION_ALREADY_CONVERTED)
                     .param(ErpSalErrors.ARG_QUOTATION_CODE, quotation.getCode());
         }

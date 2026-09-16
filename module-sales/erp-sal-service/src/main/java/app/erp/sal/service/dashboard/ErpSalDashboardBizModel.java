@@ -168,8 +168,9 @@ public class ErpSalDashboardBizModel {
     }
 
     /**
-     * 应收超期预警：账龄 > 阈值天数 且 openAmount > 阈值金额。
-     * 阈值 ≤0 时不触发预警，返回空列表（默认关闭）。
+     * 应收超期预警：OR 语义（P2-CK-sal-020）——任一启用维度命中即告警：daysThreshold>0 时
+     * 账龄超天数命中；amountThreshold>0 时 openAmount 超金额命中；未启用维度不参与判定。
+     * 双维度均 ≤0 时整体关闭（默认关闭，返回空列表）。修复原 AND 耦合下仅配置单一阈值永不触发。
      */
     @BizQuery
     public List<Map<String, Object>> findArOverdueAlert(IServiceContext context) {
@@ -191,10 +192,11 @@ public class ErpSalDashboardBizModel {
             long age = base != null ? ChronoUnit.DAYS.between(base, today) : 0L;
             if (age < 0) age = 0L;
             BigDecimal open = DashboardUtil.nz(it.getOpenAmountFunctional());
-            boolean dayHit = daysThreshold > 0 && age > daysThreshold;
-            boolean amountHit = amountThreshold != null && amountThreshold.signum() > 0
-                    && open.compareTo(amountThreshold) > 0;
-            if (dayHit && amountHit) {
+            boolean dayEnabled = daysThreshold > 0;
+            boolean amountEnabled = amountThreshold != null && amountThreshold.signum() > 0;
+            boolean dayHit = dayEnabled && age > daysThreshold;
+            boolean amountHit = amountEnabled && open.compareTo(amountThreshold) > 0;
+            if (dayHit || amountHit) {
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("partnerId", it.getPartnerId());
                 String partnerName = null;

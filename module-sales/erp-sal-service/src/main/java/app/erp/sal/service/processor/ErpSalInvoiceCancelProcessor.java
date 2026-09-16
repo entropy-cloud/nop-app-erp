@@ -26,6 +26,9 @@ import java.util.Objects;
  */
 public class ErpSalInvoiceCancelProcessor extends AbstractCancelProcessor<ErpSalInvoice> {
 
+    private static final org.slf4j.Logger LOG =
+            org.slf4j.LoggerFactory.getLogger(ErpSalInvoiceCancelProcessor.class);
+
     @Inject
     ErpSalInvoiceProcessor processor;
 
@@ -34,6 +37,10 @@ public class ErpSalInvoiceCancelProcessor extends AbstractCancelProcessor<ErpSal
 
     @Inject
     ErpSalInvoiceDocumentStateMachine stateMachine;
+
+    @Inject
+    @jakarta.annotation.Nullable
+    app.erp.fin.biz.IErpFinPostingExceptionBiz postingExceptionBiz;
 
     @Override
     public ErpSalInvoice cancel(String id, IServiceContext context) {
@@ -48,10 +55,32 @@ public class ErpSalInvoiceCancelProcessor extends AbstractCancelProcessor<ErpSal
             invoice.setPosted(false);
             invoice.setPostedAt(null);
             invoice.setPostedBy(null);
+        } else {
+            // P2-CK-sal-019：无红冲出口联动作废 PENDING 过账异常（sweep 仅扫 PENDING，重放通道关闭），
+            // 修复「作废后 sweep 24h 窗口内重试成功 → 为已作废单据生成有效凭证且无人红冲」竞态。
+            ignorePendingPostingExceptions(invoice, context);
         }
         setDocStatus(invoice, cancelledDocStatus());
         dao().updateEntity(invoice);
         return invoice;
+    }
+
+    /** P2-CK-sal-019：失败隔离（对齐 RC-R1.85 容错范式），不阻断作废主流程。 */
+    private void ignorePendingPostingExceptions(ErpSalInvoice invoice, IServiceContext context) {
+        if (postingExceptionBiz == null) {
+            return;
+        }
+        try {
+            int ignored = postingExceptionBiz.ignorePendingByBill(invoice.getCode(),
+                    app.erp.fin.dao.ErpFinBusinessType.AR_INVOICE.name(), context);
+            if (ignored > 0) {
+                LOG.info("erp-sal-invoice-cancel-pending-posting-ignored: invoiceCode={}, ignored={}",
+                        invoice.getCode(), ignored);
+            }
+        } catch (Exception e) {
+            LOG.warn("erp-sal-invoice-cancel-pending-posting-ignore-failed (isolated, non-blocking): invoiceCode={}, reason={}",
+                    invoice.getCode(), e.getMessage());
+        }
     }
 
     @Override

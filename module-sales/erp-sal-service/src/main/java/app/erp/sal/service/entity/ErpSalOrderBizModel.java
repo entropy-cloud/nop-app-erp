@@ -327,6 +327,42 @@ public class ErpSalOrderBizModel extends AbstractErpCrudBizModel<ErpSalOrder> im
         return order;
     }
 
+    /**
+     * P2-CK-sal-016：累计已转订单数量（头 quotationId 关联非 CANCELLED 订单，逐单 Σ 行 quantity）。
+     * Decision（plan Phase 8）：报价总数量 = Σ 报价行 quantity、已转数量 = 本方法；行级映射
+     * （quotationLineId）需模型变更，混合 UoM 头级 Σ 为近似口径（Deferred 登记计划）。
+     */
+    @Override
+    @BizAction
+    public java.math.BigDecimal sumConvertedQuantityByQuotation(@Name("quotationId") String quotationId,
+                                                                IServiceContext context) {
+        if (quotationId == null) {
+            return java.math.BigDecimal.ZERO;
+        }
+        // docStatus 的 xmeta 仅允许 eq/in 过滤，管道查后内存剔除已作废单（existsActiveByQuotation 同范式）。
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("quotationId", quotationId));
+        List<String> activeOrderIds = new ArrayList<>();
+        for (ErpSalOrder order : findList(q, null, context)) {
+            if (!Objects.equals(ErpSalConstants.DOC_STATUS_CANCELLED, order.getDocStatus())) {
+                activeOrderIds.add(order.getId());
+            }
+        }
+        if (activeOrderIds.isEmpty()) {
+            return java.math.BigDecimal.ZERO;
+        }
+        IEntityDao<ErpSalOrderLine> lineDao = daoFor(ErpSalOrderLine.class);
+        QueryBean lq = new QueryBean();
+        lq.addFilter(io.nop.api.core.beans.FilterBeans.in("orderId", activeOrderIds));
+        java.math.BigDecimal total = java.math.BigDecimal.ZERO;
+        for (ErpSalOrderLine line : lineDao.findAllByQuery(lq)) {
+            if (line.getQuantity() != null) {
+                total = total.add(line.getQuantity());
+            }
+        }
+        return total;
+    }
+
     @Override
     @BizAction
     public boolean existsActiveByQuotation(@Name("quotationId") String quotationId, IServiceContext context) {

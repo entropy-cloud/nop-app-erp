@@ -45,9 +45,11 @@ public class SalReturnPostingDispatcher {
     private static final Logger LOG = LoggerFactory.getLogger(SalReturnPostingDispatcher.class);
 
     /**
-     * billData 条件标记（P1-RC-024）：true = 未开票且已暂估 → 冲减暂估应收路径；
-     * false = 已开票 → 红字替代路径（credit memo 等价，P2-MA2-011 接受）。下游消费方零变更——
-     * 两种路径均生成 SALES_RETURN 凭证 + 负向 ArApItem，差异仅在标记。
+     * billData 预留标记（P1-RC-024；P2-CK-sal-018 口径修正）：当前**恒 TRUE 且无下游消费方**
+     * （全仓无读取点；SALES_RETURN 在 ErpFinArApItemGenerator 为单路径 credit memo）——
+     * 原注记声称的「true=未开票冲减 / false=已开票红字」双路径区分**未实现**，其中「已开票→红字
+     * 发票」为跨域 GL 特性（P2-MA2-011 watch-only 在案）。标记保留为后续接线双路径时的入参位；
+     * 消费方接线前本标记不产生任何行为差异。
      */
     static final String KEY_OFFSET_ESTIMATED_RECEIVABLE = "OFFSET_ESTIMATED_RECEIVABLE";
 

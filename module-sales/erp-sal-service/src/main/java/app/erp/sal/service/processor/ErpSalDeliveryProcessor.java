@@ -283,7 +283,11 @@ public class ErpSalDeliveryProcessor {
         }
 
         Map<String, BigDecimal> deliveredByOrderLine = new HashMap<>();
-        addLineQuantities(deliveredByOrderLine, loadLines(currentDelivery.getId()));
+        // P2-CK-sal-011：当前单自身行仅在仍生效（APPROVED 且未作废）时计入——cancel/reverseApprove
+        // 后置重算时当前单已非生效态，贡献归零（对齐 F3.6 pur-004 rollup 范式）。
+        if (isDeliveryEffective(currentDelivery)) {
+            addLineQuantities(deliveredByOrderLine, loadLines(currentDelivery.getId()));
+        }
         for (ErpSalDelivery d : findApprovedDeliveries(orderId)) {
             if (d.getId().equals(currentDelivery.getId())) {
                 continue;
@@ -386,7 +390,23 @@ public class ErpSalDeliveryProcessor {
     protected List<ErpSalDelivery> findApprovedDeliveries(String orderId) {
         QueryBean rq = new QueryBean();
         rq.addFilter(and(eq("orderId", orderId), eq("approveStatus", ErpSalConstants.APPROVE_STATUS_APPROVED)));
-        return new ArrayList<>(deliveryDao().findAllByQuery(rq));
+        // P2-CK-sal-011：docStatus 的 xmeta 仅允许 eq/in 过滤，已作废出库单（docStatus=CANCELLED 但
+        // approveStatus 仍 APPROVED）经内存剔除，不参与发货进度聚合。
+        List<ErpSalDelivery> result = new ArrayList<>();
+        for (ErpSalDelivery d : deliveryDao().findAllByQuery(rq)) {
+            if (!java.util.Objects.equals(d.getDocStatus(), ErpSalConstants.DOC_STATUS_CANCELLED)) {
+                result.add(d);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * P2-CK-sal-011：出库单聚合口径的「生效」判定——approveStatus=APPROVED 且 docStatus≠CANCELLED。
+     */
+    protected boolean isDeliveryEffective(ErpSalDelivery delivery) {
+        return java.util.Objects.equals(delivery.getApproveStatus(), ErpSalConstants.APPROVE_STATUS_APPROVED)
+                && !java.util.Objects.equals(delivery.getDocStatus(), ErpSalConstants.DOC_STATUS_CANCELLED);
     }
 
     protected void addLineQuantities(Map<String, BigDecimal> map, List<ErpSalDeliveryLine> lines) {

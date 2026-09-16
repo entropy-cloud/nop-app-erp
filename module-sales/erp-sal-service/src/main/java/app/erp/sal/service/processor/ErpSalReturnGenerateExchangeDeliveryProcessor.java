@@ -195,9 +195,19 @@ public class ErpSalReturnGenerateExchangeDeliveryProcessor {
             lineMap.put("uoMId", line.getUoMId());
             BigDecimal qty = nz(line.getQuantity());
             BigDecimal unitPrice = nz(line.getUnitPrice());
+            // P2-CK-sal-017：价税分离口径统一（对齐 ErpSalOrderBizModel.recomputeLineAmount P1-RC-022
+            // 公式与 state-machine.md §9 注记）——unitPrice 为含税价，净额 = 数量×单价，
+            // 税额 = 净额 × rate/(1+rate)（价内税倒挤），修复原 amount×rate/100 价外税口径漂移。
             BigDecimal amount = qty.multiply(unitPrice).setScale(4, RoundingMode.HALF_UP);
             BigDecimal taxRate = nz(line.getTaxRate());
-            BigDecimal taxAmount = amount.multiply(taxRate).divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
+            BigDecimal taxAmount;
+            if (taxRate.signum() == 0) {
+                taxAmount = BigDecimal.ZERO;
+            } else {
+                BigDecimal rate = taxRate.divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP);
+                taxAmount = amount.multiply(rate)
+                        .divide(BigDecimal.ONE.add(rate), 4, RoundingMode.HALF_UP);
+            }
             lineMap.put("quantity", qty);
             lineMap.put("unitPrice", unitPrice);
             lineMap.put("taxRate", taxRate);

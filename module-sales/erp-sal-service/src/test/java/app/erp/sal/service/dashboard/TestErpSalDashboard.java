@@ -176,6 +176,30 @@ public class TestErpSalDashboard extends JunitAutoTestCase {
         }
     }
 
+    /**
+     * P2-CK-sal-020：OR 语义——仅配置天数阈值（金额留默认 0）也应触发。
+     * 修复前 AND 耦合下 amountHit 恒 false → 零告警。
+     */
+    @Test
+    public void testArOverdueAlertDaysOnlyTriggers() {
+        ormTemplate.runInSession(() -> {
+            seedCustomer("651", "C-OVD3");
+            seedArApItemWithDue("951", "651", new BigDecimal("800"),
+                    CoreMetrics.currentDate().minusDays(100), CoreMetrics.currentDate().minusDays(100));
+        });
+        AppConfig.getConfigProvider().assignConfigValue(
+                ErpSalConstants.CONFIG_DASH_SAL_AR_OVERDUE_DAYS, "90");
+        try {
+            List<Map<String, Object>> alerts = dashboardBiz.findArOverdueAlert(CTX);
+            assertEquals(1, alerts.size(),
+                    "仅天数阈值 90（金额维度停用）→ 账龄 100>90 触发（修复前 AND 耦合永不触发）");
+            assertEquals("651", alerts.get(0).get("partnerId"));
+        } finally {
+            AppConfig.getConfigProvider().assignConfigValue(
+                    ErpSalConstants.CONFIG_DASH_SAL_AR_OVERDUE_DAYS, "0");
+        }
+    }
+
     // ---------- helpers ----------
 
     private void seedCustomer(String id, String code) {

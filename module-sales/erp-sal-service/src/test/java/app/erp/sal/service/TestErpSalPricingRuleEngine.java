@@ -1,5 +1,6 @@
 package app.erp.sal.service;
 
+import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.dao.entity.ErpSalPricingRule;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -151,8 +153,12 @@ public class TestErpSalPricingRuleEngine extends BaseTestCase {
         assertEquals(2, result.getAppliedRules().size());
     }
 
+    /**
+     * P2-CK-sal-007 语义修正：非栈式 =「同类型排他、跨类型可叠加」——非栈式 PERCENT 命中后
+     * 后续 PERCENT 被跳过、异类型（PRICE_OVERRIDE）仍生效；被跳过规则不入 appliedRules。
+     */
     @Test
-    public void testNonStackableOnlyFirstApplied() {
+    public void testNonStackableSameTypeExclusiveCrossTypeStacks() {
         ErpSalOrder order = newOrder();
         List<ErpSalOrderLine> lines = new ArrayList<>();
         lines.add(newLine(MATERIAL_ID, new BigDecimal("100"), new BigDecimal("10")));
@@ -162,16 +168,24 @@ public class TestErpSalPricingRuleEngine extends BaseTestCase {
         rule1.setDiscountPercent(new BigDecimal("10"));
         rule1.setStackable(false);
 
-        ErpSalPricingRule rule2 = newRule("PRICE_OVERRIDE", "LINE", 200);
+        // 同类型 PERCENT 后续（priority 更低）→ 被排他跳过
+        ErpSalPricingRule rule2 = newRule("PERCENT_DISCOUNT", "LINE", 200);
         rule2.setMaterialId(MATERIAL_ID);
-        rule2.setPriceOverride(new BigDecimal("90"));
-        rule2.setStackable(false);
+        rule2.setDiscountPercent(new BigDecimal("20"));
+        rule2.setStackable(true);
+
+        // 异类型 PRICE_OVERRIDE → 跨类型仍生效
+        ErpSalPricingRule rule3 = newRule("PRICE_OVERRIDE", "LINE", 300);
+        rule3.setMaterialId(MATERIAL_ID);
+        rule3.setPriceOverride(new BigDecimal("90"));
+        rule3.setStackable(false);
 
         ErpSalPricingRuleEngine.EvaluationResult result =
-                engine.evaluate(order, lines, null, List.of(rule1, rule2));
+                engine.evaluate(order, lines, null, List.of(rule1, rule2, rule3));
 
-        assertEquals(1, result.getAppliedRules().size());
+        assertEquals(2, result.getAppliedRules().size(), "非栈式 PERCENT 排他同类型，异类型仍生效");
         assertEquals("PERCENT_DISCOUNT", result.getAppliedRules().get(0).getRuleType());
+        assertEquals("PRICE_OVERRIDE", result.getAppliedRules().get(1).getRuleType());
     }
 
     @Test
@@ -238,6 +252,61 @@ public class TestErpSalPricingRuleEngine extends BaseTestCase {
         ErpSalPricingRuleEngine.EvaluationResult result2 =
                 engine.evaluate(order, lines, "OTHER", List.of(rule));
         assertTrue(result2.getAppliedRules().isEmpty());
+    }
+
+    /**
+     * P2-CK-sal-005：类目定向规则仅命中同类目行（经 line.material.categoryId 解析），
+     * 异类目行不打折——修复原 materialId 为空时全局命中所有行的过度折扣。
+     */
+    @Test
+    public void testCategoryRuleOnlyHitsSameCategoryLines() {
+        ErpSalOrder order = newOrder();
+        ErpMdMaterial homeAppliance = new ErpMdMaterial();
+        homeAppliance.setCategoryId("CAT-HOME");
+        ErpMdMaterial food = new ErpMdMaterial();
+        food.setCategoryId("CAT-FOOD");
+
+        ErpSalOrderLine applianceLine = newLine(MATERIAL_ID, new BigDecimal("100"), new BigDecimal("10"));
+        applianceLine.setMaterial(homeAppliance);
+        ErpSalOrderLine foodLine = newLine("7002", new BigDecimal("50"), new BigDecimal("10"));
+        foodLine.setMaterial(food);
+        List<ErpSalOrderLine> lines = new ArrayList<>(List.of(applianceLine, foodLine));
+
+        ErpSalPricingRule rule = newRule("PERCENT_DISCOUNT", "LINE", 100);
+        rule.setMaterialCategoryId("CAT-HOME");
+        rule.setDiscountPercent(new BigDecimal("10"));
+
+        ErpSalPricingRuleEngine.EvaluationResult result =
+                engine.evaluate(order, lines, null, List.of(rule));
+
+        assertEquals(1, result.getAppliedRules().size(), "类目规则命中");
+        // applyPercentDiscount 语义：写 discountAmount（gross×10%），不改 amount
+        assertEquals(0, applianceLine.getDiscountAmount().compareTo(new BigDecimal("100")),
+                "家电行 100×10 折扣 100（discountRate=10%）");
+        assertNull(foodLine.getDiscountAmount(), "食品行不受类目规则影响（修复前全局命中折扣 50）");
+    }
+
+    /**
+     * P2-CK-sal-006：GIFT 规则触发物料不在订单（无行命中）时不生成赠品行。
+     */
+    @Test
+    public void testGiftSkippedWhenNoLineHits() {
+        ErpSalOrder order = newOrder();
+        List<ErpSalOrderLine> lines = new ArrayList<>();
+        lines.add(newLine(MATERIAL_ID, new BigDecimal("100"), new BigDecimal("10")));
+
+        ErpSalPricingRule rule = newRule("GIFT", "LINE", 100);
+        rule.setMaterialId("MATERIAL-NOT-IN-ORDER");
+        rule.setGiftMaterialId("7009");
+        rule.setGiftQuantity(new BigDecimal("1"));
+
+        ErpSalPricingRuleEngine.EvaluationResult result =
+                engine.evaluate(order, lines, null, List.of(rule));
+
+        // processed-but-zero-hit 规则沿用既有 appliedRules 记录语义（本 finding 只裁赠品行生成）
+        boolean giftAdded = result.getModifiedLines().stream()
+                .anyMatch(l -> "7009".equals(l.getMaterialId()));
+        assertFalse(giftAdded, "触发物料不在订单时不生成赠品行（修复前 0 元赠 B 行被加入）");
     }
 
     // ---------- helpers ----------

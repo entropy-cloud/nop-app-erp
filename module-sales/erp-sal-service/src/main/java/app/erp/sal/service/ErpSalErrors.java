@@ -183,6 +183,16 @@ public interface ErpSalErrors {
             "核销金额 {settleAmount} 超过收款单 {receiptCode} 未核销余额 {receiptBalance}",
             ARG_SETTLE_AMOUNT, ARG_RECEIPT_CODE, ARG_RECEIPT_BALANCE);
 
+    // P2-CK-sal-010：核销 docStatus 守卫（state-machine.md §4「收款核销时发票已作废→拒绝核销」；
+    // 镜像 pur-015-r3/pur-005 统一批次设计，reverse 清理方向不守卫见 plan Phase 4 Decision）
+    ErrorCode ERR_SETTLE_INVOICE_CANCELLED = ErrorCode.define("erp.err.sal.settle-invoice-cancelled",
+            "发票 {invoiceCode} 已作废（当前单据状态={currentDocStatus}），不可核销",
+            ARG_INVOICE_CODE, ARG_CURRENT_DOC_STATUS);
+
+    ErrorCode ERR_SETTLE_RECEIPT_CANCELLED = ErrorCode.define("erp.err.sal.settle-receipt-cancelled",
+            "收款单 {receiptCode} 已作废（当前单据状态={currentDocStatus}），不可核销",
+            ARG_RECEIPT_CODE, ARG_CURRENT_DOC_STATUS);
+
     // --- 退货作用域错误码（消息文案绑定退货单参数，避免复用出库单/发票文案产生误导） ---
 
     ErrorCode ERR_RETURN_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.sal.return-illegal-status-transition",

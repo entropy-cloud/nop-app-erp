@@ -44,7 +44,7 @@
 
 > **反审核目标态**：与采购域一致，反审核目标态是 `REJECTED`（可重新提交），**不是** `UNSUBMITTED`（初始态）。理由见 `../domain-design-guidelines.md` §16.4。
 
-> **撤销提交约束**：仅提交人可操作；审核人一旦开始审核（nop-wf 已激活），提交人不可再撤回。
+> **撤销提交约束**：仅提交人可操作；审核人一旦开始审核（nop-wf 已激活），提交人不可再撤回。实现注记（P2-CK-sal-013）：withdrawApproval 共用骨架（AbstractWithdrawApprovalProcessor）内置提交人比对（SoDGuard.assertWithdrawerIsCreator，同 erp-common.sod-enabled 总开关；null-user 放行），跨域生效。
 ```
 
 **SUBMITTED → APPROVED 触发的后续业务**（与采购域的差异）：

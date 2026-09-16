@@ -52,6 +52,13 @@ public interface ErpCommonErrors {
             ARG_ACTION, ARG_ENTITY_NAME, ARG_ENTITY_KEY
     );
 
+    // --- P2-CK-sal-013：withdrawApproval 仅提交人可操作（跨域共用骨架一点修，C8.2 全域盘点归后） ---
+    ErrorCode ERR_WITHDRAW_NOT_SUBMITTER = ErrorCode.define(
+            "erp.err.common.withdraw-not-submitter",
+            "仅提交人可撤回提交：单据创建人 {createdBy} 与当前操作人 {userId} 不一致",
+            "createdBy", "userId"
+    );
+
     // --- P3-CK-common-012-r3：org 隔离解析失败 fail-closed ---
     ErrorCode ERR_ORG_ISOLATION_RESOLVE_FAILED = ErrorCode.define(
             "erp.err.common.org-isolation-resolve-failed",

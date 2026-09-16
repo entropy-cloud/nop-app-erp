@@ -51,6 +51,8 @@ public class ReceiptSettler {
 
     /**
      * 按分配明细核销收款到发票。返回更新后的收款单（余额/状态已回写）。
+     * P2-CK-sal-010：核销新方向拒绝已作废单据（state-machine.md §4「收款核销时发票已作废→拒绝核销」；
+     * cancel 只置 docStatus 不动 approveStatus，原仅 approveStatus 校验放行了 CANCELLED 单核销）。
      */
     public ErpSalReceipt settle(ErpSalReceipt receipt, List<SettlementAllocation> allocations) {
         if (receipt.getApproveStatus() == null
@@ -59,6 +61,7 @@ public class ReceiptSettler {
                     .param(ErpSalErrors.ARG_RECEIPT_CODE, receipt.getCode())
                     .param(ErpSalErrors.ARG_CURRENT_STATUS, receipt.getApproveStatus());
         }
+        assertNotCancelledReceipt(receipt);
         if (allocations == null || allocations.isEmpty()) {
             return receipt;
         }
@@ -137,7 +140,39 @@ public class ReceiptSettler {
         return daoProvider.daoFor(ErpSalReceipt.class).getEntityById(receipt.getId());
     }
 
+    /**
+     * P2-CK-sal-012：反向核销该收款单全部核销（cancel/reverseApprove 编排入口）——按 receiptId 查全部
+     * ReceiptLine 去重 invoiceId 逐项 {@link #reverseSettlement}（净额回 0 幂等）。修复已核销收款单
+     * 被反审核/作废后核销行留存、发票 receivedStatus 残留 RECEIVED 的派生态失真。
+     * 注意：reverse 为清理方向，不做 docStatus 守卫（含已作废发票的存量核销清理，见 Phase 4 Decision）。
+     */
+    public ErpSalReceipt reverseAllSettlements(ErpSalReceipt receipt) {
+        IEntityDao<ErpSalReceiptLine> lineDao = daoProvider.daoFor(ErpSalReceiptLine.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("receiptId", receipt.getId()));
+        java.util.LinkedHashSet<String> invoiceIds = new java.util.LinkedHashSet<>();
+        for (ErpSalReceiptLine line : lineDao.findAllByQuery(q)) {
+            if (line.getInvoiceId() != null) {
+                invoiceIds.add(line.getInvoiceId());
+            }
+        }
+        ErpSalReceipt current = receipt;
+        for (String invoiceId : invoiceIds) {
+            current = reverseSettlement(current, invoiceId);
+        }
+        return current;
+    }
+
     // ---------- helpers ----------
+
+    /** P2-CK-sal-010：已作废收款单拒绝核销（新方向；reverse 清理方向不守卫，见类 Decision）。 */
+    private void assertNotCancelledReceipt(ErpSalReceipt receipt) {
+        if (ErpSalConstants.DOC_STATUS_CANCELLED.equals(receipt.getDocStatus())) {
+            throw new NopException(ErpSalErrors.ERR_SETTLE_RECEIPT_CANCELLED)
+                    .param(ErpSalErrors.ARG_RECEIPT_CODE, receipt.getCode())
+                    .param(ErpSalErrors.ARG_CURRENT_DOC_STATUS, receipt.getDocStatus());
+        }
+    }
 
     private ErpSalInvoice requireInvoiceForSettle(ErpSalReceipt receipt, String invoiceId) {
         ErpSalInvoice invoice = daoProvider.daoFor(ErpSalInvoice.class).getEntityById(invoiceId);
@@ -155,6 +190,12 @@ public class ReceiptSettler {
             throw new NopException(ErpSalErrors.ERR_SETTLE_INVOICE_NOT_APPROVED)
                     .param(ErpSalErrors.ARG_INVOICE_CODE, invoice.getCode())
                     .param(ErpSalErrors.ARG_CURRENT_STATUS, invoice.getApproveStatus());
+        }
+        // P2-CK-sal-010：已作废发票拒绝核销（state-machine.md §4「收款核销时发票已作废→拒绝核销」）
+        if (ErpSalConstants.DOC_STATUS_CANCELLED.equals(invoice.getDocStatus())) {
+            throw new NopException(ErpSalErrors.ERR_SETTLE_INVOICE_CANCELLED)
+                    .param(ErpSalErrors.ARG_INVOICE_CODE, invoice.getCode())
+                    .param(ErpSalErrors.ARG_CURRENT_DOC_STATUS, invoice.getDocStatus());
         }
         return invoice;
     }

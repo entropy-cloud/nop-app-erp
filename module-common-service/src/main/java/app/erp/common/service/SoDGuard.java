@@ -30,7 +30,7 @@ public final class SoDGuard {
     }
 
     public static void assertApproverNotCreator(String createdBy, String approverUserId, ErrorCode errorCode) {
-        if (Boolean.FALSE.equals(AppConfig.var(CONFIG_COMMON_SOD_ENABLED, Boolean.TRUE))) {
+        if (sodDisabled()) {
             return;
         }
         if (createdBy == null || approverUserId == null) {
@@ -39,5 +39,27 @@ public final class SoDGuard {
         if (Objects.equals(createdBy, approverUserId)) {
             throw new NopException(errorCode).param(ARG_USER_ID, approverUserId);
         }
+    }
+
+    /**
+     * P2-CK-sal-013：撤回提交（withdrawApproval）仅提交人可操作（state-machine.md §2「仅提交人可操作；
+     * 审核人一旦开始审核，提交人不可再撤回」的实现前置——提交态本身即未开始审核）。与 approve 向共用
+     * {@link #CONFIG_COMMON_SOD_ENABLED} 总开关（%test 单账号范式协同）；null 容忍同 approve 向
+     * （系统/批处理上下文与直接种子实体不阻断）。
+     */
+    public static void assertWithdrawerIsCreator(String createdBy, String withdrawUserId, ErrorCode errorCode) {
+        if (sodDisabled()) {
+            return;
+        }
+        if (createdBy == null || withdrawUserId == null) {
+            return;
+        }
+        if (!Objects.equals(createdBy, withdrawUserId)) {
+            throw new NopException(errorCode).param(ARG_USER_ID, withdrawUserId);
+        }
+    }
+
+    private static boolean sodDisabled() {
+        return Boolean.FALSE.equals(AppConfig.var(CONFIG_COMMON_SOD_ENABLED, Boolean.TRUE));
     }
 }

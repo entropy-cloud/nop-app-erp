@@ -31,6 +31,9 @@ public class ErpSalReceiptReverseApproveProcessor extends AbstractReverseApprove
     @Inject
     ErpSalReceiptApprovalStateMachine stateMachine;
 
+    @Inject
+    app.erp.sal.service.entity.ReceiptSettler receiptSettler;
+
     @Override
     public ErpSalReceipt reverseApprove(String id, IServiceContext context) {
         ErpSalReceipt receipt = requireEntity(id);
@@ -38,6 +41,8 @@ public class ErpSalReceiptReverseApproveProcessor extends AbstractReverseApprove
             return receipt;
         }
         validateTransitionForReverseApprove(receipt, context);
+        // P2-CK-sal-012：反审核前反向核销全部核销行（发票 receivedStatus 随 recompute 回落）。
+        receiptSettler.reverseAllSettlements(receipt);
         if (Boolean.TRUE.equals(receipt.getPosted())) {
             postingDispatcher.reverse(receipt);
             receipt = dao().getEntityById(id);

@@ -268,17 +268,23 @@ public class ErpSalOrderProcessor {
         return level == null ? ErpSalConstants.ORDER_AVAILABILITY_CHECK_LEVEL_OFF : level;
     }
 
+    /**
+     * P2-CK-sal-009：余额表唯一键粒度为 (orgId, materialId, skuId, warehouseId, locationId, batchNo, ownerId)，
+     * 同物料同仓库常有多行（批次/库位/SKU 拆分）——可用量预校验须聚合全部命中行的 availableQuantity，
+     * 修复原 setLimit(1) 取单行导致库存分散多批次时 HARD 模式误拒。
+     */
     protected BigDecimal resolveAvailableQuantity(String materialId, String warehouseId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", warehouseId));
-        q.setLimit(1);
         List<ErpInvStockBalance> balances = stockBalanceBiz.findList(q, null, context);
-        if (balances.isEmpty()) {
-            return BigDecimal.ZERO;
+        BigDecimal total = BigDecimal.ZERO;
+        for (ErpInvStockBalance balance : balances) {
+            if (balance.getAvailableQuantity() != null) {
+                total = total.add(balance.getAvailableQuantity());
+            }
         }
-        BigDecimal available = balances.get(0).getAvailableQuantity();
-        return available == null ? BigDecimal.ZERO : available;
+        return total;
     }
 
     // ---------- step：执行（状态推进 + 持久化） ----------

@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 15 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 242 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1555 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1558 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -39,6 +39,12 @@
 > R9（doReverseApprove 一致性）为**定性校验**（输出 ✓/✗ 清单，无数值计数），故不在上表参与数值门控；其输出仍由 checker 打印供人工查阅，CI 不对其做数值断言。
 
 ## R2c 增量注记
+
+**2026-09-17 per-site 裁决（plan `2026-09-17-0030-1` F3.7 批，1555→1558，+3 合法 baseline-raise）**：
+1. `ErpSalOrderBizModel#sumConvertedQuantityByQuotation` 新增 `daoFor(ErpSalOrderLine.class)`——sal-016 分批转订单累计口径的行聚合（@BizAction 域方法）；
+2. `ReceiptSettler#reverseAllSettlements` 新增 `daoFor(ErpSalReceiptLine.class)`——sal-012 收款单全部核销行查询（intra-module 聚合器既有豁免组件）；
+3. `ErpFinPostingExceptionBizModel#ignorePendingByBill` 新增 `daoFor(ErpFinPostingException.class)`——sal-019 sweep 竞态通道的 PENDING 批量查询（@BizMutation 域方法）。
+三站点均为审计 finding 修复必需的域内聚合/查询，非绕管道；checker 实测 1558 ≤ 新基线。
 
 **2026-09-16 per-site 裁决（plan `2026-09-16-1230-1` F3.6 批，1553→1555，+2 合法 baseline-raise）**：
 1. `ErpPurReceiveProcessor#lockOrderForToleranceAggregation` 新增 `daoFor(ErpPurOrder.class)`——pur-006 超收容差聚合前订单头悲观锁点（SELECT FOR UPDATE），族 A/U20 豁免已登记组件内的同域只读+锁操作；

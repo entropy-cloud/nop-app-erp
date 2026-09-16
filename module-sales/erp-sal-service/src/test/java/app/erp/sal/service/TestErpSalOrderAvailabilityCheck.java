@@ -132,6 +132,29 @@ public class TestErpSalOrderAvailabilityCheck extends JunitAutoTestCase {
                 "库存充足 → APPROVED");
     }
 
+    /**
+     * P2-CK-sal-009：余额表批次/库位拆分多行时聚合 Σ availableQuantity——
+     * 两批次各 5 件共 10 件，需求 10 应放行（修复前 setLimit(1) 单行只见 5 误拒）。
+     */
+    @Test
+    public void testHardMultiBatchAggregateAllows() {
+        setAvailabilityCheckLevel(ErpSalConstants.ORDER_AVAILABILITY_CHECK_LEVEL_HARD);
+        ErpSalOrder order = newOrder("SO-AVAIL-BATCH-001", "100");
+        ormTemplate.runInSession(() -> {
+            seedActiveCustomer(CUSTOMER_ID, null);
+            saveOrderWithLine(order, MATERIAL_ID, WAREHOUSE_ID, "10");
+            seedBalance(MATERIAL_ID, WAREHOUSE_ID, "5");
+            seedBalance(MATERIAL_ID, WAREHOUSE_ID, "5");
+        });
+
+        assertEquals(0, submit(order.getId()).getStatus());
+        ApiResponse<?> resp = approve(order.getId());
+        assertEquals(0, resp.getStatus(),
+                "HARD 级别多批次聚合可用 5+5=10 >= 需求 10 → 放行（修复前单行 5<10 误拒）");
+        assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, reload(order.getId()).getApproveStatus(),
+                "聚合充足 → APPROVED");
+    }
+
     @Test
     public void testLineWarehouseFallbackToOrderHead() {
         setAvailabilityCheckLevel(ErpSalConstants.ORDER_AVAILABILITY_CHECK_LEVEL_HARD);
