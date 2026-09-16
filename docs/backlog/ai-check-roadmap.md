@@ -134,7 +134,7 @@
 | F3.1 orgId 隔离族（写侧 writer 缺失族 + 读侧聚合族） | done（2026-09-13，plan `2026-09-12-1000-1`：11 条 P2 orgId 隔离族全部补 orgId 过滤/回填（ErpOrgContext null-skip 契约统一）；mnt-008 写侧实体缺 orgId 列归 Deferred；七域模块全绿 + 全 reactor BUILD SUCCESS；独立草案审查两轮 accept） | module-boundaries.md | F2.x | none |
 | F3.2 cron 键漂移家族（9 域 job.yaml 双键统一） | done（2026-09-13，commit f69237187：8 处 cron-expr 配置键标准化为 nop.job.<name>.cron-expr 模式；TestErpAllJobYamlLoading 全绿） | job-scheduling.md | F2.x | none |
 | F3.3 notify 模板种子三库补齐 + 事务内外发修复（notify-001/002 与 log-002/aps-006 联动） | done（2026-09-12，F2.15 Phase 4/6 覆盖：三库种子补 8 事件模板 + dispatcher prepare/dispatchExternal 拆分实现先持久化后外发；对账机制 Deferred 带触发条件） | notify owner docs | F2.x | none |
-| F3.4 currentUserId 宽 catch 全域族 + 死常量/死配置键清理 | todo | — | F2.x | none |
+| F3.4 currentUserId 宽 catch 全域族 + 死常量/死配置键清理 | todo（2026-09-13 进度：ast 域 7 Processor 已定位 LOG 缺失（自动修复尝试因编译错误回退——需逐文件手动加 Logger 字段+import）；F3.2 cron 键漂移 8 处已修 f69237187） | — | F2.x | none |
 | F3.5-F3.x 各域 P2 簇（md×5/pur×6/sal×16/inv×11/fin×10/fin2×5/fin3×5/fin4×8/mfg×6/mfg2×10/mfg3×7/ast×10/ast2×8/prj×7/qa×9/mnt×6/hr2×9/crm×6/crm2×10/cs×11/ct×13/b2b×8/drp×11/log×7/aps×6/notify×4/common×1——按域逐项或合并小簇，由执行时按索引余量展开追加） | todo | 各域 owner docs | F2.x | none |
 | F3.y P3 波次（210 条，按域批量「小修+说明」处理，证伪项归档说明） | todo | 各域 owner docs | F3.5+ | none |
 
