@@ -83,12 +83,27 @@ public class ErpMdUoMConversionBizModel extends AbstractErpCrudBizModel<ErpMdUoM
      */
     protected BigDecimal resolveConversionRate(String materialId, String fromUoMId, String toUoMId,
                                                IServiceContext context) {
+        // 物料级正向
         BigDecimal rate = findRate(materialId, fromUoMId, toUoMId, context);
         if (rate != null) {
             return rate;
         }
-        // 通用层（materialId is null）
-        return findRate(null, fromUoMId, toUoMId, context);
+        // P1-CK-md-005（plan 2026-09-16-1000-1 Phase 1）：物料级反向（取倒数）
+        BigDecimal reverse = findRate(materialId, toUoMId, fromUoMId, context);
+        if (reverse != null && reverse.signum() > 0) {
+            return BigDecimal.ONE.divide(reverse, 6, java.math.RoundingMode.HALF_UP);
+        }
+        // 通用级正向
+        rate = findRate(null, fromUoMId, toUoMId, context);
+        if (rate != null) {
+            return rate;
+        }
+        // P1-CK-md-005：通用级反向（取倒数）
+        reverse = findRate(null, toUoMId, fromUoMId, context);
+        if (reverse != null && reverse.signum() > 0) {
+            return BigDecimal.ONE.divide(reverse, 6, java.math.RoundingMode.HALF_UP);
+        }
+        return null;
     }
 
     /**

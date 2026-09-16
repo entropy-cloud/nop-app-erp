@@ -195,6 +195,13 @@ public class ErpMdMaterialSkuBizModel extends AbstractErpCrudBizModel<ErpMdMater
                 return customerPrice;
             }
         }
+        // P1-CK-md-002（plan 2026-09-16-1000-1 Phase 1）：补供应商价格清单层（对齐 resolvePrice 四层优先级）
+        if (supplierPriceResolver != null && partnerId != null) {
+            BigDecimal supplierPrice = supplierPriceResolver.resolveSupplierPrice(sku, partnerId);
+            if (supplierPrice != null) {
+                return new ResolvedPrice(supplierPrice, ErpMdConstants.PRICING_SOURCE_SUPPLIER, null, null);
+            }
+        }
         // SKU 默认档兜底
         BigDecimal tier = pickDefaultTierPrice(sku, billType);
         return new ResolvedPrice(tier, ErpMdConstants.PRICING_SOURCE_SKU_DEFAULT, null, null);
@@ -387,7 +394,7 @@ public class ErpMdMaterialSkuBizModel extends AbstractErpCrudBizModel<ErpMdMater
      */
     protected BigDecimal pickDefaultTierPrice(ErpMdMaterialSku sku, String billType) {
         if (sku == null) {
-            return BigDecimal.ZERO;
+            return null;
         }
         if (ErpMdConstants.BILL_TYPE_PURCHASE.equals(billType)) {
             return nullSafe(sku.getPurchasePrice());

@@ -64,4 +64,6 @@ public interface ErpMdConstants {
     String PRICING_SOURCE_PROMOTION = "PROMOTION";
     /** SKU 默认档兜底。 */
     String PRICING_SOURCE_SKU_DEFAULT = "SKU_DEFAULT";
+
+    String PRICING_SOURCE_SUPPLIER = "SUPPLIER";
 }

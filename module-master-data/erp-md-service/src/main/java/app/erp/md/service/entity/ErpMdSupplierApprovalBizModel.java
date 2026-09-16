@@ -29,6 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.ge;
+import static io.nop.api.core.beans.FilterBeans.isNull;
+import static io.nop.api.core.beans.FilterBeans.le;
+import static io.nop.api.core.beans.FilterBeans.or;
 
 /**
  * 供应商准入资格（AVL）BizModel。承载 6 态状态机（apply/approve/probate/suspend/reinstate/reject）。
@@ -200,11 +204,36 @@ public class ErpMdSupplierApprovalBizModel extends AbstractErpCrudBizModel<ErpMd
         if (partnerId == null) {
             return null;
         }
-        // status 字段为字典类型，xmeta 仅允许 eq/in 过滤（不支持 ne，见 ErpPurOrderBizModel 同类约束），
-        // 故按 partnerId 取全部后在内存剔除 REJECTED，取第一条有效资格。
+        // P1-CK-md-001（plan 2026-09-16-1000-1 Phase 1）：补日期窗口过滤 + 确定性排序——
+        // 修复前无 validFrom/validTo 过滤且无 orderBy，可能返回过期记录。
+        // 改为内存侧过滤：先按 partnerId 取全部，再按日期窗口 + 最新优先排序。
+        java.time.LocalDate today = java.time.LocalDate.now();
         QueryBean q = new QueryBean();
         q.addFilter(eq("partnerId", partnerId));
-        for (ErpMdSupplierApproval approval : findList(q, null, context)) {
+        List<ErpMdSupplierApproval> all = findList(q, null, context);
+        // 内存侧过滤：剔除日期窗口外的记录 + 按有效开始日期 DESC 排序后取首个非 REJECTED
+        java.time.LocalDate today2 = today; // for lambda capture
+        List<ErpMdSupplierApproval> effective = new java.util.ArrayList<>();
+        for (ErpMdSupplierApproval approval : all) {
+            java.time.LocalDate vf = approval.getValidFrom();
+            java.time.LocalDate vt = approval.getValidTo();
+            // null 端 = 开放区间
+            boolean dateOk = (vf == null || !vf.isAfter(today))
+                    && (vt == null || !vt.isBefore(today));
+            if (dateOk) {
+                effective.add(approval);
+            }
+        }
+        // 确定性排序：validFrom DESC（null 最后）
+        effective.sort((a, b) -> {
+            java.time.LocalDate va = a.getValidFrom();
+            java.time.LocalDate vb = b.getValidFrom();
+            if (va == null && vb == null) return 0;
+            if (va == null) return 1;
+            if (vb == null) return -1;
+            return vb.compareTo(va);
+        });
+        for (ErpMdSupplierApproval approval : effective) {
             String status = currentStatus(approval);
             if (status == null || !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_REJECTED)) {
                 return approval;
