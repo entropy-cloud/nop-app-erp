@@ -806,7 +806,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
             ErpMdPartner partner = mdPartnerBiz.findById(ticket.getCustomerId(), context);
             return partner == null ? null : partner.getName();
         } catch (Exception e) {
-            return null;
+            LOG.warn("currentUserId resolution failed (degraded): {}", e.getMessage());            return null;
         }
     }
 

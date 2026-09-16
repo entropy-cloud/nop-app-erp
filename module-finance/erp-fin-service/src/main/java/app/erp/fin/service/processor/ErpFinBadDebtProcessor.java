@@ -435,7 +435,7 @@ public class ErpFinBadDebtProcessor {
             IUserContext ctx = IUserContext.get();
             return ctx == null ? null : ctx.getUserId();
         } catch (Exception e) {
-            return null;
+            LOG.warn("currentUserId resolution failed (degraded): {}", e.getMessage());            return null;
         }
     }
 

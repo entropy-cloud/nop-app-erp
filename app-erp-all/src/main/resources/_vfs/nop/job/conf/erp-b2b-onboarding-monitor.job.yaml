@@ -4,7 +4,7 @@ displayName: B2B Partner Onboarding Monitor
 description: 每小时扫描上线监控窗口（erp-b2b.onboarding-production-monitor-hours 默认 24h）内 PRODUCTION 伙伴的 EDI 失败率（allowedFormats→formatId 间接锚点 + org 级 scope），超 erp-b2b.onboarding-monitor-failure-rate 阈值通知 B2B 管理员；cron 经 erp-b2b.onboarding-monitor-cron 配置门控
 jobGroup: erp-b2b
 trigger:
-  cronExpr: "@cfg:erp-b2b.onboarding-monitor-cron|0 0 * * * ?"
+  cronExpr: "@cfg:nop.job.erp-b2b-onboarding-monitor.cron-expr|0 0 * * * ?"
 invoker:
   bean: erpB2bOnboardingMonitorJob
   method: execute

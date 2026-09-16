@@ -230,7 +230,7 @@ public class ErpCsTicketScanOverdueTicketsProcessor {
             ErpMdPartner partner = mdPartnerBiz.findById(customerId, context);
             return partner == null ? null : partner.getName();
         } catch (Exception e) {
-            return null;
+            LOG.warn("currentUserId resolution failed (degraded): {}", e.getMessage());            return null;
         }
     }
 

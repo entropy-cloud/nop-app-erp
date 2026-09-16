@@ -278,7 +278,7 @@ public class ErpSalQuotationProcessor {
             }
             return ctx.getUserId();
         } catch (Exception e) {
-            return null;
+            LOG.warn("currentUserId resolution failed (degraded): {}", e.getMessage());            return null;
         }
     }
 

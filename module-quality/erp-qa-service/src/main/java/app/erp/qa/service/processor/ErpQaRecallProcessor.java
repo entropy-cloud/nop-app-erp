@@ -207,7 +207,7 @@ public class ErpQaRecallProcessor {
             IUserContext ctx = IUserContext.get();
             return ctx != null ? ctx.getUserId() : null;
         } catch (Exception e) {
-            return null;
+            LOG.warn("currentUserId resolution failed (degraded): {}", e.getMessage());            return null;
         }
     }
 

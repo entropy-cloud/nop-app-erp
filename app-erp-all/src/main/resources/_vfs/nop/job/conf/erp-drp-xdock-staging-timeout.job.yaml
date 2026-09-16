@@ -9,7 +9,7 @@ description: >
   erp-inv.drp-xdock-enabled 功能总开关（默认 false）。
 jobGroup: erp-drp
 trigger:
-  cronExpr: "@cfg:erp-inv.drp-xdock-staging-timeout-cron|0 15 */2 * * ?"
+  cronExpr: "@cfg:nop.job.erp-drp-xdock-staging-timeout.cron-expr|0 15 */2 * * ?"
 invoker:
   bean: erpDrpCrossDockStagingTimeoutJob
   method: execute
