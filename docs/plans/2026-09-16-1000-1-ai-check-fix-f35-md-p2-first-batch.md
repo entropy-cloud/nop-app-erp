@@ -1,6 +1,6 @@
 # 2026-09-16-1000-1 ai-check F3.5-F3.x md 域 P2 首批（md-001..005 五条）
 
-> Plan Status: draft
+> Plan Status: active
 > Last Reviewed: 2026-09-16
 > Source: `docs/backlog/ai-check-roadmap.md` F3.5-F3.x（各域 P2 簇）；findings `ck-master-data.md`
 > Related: plan `2026-09-12-1000-1`（F3.1 playbook 先例）
@@ -43,7 +43,7 @@
 
 Status: planned
 Targets: `ErpMdSupplierApprovalBizModel.java`、`ErpMdMaterialSkuBizModel.java`、`ErpMdCurrencyRefreshRatesFromApiProcessor.java`、`ErpMdUoMConversionBizModel.java`
-Skill: `nop-backend-dev`
+Skill: none
 
 - [ ] Fix: md-001 findEffectiveByPartner 补日期过滤（null 端 = 开放区间：`(isNull("validFrom") OR le("validFrom", today)) AND (isNull("validTo") OR ge("validTo", today))`）+ `orderBy(validFrom, DESC)` 确定性排序
 - [ ] Fix: md-002 resolvePriceWithSource 补 supplierPriceResolver 分支（对齐 resolvePrice 四层优先级）
@@ -66,6 +66,7 @@ Status: planned
 ## Draft Review Record
 
 - Independent draft review iteration 1: `needs revision`（agent `agent_635ed6fb-8f3d-4d11-a93d-c8ffa918aa19`，2026-09-16）——B1（Blocker）md-001 日期列可空需 isNull OR 复合过滤；P1 技能名不实；P2 md-004 存量处置+自排除+配置门控；P3 md-005 rate=0 守卫+层级序+md-003 报表联动。全部修订。
+- Independent draft review iteration 2 (recheck): `accept`（同审查者复核，2026-09-16：5 点残留全部实际落盘且与实仓一致；L46 Skill: none 为最后单行修正；残留风险 3 项非阻塞——md-001 NULL 排序测试覆盖 / md-004 存量行 legacy 窗口 / md-005 scale 引用常量。裁决原文：「修复 L46 单行后即 passes draft review」。）
 
 ## Closure Gates
 
