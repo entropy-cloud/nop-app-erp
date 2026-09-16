@@ -1,5 +1,8 @@
 package app.erp.ast.service.processor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import app.erp.ast.biz.IErpAstAssetCapitalizationBiz;
 import app.erp.ast.biz.IErpAstDisposalBiz;
 import app.erp.ast.dao.entity.ErpAstAsset;
@@ -43,6 +46,8 @@ import static io.nop.api.core.beans.FilterBeans.ne;
  * 详见 owner doc {@code docs/design/assets/inventory.md}。
  */
 public class ErpAstInventoryProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpAstInventoryProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;
@@ -418,6 +423,7 @@ public class ErpAstInventoryProcessor {
             IUserContext ctx = IUserContext.get();
             return ctx == null ? null : ctx.getUserId();
         } catch (Exception e) {
+            LOG.warn("currentUserId resolution failed (degraded): {}", e.getMessage());
             return null;
         }
     }

@@ -1,5 +1,8 @@
 package app.erp.ast.service.processor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import app.erp.ast.biz.IErpAstDepreciationScheduleBiz;
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstAssetCategory;
@@ -43,6 +46,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>详见 owner doc {@code docs/design/assets/maintenance.md}。
  */
 public class ErpAstMaintenanceProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpAstMaintenanceProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;
@@ -206,6 +211,7 @@ public class ErpAstMaintenanceProcessor {
             IUserContext ctx = IUserContext.get();
             return ctx == null ? null : ctx.getUserId();
         } catch (Exception e) {
+            LOG.warn("currentUserId resolution failed (degraded): {}", e.getMessage());
             return null;
         }
     }

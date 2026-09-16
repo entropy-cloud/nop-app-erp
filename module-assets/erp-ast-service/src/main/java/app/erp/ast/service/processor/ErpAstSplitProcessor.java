@@ -1,5 +1,8 @@
 package app.erp.ast.service.processor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstAssetCategory;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
@@ -47,6 +50,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>每个 step 方法标记 protected，下游可逐个覆盖以产品化定制。
  */
 public class ErpAstSplitProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpAstSplitProcessor.class);
 
     static final BigDecimal PROPORTION_TOLERANCE = new BigDecimal("0.000001");
     static final BigDecimal AMOUNT_TOLERANCE = new BigDecimal("0.01");
@@ -540,6 +545,7 @@ public class ErpAstSplitProcessor {
             IUserContext ctx = IUserContext.get();
             return ctx == null ? null : ctx.getUserId();
         } catch (Exception e) {
+            LOG.warn("currentUserId resolution failed (degraded): {}", e.getMessage());
             return null;
         }
     }

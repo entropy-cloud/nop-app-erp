@@ -483,6 +483,7 @@ public class ErpApsAutoDispatchProcessor {
             IUserContext ctx = IUserContext.get();
             return ctx == null ? null : ctx.getUserId();
         } catch (Exception e) {
+            LOG.warn("currentUserId resolution failed (degraded): {}", e.getMessage());
             return null;
         }
     }

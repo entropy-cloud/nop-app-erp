@@ -1,5 +1,8 @@
 package app.erp.ast.service.processor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstAssetCategory;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
@@ -40,6 +43,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * reverseApprove 抛 {@code ERR_AST_MERGE_REVERSE_NOT_SUPPORTED}（owner doc {@code split-merge.md} §关键业务规则 5 不可逆契约）。
  */
 public class ErpAstMergeProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpAstMergeProcessor.class);
 
     static final int VALUE_SCALE = 4;
 
@@ -519,6 +524,7 @@ public class ErpAstMergeProcessor {
             IUserContext ctx = IUserContext.get();
             return ctx == null ? null : ctx.getUserId();
         } catch (Exception e) {
+            LOG.warn("currentUserId resolution failed (degraded): {}", e.getMessage());
             return null;
         }
     }
