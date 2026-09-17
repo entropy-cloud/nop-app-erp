@@ -450,6 +450,11 @@ public interface ErpFinErrors {
     ErrorCode ERR_BUDGET_COMMITMENT_SUBJECT_NOT_CONFIGURED = ErrorCode.define("erp.err.fin.budget.commitment.subject-not-configured",
             "承付占用科目未配置（启用 erp-fin.budget-commitment-enabled=true 时必须配置 erp-fin.budget-commitment-subject-code）");
 
+    // P2-CK-fin3-009：预算控制期间解析失败显式拒绝（HARD 模式；修复 periodId=null 静默 fail-open）
+    ErrorCode ERR_BUDGET_PERIOD_NOT_RESOLVED = ErrorCode.define("erp.err.fin.budget-period-not-resolved",
+            "预算控制期间解析失败（业务日期不在任何会计期间或期间未建），来源单据 {sourceBillType}/{sourceBillCode} 按模式拒绝",
+            "sourceBillType", "sourceBillCode");
+
     // --- 报表渲染作用域 ---
 
     ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define("erp.err.fin.report.name-invalid",

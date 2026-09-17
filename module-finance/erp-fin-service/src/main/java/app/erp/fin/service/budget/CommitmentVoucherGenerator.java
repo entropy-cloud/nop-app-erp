@@ -162,7 +162,7 @@ public class CommitmentVoucherGenerator {
         line.setCreditAmount(credit);
         line.setCurrencyId(currencyId);
         line.setExchangeRate(BigDecimal.ONE);
-        line.setAmountSource(absAmount);
+        line.setAmountSource(absAmount); // P2-CK-fin3-010：承付单币种简化（currencyId="1"/rate=1），多币种承付随 P1-CK-fin3-005 successor
         line.setAmountFunctional(absAmount);
         line.setAcctSchemaId(acctSchemaId);
         line.setOrgId(orgId);

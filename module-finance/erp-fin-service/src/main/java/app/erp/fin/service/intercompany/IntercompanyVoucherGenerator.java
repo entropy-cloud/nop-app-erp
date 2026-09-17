@@ -2,12 +2,16 @@ package app.erp.fin.service.intercompany;
 
 import app.erp.fin.dao.api.IErpFinGlMappingResolver;
 import app.erp.fin.dao.dto.GlMappingDimensions;
+import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.dao.entity.ErpMdSubject;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
+import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.posting.ErpFinPostingErrors;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -16,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +75,17 @@ public class IntercompanyVoucherGenerator {
     public List<String> generatePairedVouchers(String transferOrderCode, String fromOrgLegalId, String toOrgLegalId,
                                              String fromAcctSchemaId, String toAcctSchemaId, String periodId,
                                              String currencyId, BigDecimal amount) {
+        return generatePairedVouchers(transferOrderCode, fromOrgLegalId, toOrgLegalId,
+                fromAcctSchemaId, toAcctSchemaId, periodId, currencyId, amount, null);
+    }
+
+    /**
+     * P2-CK-fin4-007：businessDate 透传变体——voucherDate 用业务日期而非今天（迟到确认场景
+     * voucherDate 与 periodId 脱钩修复），并补期间锁定守卫。
+     */
+    public List<String> generatePairedVouchers(String transferOrderCode, String fromOrgLegalId, String toOrgLegalId,
+                                             String fromAcctSchemaId, String toAcctSchemaId, String periodId,
+                                             String currencyId, BigDecimal amount, LocalDate businessDate) {
         List<String> voucherIds = new ArrayList<>();
         if (amount == null || amount.signum() <= 0) {
             return voucherIds;
@@ -88,7 +104,7 @@ public class IntercompanyVoucherGenerator {
                 DEFAULT_REVENUE_SUBJECT_CODE);
         String arVoucherId = writeIntercompanyVoucher(transferOrderCode, ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE,
                 fromOrgLegalId, fromAcctSchemaId, periodId, currencyId, amount,
-                arSubjectCode, "Intercompany AR", revenueSubjectCode, "Intercompany revenue"); // 记账摘要 memo 兼科目名兜底
+                arSubjectCode, "Intercompany AR", revenueSubjectCode, "Intercompany revenue", businessDate); // 记账摘要 memo 兼科目名兜底
         if (arVoucherId != null) {
             voucherIds.add(arVoucherId);
         }
@@ -102,7 +118,7 @@ public class IntercompanyVoucherGenerator {
                 DEFAULT_AP_SUBJECT_CODE);
         String apVoucherId = writeIntercompanyVoucher(transferOrderCode, ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE,
                 toOrgLegalId, toAcctSchemaId, periodId, currencyId, amount,
-                costSubjectCode, "Intercompany cost", apSubjectCode, "Intercompany AP"); // 记账摘要 memo 兼科目名兜底
+                costSubjectCode, "Intercompany cost", apSubjectCode, "Intercompany AP", businessDate); // 记账摘要 memo 兼科目名兜底
         if (apVoucherId != null) {
             voucherIds.add(apVoucherId);
         }
@@ -204,7 +220,9 @@ public class IntercompanyVoucherGenerator {
         reversal.setCode(ErpFinConstants.INTERCOMPANY_VOUCHER_REVERSAL_BILL_CODE_PREFIX
                 + StringHelper.generateUUID().substring(0, 12));
         reversal.setVoucherType("TRANSFER");
-        reversal.setVoucherDate(CoreMetrics.today());
+        // P2-CK-fin4-007：红字凭证 voucherDate 沿用原凭证业务日期（非今天）——与配对凭证归属一致
+        reversal.setVoucherDate(original.getVoucherDate() != null
+                ? original.getVoucherDate() : CoreMetrics.today());
         reversal.setOrgId(original.getOrgId());
         reversal.setAcctSchemaId(original.getAcctSchemaId());
         reversal.setPeriodId(original.getPeriodId());
@@ -284,7 +302,8 @@ public class IntercompanyVoucherGenerator {
     private String writeIntercompanyVoucher(String transferOrderCode, String billType, String orgId, String acctSchemaId,
                                           String periodId, String currencyId, BigDecimal amount,
                                           String debitSubjectCode, String debitSubjectName,
-                                          String creditSubjectCode, String creditSubjectName) {
+                                          String creditSubjectCode, String creditSubjectName,
+                                          LocalDate businessDate) {
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         IEntityDao<ErpFinVoucherLine> lineDao = daoProvider.daoFor(ErpFinVoucherLine.class);
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
@@ -292,11 +311,20 @@ public class IntercompanyVoucherGenerator {
         ErpMdSubject debitSubject = findSubjectByCode(debitSubjectCode);
         ErpMdSubject creditSubject = findSubjectByCode(creditSubjectCode);
 
+        // P2-CK-fin4-007②：期间锁定守卫（对齐引擎 resolveOpenPeriod CLOSED 拒绝语义）——
+        // 迟到确认不再向 CLOSED 期间直写 POSTED 凭证
+        ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
+        if (period != null && "CLOSED".equals(period.getStatus())) {
+            throw new NopException(ErpFinPostingErrors.ERR_PERIOD_CLOSED)
+                    .param("periodId", periodId);
+        }
+
         ErpFinVoucher voucher = voucherDao.newEntity();
         voucher.setCode(ErpFinConstants.INTERCOMPANY_VOUCHER_BILL_CODE_PREFIX
                 + StringHelper.generateUUID().substring(0, 12));
         voucher.setVoucherType("TRANSFER");
-        voucher.setVoucherDate(CoreMetrics.today());
+        // P2-CK-fin4-007①：voucherDate 用业务日期（null 回退今天），修复与 periodId 脱钩
+        voucher.setVoucherDate(businessDate != null ? businessDate : CoreMetrics.today());
         voucher.setOrgId(orgId);
         voucher.setAcctSchemaId(acctSchemaId);
         voucher.setPeriodId(periodId);
@@ -361,8 +389,10 @@ public class IntercompanyVoucherGenerator {
             line.setSubjectCode(subject.getCode());
             line.setSubjectName(subject.getName());
         } else {
-            line.setSubjectCode(fallbackCode);
-            line.setSubjectName(fallbackName);
+            // P2-CK-fin4-007③：科目解析失败显式抛错（对齐引擎 ERR_SUBJECT_NOT_RESOLVED 语义）——
+            // 原 subjectId=null 静默降级致 GL 聚合（subjectId==null continue）静默丢金额
+            throw new NopException(ErpFinPostingErrors.ERR_SUBJECT_NOT_FOUND)
+                    .param("subjectCode", fallbackCode);
         }
     }
 

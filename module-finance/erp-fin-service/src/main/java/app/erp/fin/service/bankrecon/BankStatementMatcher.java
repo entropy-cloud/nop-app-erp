@@ -13,6 +13,8 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -50,21 +52,64 @@ public class BankStatementMatcher {
         int daysWindow = bankLedgerQuery.resolveDaysWindow();
 
         List<ErpFinBankStatementLine> unmatched = loadUnmatchedLines(statementId);
+
+        // P2-CK-fin4-011：跨行缓存消除 N+1——按对账单行 min/max 日期并集一次预载窗口内全部
+        // 凭证行，循环内按行做方向/金额/occupied/counterparty 内存过滤（与 findCandidates 逐行
+        // 查询的过滤条件等价）；已勾对凭证行 id 集合循环内增量维护（本行命中即加入，防同轮双匹配）。
+        LocalDate minDate = null;
+        LocalDate maxDate = null;
+        for (ErpFinBankStatementLine line : unmatched) {
+            LocalDate d = line.getTransactionDate();
+            if (d == null) {
+                continue;
+            }
+            LocalDate lo = d.minusDays(Math.max(0, daysWindow));
+            LocalDate hi = d.plusDays(Math.max(0, daysWindow));
+            minDate = minDate == null || lo.isBefore(minDate) ? lo : minDate;
+            maxDate = maxDate == null || hi.isAfter(maxDate) ? hi : maxDate;
+        }
+        java.util.List<ErpFinVoucherLine> windowLines = minDate == null
+                ? java.util.Collections.emptyList()
+                : bankLedgerQuery.findVoucherLinesInWindow(account, minDate, maxDate);
+        java.util.Set<String> occupied = bankLedgerQuery.findOccupiedLineIds(account.getId());
+
         for (ErpFinBankStatementLine line : unmatched) {
             String oppositeDirection = oppositeDirection(line.getDcDirection());
             if (oppositeDirection == null) {
                 result.setUnmatched(result.getUnmatched() + 1);
                 continue;
             }
-            List<ErpFinVoucherLine> candidates = bankLedgerQuery.findCandidates(
-                    account, line.getAmount(), oppositeDirection, line.getTransactionDate(), daysWindow,
-                    line.getCounterpartyName());
+            BigDecimal amount = line.getAmount();
+            LocalDate txnDate = line.getTransactionDate();
+
+            List<ErpFinVoucherLine> candidates = new java.util.ArrayList<>();
+            if (amount != null && txnDate != null) {
+                for (ErpFinVoucherLine vl : windowLines) {
+                    if (occupied.contains(vl.getId())) {
+                        continue;
+                    }
+                    if (!ErpFinConstants.DC_DEBIT.equals(oppositeDirection)
+                            ? nz(vl.getCreditAmount()).compareTo(amount) != 0
+                            : nz(vl.getDebitAmount()).compareTo(amount) != 0) {
+                        continue;
+                    }
+                    // 两侧任一为空放行（对齐 findCandidates counterparty 过滤语义）
+                    if (line.getCounterpartyName() != null && vl.getPartner() != null
+                            && vl.getPartner().getName() != null
+                            && !line.getCounterpartyName().equals(vl.getPartner().getName())) {
+                        continue;
+                    }
+                    candidates.add(vl);
+                }
+            }
 
             if (candidates.size() == 1) {
                 ErpFinVoucherLine chosen = candidates.get(0);
                 line.setMatchStatus(ErpFinConstants.BANK_MATCH_MATCHED);
                 line.setMatchedLineId(chosen.getId());
                 result.setMatched(result.getMatched() + 1);
+                // 增量维护 occupied（同轮后续行不再命中同一凭证行）
+                occupied.add(chosen.getId());
             } else if (candidates.isEmpty()) {
                 result.setUnmatched(result.getUnmatched() + 1);
             } else {
@@ -73,6 +118,10 @@ public class BankStatementMatcher {
             }
         }
         return result;
+    }
+
+    private static java.math.BigDecimal nz(java.math.BigDecimal v) {
+        return v != null ? v : java.math.BigDecimal.ZERO;
     }
 
     protected ErpFinBankStatement loadStatement(String statementId) {

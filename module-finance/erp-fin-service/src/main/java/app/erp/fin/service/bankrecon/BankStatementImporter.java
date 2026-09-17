@@ -24,6 +24,7 @@ import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.in;
 import io.nop.api.core.time.CoreMetrics;
 
 /**
@@ -181,21 +182,46 @@ public class BankStatementImporter {
     }
 
     /** 经 statement.fundAccountId 关联反查银行流水行是否已存在同 refNo（避免全表扫描）。 */
+    /**
+     * P2-CK-fin4-009：账户级幂等——去重范围从「最近一张对账单」扩展到该账户**全部**对账单行
+     *（statementId 列表 in 查询；bank-reconciliation.md §业务规则1 账户维度唯一键）。
+     */
     protected boolean existsByRefNo(String fundAccountId, String refNo) {
-        String statementId = findStatementIdByAccount(fundAccountId);
-        if (statementId == null) {
-            return false;
-        }
-        return countLinesByFilter(and(eq("statementId", statementId), eq("refNo", refNo))) > 0;
+        return countLinesAcrossStatements(fundAccountId, qb -> {
+            qb.addFilter(eq("refNo", refNo));
+            return qb;
+        }) > 0;
     }
 
     protected boolean existsByComposite(String fundAccountId, LocalDate txnDate, BigDecimal amount, String dcDirection) {
-        String statementId = findStatementIdByAccount(fundAccountId);
-        if (statementId == null) {
-            return false;
+        return countLinesAcrossStatements(fundAccountId, qb -> {
+            qb.addFilter(eq("transactionDate", txnDate));
+            qb.addFilter(eq("amount", amount));
+            qb.addFilter(eq("dcDirection", dcDirection));
+            return qb;
+        }) > 0;
+    }
+
+    /** 账户全部对账单行按过滤条件计数（statementId 分批 in，防参数上限）。 */
+    protected long countLinesAcrossStatements(String fundAccountId, java.util.function.Function<io.nop.api.core.beans.query.QueryBean, io.nop.api.core.beans.query.QueryBean> extraAppender) {
+        IEntityDao<ErpFinBankStatement> stmtDao = daoProvider.daoFor(ErpFinBankStatement.class);
+        QueryBean sq = new QueryBean();
+        sq.addFilter(eq("fundAccountId", fundAccountId));
+        List<String> statementIds = stmtDao.findAllByQuery(sq).stream()
+                .map(ErpFinBankStatement::getId).collect(java.util.stream.Collectors.toList());
+        if (statementIds.isEmpty()) {
+            return 0;
         }
-        return countLinesByFilter(and(eq("statementId", statementId),
-                eq("transactionDate", txnDate), eq("amount", amount), eq("dcDirection", dcDirection))) > 0;
+        IEntityDao<ErpFinBankStatementLine> lineDao = daoProvider.daoFor(ErpFinBankStatementLine.class);
+        long total = 0;
+        int batch = 500;
+        for (int i = 0; i < statementIds.size(); i += batch) {
+            QueryBean q = new QueryBean();
+            q.addFilter(in("statementId", statementIds.subList(i, Math.min(i + batch, statementIds.size()))));
+            extraAppender.apply(q);
+            total += lineDao.countByQuery(q);
+        }
+        return total;
     }
 
     protected String findStatementIdByAccount(String fundAccountId) {

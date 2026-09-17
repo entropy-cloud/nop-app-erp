@@ -17,8 +17,10 @@
 
     <processor name="process">
         <source><![CDATA[
-            const biz = inject('IErpFinReconciliationBiz');
-            biz.runAutoReconciliation(item.direction, null, 'FIFO', batchChunkCtx.serviceContext);
+            // P2-CK-fin2-008：批处理入口直调 processor bean 并传 skipDisabled=true
+            //（业务开关关闭时 skip+warn 返回空结果，不再整批抛错；BizModel 手动路径保留抛错反馈）
+            inject('app.erp.fin.service.processor.ErpFinReconciliationRunAutoReconciliationProcessor')
+                .runAutoReconciliation(item.direction, null, 'FIFO', true, batchChunkCtx.serviceContext);
         ]]></source>
     </processor>
 </batch>

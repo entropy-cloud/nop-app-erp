@@ -243,7 +243,21 @@ public class ErpFinExpenseClaimProcessor {
         String periodId = resolvePeriodId(claim.getBusinessDate());
         BigDecimal amount = claim.getAmountFunctional() != null
                 ? claim.getAmountFunctional() : BigDecimal.ZERO;
-        budgetControlBiz.check(subjectId, null, periodId, amount, "EXPENSE_CLAIM", claim.getCode(), context);
+        // P2-CK-fin3-008：透传行级成本中心维度（取第一行；多行多 cc 残留口径见 plan F3.9 约束②）
+        String costCenterId = resolveFirstLineCostCenterId(claim);
+        budgetControlBiz.check(subjectId, costCenterId, periodId, amount, "EXPENSE_CLAIM", claim.getCode(), context);
+    }
+
+    /** P2-CK-fin3-008：预算 check 透传行级成本中心维度（取第一行；行无值/无行回退 null=match-any）。 */
+    protected String resolveFirstLineCostCenterId(app.erp.fin.dao.entity.ErpFinExpenseClaim claim) {
+        var lines = claim.getLines();
+        if (lines == null) {
+            return null;
+        }
+        for (app.erp.fin.dao.entity.ErpFinExpenseClaimLine line : lines) {
+            return line.getCostCenterId();
+        }
+        return null;
     }
 
     protected String resolveBudgetSubjectId(String configKey) {

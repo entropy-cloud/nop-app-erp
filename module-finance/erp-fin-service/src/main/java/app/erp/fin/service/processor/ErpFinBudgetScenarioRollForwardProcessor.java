@@ -117,7 +117,7 @@ public class ErpFinBudgetScenarioRollForwardProcessor {
         target.setExchangeRate(source.getExchangeRate());
         target.setControlLevel(source.getControlLevel());
         target.setDocStatus(ErpFinConstants.BUDGET_STATUS_DRAFT);
-        target.setApproveStatus(ErpFinConstants.BUDGET_STATUS_DRAFT);
+        target.setApproveStatus(ErpFinConstants.APPROVE_STATUS_UNSUBMITTED); // P2-CK-fin3-006：approveStatus 轴字典内值（原 BUDGET_STATUS_DRAFT 为 docStatus 轴值，写 approveStatus 轴属字典外值）
         target.setRollForwardStrategy(strategy);
         dao.saveEntity(target);
         return target;
@@ -136,6 +136,11 @@ public class ErpFinBudgetScenarioRollForwardProcessor {
                     ? sl.getBudgetAmountFunctional() : BigDecimal.ZERO;
             sourceAmountSum = sourceAmountSum.add(sourceAmt);
             BigDecimal targetAmt = adjustAmountByStrategy(strategy, sourceAmt);
+            // P2-CK-fin3-010：复制行双金额分别携带（source 行值随 strategy 同比例缩放，
+            // functional 顶替 source 会破坏 rate×source=functional 关系）
+            BigDecimal targetSourceAmt = sl.getBudgetAmountSource() != null
+                    ? adjustAmountByStrategy(strategy, sl.getBudgetAmountSource())
+                    : targetAmt;
 
             ErpFinBudgetLine tl = lineDao.newEntity();
             tl.setScenarioId(target.getId());
@@ -151,7 +156,7 @@ public class ErpFinBudgetScenarioRollForwardProcessor {
             tl.setPartnerId(sl.getPartnerId());
             tl.setWarehouseId(sl.getWarehouseId());
             tl.setMaterialId(sl.getMaterialId());
-            tl.setBudgetAmountSource(targetAmt);
+            tl.setBudgetAmountSource(targetSourceAmt);
             tl.setBudgetAmountFunctional(targetAmt);
             tl.setCurrencyId(sl.getCurrencyId());
             tl.setExchangeRate(sl.getExchangeRate());

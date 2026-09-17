@@ -44,6 +44,8 @@ public class AdvanceOffsetOrchestrator {
     @Inject
     IDaoProvider daoProvider;
     @Inject
+    app.erp.fin.service.reconciliation.PartnerBalanceUpdater partnerBalanceUpdater;
+    @Inject
     EmployeeAdvancePostingDispatcher advanceDispatcher;
 
     /**
@@ -99,6 +101,8 @@ public class AdvanceOffsetOrchestrator {
             daoProvider.daoFor(ErpFinEmployeeAdvance.class).updateEntity(advance);
             claim.setSettleAdvanceId(advance.getId());
         }
+        // P2-CK-fin2-006：抵扣改写双方辅助账 open 后刷新伙伴余额缓存
+        partnerBalanceUpdater.refresh(partnerId);
         return true;
     }
 
@@ -134,6 +138,10 @@ public class AdvanceOffsetOrchestrator {
             advance.setSettledAmount(nz(advance.getSettledAmount()).subtract(settledNet));
             advance.setOutstandingAmount(nz(advance.getOutstandingAmount()).add(settledNet));
             daoProvider.daoFor(ErpFinEmployeeAdvance.class).updateEntity(advance);
+        }
+        // P2-CK-fin2-006：反向抵扣改写辅助账后刷新伙伴余额缓存
+        if (payableItem != null) {
+            partnerBalanceUpdater.refresh(payableItem.getPartnerId());
         }
     }
 

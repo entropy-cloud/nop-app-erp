@@ -81,11 +81,22 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         String acctSchemaId = resolveCandidateAcctSchemaId(candidate.getOrgId());
         String currencyId = resolveCandidateCurrencyId(candidate.getOrgId());
 
+        // P2-CK-fin4-007：①voucherDate 用业务日期（候选期间的开始日，非今天）；②期间锁定守卫
+        //（CLOSED 拒绝，对齐引擎 resolveOpenPeriod 语义）；③applySubject 解析失败抛错（本类外）
+        app.erp.fin.dao.entity.ErpFinAccountingPeriod elimPeriod =
+                daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinAccountingPeriod.class)
+                        .getEntityById(candidate.getPeriodId());
+        if (elimPeriod != null && "CLOSED".equals(elimPeriod.getStatus())) {
+            throw new NopException(app.erp.fin.service.posting.ErpFinPostingErrors.ERR_PERIOD_CLOSED)
+                    .param("periodId", candidate.getPeriodId());
+        }
+        java.time.LocalDate bizDate = elimPeriod != null ? elimPeriod.getStartDate() : CoreMetrics.today();
+
         ErpFinVoucher voucher = voucherDao.newEntity();
         voucher.setCode(ErpFinConstants.ELIMINATION_VOUCHER_BILL_CODE_PREFIX
                 + StringHelper.generateUUID().substring(0, 12));
         voucher.setVoucherType("TRANSFER");
-        voucher.setVoucherDate(CoreMetrics.today());
+        voucher.setVoucherDate(bizDate);
         voucher.setOrgId(candidate.getOrgId());
         voucher.setAcctSchemaId(acctSchemaId);
         voucher.setPeriodId(candidate.getPeriodId());
@@ -99,12 +110,15 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         // 借方行（抵消方向由 eliminationType 决定，简化为 Dr 抵消科目 / Cr 抵消对冲科目）
         String debitSubjectCode = resolveEliminationSubjectCode(candidate.getEliminationType(), true);
         app.erp.md.dao.entity.ErpMdSubject debitSubject = findSubjectByCode(debitSubjectCode);
+        // P2-CK-fin4-007③：科目解析失败显式抛错（subjectId=null 会被 GL 聚合静默跳过丢金额）
+        if (debitSubject == null) {
+            throw new NopException(app.erp.fin.service.posting.ErpFinPostingErrors.ERR_SUBJECT_NOT_FOUND)
+                    .param("subjectCode", debitSubjectCode);
+        }
         ErpFinVoucherLine debitLine = lineDao.newEntity();
         debitLine.setVoucherId(voucherId);
         debitLine.setLineNo(1);
-        if (debitSubject != null) {
-            debitLine.setSubjectId(debitSubject.getId());
-        }
+        debitLine.setSubjectId(debitSubject.getId());
         debitLine.setSubjectCode(debitSubjectCode);
         debitLine.setSubjectName("Elimination-" + candidate.getEliminationType());
         debitLine.setDcDirection(ErpFinConstants.DC_DEBIT);
@@ -123,12 +137,15 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         // 贷方行
         String creditSubjectCode = resolveEliminationSubjectCode(candidate.getEliminationType(), false);
         app.erp.md.dao.entity.ErpMdSubject creditSubject = findSubjectByCode(creditSubjectCode);
+        // P2-CK-fin4-007③：同上显式抛错
+        if (creditSubject == null) {
+            throw new NopException(app.erp.fin.service.posting.ErpFinPostingErrors.ERR_SUBJECT_NOT_FOUND)
+                    .param("subjectCode", creditSubjectCode);
+        }
         ErpFinVoucherLine creditLine = lineDao.newEntity();
         creditLine.setVoucherId(voucherId);
         creditLine.setLineNo(2);
-        if (creditSubject != null) {
-            creditLine.setSubjectId(creditSubject.getId());
-        }
+        creditLine.setSubjectId(creditSubject.getId());
         creditLine.setSubjectCode(creditSubjectCode);
         creditLine.setSubjectName("Elimination offset-" + candidate.getEliminationType());
         creditLine.setDcDirection(ErpFinConstants.DC_CREDIT);

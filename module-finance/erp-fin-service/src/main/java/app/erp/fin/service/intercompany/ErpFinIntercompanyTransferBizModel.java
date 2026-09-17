@@ -132,7 +132,7 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
         BigDecimal amount = pricing.getUnitPrice().multiply(totalQty);
 
         return intercompanyVoucherGenerator.generatePairedVouchers(transferCode, fromLegalId, toLegalId,
-                fromAcctSchemaId, toAcctSchemaId, periodId, currencyId, amount);
+                fromAcctSchemaId, toAcctSchemaId, periodId, currencyId, amount, businessDate);
     }
 
     @Override
@@ -181,7 +181,7 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
         String currencyId = resolveOrgCurrencyId(sellerLegal);
 
         return intercompanyVoucherGenerator.generatePairedVouchers(docCode, sellerLegal, buyerLegal,
-                sellerAcctSchemaId, buyerAcctSchemaId, periodId, currencyId, amount);
+                sellerAcctSchemaId, buyerAcctSchemaId, periodId, currencyId, amount, businessDate);
     }
 
     @Override

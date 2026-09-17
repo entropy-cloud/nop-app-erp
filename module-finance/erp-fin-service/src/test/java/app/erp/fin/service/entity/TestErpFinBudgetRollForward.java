@@ -70,6 +70,9 @@ public class TestErpFinBudgetRollForward extends JunitAutoTestCase {
         assertNotNull(target.getId(), "应生成新方案");
         assertEquals(2025, target.getFiscalYear(), "目标年度应为 2025");
         assertEquals(ErpFinConstants.BUDGET_STATUS_DRAFT, target.getDocStatus(), "目标方案 DRAFT 状态");
+        // P2-CK-fin3-006（F3.9）：approveStatus 轴必须为字典内值 UNSUBMITTED（修复前写 docStatus 轴值 DRAFT）
+        assertEquals(ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, target.getApproveStatus(),
+                "目标方案 approveStatus=UNSUBMITTED（字典内值，修复前为字典外值 DRAFT）");
         assertEquals(scenarioId, target.getParentScenarioId(), "parentScenarioId 指向源方案");
 
         BigDecimal copiedAmount = findLineAmount(target.getId(), "6601");

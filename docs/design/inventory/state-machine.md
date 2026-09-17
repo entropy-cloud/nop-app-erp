@@ -185,10 +185,10 @@
 
 - **迁移**：`confirm: {DRAFT}→CONFIRMED`；initial={DRAFT}、terminal={CONFIRMED}。
 - **仅 confirm 边的原因**：调拨单确认后，实际物理移动由**独立 ErpInvStockMove 流**承载（生成新 DRAFT 移动单走移动单状态机），非本单 docStatus 生命周期。DONE/CANCELLED 生命周期（cancel/complete/reverse writer）属 out-of-scope（路线图 Deferred「TransferOrder DONE/CANCELLED 生命周期 + approveStatus 接入」，触发条件 = PM 要求调拨单取消/完成/审批业务流落地时）。
-- **过账边界（较轻保护区）**：confirm **不触发存货成本过账、不生成 stock movement**；仅可选跨法人内部往来 GL hook（`dispatchIntercompanyPosting` → `IErpFinIntercompanyTransferBiz.onTransferConfirmed`，config-gated + **失败吞掉** log warn，不阻塞库存确认）。无 TransferOrderPostingDispatcher。
+- **过账边界（较轻保护区）**：confirm **不触发存货成本过账、不生成 stock movement**；仅可选跨法人内部往来 GL hook（`dispatchIntercompanyPosting` → `IErpFinIntercompanyTransferBiz.onTransferConfirmed`，config-gated + **rethrow 强一致**（P2-CK-fin4-008 语义反转：原失败吞掉 log warn 改为失败时调拨确认整体回滚——intercompany 为法人间法定凭证，静默缺凭证无补偿面不可接受）。无 TransferOrderPostingDispatcher。
 - **错误码缺陷（confirmed live defect，行为保持不修正）**：confirm 守卫（`ErpInvTransferOrderConfirmProcessor.validateDraft`）抛**盘点单的** `ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION`（`erp.err.inv.stock-take.illegal-transition`）+ `ARG_TAKE_ID` 参数（copy-paste bug，应为 TransferOrder 自己的码；无 TransferOrder 专属 illegal-transition 码）。路线图 Non-Goal「不借迁移改变既有错误码」→ 行为保持映射既有（错误）码；修正（新增 `ERR_INV_TRANSFER_ORDER_ILLEGAL_TRANSITION`）登记为 successor（见路线图 Deferred）。
 - **状态机 Bean**：`ErpInvTransferOrderStateMachine`（confirm 单边；非法来源态 Bean 抛 common 码，Processor 映射为上述既有（错误）领域码 + `ARG_TAKE_ID`/`ARG_CURRENT_STATUS` 参数不变）。
-- **动态守卫边界（保留 Processor）**：intercompany hook（config-gated + 失败吞掉）不属于状态轴判断，Bean 不承载。
+- **动态守卫边界（保留 Processor）**：intercompany hook（config-gated + rethrow 强一致，P2-CK-fin4-008 语义反转）不属于状态轴判断，Bean 不承载。
 
 ## 所有权转移单状态机（独立）
 

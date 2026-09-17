@@ -450,3 +450,8 @@ budgetGroupCode = "3Y-PLAN-2026"
 | 结转时上年度 Scenario 仍可调整 | **结转后源 Scenario status=CLOSED**（终态不可再调整）——避免已结转数据被改 |
 | commitment 一并结转 | **A2 默认不结转 commitment**（与 actualAmount 合并记录）——业务语义复杂，归 successor |
 | 预算物化为快照表 | **保持派生查询**——`commitmentAmount/actualAmount/availableAmount` 从 VoucherLine 聚合不落库；物化 successor 触发条件：BudgetLine > 10 万行或查询 P95 > 500ms |
+
+## 预算控制实现口径（P2-CK-fin3-008/009 登记，plan 2026-09-17-0600-1 F3.9 批）
+
+- **成本中心维度 match-any**（fin3-008 混合方向）：check/aggregate 侧 `costCenterId=null` 语义为「匹配任意成本中心预算行 + 聚合跨维度」（原 IS NULL 精确匹配使带 cc 预算行静默失效）；expense 调用侧透传行级 costCenterId，purchase 两站点单据无维度字段走 match-any；命中为同期首条 APPROVED 行（未实现具体度排序——混合维度下行选择不确定性登记为 residual）。回归面：纯无 cc 预算部署零回归；混合维度部署 HARD 模式从静默 PASS 变可能 BLOCK（收紧属修复本意）。残留口径：命中带 cc 行而聚合跨维度。
+- **期间解析失败模式**（fin3-009）：`erp-fin.budget-period-missing-mode`（默认 WARN）——WARN 记 SKIPPED ControlLog（无 match 变体，scenarioId/budgetLineId 置空）后放行；HARD 抛 `ERR_BUDGET_PERIOD_NOT_RESOLVED`。`aggregateAmount` periodId null 场景经 check() 入口早返回闭合（periodId=null 分支在聚合前拦截，不进入聚合）。

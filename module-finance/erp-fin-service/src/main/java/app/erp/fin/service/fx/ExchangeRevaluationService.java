@@ -107,7 +107,8 @@ public class ExchangeRevaluationService {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         QueryBean q = new QueryBean();
         q.addFilter(notIn("status", Arrays.asList(
-                ErpFinConstants.AR_AP_STATUS_SETTLED, ErpFinConstants.AR_AP_STATUS_CANCELLED)));
+                ErpFinConstants.AR_AP_STATUS_SETTLED, ErpFinConstants.AR_AP_STATUS_CANCELLED,
+                ErpFinConstants.AR_AP_STATUS_WRITTEN_OFF))); // P2-CK-fin4-005：部分核销残留 open 不入重估
         // P1-CK-fin4-004（plan 2026-09-12-1000-1 Phase 3）：orgId 过滤（null-skip 契约）
         String _orgId = app.erp.common.org.ErpOrgContext.currentOrgId(null);
         if (_orgId != null) {

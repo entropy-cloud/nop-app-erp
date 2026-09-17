@@ -35,6 +35,18 @@ public class ErpFinConsolidationEliminationGenerateEliminationCandidatesProcesso
     IDaoProvider daoProvider;
 
     public int generateEliminationCandidates(String periodId, IServiceContext context) {
+
+        // P2-CK-fin4-006：幂等——同 (periodId, pairKey, eliminationType) 已有候选即跳过该配对
+        //（不带 status 过滤：任何既有候选即阻断重建——postElimination 仅守卫 CANDIDATE 态，
+        // 重建候选可再次过账重开重复抵销链。全 skip 返回 0 保留 LOG 观测，约束⑦）
+        java.util.Set<String> existingKeys = new java.util.HashSet<>();
+        for (app.erp.fin.dao.entity.ErpFinConsolidationElimination c
+                : daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinConsolidationElimination.class).findAllByQuery(new QueryBean())) {
+            if (periodId != null && periodId.equals(c.getPeriodId())) {
+                existingKeys.add(c.getPairKey() + "|" + c.getEliminationType());
+            }
+        }
+        int skippedDup = 0;
         if (!isEliminationEnabled()) {
             return 0;
         }
@@ -97,6 +109,12 @@ public class ErpFinConsolidationEliminationGenerateEliminationCandidatesProcesso
                 candidate.setToOrgId(m.getApOrgId());
                 candidate.setEliminationType(ErpFinConstants.ELIMINATION_TYPE_INVENTORY_PROFIT);
                 candidate.setPeriodId(periodId);
+                // P2-CK-fin4-006：同键已有候选跳过（幂等）
+                if (!existingKeys.add(m.getPairKey() + "|"
+                        + ErpFinConstants.ELIMINATION_TYPE_INVENTORY_PROFIT)) {
+                    skippedDup++;
+                    continue;
+                }
                 candidate.setPairKey(m.getPairKey());
                 candidate.setMatchId(m.getId());
                 candidate.setEliminationAmount(m.getMatchedAmount());
@@ -106,12 +124,14 @@ public class ErpFinConsolidationEliminationGenerateEliminationCandidatesProcesso
             }
         }
 
-        if (count == 0) {
+        // P2-CK-fin4-006（约束⑦）：全 skip（幂等重跑无新增）返回 0 不抛错，保留 LOG 观测
+        if (count == 0 && skippedDup == 0) {
             throw new NopException(ErpFinErrors.ERR_ELIMINATION_NO_CANDIDATES)
                     .param(ErpFinErrors.ARG_PERIOD_ID, periodId);
         }
 
-        LOG.info("elimination candidate detection completed: period {} detected {} candidates", periodId, count);
+        LOG.info("elimination candidate detection completed: period {} detected {} candidates (skippedDup={})",
+                periodId, count, skippedDup);
         return count;
     }
 

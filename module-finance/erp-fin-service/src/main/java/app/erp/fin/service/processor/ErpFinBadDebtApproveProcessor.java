@@ -27,6 +27,11 @@ public class ErpFinBadDebtApproveProcessor extends AbstractApproveProcessor<ErpF
         if (debt.isApproved()) {
             return debt;
         }
+        // P2-CK-fin2-009：SoD 守卫（bad-debt.md C21「审批人与发起人分离」；P1-MA6-001 清单漏 ErpFinBadDebt）——
+        // 同码同型对齐 EmployeeAdvance/ExpenseClaim 先例。
+        app.erp.common.service.SoDGuard.assertApproverNotCreator(
+                debt.getCreatedBy(), processor.currentUserId(),
+                app.erp.fin.service.ErpFinErrors.ERR_FIN_APPROVER_IS_CREATOR);
         processor.validateTransitionForApprove(debt);
         return processor.approveInternal(debt, processor.loadArApItem(debt.getSourceArApItemId()), context);
     }

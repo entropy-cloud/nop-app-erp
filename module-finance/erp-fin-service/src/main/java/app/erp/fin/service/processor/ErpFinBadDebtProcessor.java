@@ -63,6 +63,9 @@ public class ErpFinBadDebtProcessor {
     IDaoProvider daoProvider;
 
     @Inject
+    app.erp.fin.service.reconciliation.PartnerBalanceUpdater partnerBalanceUpdater;
+
+    @Inject
     FinPostingExecutor finPostingExecutor;
 
     @Inject
@@ -155,6 +158,8 @@ public class ErpFinBadDebtProcessor {
                 item.setStatus(ErpFinConstants.AR_AP_STATUS_WRITTEN_OFF);
             }
             arApItemDao().updateEntity(item);
+            // P2-CK-fin2-006：反审回退辅助账后刷新伙伴余额缓存
+            partnerBalanceUpdater.refresh(item.getPartnerId());
         }
 
         // step 3：翻 approvalStatus → REJECTED（保留 voucherId 不动——原凭证 isReversed=true 已表明状态）
@@ -211,6 +216,8 @@ public class ErpFinBadDebtProcessor {
                         ErpFinConstants.DC_CREDIT, amount, item.getPartnerId()));
         String voucherId = writeBadDebtVoucher(debt, item, ErpFinBusinessType.BAD_DEBT_WRITE_OFF, "Bad debt write-off", lines);
         debt.setVoucherId(voucherId);
+        // P2-CK-fin2-006：辅助账 open 改写后刷新伙伴余额缓存（核销 post/reverse 范式对齐）
+        partnerBalanceUpdater.refresh(item.getPartnerId());
     }
 
     /**
@@ -243,6 +250,8 @@ public class ErpFinBadDebtProcessor {
                         ErpFinConstants.DC_CREDIT, amount, item.getPartnerId()));
         String voucherId = writeBadDebtVoucher(debt, item, ErpFinBusinessType.BAD_DEBT_RECOVERY, "Bad debt recovery", lines);
         debt.setVoucherId(voucherId);
+        // P2-CK-fin2-006：同上刷新伙伴余额缓存
+        partnerBalanceUpdater.refresh(item.getPartnerId());
     }
 
     protected String writeBadDebtVoucher(ErpFinBadDebt debt, ErpFinArApItem item, ErpFinBusinessType businessType,

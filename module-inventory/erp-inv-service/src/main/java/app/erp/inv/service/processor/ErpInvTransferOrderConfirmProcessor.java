@@ -63,8 +63,11 @@ public class ErpInvTransferOrderConfirmProcessor {
                 intercompanyTransferBiz.onTransferConfirmed(order.getId(), order.getFromWarehouseId(),
                         order.getToWarehouseId(), qtyByMaterial, order.getBusinessDate(), context);
             } catch (RuntimeException e) {
-                org.slf4j.LoggerFactory.getLogger(ErpInvTransferOrderConfirmProcessor.class)
-                        .warn("intercompany posting failed for transfer {}: {}", order.getId(), e.getMessage());
+                // P2-CK-fin4-008（rethrow 强一致，反转「失败不阻塞」设计意图——posting.md L573/
+                // inventory-intercompany 语义随批同步）：intercompany 链不走引擎无异常工作台通道，
+                // 静默 warn 会致双法人账套缺凭证且调拨 DONE 后无重试入口；改为失败时调拨确认
+                // 整体回滚（真实故障阻断）。转移定价缺失 ERR_TRANSFER_PRICE_NOT_FOUND 同样传播（预期）。
+                throw e;
             }
         }
     }

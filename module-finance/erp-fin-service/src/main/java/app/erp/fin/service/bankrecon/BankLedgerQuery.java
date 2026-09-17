@@ -100,6 +100,83 @@ public class BankLedgerQuery {
         return filtered;
     }
 
+    /**
+     * P2-CK-fin4-011：预载某日的候选凭证行（POSTED 未红冲、同科目、同方向、同金额），
+     * 供 autoMatch 循环外按日预载、循环内过滤 occupied/counterparty——消除逐行全量重查 N+1。
+     */
+    public List<ErpFinVoucherLine> findCandidatesForDay(ErpFinFundAccount fundAccount, BigDecimal amount,
+                                                        String oppositeDirection, LocalDate txnDate,
+                                                        String counterpartyName, int daysWindow,
+                                                        java.util.Set<String> occupied) {
+        if (fundAccount == null || fundAccount.getSubjectId() == null
+                || amount == null || txnDate == null || oppositeDirection == null) {
+            return new ArrayList<>();
+        }
+        LocalDate from = txnDate.minusDays(Math.max(0, daysWindow));
+        LocalDate to = txnDate.plusDays(Math.max(0, daysWindow));
+
+        List<String> voucherIds = findVoucherIdsInWindow(from, to);
+        if (voucherIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        IEntityDao<ErpFinVoucherLine> lineDao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        List<ErpFinVoucherLine> result = new ArrayList<>();
+        int batchSize = 500;
+        for (int start = 0; start < voucherIds.size(); start += batchSize) {
+            int end = Math.min(start + batchSize, voucherIds.size());
+            List<String> chunk = voucherIds.subList(start, end);
+
+            QueryBean q = new QueryBean();
+            q.addFilter(eq("subjectId", fundAccount.getSubjectId()));
+            q.addFilter(eq("dcDirection", oppositeDirection));
+            q.addFilter(in("voucherId", chunk));
+            if (ErpFinConstants.DC_DEBIT.equals(oppositeDirection)) {
+                q.addFilter(eq("debitAmount", amount));
+            } else {
+                q.addFilter(eq("creditAmount", amount));
+            }
+            result.addAll(lineDao.findAllByQuery(q));
+        }
+
+        // occupied 增量维护由调用方传入（autoMatch 循环内命中即加入），语义与逐行查询等价
+        result.removeIf(line -> occupied.contains(line.getId()));
+
+        if (StringHelper.isNotBlank(counterpartyName)) {
+            result.removeIf(line -> {
+                String partnerName = line.getPartner() == null ? null : line.getPartner().getName();
+                return partnerName != null && !partnerName.equals(counterpartyName);
+            });
+        }
+        return result;
+    }
+
+    /**
+     * P2-CK-fin4-011：预载日期窗口内该科目的全部过账凭证行（不滤方向/金额/occupied），
+     * 供 autoMatch 一次载入后循环内内存过滤（消除逐行全量重查 N+1）。
+     */
+    public List<ErpFinVoucherLine> findVoucherLinesInWindow(ErpFinFundAccount fundAccount,
+                                                            LocalDate from, LocalDate to) {
+        if (fundAccount == null || fundAccount.getSubjectId() == null) {
+            return new ArrayList<>();
+        }
+        List<String> voucherIds = findVoucherIdsInWindow(from, to);
+        if (voucherIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        IEntityDao<ErpFinVoucherLine> lineDao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        List<ErpFinVoucherLine> result = new ArrayList<>();
+        int batchSize = 500;
+        for (int start = 0; start < voucherIds.size(); start += batchSize) {
+            int end = Math.min(start + batchSize, voucherIds.size());
+            QueryBean q = new QueryBean();
+            q.addFilter(eq("subjectId", fundAccount.getSubjectId()));
+            q.addFilter(in("voucherId", voucherIds.subList(start, end)));
+            result.addAll(lineDao.findAllByQuery(q));
+        }
+        return result;
+    }
+
     /** 取日期窗口内已过账（POSTED）且未红冲的凭证 ID。 */
     protected List<String> findVoucherIdsInWindow(LocalDate from, LocalDate to) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);

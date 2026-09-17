@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.in;
 
 // 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpFinAccountingPeriod、ErpFinAccountingPeriodStatus、ErpFinBudgetCarryForwardLog、ErpFinBudgetLine、ErpFinVoucher、ErpFinVoucherLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
@@ -235,17 +236,30 @@ public class ErpFinBudgetScenarioCarryForwardProcessor {
         if (line.getCostCenterId() != null) {
             lq.addFilter(eq("costCenterId", line.getCostCenterId()));
         }
-        List<ErpFinVoucherLine> vlines = daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(lq);
+        // P2-CK-fin3-007（B1 修订）：voucherId 集合下推消除 O(n×m) contains
+        //（期间过滤经 voucherId 集合传递——VoucherLine 无 periodId 列；分批防 in 参数上限）
         BigDecimal debit = BigDecimal.ZERO, credit = BigDecimal.ZERO;
-        for (ErpFinVoucherLine vl : vlines) {
-            if (!voucherIds.contains(vl.getVoucherId())) {
-                continue;
+        int batch = 500;
+        for (int i = 0; i < voucherIds.size(); i += batch) {
+            List<String> batchIds = voucherIds.subList(i, Math.min(i + batch, voucherIds.size()));
+            for (ErpFinVoucherLine vl : findVoucherLinesByVoucherIds(line, batchIds)) {
+                debit = debit.add(vl.getDebitAmount() != null ? vl.getDebitAmount() : BigDecimal.ZERO);
+                credit = credit.add(vl.getCreditAmount() != null ? vl.getCreditAmount() : BigDecimal.ZERO);
             }
-            debit = debit.add(vl.getDebitAmount() != null ? vl.getDebitAmount() : BigDecimal.ZERO);
-            credit = credit.add(vl.getCreditAmount() != null ? vl.getCreditAmount() : BigDecimal.ZERO);
         }
         return ErpFinConstants.DC_CREDIT.equals(subject.getDirection())
                 ? credit.subtract(debit) : debit.subtract(credit);
+    }
+
+    /** P2-CK-fin3-007：按 voucherId 批次查询同维度凭证行（行级条件下推）。 */
+    protected List<ErpFinVoucherLine> findVoucherLinesByVoucherIds(ErpFinBudgetLine line, List<String> voucherIds) {
+        QueryBean lq = new QueryBean();
+        lq.addFilter(eq("subjectId", line.getSubjectId()));
+        lq.addFilter(in("voucherId", voucherIds));
+        if (line.getCostCenterId() != null) {
+            lq.addFilter(eq("costCenterId", line.getCostCenterId()));
+        }
+        return daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(lq);
     }
 
     protected BigDecimal computeCarriedAmount(String rule, BigDecimal budget, BigDecimal actual, BigDecimal remaining) {

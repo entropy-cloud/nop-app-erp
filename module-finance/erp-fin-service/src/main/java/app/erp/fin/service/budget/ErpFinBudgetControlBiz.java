@@ -54,6 +54,11 @@ import static io.nop.api.core.beans.FilterBeans.or;
  */
 public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
 
+    /** P2-CK-fin3-009：periodId 解析失败时的控制模式（WARN=记录 SKIPPED 后放行；HARD=拒绝）。 */
+    public static final String CONFIG_BUDGET_PERIOD_MISSING_MODE = "erp-fin.budget-period-missing-mode";
+    public static final String BUDGET_PERIOD_MISSING_MODE_WARN = "WARN";
+    public static final String BUDGET_PERIOD_MISSING_MODE_HARD = "HARD";
+
     /** F2.3（P1-CK-fin3-004）：预算检查 per-维度串行锁表（有界：科目×成本中心×期间组合数）。 */
     private static final java.util.concurrent.ConcurrentHashMap<String, Object> CHECK_LOCKS =
             new java.util.concurrent.ConcurrentHashMap<>();
@@ -81,6 +86,23 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
             return new BudgetCheckResult(BudgetCheckResult.ACTION_PASS, BigDecimal.ZERO, null);
         }
         if (subjectId == null || amount == null || amount.signum() <= 0) {
+            return new BudgetCheckResult(BudgetCheckResult.ACTION_PASS, BigDecimal.ZERO, null);
+        }
+
+        // P2-CK-fin3-009：periodId 解析失败不再静默 fail-open——新 config 键
+        // erp-fin.budget-period-missing-mode（默认 WARN）：WARN 记 SKIPPED ControlLog 后放行；
+        // HARD 抛 ERR_BUDGET_PERIOD_NOT_RESOLVED（观测闭环，不静默）。
+        if (periodId == null) {
+            String mode = AppConfig.var(CONFIG_BUDGET_PERIOD_MISSING_MODE,
+                    BUDGET_PERIOD_MISSING_MODE_WARN);
+            LOG.warn("erp-fin-budget-period-not-resolved: sourceBillType={}, sourceBillCode={}, mode={}",
+                    sourceBillType, sourceBillCode, mode);
+            writeSkippedControlLog(subjectId, costCenterId, sourceBillType, sourceBillCode, mode, "1");
+            if (BUDGET_PERIOD_MISSING_MODE_HARD.equals(mode)) {
+                throw new NopException(ErpFinErrors.ERR_BUDGET_PERIOD_NOT_RESOLVED)
+                        .param(ErpFinErrors.ARG_SOURCE_BILL_TYPE, sourceBillType)
+                        .param(ErpFinErrors.ARG_SOURCE_BILL_CODE, sourceBillCode);
+            }
             return new BudgetCheckResult(BudgetCheckResult.ACTION_PASS, BigDecimal.ZERO, null);
         }
 
@@ -149,10 +171,10 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
         QueryBean lq = new QueryBean();
         lq.addFilter(in("voucherId", voucherIds));
         lq.addFilter(eq("subjectId", subjectId));
+        // P2-CK-fin3-008 联动：match-any 语义下聚合同样跨成本中心维度（null 不加过滤），
+        // 否则命中带 cc 预算行而余量只聚无 cc 凭证行，口径分裂
         if (costCenterId != null) {
             lq.addFilter(eq("costCenterId", costCenterId));
-        } else {
-            lq.addFilter(isNull("costCenterId"));
         }
         BigDecimal debit = BigDecimal.ZERO;
         BigDecimal credit = BigDecimal.ZERO;
@@ -198,10 +220,12 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
         QueryBean lq = new QueryBean();
         lq.addFilter(eq("subjectId", subjectId));
         lq.addFilter(eq("periodId", periodId));
+        // P2-CK-fin3-008：costCenterId null 改 match-any（单据无成本中心维度时不限定
+        // costCenterId IS NULL——带成本中心预算行原本永不命中，控制静默失效）；具体度排序：
+        // 有 cc 维度的专用行优先于 match-any 聚合行（findAll 后由调用侧 winner 排序消化，
+        // 简化实现：null 查询返回全部同维度行，由 matches 兜底）
         if (costCenterId != null) {
             lq.addFilter(eq("costCenterId", costCenterId));
-        } else {
-            lq.addFilter(isNull("costCenterId"));
         }
         for (ErpFinBudgetLine line : lineDao.findAllByQuery(lq)) {
             ErpFinBudgetScenario scenario = line.getScenario();
@@ -210,6 +234,28 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
             }
         }
         return null;
+    }
+
+    /**
+     * P2-CK-fin3-009：无 match 变体 ControlLog——periodId 解析失败 / 无匹配预算行时的
+     * SKIPPED 观测记录（scenarioId/budgetLineId 置空；writeControlLog 强依赖 BudgetLineMatch 的重载变体）。
+     */
+    private void writeSkippedControlLog(String subjectId, String costCenterId, String sourceBillType,
+                                        String sourceBillCode, String mode, String orgId) {
+        IEntityDao<ErpFinBudgetControlLog> dao = daoProvider.daoFor(ErpFinBudgetControlLog.class);
+        ErpFinBudgetControlLog logEntry = dao.newEntity();
+        logEntry.setOrgId(orgId != null ? orgId : "1");
+        logEntry.setBusinessDate(CoreMetrics.today());
+        logEntry.setSourceBillType(sourceBillType != null ? sourceBillType : "UNKNOWN");
+        logEntry.setSourceBillCode(sourceBillCode != null ? sourceBillCode : "");
+        logEntry.setSubjectId(subjectId);
+        logEntry.setCostCenterId(costCenterId);
+        logEntry.setRequestedAmount(BigDecimal.ZERO);
+        logEntry.setCommittedAmount(BigDecimal.ZERO);
+        logEntry.setAvailableAmount(BigDecimal.ZERO);
+        logEntry.setActionResult("SKIPPED");
+        logEntry.setReason("Budget check skipped: period not resolved (mode=" + mode + ")");
+        dao.saveEntity(logEntry);
     }
 
     private void writeControlLog(BudgetLineMatch match, String periodId, String sourceBillType, String sourceBillCode,

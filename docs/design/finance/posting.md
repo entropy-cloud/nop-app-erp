@@ -570,7 +570,7 @@ VoucherBillR（业财回链）
 
 跨法人内部交易凭证经 `erp-fin.intercompany-posting-enabled`（默认 false）控制：
 - 默认关闭：保护既有 inventory 调拨测试不触发自动凭证（config-gated 回归安全）。
-- 调拨确认失败不阻塞库存移动（凭证生成异常 try-catch 兜底，保持库存与凭证解耦）。
+- 调拨确认失败不阻塞库存移动（凭证生成异常 try-catch 兜底，保持库存与凭证解耦）。（P2-CK-fin4-008 语义反转：intercompany 链改 rethrow 强一致——调拨确认整体回滚，静默缺凭证无补偿面不可接受；本行原「不阻塞」语义仅保留于 PO/SO 钩子，二者语义分化理由见 inventory confirm 同批登记）
 
 ### PO/SO 触发路径扩展
 
@@ -590,7 +590,7 @@ VoucherBillR（业财回链）
 | `onTradeDocumentApproved` | PO/SO approve 后置 | docType + docId + docCode + executingOrgId + amount + businessDate | 配对凭证 ID 列表（AR + AP） |
 | `onTradeDocumentReversed` | PO/SO reverseApprove 前置 | docType + docId + docCode | 红冲凭证 ID 列表 |
 
-**跨法人判定**（全在 finance 域，AP-7 合规）：执行方法人根 = finance SPI 解析 `order.orgId`；对手方法人根 = 转移定价规则表反向查找（PO 查 toOrgId=执行方、SO 查 fromOrgId=执行方）。同法人 skip；钩子非阻塞 try-catch（对齐 inventory confirm 范式）。
+**跨法人判定**（全在 finance 域，AP-7 合规）：执行方法人根 = finance SPI 解析 `order.orgId`；对手方法人根 = 转移定价规则表反向查找（PO 查 toOrgId=执行方、SO 查 fromOrgId=执行方）。同法人 skip；钩子非阻塞 try-catch（对齐 inventory confirm 范式）。（P2-CK-fin4-008 注：inventory confirm 范式已改为 rethrow 强一致，PO/SO 钩子保留非阻塞 catch-and-warn——语义分化登记：钩子为增强性记账、失败不阻断主单据；intercompany 为法人间法定凭证、失败必须阻断）
 
 **receive/delivery 联级**：归 Deferred successor（订单级已表达跨法人交易，联级为增强，避免重复计量）。
 

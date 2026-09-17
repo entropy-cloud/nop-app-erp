@@ -154,7 +154,10 @@ public class BudgetVoucherGenerator {
             line.setCurrencyId(scenario.getCurrencyId());
             BigDecimal rate = scenario.getExchangeRate() != null ? scenario.getExchangeRate() : BigDecimal.ONE;
             line.setExchangeRate(rate);
-            line.setAmountSource(f.amount);
+            // P2-CK-fin3-010：维护「本位币 = source × rate」恒等式（budget.md L56）——
+            // rate≠1 时 amountSource 落本位币金额会使源币列失真
+            line.setAmountSource(rate.signum() == 0 ? f.amount
+                    : f.amount.divide(rate, 4, java.math.RoundingMode.HALF_UP));
             line.setAmountFunctional(f.amount);
             line.setAcctSchemaId(scenario.getAcctSchemaId());
             line.setOrgId(scenario.getOrgId());
