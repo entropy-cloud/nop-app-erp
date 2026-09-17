@@ -26,9 +26,9 @@ public class ErpMfgSubcontractOrderReceiveFinishedProcessor {
         ErpMfgSubcontractOrder order = facade.requireOrder(subcontractOrderId, context);
         facade.requireStatus(order, ErpMfgConstants.SUBCONTRACT_STATUS_ISSUED, "ISSUED");
 
+        // P2-CK-mfg3-007：非正数量拒绝（修复前静默替换为行数量或 ONE）
         if (receivedQty == null || receivedQty.signum() <= 0) {
-            BigDecimal lineQty = facade.sumLineQuantity(subcontractOrderId);
-            receivedQty = lineQty.signum() > 0 ? lineQty : BigDecimal.ONE;
+            throw new IllegalStateException("P2-CK-mfg3-007: receivedQty must be positive for subcontract order " + subcontractOrderId);
         }
 
         facade.generateReceiptMove(order, receivedQty, destWarehouseId, context);
