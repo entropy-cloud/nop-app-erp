@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 
 /**
@@ -76,7 +77,7 @@ public class KitAvailabilityChecker {
             return KitAvailabilityResult.reserved();
         }
 
-        Map<String, BigDecimal> availableByMaterial = loadAvailableByMaterial(requiredByMaterial.keySet());
+        Map<String, BigDecimal> availableByMaterial = loadAvailableByMaterial(requiredByMaterial.keySet(), wo.getOrgId());
 
         KitAvailabilityResult result = KitAvailabilityResult.reserved();
         for (Map.Entry<String, BigDecimal> e : requiredByMaterial.entrySet()) {
@@ -152,23 +153,27 @@ public class KitAvailabilityChecker {
         return snaps == null || snaps.isEmpty() ? null : snaps.iterator().next();
     }
 
-    private Map<String, BigDecimal> loadAvailableByMaterial(Set<String> materialIds) {
+    private Map<String, BigDecimal> loadAvailableByMaterial(Set<String> materialIds, String orgId) {
         Map<String, BigDecimal> availableByMaterial = new HashMap<>();
         if (materialIds.isEmpty()) {
             return availableByMaterial;
         }
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
-        // 按物料 IN 查询，余额表多仓/批时聚合 availableQuantity。
-        List<ErpInvStockBalance> balances = dao.findAllByQuery(buildBalanceQuery(materialIds));
+        // P2-CK-mfg-007：orgId 过滤（null-skip 契约）——修复跨组织假齐套
+        List<ErpInvStockBalance> balances = dao.findAllByQuery(buildBalanceQuery(materialIds, orgId));
         for (ErpInvStockBalance b : balances) {
             availableByMaterial.merge(b.getMaterialId(), nz(b.getAvailableQuantity()), BigDecimal::add);
         }
         return availableByMaterial;
     }
 
-    private QueryBean buildBalanceQuery(Set<String> materialIds) {
+    private QueryBean buildBalanceQuery(Set<String> materialIds, String orgId) {
         QueryBean q = new QueryBean();
         q.addFilter(in("materialId", new ArrayList<>(materialIds)));
+        // P2-CK-mfg-007：orgId 过滤（null-skip 契约——单组织 orgId=null 不过滤）
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+        }
         return q;
     }
 
