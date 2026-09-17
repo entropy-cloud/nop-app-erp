@@ -476,7 +476,8 @@ public class SimulationMrpEngine {
             if (t.uoMId == null) {
                 t.uoMId = d.getUoMId();
             }
-            if (d.getRequirementDate() != null && (t.requirementDate == null || d.getRequirementDate().isAfter(t.requirementDate))) {
+            if (// P2-CK-mfg2-011：聚合取最早需求日（修复前取最晚致供给系统性延迟）
+            d.getRequirementDate() != null && (t.requirementDate == null || d.getRequirementDate().isBefore(t.requirementDate))) {
                 t.requirementDate = d.getRequirementDate();
             }
         }

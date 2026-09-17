@@ -356,8 +356,9 @@ public class CostRollupService {
     }
 
     static BigDecimal divide(BigDecimal a, BigDecimal b) {
-        if (b.signum() == 0) {
-            return BigDecimal.ZERO;
+        // P2-CK-mfg2-010 姊妹站点：同修
+        if (b.signum() <= 0) {
+            throw new IllegalArgumentException("Cost rollup quantity must be positive, got: " + b);
         }
         return a.divide(b, SCALE, RM);
     }

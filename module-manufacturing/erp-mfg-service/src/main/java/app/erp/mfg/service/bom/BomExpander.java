@@ -225,8 +225,9 @@ public class BomExpander {
     }
 
     static BigDecimal divide(BigDecimal a, BigDecimal b) {
-        if (b.signum() == 0) {
-            return BigDecimal.ZERO;
+        // P2-CK-mfg2-010：BOM qty≤0 抛错（不静默归零——防假齐套/MRP 零需求/成本 0）
+        if (b.signum() <= 0) {
+            throw new IllegalArgumentException("BOM quantity must be positive, got: " + b);
         }
         return a.divide(b, SCALE, RoundingMode.HALF_UP);
     }

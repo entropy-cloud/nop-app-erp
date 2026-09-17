@@ -150,16 +150,13 @@ public class BatchGenealogyWriter {
                 : BigDecimal.ONE;
 
         int lineNo = 10;
-        Set<String> usedInputLots = new HashSet<>();
+        // P2-CK-mfg3-008：同批次多领料行去重丢量——改 Map 累合替代去重跳过
+        // (inputLotId → [inputLot, materialId, uoMId, qty])，qty 按 ratio 缩放后累加
+        Map<String, Object[]> aggregatedInputs = new LinkedHashMap<>();
         for (IssueLineCtx ctx : issueLines) {
             ErpMfgMaterialIssueLine issueLine = ctx.line;
-            // P1-CK-mfg3-004 修复：输入批次按领料单头仓库解析（修复前用产成品仓 destWarehouseId
-            // 查原料批次——多仓布局下恒 null，基因链零输入行，追溯/召回静默为空）。
             ErpInvBatch inputLot = resolveInputLot(issueLine, ctx.issueWarehouseId);
             if (inputLot == null) {
-                continue;
-            }
-            if (!usedInputLots.add(inputLot.getId())) {
                 continue;
             }
             BigDecimal inputQty = nz(issueLine.getIssuedQuantity()).multiply(ratio)
@@ -167,12 +164,28 @@ public class BatchGenealogyWriter {
             if (inputQty.signum() <= 0) {
                 continue;
             }
+            String lotId = inputLot.getId();
+            if (aggregatedInputs.containsKey(lotId)) {
+                Object[] prev = aggregatedInputs.get(lotId);
+                prev[3] = ((BigDecimal) prev[3]).add(inputQty);
+            } else {
+                aggregatedInputs.put(lotId, new Object[]{inputLot, issueLine.getMaterialId(),
+                        issueLine.getUoMId(), inputQty});
+            }
+        }
+        // P2-CK-mfg3-008：从聚合 Map 生成基因链行（同批次多行已累合）
+        for (Object[] agg : aggregatedInputs.values()) {
+            ErpInvBatch inputLot = (ErpInvBatch) agg[0];
+            String materialId = (String) agg[1];
+            String lineUoMId = (String) agg[2];
+            BigDecimal totalQty = (BigDecimal) agg[3];
+
             ErpMfgBatchGenealogy row = newEntity();
             row.setWorkOrderId(wo.getId());
             row.setInputLotId(inputLot.getId());
-            row.setInputMaterialId(issueLine.getMaterialId());
-            row.setInputQty(inputQty);
-            row.setInputUoMId(issueLine.getUoMId());
+            row.setInputMaterialId(materialId);
+            row.setInputQty(totalQty);
+            row.setInputUoMId(lineUoMId);
             row.setOutputLotId(outputLot.getId());
             row.setOutputMaterialId(productId);
             row.setOutputQty(completedQty);

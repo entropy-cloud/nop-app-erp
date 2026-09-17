@@ -192,6 +192,9 @@ public class DemandAggregator {
         // 区间相交：line.periodStart <= planEnd AND line.periodEnd >= planStart
         lq.addFilter(le("periodStart", planEnd));
         lq.addFilter(ge("periodEnd", planStart));
+        // P2-CK-mfg2-004：MRP 仅消费产品级预测行（warehouseId IS NULL），
+        // 仓级预测行由 DRP 消费——修复双引擎重复计入
+        lq.addFilter(io.nop.api.core.beans.FilterBeans.isNull("warehouseId"));
         List<ErpMfgForecastLine> lines = lineDao.findAllByQuery(lq);
 
         // 按物料聚合 forecastQty（MRP 为产品级，忽略 warehouseId 维度；同物料多桶累加）
