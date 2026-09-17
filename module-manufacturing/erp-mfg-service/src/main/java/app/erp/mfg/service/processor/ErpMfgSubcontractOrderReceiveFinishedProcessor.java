@@ -23,6 +23,10 @@ public class ErpMfgSubcontractOrderReceiveFinishedProcessor {
 
     public ErpMfgSubcontractOrder receiveFinished(String subcontractOrderId, BigDecimal receivedQty,
                                                   String destWarehouseId, IServiceContext context) {
+        // P2-CK-mfg3-007：仓库参数非空守卫
+        if (destWarehouseId == null || destWarehouseId.isEmpty()) {
+            throw new IllegalStateException("destWarehouseId is required for subcontract receive");
+        }
         ErpMfgSubcontractOrder order = facade.requireOrder(subcontractOrderId, context);
         facade.requireStatus(order, ErpMfgConstants.SUBCONTRACT_STATUS_ISSUED, "ISSUED");
 
