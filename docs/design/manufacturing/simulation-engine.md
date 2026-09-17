@@ -321,3 +321,9 @@ DRP 侧与 MRP 侧完全同构，仅参数类型字典与覆盖目标不同：
 ### 场景状态重置机制
 
 `runSimulation` 后 scenario status=COMPLETED。要再跑（compareVersions 需两版本），须先重置 DRAFT。无内置 mutation，spec 用 `ErpMfgMrpScenario__update(data:{id,status:"DRAFT"})` / `ErpDrpScenario__update(...)` 直接置位（对齐 JUnit `resetScenarioToDraft` 直写 DB 范式，绕过状态机）。
+
+## Decision C：仿真对比第 4 维「总采购额差」（P2-CK-mfg2-006 登记）
+
+`lookupStandardCost` 现返回 ZERO（ErpMdMaterial 无 standardCost 列）。**Deferred**：
+- 真实价源接入需 CostRollupLine FIRMED 最新记录查询（按 materialId）或 ErpMdMaterial 新增 standardCost 列（ORM 变更）
+- 重开触发条件：仿真对比采购额差维度有实际业务需求时立项

@@ -140,6 +140,11 @@ public class SimulationVersionComparator {
         }
     }
 
+    /**
+     * P2-CK-mfg2-007：indexLines 改用本地聚合 Map（零实体写入）——修复 session 托管实体
+     * 直接 setNetRequirement/setPlannedQuantity 污染会话缓存、破坏仿真快照不可变（AP-06）。
+     * 返回 Map<materialId, ErpMfgMrpPlanLine>（新建 detached 实体承载聚合结果）。
+     */
     private Map<String, ErpMfgMrpPlanLine> indexLines(String planId) {
         Map<String, ErpMfgMrpPlanLine> byMaterial = new LinkedHashMap<>();
         if (planId == null) {
@@ -148,12 +153,16 @@ public class SimulationVersionComparator {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", planId));
         for (ErpMfgMrpPlanLine l : daoProvider.daoFor(ErpMfgMrpPlanLine.class).findAllByQuery(q)) {
-            // 顶层物料聚合（parentLineId=null）作为对比键；子件展开行不单独对比
             if (l.getParentLineId() == null && l.getMaterialId() != null) {
-                // 同物料多顶层行累加（罕见，但保险）
-                ErpMfgMrpPlanLine existing = byMaterial.get(l.getMaterialId());
+                String matId = l.getMaterialId();
+                ErpMfgMrpPlanLine existing = byMaterial.get(matId);
                 if (existing == null) {
-                    byMaterial.put(l.getMaterialId(), l);
+                    // 新建 detached 实体承载聚合值（不引用 session 托管实体）
+                    ErpMfgMrpPlanLine copy = new ErpMfgMrpPlanLine();
+                    copy.setMaterialId(matId);
+                    copy.setNetRequirement(nz(l.getNetRequirement()));
+                    copy.setPlannedQuantity(nz(l.getPlannedQuantity()));
+                    byMaterial.put(matId, copy);
                 } else {
                     existing.setNetRequirement(nz(existing.getNetRequirement()).add(nz(l.getNetRequirement())));
                     existing.setPlannedQuantity(nz(existing.getPlannedQuantity()).add(nz(l.getPlannedQuantity())));

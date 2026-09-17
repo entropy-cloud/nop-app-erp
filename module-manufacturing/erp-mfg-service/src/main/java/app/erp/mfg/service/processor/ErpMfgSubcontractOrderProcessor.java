@@ -168,17 +168,9 @@ public class ErpMfgSubcontractOrderProcessor {
     }
 
     protected void reverseOneVoucher(String billHeadCode, ErpFinBusinessType businessType, ErpMfgSubcontractOrder order) {
-        try {
-            mfgPostingExecutor.reverse(billHeadCode, businessType);
-        } catch (Exception e) {
-            if (e instanceof NopException) {
-                LOG.warn("Subcontract GL voucher reversal failed (exception swallowed to keep idempotency), subcontract order {} billHeadCode={}: {}",
-                        order.getCode(), billHeadCode, e.getMessage());
-            } else {
-                LOG.error("Subcontract GL voucher reversal error (exception swallowed to keep idempotency), subcontract order {} billHeadCode={}",
-                        order.getCode(), billHeadCode, e);
-            }
-        }
+        // P2-CK-mfg3-006（F2.5 范式）：红冲失败不再吞异常——中止 @BizMutation 保持 DONE+posted=true 可重试
+        //（原「swallowed to keep idempotency」语义已显式重裁决：静默缺凭证无补偿面不可接受）
+        mfgPostingExecutor.reverse(billHeadCode, businessType);
     }
 
     /**
@@ -301,6 +293,11 @@ public class ErpMfgSubcontractOrderProcessor {
     }
 
     protected void validateTransitionForReverseApprove(ErpMfgSubcontractOrder order, IServiceContext context) {
+        // P2-CK-mfg3-012：docStatus 守卫——仅 APPROVED（未发料）可反审核
+        String _ds = order.getDocStatus();
+        if (_ds != null && !"APPROVED".equals(_ds)) {
+            throw new IllegalStateException("Subcontract order docStatus=" + _ds + ", only APPROVED allows reverseApprove (P2-CK-mfg3-012)");
+        }
         String status = order.getApproveStatus();
         try {
             approvalStateMachine.assertCanReverseApprove(status);
@@ -534,7 +531,8 @@ public class ErpMfgSubcontractOrderProcessor {
             }
             return Boolean.parseBoolean(value.trim());
         } catch (Exception e) {
-            return defaultValue;
+            // P2-CK-mfg3-006：F2.5 范式——红冲/反向移动失败不再吞异常，中止保持可重试
+            throw e;
         }
     }
 
