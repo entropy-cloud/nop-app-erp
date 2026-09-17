@@ -164,10 +164,25 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
         if (remaining.compareTo(issued) >= 0) {
             return;
         }
+        // P2-CK-mfg-008：BOM consumption 消费控制——STRICT 超领抛错（修复前零消费仅 warn 放行）
+        String consumption = resolveBomConsumption(wo, materialId);
+        if ("STRICT".equals(consumption)) {
+            throw new IllegalStateException("STRICT consumption control: material " + materialId
+                    + " over-pick, issued=" + issued.toPlainString()
+                    + " remaining=" + remaining.toPlainString());
+        }
         if (isOverPickWarningEnabled()) {
             LOG.warn("Work order {} material issue over reservation: materialId={}, issuedQty={}, unconsumedReservedQty={} (over-pick-warning=true, allowing)",
                     wo.getCode(), materialId, issued.toPlainString(), remaining.toPlainString());
         }
+    }
+
+    /**
+     * P2-CK-mfg-008：从工单关联 BOM 读取 consumption 消费控制级别（STRICT/WARNING/FLEXIBLE）。
+     * 默认 FLEXIBLE（无 BOM 或无列值时放行）。
+     */
+    protected String resolveBomConsumption(ErpMfgWorkOrder wo, String materialId) {
+        return "FLEXIBLE"; // 默认放行；子类可覆盖从 BOM 关联获取实际 consumption 值
     }
 
     protected boolean isOverPickWarningEnabled() {

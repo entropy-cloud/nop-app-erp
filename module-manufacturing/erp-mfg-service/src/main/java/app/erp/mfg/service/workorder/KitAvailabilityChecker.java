@@ -110,7 +110,16 @@ public class KitAvailabilityChecker {
      * 按 BOM 多级展开子件需求（RC-R1.48 物料预留创建复用；对齐 {@link #check} 的 explode 调用范式）。
      */
     public List<BomExplosionNode> explodeRequirements(String bomId, BigDecimal requestedQty) {
-        return bomExpander.explode(bomId, requestedQty, true);
+        // P2-CK-mfg2-009：从 BOM 实体读 useMultiLevelBom 列控制展开深度（修复前硬编码 true）
+        boolean multiLevel = resolveUseMultiLevel(bomId);
+        return bomExpander.explode(bomId, requestedQty, multiLevel);
+    }
+
+    /** P2-CK-mfg2-009：从 BOM 实体读 useMultiLevelBom 列（默认 true=多级） */
+    private boolean resolveUseMultiLevel(String bomId) {
+        if (bomId == null) return true;
+        var bom = daoProvider.daoFor(app.erp.mfg.dao.entity.ErpMfgBom.class).getEntityById(bomId);
+        return bom == null || bom.getUseMultiLevelBom() == null || bom.getUseMultiLevelBom();
     }
 
     /**
