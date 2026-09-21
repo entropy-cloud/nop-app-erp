@@ -750,3 +750,14 @@ checker 复跑（2026-09-11，M2.9 Phase 3）：exit 0，R2c=**1543**≤1543（�
 | 2 | `module-inventory/erp-inv-service/.../entity/ErpInvSerialNumberBizModel.java:65`（私有 `findSerial` 唯一键查询 helper，serialNo+materialId + id desc 取首行） | R1d | **baseline-raise**（14→**15**） | 同域（inv）只读内部辅助查询 + 站点裁决注释，对齐基线内 14 条已裁决条目形态（`2026-07-27-0823-1`：同域只读内部辅助查询、每处代码注释明示理由）。Fix (i) `findList(q, null, context)` 否决理由：平台源码实证 `prepareFindPageQuery` 链 = `checkAllowQuery`（objMeta 过滤字段校验/可排序校验）+ `AuthHelper.appendFilter`（数据权限行过滤追加）+ objMeta filter/orderBy 叠加 + **`maxPageSize` limit 截断** + `transformFilter`/`resolveBizExpr` 元数据变换——等价性仅在当前配置（无数据权限规则/元数据不标记非可查询）下成立，属配置敏感面而非机械收敛，将其引入出库翻转写路径（stock-move complete 同事务调用）存在配置漂移下的静默行为面；对齐 Non-Goal「不借机改 `markOutbound` 业务语义」。残留风险：R1d 基线永久多接受 1 条同域 helper 查询（站点注释已明示理由，形态与既有 14 条一致）。 |
 
 checker 复跑（2026-09-11，本计划 Phase 3）：exit 0，R1b=**0**=0（Fix 回落）/ R1d=**15**≤15（机器块与本人类可读表双写同步上调）/ R2b=242 / R2c=1543 / R2a=34 / R2d=38 / R3=5 / R6=2 / R10=14 / R12a=71 / R12b=66 / R12c=42 逐值 ≤ 机器块，全 19 规则零裸漂移，CI red 消除。
+
+## R2c 基线上调注记（plan 2026-09-17-0800-1，F3.10 mfg 批 R2c 1569→1571 +2 裁决）
+
+`2026-09-17-0800-1`（ai-check r1 F3.10 mfg 批，保护区双独立子 agent 批准批次）新增两处同域 daoFor 只读站点。**per-site 证据**（对齐 `2026-07-25-1057-1`/`2026-09-11-0457-1` 逐站点分类框架）：
+
+| # | 站点（file:line） | 规则贡献 | commit → 源计划 | 分类 |
+|---|------------------|---------|----------------|------|
+| 1 | `module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/workorder/KitAvailabilityChecker.java:121`（`resolveUseMultiLevel` 按 bomId 加载 BOM 行读 `useMultiLevelBom` 列——P2-CK-mfg2-009 展开深度控制的修复义务内在面） | R2c+1 | `7dd8724dc` → `2026-09-17-0800-1`（F3.10 mfg2-009） | ✅ 修复义务内在面（mfg 同域 Processor 组件只读 load-by-id，非跨域编排；同文件既有 buildBalanceQuery/loadAvailableByMaterial 同型 daoFor 站点族第 N 处；对齐族 A/U20 豁免登记形态） |
+| 2 | `module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgMaterialIssueConfirmProcessor.java:236`（`resolveBomConsumption` 按 wo.bomId 加载 BOM 行读 `consumption` 列——P2-CK-mfg-008 消耗控制分级的修复义务内在面） | R2c+1 | 本批（F3.10 收尾） → `2026-09-17-0800-1`（F3.10 mfg-008 真接线） | ✅ 修复义务内在面（mfg 同域 Processor 只读 load-by-id；AbstractErpMfgMaterialIssueProcessor 族既有「同域持久化用 IDaoProvider」范式；owner doc bom-and-routing.md §实现注记已登记语义） |
+
+checker 复跑（2026-09-21，F3.10 批 Phase 验证）：exit 0，R2c=**1571**（机器块与本人类可读表双写同步上调），R2b/R12a 等其余规则逐值 ≤ 机器块零裸漂移。

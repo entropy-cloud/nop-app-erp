@@ -9,6 +9,8 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
+import app.erp.mfg.service.processor.ErpMfgSubcontractOrderProcessor;
+import app.erp.mfg.service.posting.MfgPostingExecutor;
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdMaterial;
@@ -34,6 +36,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +88,8 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
     IGraphQLEngine graphQLEngine;
     @Inject
     IErpFinVoucherBiz voucherBiz;
+    @Inject
+    MfgPostingExecutor mfgPostingExecutor;
 
     /**
      * (a) 正路径：全链生命周期到 COMPLETED + posted=true → reverseCompletion → 状态回退 + 红字凭证存在。
@@ -151,6 +156,82 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
                     "红冲后原料余额恢复 10（发料 2 退回）");
         } finally {
             setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "false");
+        }
+    }
+
+    /**
+     * (e) P2-CK-mfg3-006/C3（plan 2026-09-17-0800-1 结束审计 B1）：段级红冲重入幂等 + 真实失败中止。
+     *
+     * <ul>
+     *   <li>重入：SF 段红冲成功后对同段再次红冲——fin 侧全部凭证已红冲（isReversed 过滤后空集）抛
+     *       ERR_REVERSE_SOURCE_NOT_FOUND，reverseOneVoucher 判良性跳过不抛出，且不生成第二条红字凭证；
+     *       （修复前逐段吞一切异常为旧范式、直接 rethrow 无良性判定则重入必抛——两者皆非本契约）。</li>
+     *   <li>真实失败：注入抛 RuntimeException 的 executor → reverseOneVoucher 不吞、原样 rethrow
+     *       （F2.5：中止 @BizMutation 保持 DONE+posted=true 可重试）。</li>
+     * </ul>
+     */
+    @Test
+    public void testGlSegmentReversalReentryIdempotentAndRealFailureRethrows() {
+        seedPeriodAndSubjects();
+        seedMaterial(M1, "MOVING_AVERAGE");
+        seedMaterial(P, null);
+        generateIncoming(M1, "PR-SC-RV-C3", bd("10"), bd("5"));
+
+        String orderId = seedSubcontractOrder("SUB-RV-C3", bd("50"));
+        seedSubcontractLine("9805", orderId, M1, bd("2"));
+
+        setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "true");
+        try {
+            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", orderId));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", orderId));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__issueMaterials",
+                    Map.of("subcontractOrderId", orderId, "sourceWarehouseId", WAREHOUSE_ID));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__receiveFinished",
+                    Map.of("subcontractOrderId", orderId, "receivedQty", bd("1"), "destWarehouseId", WAREHOUSE_ID));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__postProcessingFee", Map.of("subcontractOrderId", orderId));
+
+            ExposedReverseFacade exposed = new ExposedReverseFacade();
+            exposed.setMfgPostingExecutor(mfgPostingExecutor);
+            ErpMfgSubcontractOrder order = reload(orderId);
+
+            // 第一次红冲 SF 段：真实红冲成功（经 fin Facade，ReversalListener 联动同 (d)）
+            exposed.reverseSegment("SUB-RV-C3-SF", ErpFinBusinessType.SUBCONTRACT_FEE, order);
+            assertTrue(Boolean.TRUE.equals(daoProvider.daoFor(ErpFinVoucher.class)
+                            .getEntityById(findVoucher("SUB-RV-C3-SF", ErpFinBusinessType.SUBCONTRACT_FEE).getId())
+                            .getIsReversed()),
+                    "前置：SF 段第一次红冲后 isReversed=true");
+
+            // 重入第二次：SOURCE_NOT_FOUND 判良性跳过——不抛出、不生成第二条红字凭证
+            exposed.reverseSegment("SUB-RV-C3-SF", ErpFinBusinessType.SUBCONTRACT_FEE, order);
+            int reversalCount = 0;
+            for (ErpFinVoucher v : findReversalVouchers("SUB-RV-C3-SF", ErpFinBusinessType.SUBCONTRACT_FEE)) {
+                reversalCount++;
+            }
+            assertEquals(1, reversalCount, "重入不得生成第二条 REVERSAL 红字凭证");
+
+            // 真实失败：注入抛 RuntimeException 的 executor → 原样 rethrow（F2.5 中止语义，不吞）
+            ExposedReverseFacade failing = new ExposedReverseFacade();
+            failing.setMfgPostingExecutor(new ThrowingReverseExecutor());
+            org.junit.jupiter.api.Assertions.assertThrows(RuntimeException.class,
+                    () -> failing.reverseSegment("SUB-RV-C3-SR", ErpFinBusinessType.SUBCONTRACT_RECEIPT, reload(orderId)),
+                    "真实红冲失败必须 rethrow（不吞异常）");
+        } finally {
+            setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "false");
+        }
+    }
+
+    /** 暴露 protected reverseOneVoucher 供段级契约测试。 */
+    private static final class ExposedReverseFacade extends ErpMfgSubcontractOrderProcessor {
+        void reverseSegment(String billHeadCode, ErpFinBusinessType type, ErpMfgSubcontractOrder order) {
+            reverseOneVoucher(billHeadCode, type, order);
+        }
+    }
+
+    /** 抛 RuntimeException 的红冲执行器（真实失败路径验证）。 */
+    private static final class ThrowingReverseExecutor extends MfgPostingExecutor {
+        @Override
+        public void reverse(String billHeadCode, ErpFinBusinessType businessType) {
+            throw new RuntimeException("simulated segment reversal failure (not SOURCE_NOT_FOUND)");
         }
     }
 
@@ -378,6 +459,20 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
             return null;
         }
         return daoProvider.daoFor(ErpFinVoucher.class).getEntityById(links.get(0).getVoucherId());
+    }
+
+    private List<ErpFinVoucher> findReversalVouchers(String billHeadCode, ErpFinBusinessType type) {
+        List<ErpFinVoucher> result = new ArrayList<>();
+        QueryBean q = new QueryBean();
+        q.addFilter(and(eq("billCode", billHeadCode), eq("businessType", type.name())));
+        List<ErpFinVoucherBillR> links = daoProvider.daoFor(ErpFinVoucherBillR.class).findAllByQuery(q);
+        for (ErpFinVoucherBillR lnk : links) {
+            ErpFinVoucher v = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(lnk.getVoucherId());
+            if (v != null && ErpFinConstants.POSTING_TYPE_REVERSAL.equals(v.getPostingType())) {
+                result.add(v);
+            }
+        }
+        return result;
     }
 
     private ErpFinVoucher findReversalVoucher(String billHeadCode, ErpFinBusinessType type) {

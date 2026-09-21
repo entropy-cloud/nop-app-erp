@@ -7,6 +7,7 @@ import app.erp.inv.dao.entity.ErpInvReservation;
 import app.erp.inv.dao.entity.ErpInvReservationLine;
 import app.erp.inv.dao.entity.ErpInvStockLedger;
 import app.erp.inv.dao.entity.ErpInvStockMove;
+import app.erp.mfg.dao.entity.ErpMfgBom;
 import app.erp.mfg.dao.entity.ErpMfgMaterialIssue;
 import app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
@@ -57,6 +58,8 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
         }
 
         // issue-status DRAFT→CONFIRMED（confirm 动作瞬态中间态，同事务内立即推进至 DONE）
+        // P2-CK-mfg-008：BOM consumption 消费控制分级在任何副作用（预留消耗/移动单/回写）之前执行
+        enforceConsumptionControl(issue, lines, context);
         issue.setDocStatus(ErpMfgConstants.ISSUE_STATUS_CONFIRMED);
         issueDao().updateEntity(issue);
 
@@ -164,13 +167,6 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
         if (remaining.compareTo(issued) >= 0) {
             return;
         }
-        // P2-CK-mfg-008：BOM consumption 消费控制——STRICT 超领抛错（修复前零消费仅 warn 放行）
-        String consumption = resolveBomConsumption(wo, materialId);
-        if ("STRICT".equals(consumption)) {
-            throw new IllegalStateException("STRICT consumption control: material " + materialId
-                    + " over-pick, issued=" + issued.toPlainString()
-                    + " remaining=" + remaining.toPlainString());
-        }
         if (isOverPickWarningEnabled()) {
             LOG.warn("Work order {} material issue over reservation: materialId={}, issuedQty={}, unconsumedReservedQty={} (over-pick-warning=true, allowing)",
                     wo.getCode(), materialId, issued.toPlainString(), remaining.toPlainString());
@@ -178,11 +174,70 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
     }
 
     /**
-     * P2-CK-mfg-008：从工单关联 BOM 读取 consumption 消费控制级别（STRICT/WARNING/FLEXIBLE）。
-     * 默认 FLEXIBLE（无 BOM 或无列值时放行）。
+     * P2-CK-mfg-008：BOM consumption 消费控制分级（{@code ErpMfgBom.consumption}，dict erp-mfg/consumption）。
+     * 超领判定维度为<b>工单材料行需求量累计</b>（README 关键业务规则 3「严格按 BOM」）：
+     * 行已入账 {@code actualQuantity} + 本次确认行 issued 之和 &gt; {@code plannedQuantity} 时——
+     * STRICT 抛错中止确认（任何副作用之前）；WARNING LOG.warn 放行；FLEXIBLE 放行。
+     * 无工单关联行 / 工单行缺失 / 行计划量非正的领料行不设限（独立领料无 BOM 需求上限语义）。
      */
-    protected String resolveBomConsumption(ErpMfgWorkOrder wo, String materialId) {
-        return "FLEXIBLE"; // 默认放行；子类可覆盖从 BOM 关联获取实际 consumption 值
+    protected void enforceConsumptionControl(ErpMfgMaterialIssue issue, List<ErpMfgMaterialIssueLine> lines,
+                                             IServiceContext context) {
+        String workOrderId = issue.getWorkOrderId();
+        if (workOrderId == null) {
+            return;
+        }
+        ErpMfgWorkOrder wo = workOrderBiz.get(workOrderId, false, context);
+        if (wo == null) {
+            return;
+        }
+        String consumption = resolveBomConsumption(wo);
+        if (consumption == null || ErpMfgConstants.CONSUMPTION_FLEXIBLE.equals(consumption)) {
+            return;
+        }
+        Map<String, BigDecimal> issuedByWorkOrderLine = new HashMap<>();
+        for (ErpMfgMaterialIssueLine line : lines) {
+            if (line.getWorkOrderLineId() == null) {
+                continue;
+            }
+            BigDecimal issued = line.getIssuedQuantity() != null ? line.getIssuedQuantity() : line.getRequiredQuantity();
+            if (nz(issued).signum() <= 0) {
+                continue;
+            }
+            issuedByWorkOrderLine.merge(line.getWorkOrderLineId(), nz(issued), BigDecimal::add);
+        }
+        for (Map.Entry<String, BigDecimal> e : issuedByWorkOrderLine.entrySet()) {
+            ErpMfgWorkOrderLine wol = workOrderLineBiz.get(e.getKey(), false, context);
+            if (wol == null || nz(wol.getPlannedQuantity()).signum() <= 0) {
+                continue;
+            }
+            BigDecimal projected = nz(wol.getActualQuantity()).add(e.getValue());
+            if (projected.compareTo(nz(wol.getPlannedQuantity())) <= 0) {
+                continue;
+            }
+            if (ErpMfgConstants.CONSUMPTION_STRICT.equals(consumption)) {
+                throw new IllegalStateException("P2-CK-mfg-008: STRICT consumption control, work order " + wo.getCode()
+                        + " workOrderLine " + e.getKey() + " projected=" + projected.toPlainString()
+                        + " > planned=" + wol.getPlannedQuantity().toPlainString());
+            }
+            LOG.warn("Work order {} workOrderLine {} over BOM consumption: projected={} planned={} (consumption=WARNING, allowing)",
+                    wo.getCode(), e.getKey(), projected.toPlainString(), wol.getPlannedQuantity().toPlainString());
+        }
+    }
+
+    /**
+     * P2-CK-mfg-008：从工单关联 BOM 读取 consumption 消费控制级别（STRICT/WARNING/FLEXIBLE）。
+     * 无 BOM 关联或列值为空时默认 FLEXIBLE（放行）。
+     */
+    protected String resolveBomConsumption(ErpMfgWorkOrder wo) {
+        String bomId = wo.getBomId();
+        if (bomId == null) {
+            return ErpMfgConstants.CONSUMPTION_FLEXIBLE;
+        }
+        ErpMfgBom bom = daoProvider.daoFor(ErpMfgBom.class).getEntityById(bomId);
+        String value = bom == null ? null : bom.getConsumption();
+        return value == null || value.trim().isEmpty()
+                ? ErpMfgConstants.CONSUMPTION_FLEXIBLE
+                : value.trim();
     }
 
     protected boolean isOverPickWarningEnabled() {

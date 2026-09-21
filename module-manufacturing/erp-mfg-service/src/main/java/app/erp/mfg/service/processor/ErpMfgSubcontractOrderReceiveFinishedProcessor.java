@@ -35,6 +35,21 @@ public class ErpMfgSubcontractOrderReceiveFinishedProcessor {
             throw new IllegalStateException("P2-CK-mfg3-007: receivedQty must be positive for subcontract order " + subcontractOrderId);
         }
 
+        // P2-CK-mfg3-007：收货数量上限守卫——单次收货（ISSUED→RECEIVED 一次性迁移，无累计分批面）
+        // 不得超过委外订单行数量合计（修复前无上限，超量入库直接虚增库存）；损耗/超收容差口径未裁决前
+        // 按 100% 严格上限（subcontracting.md §实现约定 scope 注记，放宽需产品裁决）。
+        BigDecimal orderedQty = BigDecimal.ZERO;
+        for (app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine line : facade.loadLines(subcontractOrderId)) {
+            if (line.getQuantity() != null) {
+                orderedQty = orderedQty.add(line.getQuantity());
+            }
+        }
+        if (orderedQty.signum() > 0 && receivedQty.compareTo(orderedQty) > 0) {
+            throw new IllegalStateException("P2-CK-mfg3-007: receivedQty " + receivedQty.toPlainString()
+                    + " exceeds ordered quantity " + orderedQty.toPlainString()
+                    + " for subcontract order " + subcontractOrderId);
+        }
+
         facade.generateReceiptMove(order, receivedQty, destWarehouseId, context);
 
         if (facade.isSubcontractPostingEnabled()) {

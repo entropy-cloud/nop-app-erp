@@ -13,6 +13,7 @@ import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.posting.MfgPostingExecutor;
+import app.erp.mfg.service.posting.ProductionVarianceDispatcher;
 import app.erp.mfg.service.posting.SubcontractPostingDispatcher;
 import app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderApprovalStateMachine;
 import app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderDocumentStateMachine;
@@ -158,7 +159,7 @@ public class ErpMfgSubcontractOrderProcessor {
 
     /**
      * 红冲三段 GL 凭证（-SF/-SR/-SI）。posted==true 即有凭证须红冲（非 config flag），避免孤儿凭证；
-     * 逐段 try/catch 吞异常告警保持幂等（对齐 {@link SubcontractPostingDispatcher} 正向过账范式）。
+     * 逐段真实失败 rethrow（F2.5 范式，P2-CK-mfg3-006）——中止 @BizMutation 保持 DONE+posted=true 可重试。
      */
     protected void reverseGlPostings(ErpMfgSubcontractOrder order, IServiceContext context) {
         String code = order.getCode();
@@ -168,16 +169,28 @@ public class ErpMfgSubcontractOrderProcessor {
     }
 
     protected void reverseOneVoucher(String billHeadCode, ErpFinBusinessType businessType, ErpMfgSubcontractOrder order) {
-        // P2-CK-mfg3-006（F2.5 范式）：红冲失败不再吞异常——中止 @BizMutation 保持 DONE+posted=true 可重试
-        //（原「swallowed to keep idempotency」语义已显式重裁决：静默缺凭证无补偿面不可接受）
-        mfgPostingExecutor.reverse(billHeadCode, businessType);
+        try {
+            mfgPostingExecutor.reverse(billHeadCode, businessType);
+        } catch (Exception e) {
+            if (ProductionVarianceDispatcher.isFinReverseSourceNotFound(e)) {
+                // P2-CK-mfg3-006/C3（plan 2026-09-17-0800-1 结束审计 B1 修正）：部分红冲后重入幂等——
+                // fin 侧 reverse 对「全部凭证已红冲（isReversed 过滤后空集）或本段从未生成凭证」抛
+                // ERR_REVERSE_SOURCE_NOT_FOUND，均为良性跳过，保证重试链可推进到尚未红冲的段
+                LOG.info("Subcontract GL segment already reversed or absent (idempotent skip), subcontract order {} billHeadCode={}",
+                        order.getCode(), billHeadCode);
+                return;
+            }
+            // F2.5：真实红冲失败（期间锁定等）不再吞异常——中止保持可重试
+            //（原「swallowed to keep idempotency」语义已显式重裁决：静默缺凭证无补偿面不可接受）
+            throw wrapReversalFailure(e);
+        }
     }
 
     /**
      * 反向两段库存移动（issue OUTGOING + receipt MANUFACTURING）。经 {@code relatedBillType}+{@code relatedBillCode}
      * 反查原移动单 → {@code IErpInvStockMoveBiz.reverse} 生成反向冲销移动单（余额自动回滚）。
-     * 仅反向仓库前置满足的移动单（{@link #canSafelyReverse}），找不到原移动单或反向失败时吞异常告警，
-     * 不阻断 GL 红冲与状态回退。
+     * 仅反向仓库前置满足的移动单（{@link #canSafelyReverse}）。真实反向失败 rethrow（F2.5 范式，
+     * P2-CK-mfg3-006）——中止 @BizMutation 保持 DONE+posted=true 可重试。
      */
     protected void reverseInventoryMoves(ErpMfgSubcontractOrder order, IServiceContext context) {
         reverseOneMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_SUBCONTRACT_RECEIPT, order.getCode(), order, context);
@@ -186,27 +199,43 @@ public class ErpMfgSubcontractOrderProcessor {
 
     protected void reverseOneMove(String relatedBillType, String relatedBillCode, ErpMfgSubcontractOrder order,
                                   IServiceContext context) {
+        ErpInvStockMove original = stockMoveBiz.findByRelatedBill(relatedBillType, relatedBillCode, context);
+        if (original == null) {
+            return;
+        }
+        // P2-CK-mfg3-006/C3（plan 2026-09-17-0800-1 结束审计 B1 修正）：部分红冲后重入幂等——
+        // 库存域 reverse 不翻转原移动单状态，重入会二次冲销；经「REVERSAL 冲销单是否已存在」判定跳过
+        //（"REVERSAL" 与库存域 ErpInvStockMoveReverseProcessor#buildReverseRequest 写入值一致，字面量避免跨 service 依赖）
+        if (stockMoveBiz.findByRelatedBill("REVERSAL", original.getCode(), context) != null) {
+            LOG.info("Subcontract inventory move already reversed (idempotent skip), subcontract order {} relatedBillType={} moveCode={}",
+                    order.getCode(), relatedBillType, original.getCode());
+            return;
+        }
+        if (!canSafelyReverse(original)) {
+            LOG.warn("Subcontract reversal skipped inventory move reverse (move warehouse does not satisfy reversal precondition, when MANUFACTURE move sourceWarehouseId is empty"
+                            + " its reversed bookkeeper destWarehouseId is also empty), subcontract order {} relatedBillType={} moveCode={}",
+                    order.getCode(), relatedBillType, original.getCode());
+            return;
+        }
         try {
-            ErpInvStockMove original = stockMoveBiz.findByRelatedBill(relatedBillType, relatedBillCode, context);
-            if (original == null) {
-                return;
-            }
-            if (!canSafelyReverse(original)) {
-                LOG.warn("Subcontract reversal skipped inventory move reverse (move warehouse does not satisfy reversal precondition, when MANUFACTURE move sourceWarehouseId is empty"
-                                + " its reversed bookkeeper destWarehouseId is also empty), subcontract order {} relatedBillType={} moveCode={}",
-                        order.getCode(), relatedBillType, original.getCode());
-                return;
-            }
             stockMoveBiz.reverse(original.getId(), context);
         } catch (Exception e) {
-            if (e instanceof NopException) {
-                LOG.warn("Subcontract reversal failed to reverse inventory move (exception swallowed to keep idempotency), subcontract order {} relatedBillType={}: {}",
-                        order.getCode(), relatedBillType, e.getMessage());
-            } else {
-                LOG.error("Subcontract reversal error reversing inventory move (exception swallowed to keep idempotency), subcontract order {} relatedBillType={}",
-                        order.getCode(), relatedBillType, e);
-            }
+            // F2.5：真实反向失败（余额冲突等）不再吞异常——中止保持可重试
+            LOG.error("Subcontract reversal failed to reverse inventory move, subcontract order {} relatedBillType={}",
+                    order.getCode(), relatedBillType, e);
+            throw wrapReversalFailure(e);
         }
+    }
+
+    /**
+     * 红冲失败异常包装：RuntimeException 原样上抛（NopException 保错误码），受检异常包 IllegalStateException。
+     * 使 @BizMutation 中止后 DONE+posted=true 保持可重试。
+     */
+    protected RuntimeException wrapReversalFailure(Throwable e) {
+        if (e instanceof RuntimeException) {
+            return (RuntimeException) e;
+        }
+        return new IllegalStateException(e);
     }
 
     /**
@@ -531,8 +560,9 @@ public class ErpMfgSubcontractOrderProcessor {
             }
             return Boolean.parseBoolean(value.trim());
         } catch (Exception e) {
-            // P2-CK-mfg3-006：F2.5 范式——红冲/反向移动失败不再吞异常，中止保持可重试
-            throw e;
+            // 配置读取异常时回落默认值（结束审计 B4：此 helper 与红冲链无关，F2.5 rethrow 不适用于配置面）
+            LOG.warn("Config {} read failed, fallback to default {}: {}", key, defaultValue, e.getMessage());
+            return defaultValue;
         }
     }
 

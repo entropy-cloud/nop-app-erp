@@ -2,6 +2,7 @@ package app.erp.mfg.service.posting;
 
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
+import app.erp.fin.service.posting.ErpFinPostingErrors;
 import app.erp.mfg.dao.entity.ErpMfgCostVariance;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.service.ErpMfgConstants;
@@ -125,33 +126,65 @@ public class ProductionVarianceDispatcher {
      * <p>billHeadCode 派生对齐正向 {@link #buildEvent}（{@code wo.code + "-PV"}）；红冲经
      * {@link MfgPostingExecutor#reverse} → {@code IErpFinVoucherBiz.reverse}。
      *
-     * <p>异常处理范式（plan 2026-07-18-2251-1 Phase 1 Decision (a)）：始终调用 + 本地 try/catch 守护吞异常。
-     * {@code IErpFinVoucherBiz.reverse} 在无原已过账凭证时抛 {@code NopException(ERR_REVERSE_SOURCE_NOT_FOUND)}
-     * （非 no-op），由本地 catch 守护吞此异常 + 真实红冲失败异常，log warn 不阻断重算后续步骤
-     * （deleteByWorkOrder/calculateVariances/dispatchIfApplicable）。范式对齐 {@link #dispatchIfApplicable} 过账失败
-     * try/catch（{@code :109-115}）。红冲失败孤儿凭证风险经 log warn 可观测，归 finance 5.1 异常工作台兜底。
+     * <p>门控（P2-CK-mfg3-009，plan 2026-09-17-0800-1）：按「该工单存在差异行」判定（不再要求 posted=true）——
+     * 红冲失败后重算重建的差异行均为 posted=false，旧门控会跳过红冲重试，与 fin 侧 post 幂等命中复合成
+     * 「一次红冲失败后差异永久悬挂」。凭证存在性由 fin 侧 reverse 权威判定：无已过账凭证抛
+     * {@code ERR_REVERSE_SOURCE_NOT_FOUND}（差异行为空 ⇒ 不可能有本类型凭证，凭证仅经
+     * {@link #dispatchIfApplicable} 自差异行派生，故行存在性门控是其安全超集），经本地 catch 判定为良性放行。
+     *
+     * <p>异常处理分级（plan 2026-07-18-2251-1 范式 + P2-CK-mfg3-009 C2 裁决）：
+     * <ul>
+     *   <li>{@code ERR_REVERSE_SOURCE_NOT_FOUND}（无可红冲凭证）——良性，log info，返回 {@code true}；</li>
+     *   <li>其他异常（期间锁定等真实红冲失败）——log warn 告警，返回 {@code false}。调用方须跳过
+     *       {@link #dispatchIfApplicable}：旧凭证仍以旧金额未冲销占位时，fin 侧 post 幂等命中会返回旧凭证 ID，
+     *       若照旧 markPosted 会把新金额差异行误标 posted=true（GL 与差异行金额分叉）。</li>
+     * </ul>
+     *
+     * @return {@code true} = 重算链可继续派发新凭证（无可红冲凭证 / 红冲成功）；
+     *         {@code false} = 真实红冲失败，派发段必须中止（新差异行保持 posted=false，下次重算自动重试红冲）
      */
-    public void reverseIfExists(String workOrderId) {
+    public boolean reverseIfExists(String workOrderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workOrderId", workOrderId));
-        q.addFilter(eq("posted", true));
         q.setLimit(1);
         IEntityDao<ErpMfgCostVariance> dao = daoProvider.daoFor(ErpMfgCostVariance.class);
-        List<ErpMfgCostVariance> posted = dao.findAllByQuery(q);
-        if (posted.isEmpty()) {
-            return;
+        if (dao.findAllByQuery(q).isEmpty()) {
+            return true;
         }
         ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(workOrderId);
         if (wo == null) {
-            return;
+            return true;
         }
         String billHeadCode = wo.getCode() + "-PV";
         try {
             executor.reverse(billHeadCode, ErpFinBusinessType.PRODUCTION_VARIANCE);
+            return true;
         } catch (Exception e) {
-            LOG.warn("Production variance reversal failed or no original voucher, work order {} billHeadCode={} non-blocking for recalculation: {}",
+            if (isFinReverseSourceNotFound(e)) {
+                LOG.info("Production variance reversal skipped (no posted voucher to reverse), work order {} billHeadCode={}",
+                        wo.getCode(), billHeadCode);
+                return true;
+            }
+            LOG.warn("Production variance reversal failed, work order {} billHeadCode={} — variance dispatch aborted, "
+                    + "new variance lines remain posted=false until next recalculation retries the reversal: {}",
                     wo.getCode(), billHeadCode, e.getMessage());
+            return false;
         }
+    }
+
+    /**
+     * 红冲「无可冲销凭证」良性判定：fin 侧 reverse 对「全部凭证已红冲（isReversed 过滤后空集）或从未生成」
+     * 抛 {@code ERR_REVERSE_SOURCE_NOT_FOUND}。遍历 cause 链兼容事务管理器/IoC 包装异常。
+     * 供 mfg 域各红冲链共用（ProductionVariance / Subcontract F2.5 重入幂等）。
+     */
+    public static boolean isFinReverseSourceNotFound(Throwable t) {
+        for (Throwable cur = t; cur != null; cur = cur.getCause()) {
+            if (cur instanceof NopException
+                    && ErpFinPostingErrors.ERR_REVERSE_SOURCE_NOT_FOUND.getErrorCode().equals(((NopException) cur).getErrorCode())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private PostingEvent buildEvent(ErpMfgWorkOrder wo, BigDecimal materialNet, BigDecimal laborNet,

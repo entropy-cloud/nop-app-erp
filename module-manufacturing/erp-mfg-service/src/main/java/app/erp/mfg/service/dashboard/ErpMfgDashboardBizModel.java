@@ -76,10 +76,11 @@ public class ErpMfgDashboardBizModel {
 
             long inProcessCount = countByDocStatusIn(Arrays.asList(
                     ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS,
-                    ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED));
-            BigDecimal periodCompletedQty = sumCompletedQtyInRange(from, to);
-            long stockPartialCount = countByDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL);
-            double onTimeRate = computeOnTimeRate();
+                    ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED), resolveOrgId(context));
+            BigDecimal periodCompletedQty = sumCompletedQtyInRange(from, to, resolveOrgId(context));
+            long stockPartialCount = countByDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL,
+                    resolveOrgId(context));
+            double onTimeRate = computeOnTimeRate(resolveOrgId(context));
 
             Map<String, Object> kpi = new LinkedHashMap<>();
             kpi.put("startDate", from);
@@ -99,6 +100,10 @@ public class ErpMfgDashboardBizModel {
             // DB 级 GROUP BY docStatus + COUNT，避免全表物化
             QueryBean q = new QueryBean();
             q.setSourceName(ErpMfgWorkOrder.class.getName());
+            String orgId = resolveOrgId(context);
+            if (orgId != null) {
+                q.addFilter(eq("orgId", orgId));
+            }
             QueryFieldBean dim = QueryFieldBean.mainField("docStatus");
             QueryFieldBean cnt = QueryFieldBean.mainField("docStatus").count().alias("cnt");
             q.setFields(Arrays.asList(dim, cnt));
@@ -125,7 +130,7 @@ public class ErpMfgDashboardBizModel {
         LocalDate today = CoreMetrics.currentDate();
         LocalDate from = today.minusMonths(n - 1L).withDayOfMonth(1);
         return ormTemplate.runInSession(session -> {
-            List<ErpMfgWorkOrder> orders = loadCompletedInRange(from, today);
+            List<ErpMfgWorkOrder> orders = loadCompletedInRange(from, today, resolveOrgId(context));
             Map<String, BigDecimal> qtyByMonth = new LinkedHashMap<>();
             for (ErpMfgWorkOrder o : orders) {
                 LocalDate d = o.getActualEndDate();
@@ -156,6 +161,10 @@ public class ErpMfgDashboardBizModel {
             q.addFilter(ne("docStatus", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED));
             q.addFilter(ne("docStatus", ErpMfgConstants.WORK_ORDER_STATUS_CLOSED));
             q.addFilter(ne("docStatus", ErpMfgConstants.WORK_ORDER_STATUS_CANCELLED));
+            String orgId = resolveOrgId(context);
+            if (orgId != null) {
+                q.addFilter(eq("orgId", orgId));
+            }
             List<ErpMfgWorkOrder> orders = dao.findAllByQuery(q);
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpMfgWorkOrder o : orders) {
@@ -253,26 +262,35 @@ public class ErpMfgDashboardBizModel {
 
     // ===================== helpers =====================
 
-    private long countByDocStatusIn(List<String> statuses) {
+    private long countByDocStatusIn(List<String> statuses, String orgId) {
         IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("docStatus", statuses));
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+        }
         return dao.countByQuery(q);
     }
 
-    private long countByDocStatus(String status) {
+    private long countByDocStatus(String status, String orgId) {
         IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", status));
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+        }
         return dao.countByQuery(q);
     }
 
-    private BigDecimal sumCompletedQtyInRange(LocalDate from, LocalDate to) {
+    private BigDecimal sumCompletedQtyInRange(LocalDate from, LocalDate to, String orgId) {
         IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED));
         q.addFilter(ge("actualEndDate", from));
         q.addFilter(le("actualEndDate", to));
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+        }
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpMfgWorkOrder o : dao.findAllByQuery(q)) {
             sum = sum.add(DashboardUtil.nz(o.getCompletedQuantity()));
@@ -280,10 +298,13 @@ public class ErpMfgDashboardBizModel {
         return sum;
     }
 
-    private double computeOnTimeRate() {
+    private double computeOnTimeRate(String orgId) {
         IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED));
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+        }
         List<ErpMfgWorkOrder> completed = dao.findAllByQuery(q);
         if (completed.isEmpty()) return 0.0;
         long onTime = 0;
@@ -297,12 +318,15 @@ public class ErpMfgDashboardBizModel {
         return (double) onTime / (double) completed.size();
     }
 
-    private List<ErpMfgWorkOrder> loadCompletedInRange(LocalDate from, LocalDate to) {
+    private List<ErpMfgWorkOrder> loadCompletedInRange(LocalDate from, LocalDate to, String orgId) {
         IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED));
         q.addFilter(ge("actualEndDate", from));
         q.addFilter(le("actualEndDate", to));
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+        }
         return dao.findAllByQuery(q);
     }
 

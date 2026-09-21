@@ -72,6 +72,11 @@ public interface ErpMfgConstants extends ErpMfgDocStatus {
     String WORK_ORDER_LINE_TYPE_INPUT = "INPUT";
     String WORK_ORDER_LINE_TYPE_BYPRODUCT = "BYPRODUCT";
 
+    // BOM 消耗控制级别（ErpMfgBom.consumption，dict erp-mfg/consumption）
+    String CONSUMPTION_FLEXIBLE = "FLEXIBLE";
+    String CONSUMPTION_WARNING = "WARNING";
+    String CONSUMPTION_STRICT = "STRICT";
+
     // 业务联动源单类型（manufacturing 发起的库存移动单 relatedBillType 自由字符串）
     String RELATED_BILL_TYPE_MFG_ISSUE = "ERP_MFG_ISSUE";
     String RELATED_BILL_TYPE_MFG_WORK_ORDER = "ERP_MFG_WORK_ORDER";

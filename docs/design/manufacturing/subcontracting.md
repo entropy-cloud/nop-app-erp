@@ -229,6 +229,8 @@ posted=false → 异步过账 → posted=true
 - **业财过账 config-gated**：`erp-mfg.subcontract-posting-enabled`（默认 false 向后兼容）。新增 SUBCONTRACT_ISSUE(502)/RECEIPT(503)/FEE(504) 三个 ErpFinBusinessType + erp-fin/business-type 字典项 + COA 1408 委外物资科目。凭证科目分解：ISSUE Dr 1408 / Cr 1401；RECEIPT Dr 1405 / Cr 1408；FEE Dr 1408 / Cr 2202。
 - **MRP 委外释放 config-gated**：`erp-mfg.subcontract-release-enabled`（默认 false 向后兼容）。释放生成 APPROVED 委外单（跳过审批，对齐 MRP O-4 架构豁免）。
 - **加工费为订单头级单一金额**：设计描述按委外发票行金额分配，本期以订单头 `processingFee` 单一金额过账（精确行级加工费归集归 successor）。
+- **入参与状态守卫（P2-CK-mfg3-007/mfg3-012，plan 2026-09-17-0800-1）**：`receiveFinished` 的 `destWarehouseId` 非空、`receivedQty` 非正拒绝（修复前静默替换为行数量或 ONE / 仓库缺失静默放行），且收货数量受上限守卫——单次收货（ISSUED→RECEIVED 一次性迁移）不得超过订单行数量合计，损耗/超收容差口径未裁决前按 100% 严格上限（放宽需产品裁决）；`reverseApprove` 补 docStatus 守卫——仅 `APPROVED`（未发料）可反审核，ISSUED 及之后状态拒绝（发料出库已发生不得回退审批轴）。
+- **红冲失败强一致（P2-CK-mfg3-006，F2.5 范式）**：`reverseOneVoucher`/`reverseOneMove` 红冲段真实失败 rethrow 中止 `@BizMutation`——委外单保持 DONE+posted=true 可重试（静默吞异常原语义废止：GL 段有 fin sweep 兜底而库存段无任何兜底，吞异常使终态假成功且无补偿面）。**段级重入幂等（C3 裁决）**：GL 段已红冲（fin 侧 isReversed 过滤后空集抛 `ERR_REVERSE_SOURCE_NOT_FOUND`）或本段从未生成凭证 → 良性跳过，保证部分红冲中止后的重试链可推进到未红冲段；库存段经「`REVERSAL` 冲销单已存在」判定跳过（库存域 reverse 不翻转原移动单状态，重入会二次冲销）；`canSafelyReverse` 仓库前置不满足的 warn 跳过（P1-CK-mfg3-002 既有裁决）保持不变。测试：TestErpMfgSubcontractReverse#testGlSegmentReversalReentryIdempotentAndRealFailureRethrows。
 - **Successor 触发条件**：供应商 Portal 协同 / 来料质检触发 / 损耗核算 / 退货 / 批次序列号 / 独立单据实体 / 委外差异 / 浏览器层 E2E / 前端 AMIS 动作页面。
 
 ## 实现约定：委外红冲完工

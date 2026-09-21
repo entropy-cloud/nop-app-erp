@@ -243,10 +243,12 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
     }
 
     /**
-     * (d) 红冲失败容错路径：手工注入抛非 SOURCE_NOT_FOUND 异常的 executor → reverseIfExists 仍 log warn
-     * 不阻断 deleteByWorkOrder/calculateVariances/dispatchIfApplicable 后续步骤。
+     * (d) 红冲失败容错路径：手工注入抛非 SOURCE_NOT_FOUND 异常的 executor → reverseIfExists 不抛出、
+     * 返回 {@code false}（P2-CK-mfg3-009 C2 裁决：真实红冲失败须中止派发段）。
      *
-     * <p>验证 Phase 1 Decision (a) 残留风险 mask 可观测性：catch 块吞所有 Exception 类型，孤儿凭证风险经 log warn 落地。
+     * <p>验证 plan 2026-07-18-2251-1 Phase 1 Decision (a) 异常 mask 可观测性 + plan 2026-09-17-0800-1
+     * 返回值分级契约（良性 SOURCE_NOT_FOUND → true；真实失败 → false）。链级中止
+     * （reversalOk=false 跳过 dispatchIfApplicable）经 (f) 端到端覆盖。
      */
     @Test
     public void testReverseFailureDoesNotBlockRecompute() {
@@ -260,20 +262,24 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
                 bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
         seedTimeLog("5653", "8253", bd("150"));
 
-        // 直接调 dispatcher.reverseIfExists，使用一个抛 RuntimeException 的执行器
+        // 经计算器直接产生差异行（不入账 posted——避免派发面写入），使新门控「差异行存在」放行触达 executor；
+        //（无差异行时 reverseIfExists 直接放行返回 true，不触 executor）
+        ormTemplate.runInSession(session -> {
+            List<ErpMfgCostVariance> seeded = productionVarianceCalculator.calculateVariances("8253");
+            assertFalse(seeded.isEmpty(), "差异行已计算（门控前置）");
+            return null;
+        });
+
+        // 直接调 dispatcher.reverseIfExists，使用一个抛 RuntimeException 的执行器：
+        // 差异行存在 → 门控放行触达 executor → reverse 抛 RuntimeException → 不抛出、返回 false
+        //（C2 裁决：真实红冲失败须中止派发段；链级中止行为另经 testReversalFailureAbortsDispatchKeepsLinesUnposted 覆盖）
         ProductionVarianceDispatcher failingDispatcher = new ProductionVarianceDispatcher();
         failingDispatcher.setDaoProvider(daoProvider);
         failingDispatcher.setVarianceCalculator(productionVarianceCalculator);
         failingDispatcher.setExecutor(new ThrowingMfgPostingExecutor());
-
-        // 不阻断：reverseIfExists 调用本身应安全返回（异常被吞）
-        failingDispatcher.reverseIfExists("8253");
-
-        // 后续 calculateVariances 应正常完成（不因红冲失败而被阻断）—— 经直接计算路径验证
-        productionVarianceCalculator.deleteByWorkOrder("8253");
-        List<ErpMfgCostVariance> lines = productionVarianceCalculator.calculateVariances("8253");
-        assertFalse(lines.isEmpty(), "差异行已计算（红冲失败不阻断重算）");
-        // 注：未调 dispatchIfApplicable 故数据行 posted=false，此断言聚焦红冲失败容错路径，过账另经 (a)(c) 覆盖
+        assertFalse(failingDispatcher.reverseIfExists("8253"),
+                "非 SOURCE_NOT_FOUND 红冲失败应返回 false（C2：中止派发段）");
+        // 注：不阻断数据行重算的语义经链级测试覆盖；此处聚焦 dispatcher 返回值契约本身
     }
 
     /**
@@ -312,6 +318,112 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
         List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder("8254");
         assertTrue(lines.stream().allMatch(l -> Boolean.TRUE.equals(l.getPosted())),
                 "首次计算后全部差异行 posted=true");
+    }
+
+    /**
+     * (f) P2-CK-mfg3-009 C2 裁决（plan 2026-09-17-0800-1）：红冲真实失败（期间锁定）→ 重算链派发段中止，
+     * 新差异行保持 posted=false，不因 fin 侧 post 幂等命中旧凭证而误标 posted=true。
+     *
+     * <p>红绿反转证明：修复前 reverseIfExists 吞一切异常继续派发 → fin 侧 post 幂等命中（billHeadCode 相同、
+     * 旧凭证未冲销、期间校验位于幂等短路之后不阻断命中）返回旧凭证 ID → markPosted 把新金额差异行误标
+     * posted=true（GL=旧金额、差异行=新金额数据分叉）。修复后红冲真实失败返回 false → 派发段中止 →
+     * 差异行诚实保持 posted=false，待期间重开后下次重算自动重试红冲。
+     */
+    @Test
+    public void testReversalFailureAbortsDispatchKeepsLinesUnposted() {
+        seedProduct(P);
+        seedWorkcenter(WC1, bd("20"));
+        String bomId = seedBom("9255", P);
+        seedBomOperation("4255", bomId, WC1, bd("60"));
+        seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
+        seedPeriodAndSubjects();
+        seedCompletedWorkOrder("8255", "WO-RC-F", bomId, P,
+                bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
+        seedTimeLog("5655", "8255", bd("150"));
+
+        // 第一次重算：期间 OPEN → 正常派发 V1
+        ApiResponse<?> r1 = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
+                ApiRequest.build(Map.of("workOrderId", "8255")));
+        assertEquals(0, r1.getStatus(), "第一次 calculateVariances 应成功: " + r1);
+        ErpFinVoucher v1 = findVoucher("WO-RC-F-PV", ErpFinBusinessType.PRODUCTION_VARIANCE, "NORMAL");
+        assertNotNull(v1, "首次计算应派发 NORMAL 凭证 V1");
+
+        // 锁定期间（真实红冲失败场景：reverseProcess 的 resolveOpenPeriod 抛 ERR_PERIOD_CLOSED）
+        setPeriodStatus("CLOSED");
+        try {
+            ApiResponse<?> r2 = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
+                    ApiRequest.build(Map.of("workOrderId", "8255")));
+            assertEquals(0, r2.getStatus(), "红冲失败容错下重算 RPC 仍应成功: " + r2);
+
+            // 旧凭证未被红冲（红冲失败被 dispatcher 容错吞掉）
+            ErpFinVoucher v1After = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(v1.getId());
+            assertFalse(Boolean.TRUE.equals(v1After.getIsReversed()),
+                    "期间锁定下红冲失败，V1 保持 isReversed=false");
+            assertEquals(null, findVoucher("WO-RC-F-PV", ErpFinBusinessType.PRODUCTION_VARIANCE, "REVERSAL"),
+                    "红冲失败不应生成 REVERSAL 凭证");
+
+            // 核心断言（C2）：派发段中止，新差异行保持 posted=false（修复前经幂等命中误标 posted=true）
+            List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder("8255");
+            assertFalse(lines.isEmpty(), "重算应重建差异行");
+            assertTrue(lines.stream().noneMatch(l -> Boolean.TRUE.equals(l.getPosted())),
+                    "红冲失败时新差异行必须保持 posted=false（C2：不得经幂等命中旧凭证回写）");
+        } finally {
+            setPeriodStatus("OPEN");
+        }
+    }
+
+    /**
+     * (g) P2-CK-mfg3-009 门控修复红绿反转：差异行全部 posted=false 时下次重算仍重试红冲（悬挂解除）。
+     *
+     * <p>复现「红冲失败后重算」悬挂前态：V1 未冲销 + 差异行均 posted=false。修复前门控按
+     * 「posted=true 行存在」判定 → 跳过红冲 → dispatch 幂等命中 V1 → 永不红冲；修复后门控按
+     * 「差异行存在」判定 → 重试红冲成功 → V1 isReversed=true + REVERSAL 凭证 + 新 NORMAL 凭证 + 行 posted=true。
+     */
+    @Test
+    public void testReversalRetriedWhenLinesUnpostedAfterFailure() {
+        seedProduct(P);
+        seedWorkcenter(WC1, bd("20"));
+        String bomId = seedBom("9256", P);
+        seedBomOperation("4256", bomId, WC1, bd("60"));
+        seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
+        seedPeriodAndSubjects();
+        seedCompletedWorkOrder("8256", "WO-RC-G", bomId, P,
+                bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
+        seedTimeLog("5656", "8256", bd("150"));
+
+        // 第一次重算：V1 + 行 posted=true
+        ApiResponse<?> r1 = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
+                ApiRequest.build(Map.of("workOrderId", "8256")));
+        assertEquals(0, r1.getStatus(), "第一次 calculateVariances 应成功: " + r1);
+        ErpFinVoucher v1 = findVoucher("WO-RC-G-PV", ErpFinBusinessType.PRODUCTION_VARIANCE, "NORMAL");
+        assertNotNull(v1, "首次计算应派发 NORMAL 凭证 V1");
+
+        // 构造悬挂前态：差异行全部置回 posted=false（等价于「红冲失败 + 重算后行未回写」状态）
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpMfgCostVariance> dao = daoProvider.daoFor(ErpMfgCostVariance.class);
+            for (ErpMfgCostVariance l : productionVarianceCalculator.findByWorkOrder("8256")) {
+                l.setPosted(false);
+                dao.updateEntity(l);
+            }
+        });
+
+        // 期间 OPEN：下次重算必须重试红冲（门控修复点）→ 红冲成功 → 新凭证派发
+        ApiResponse<?> r2 = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
+                ApiRequest.build(Map.of("workOrderId", "8256")));
+        assertEquals(0, r2.getStatus(), "第二次 calculateVariances 应成功: " + r2);
+
+        // 红绿判据：V1 被红冲（修复前门控跳过红冲，V1 永远 isReversed=false）
+        ErpFinVoucher v1After = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(v1.getId());
+        assertTrue(Boolean.TRUE.equals(v1After.getIsReversed()),
+                "行全 posted=false 时重算仍须重试红冲（门控修复），V1 应被红冲");
+        assertNotNull(findVoucher("WO-RC-G-PV", ErpFinBusinessType.PRODUCTION_VARIANCE, "REVERSAL"),
+                "红冲重试成功应生成 REVERSAL 凭证");
+
+        // 无孤儿 + 行全 posted=true（完全收敛）
+        assertNoOrphanVoucher("WO-RC-G-PV");
+        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder("8256");
+        assertTrue(lines.stream().allMatch(l -> Boolean.TRUE.equals(l.getPosted())),
+                "重算收敛后全部差异行 posted=true");
     }
 
     // ---------- 查询 helper ----------
@@ -376,6 +488,19 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
     private void setVarianceAutoCalc(boolean value) {
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpMfgConstants.CONFIG_VARIANCE_AUTO_CALC_ENABLED, String.valueOf(value));
+    }
+
+    private void setPeriodStatus(String status) {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+            QueryBean q = new QueryBean();
+            q.addFilter(eq("code", PERIOD_CODE));
+            List<ErpFinAccountingPeriod> list = dao.findAllByQuery(q);
+            assertFalse(list.isEmpty(), "期间 " + PERIOD_CODE + " 应已种子化");
+            ErpFinAccountingPeriod period = list.get(0);
+            period.orm_propValueByName("status", status);
+            dao.updateEntity(period);
+        });
     }
 
     // ---------- seed helper（与 TestErpMfgProductionVariance 范式对齐，独立 ID 段避免冲突） ----------

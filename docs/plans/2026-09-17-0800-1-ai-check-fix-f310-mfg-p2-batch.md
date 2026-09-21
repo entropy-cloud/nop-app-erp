@@ -1,7 +1,7 @@
 # 2026-09-17-0800-1 ai-check r1 修复批次 F3.10：mfg 域 14 条 P2（HEAD 复核实际开放面）
 
-> Plan Status: active
-> Last Reviewed: 2026-09-17
+> Plan Status: done（2026-09-21 结束审计 round2 pass）
+> Last Reviewed: 2026-09-21
 > Source: ai-check-index.md mfg 系 open 行 + ck-mfg-workorder.md / ck-mfg-bom-mrp.md / ck-mfg-subcontracting.md
 > Audit: required
 > **Protected Area**: mfg 域——双独立子 agent 批准流程同 F3.8/F3.9
@@ -53,65 +53,65 @@
 
 ### Phase 1 — mfg-006 快照族守卫 + mfg-007 kit orgId
 
-Status: planned
+Status: done（2026-09-21；实际守卫三实体为 BomSnapshot/BomLineSnapshot/BomOperationSnapshot——plan 草案 Targets 中 LineSnapshot/OperationSnapshot 命名与 ORM 实体名有出入，以 ORM 为准）
 Targets: ErpMfgWorkOrderBomSnapshotBizModel、ErpMfgWorkOrderLineSnapshotBizModel、ErpMfgWorkOrderOperationSnapshotBizModel、KitAvailabilityChecker.java
 Skill: none
 
 - Item Types: `Fix`
-- [ ] mfg-006：BomSnapshot 三实体 override `defaultPrepareUpdate` 与 `defaultPrepareDelete`——快照不可变语义（update 抛错；delete 保留 cascade-delete 不经 prepare 钩子故不受影响）
-- [ ] mfg-007：KitAvailabilityChecker#buildBalanceQuery 补 `eq("orgId", wo.getOrgId())`（沿用 dashboard null-skip 契约）
-- [ ] Proof：快照 update 被拒 + orgId 隔离断言
+- [x] mfg-006：BomSnapshot 三实体 override `defaultPrepareUpdate` 抛 IllegalStateException（SNAPSHOT_IMMUTABLE；delete 保留不经钩子；Proof：TestErpMfgF310Proofs#testSnapshotUpdateRejected）
+- [x] mfg-007：KitAvailabilityChecker#buildBalanceQuery 补 `eq("orgId", wo.getOrgId())`（null-skip 契约；Proof：testKitCheckIsolatesBalanceByOrgId）+ C1 dashboard 半边全查询补齐（7 查询接线 + 死 import 清理）
+- [x] Proof：testSnapshotUpdateRejected + testKitCheckIsolatesBalanceByOrgId（红→绿，TestErpMfgF310Proofs）
 
 Exit Criteria:
 - [ ] 两修复落地；新测试红→绿；mfg 既有测试零回归
 
 ### Phase 2 — mfg-008 consumption + mfg2-009/010/011 BOM/MRP 四缺陷
 
-Status: planned
+Status: done（2026-09-21）
 Targets: ErpMfgMaterialIssueConfirmProcessor.java、BOM 展开逻辑、MrpEngine、SimulationMrpEngine、CostRollupService
 Skill: none
 
 - Item Types: `Fix`
-- [ ] mfg-008：confirm 按 bom.consumption 分级——STRICT 超领（对 WO 行 requiredQuantity 累计）抛错/WARNING warn/FLEXIBLE 放行
-- [ ] mfg2-009：useMultiLevelBom=false 时单级展开（齐套/预留展开深度控制；MRP 不受该列治理）
-- [ ] mfg2-010：BOM qty≤0 抛错（不静默归零）+ CostRollupService.divide 姊妹站点同修；成功路径数值零变化（保护区约束 4）
-- [ ] mfg2-011：requirementDate 聚合改最早 + SimulationMrpEngine#topDemandsByMaterial fork 同步
-- [ ] Proof：各修复红→绿
+- [x] mfg-008：confirm 副作用前 enforceConsumptionControl 按 bom.consumption 分级——STRICT 超领（对 WO 材料行 plannedQuantity 累计=已入账 actualQuantity+本次 issued）抛错/WARNING warn/FLEXIBLE 放行；resolveBomConsumption 实读 ErpMfgBom.consumption（初版 stub 恒 FLEXIBLE 已在本批修正为真接线）
+- [x] mfg2-009：resolveUseMultiLevel 读列（空缺省 true）；MRP 不受该列治理
+- [x] mfg2-010：BomExpander.divide 与 CostRollupService.divide 姊妹站点 signum()<=0 抛 IllegalArgumentException；Proof：testBomNonPositiveQtyExplodeRejected
+- [x] mfg2-011：isBefore 取最早 + SimulationMrpEngine fork 同步
+- [x] Proof：testStrictConsumptionRejectsOverIssue / testWarningConsumptionWarnsAndAllows / testFlexibleConsumptionAllowsOverIssue（红→绿）
 
 Exit Criteria:
-- [ ] 四缺陷修复；新测试红→绿；mfg 既有测试零回归
+- [x] 四缺陷修复；新测试红→绿；mfg 既有测试零回归（mfg-service 321/0/0）
 
 ### Phase 3 — mfg3 组委外域四缺陷
 
-Status: planned
+Status: done（2026-09-21）
 Targets: ErpMfgSubcontractOrderProcessor、ErpMfgSubcontractOrderReceiveFinishedProcessor、ErpMfgSubcontractOrderBizModel、genealogy/BatchGenealogyWriter
 Skill: none
 
 - Item Types: `Fix`
-- [ ] mfg3-006：红冲吞异常改 F2.5 范式（NopException 中止 @BizMutation，保持 DONE+posted=true 可重试；不天真 rethrow 破坏部分红冲幂等——现注释「swallowed to keep idempotency」语义须显式重裁决）
-- [ ] mfg3-007：仓库参数非空守卫 + 收货数量上限守卫（损耗扣除口径 scope 注记）+ 非正数量拒绝
-- [ ] mfg3-008：多领料行去重改 sum 聚合（inputQty 累加替代首行）
-- [ ] mfg3-012：reverseApprove 补委外语义 docStatus 白名单（≤APPROVED/未发料——工单词汇 NOT_STARTED 不适用）
-- [ ] Proof：各修复红→绿
+- [x] mfg3-006：reverseOneVoucher/reverseOneMove 两腿真实失败 rethrow（F2.5 范式）+ 段级重入幂等（C3 裁决：GL 段 SOURCE_NOT_FOUND 良性跳过 + 库存段 REVERSAL 冲销单存在性跳过）——结束审计 round1 B1 揭示初版「改一半+重入声称失实」后修正落地（含 readBoolConfig 误插 rethrow 回退 B4 + TestErpMfgSubcontractReverse 段级契约测试）
+- [x] mfg3-007：destWarehouseId 非空守卫 + 非正数量拒绝 + 收货上限守卫（单次收货 ≤ 订单行数量合计，100% 严格上限；损耗/超收容差口径未裁决 scope 注记见 subcontracting.md §实现约定）
+- [x] mfg3-008：BatchGenealogyWriter 改 LinkedHashMap 同 inputLot inputQty 求和
+- [x] mfg3-012：reverseApprove docStatus 守卫仅 APPROVED（未发料）可反审核；Proof：testSubcontractReverseApproveOnlyBeforeIssue
+- [x] Proof：testSubcontractReceiveRejectsMissingWarehouseAndNonPositiveQty（含上限红→绿）+ 既有 TestErpMfgSubcontractReverse/Subcontracting 全绿
 
 Exit Criteria:
-- [ ] 四缺陷修复；新测试红→绿；mfg 既有测试零回归
+- [x] 四缺陷修复；新测试红→绿；mfg 既有测试零回归
 
 ### Phase 4 — mfg2-004 Decision + mfg2-006 Decision + mfg2-007 + mfg3-009
 
-Status: planned
+Status: done（2026-09-21）
 Targets: MrpEngine/DemandAggregator、SimulationVersionComparator、差异重算链
 Skill: none
 
 - Item Types: `Decision | Fix`
-- [ ] mfg2-004 Decision：owner doc mrp.md L88 裁决（行漂移；L88 现文背书 MRP 忽略仓库维度，Decision 须同步修订 L88；"三处契约"实为四处视角：mrp.md L88/ORM 注释/DRP javadoc/实现分支） warehouseId 过滤（MRP 过滤 vs 三处契约改声明）→ 裁决后实施对应分支
-- [ ] mfg2-006 Decision：lookupStandardCost 价源选择——接 CostRollupLine FIRMED 最新 或 owner doc simulation-engine.md Decision C 显式 Deferred + 重开触发
-- [ ] mfg2-007：SimulationVersionComparator.indexLines session 托管写值改本地聚合 Map（零实体写入）
-- [ ] mfg3-009：reverseIfExists 门控改按凭证存在性（或追加「存在未红冲同码凭证」分支）+ 幂等命中时 posted 回写——仅限门控与 posted 回写修复，不触差异金额计算
-- [ ] Proof：各修复红→绿
+- [x] mfg2-004 Decision：裁决=MRP 过滤分支——DemandAggregator 补 isNull(warehouseId) 仅消费产品级预测行；mrp.md FORECAST 条目同步修订（声明与实现收口）
+- [x] mfg2-006 Decision：Decision C 显式 Deferred（simulation-engine.md §Decision C 已登记价源两备选 + 重开触发条件）
+- [x] mfg2-007：indexLines 改 detached 副本实体参与排序（零 session 实体写入；实现取副本实体形态，聚合语义等价）
+- [x] mfg3-009：门控改「差异行存在」（fin reverse 为凭证存在性权威，SOURCE_NOT_FOUND 良性）+ 返回值分级（真实失败=false）→ 两个 call site 中止派发段——C2 裁决落地：同额重试与旧凭证命中两路径经「中止唯一命中路径」结构性区分，无脏回写；不触差异金额计算
+- [x] Proof：TestErpMfgVarianceRecomputeReversal (f) testReversalFailureAbortsDispatchKeepsLinesUnposted + (g) testReversalRetriedWhenLinesUnpostedAfterFailure（悬挂解除红绿反转对）+ (d) 返回值契约更新
 
 Exit Criteria:
-- [ ] 四项落地；新测试或行为等价断言红→绿；mfg 既有测试零回归
+- [x] 四项落地；新测试红→绿；mfg 既有测试零回归
 
 ## Protected Area Approval Record
 
@@ -133,15 +133,15 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（Phase 1-4 全部退出标准勾选）
-- [ ] 相关文档对齐（owner doc 登记；ai-check-index.md 回填；roadmap 进度；baselines 基线行；compliance-baseline 裁决；docs/logs 当日日志）
-- [ ] 已运行验证：`mvn test -pl module-manufacturing/erp-mfg-service`（含新增测试类全绿）；全 reactor `mvn install -DskipTests` + `mvn test`（install 先于 test——F3.8 教训）；compliance checker
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 保护区双独立子 agent 批准记录落盘
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理执行
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（Phase 1-4 全部退出标准勾选）
+- [x] 相关文档对齐（owner doc：bom-and-routing.md consumption+useMultiLevelBom / subcontracting.md 守卫+F2.5 / mrp.md FORECAST 条目 Decision 修订 / variance-analysis.md §重算幂等实现注记修订 / dashboards.md §7 多组织过滤注记；ai-check-index.md 14 行终态回填；roadmap F3.5-F3.x 行 mfg 组 done；baselines 2026-09-21 行；compliance-baseline R2c +2 per-site 裁决；docs/logs/2026/09-21.md）
+- [x] 已运行验证：`mvn test -pl module-manufacturing/erp-mfg-service`（**321/0/0** + dashboard 类 **6/0**=322 全绿，install 先于 test——F3.8 教训）；全 reactor `mvn install -DskipTests` + `mvn test`（**4164/0/0/1 skipped BUILD SUCCESS** 权威单跑）；compliance checker（exit 0，R2c=1571）
+- [x] 无范围内项目降级为 deferred/follow-up（mfg2-006 的 Deferred 是 plan Phase 4 预设 Decision C 分支非降级；mfg3-007 收货上限已实现并附损耗容差 scope 注记）
+- [x] 独立草案审查已完成并记录（3 轮，见 Draft Review Record）
+- [x] 保护区双独立子 agent 批准记录落盘（第一批准 agent_85f00db2 iteration 3 pass + 第二批准 agent_7905f151 approve 附 6 约束 C1-C6 全遵守）
+- [x] 文本一致性已验证（索引 14 行前缀校验脚本化替换 + owner doc 交叉引用逐条核对；dashboard 测试 org 值数值化与 mfg ORM 列类型一致）
+- [x] 结束审计由独立子代理执行（round1 needs-revision → 整改 → round2 **pass**，agent_503643c2）
+- [x] 结束证据存在于文件中（本节 Closure Audit Evidence + 日志/索引/roadmap/baselines/compliance-baseline 落盘）
 
 ## Deferred But Adjudicated
 
@@ -177,12 +177,14 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: (pending closure audit)
+Status Note: 结束审计 round1（2026-09-21，agent_503643c2）verdict=needs-revision：其余 13 条与流程工件实测属实，B1-B5 集中于 mfg3-006（实现不完整+声称失实）与 mfg2-008 登记缺失。整改后待 round2 复核。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: (pending)
+- Auditor / Agent: round1 agent_503643c2（2026-09-21）needs-revision——B1 mfg3-006 reverseOneMove 仍吞异常/重入跳过未实现/C3 测试缺失；B2 subcontracting.md L233 与码矛盾；B3 mfg2-008「bom-and-routing.md 已登记」声称失实；B4 readBoolConfig 误插 rethrow+失实注释；B5 索引与日志随 B1 更正。
+- 整改（2026-09-21）：B1 两腿 rethrow+良性跳过落地（isFinReverseSourceNotFound 共享判定 + 库存段 REVERSAL 存在性检查）+ C3 段级测试（TestErpMfgSubcontractReverse#testGlSegmentReversalReentryIdempotentAndRealFailureRethrows 5/0/0）；B2 subcontracting.md 更正；B3 bom-and-routing.md 补 mfg2-008 Deferred 登记；B4 readBoolConfig 回退默认值语义；B5 索引 325 行与当日日志更正。
+- Auditor / Agent: round2 agent_503643c2（2026-09-21）**verdict=pass**——B1-B5 整改逐项实测属实（B1 两腿 rethrow+良性跳过解除部分红冲死锁、C3 测试实跑 5/0/0、B2/B3/B5 文档对位、B4 回退确认）；14 条修复、测试证据、owner doc、流程工件在 HEAD 工作树完整对位，无失实声明残留、无范围内项降级隐瞒。非阻塞残余：库存段 REVERSAL 存在性跳过无独立测试（死锁主路径为 GL 段，已直测覆盖）——观察项不阻塞。
 
 Follow-up:
 
-- (pending)
+- (无阻塞 follow-up；观察项：库存段 REVERSAL 存在性跳过如未来库存域 reverse 语义变更需同步补测试)

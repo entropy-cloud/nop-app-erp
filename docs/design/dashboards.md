@@ -177,6 +177,8 @@
 
 **涉及机制**:state-machine.md、material-reservation.md(齐套)、bom-and-routing.md
 
+> **多组织过滤（P2-CK-mfg-007 dashboard 半边，plan 2026-09-17-0800-1 C1）**：§7 全部工单实体查询（KPI 四指标/状态分布/完工趋势/延期预警）经 `resolveOrgId(context)` null-skip 契约过滤（同 ast/mnt 看板，plan 2026-09-12-1000-1）；CRP 负荷图为工作中心域数据（`CrpLoadCalculator` 自有查询面），不在本契约范围。
+
 ---
 
 ## 8. 维护看板(Maintenance Dashboard)

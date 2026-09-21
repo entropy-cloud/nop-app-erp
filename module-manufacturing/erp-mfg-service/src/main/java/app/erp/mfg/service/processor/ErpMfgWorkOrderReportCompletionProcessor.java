@@ -95,10 +95,13 @@ public class ErpMfgWorkOrderReportCompletionProcessor {
         if (willFinish && facade.isVarianceAutoCalcEnabled()) {
             try {
                 // 重算幂等闭环（plan 2026-07-18-2251-1）：先红冲既有 PRODUCTION_VARIANCE 凭证 → 删差异旧行 → 重算 → 派发新凭证。
-                facade.productionVarianceDispatcher.reverseIfExists(workOrderId);
+                // P2-CK-mfg3-009：红冲真实失败时中止派发段（新差异行保持 posted=false，防幂等命中旧凭证误标 posted）。
+                boolean reversalOk = facade.productionVarianceDispatcher.reverseIfExists(workOrderId);
                 facade.productionVarianceCalculator.deleteByWorkOrder(workOrderId);
                 facade.productionVarianceCalculator.calculateVariances(workOrderId);
-                facade.productionVarianceDispatcher.dispatchIfApplicable(workOrderId);
+                if (reversalOk) {
+                    facade.productionVarianceDispatcher.dispatchIfApplicable(workOrderId);
+                }
             } catch (Exception e) {
                 if (facade.isNoStandardCostError(e)) {
                     LOG.warn("Work order {} completion variance calculation skipped (no FIRMED standard cost, not a fault): {}", wo.getCode(), e.getMessage());

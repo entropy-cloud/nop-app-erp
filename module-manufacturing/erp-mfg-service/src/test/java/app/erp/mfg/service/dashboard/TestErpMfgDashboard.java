@@ -2,6 +2,7 @@ package app.erp.mfg.service.dashboard;
 
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.common.org.ErpOrgContext;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.time.CoreMetrics;
@@ -139,15 +140,51 @@ public class TestErpMfgDashboard extends JunitAutoTestCase {
         assertEquals(10L, alerts.get(0).get("overdueDays"));
     }
 
+    /**
+     * P2-CK-mfg-007 dashboard 半边 orgId 隔离（plan 2026-09-17-0800-1 C1）：ctx orgId 过滤各 KPI 查询——
+     * org A 的在制/齐套工单不计入 org B 视角；org B 自身工单可见。
+     */
+    @Test
+    public void testKpiOrgIdIsolation() {
+        ormTemplate.runInSession(() -> {
+            // org "1"（既有种子组织）：在制 1 + 齐套待产 1
+            seedWorkOrder("141", ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, null);
+            seedWorkOrder("142", ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL, null, null, null);
+            // org "2"：在制 1
+            seedWorkOrderInOrg("143", ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, "2");
+        });
+
+        IServiceContext ctxB = new ServiceContextImpl();
+        ErpOrgContext.setCurrentOrgId(ctxB, "2");
+        Map<String, Object> kpiB = dashboardBiz.getDashboardKpi(null, null, ctxB);
+        assertEquals(1L, kpiB.get("inProcessCount"), "org B 视角在制 = 自身 1（org A 的 141 不可见）");
+        assertEquals(0L, kpiB.get("stockPartialCount"), "org B 视角齐套待产 = 0（142 属 org A）");
+
+        IServiceContext ctxA = new ServiceContextImpl();
+        ErpOrgContext.setCurrentOrgId(ctxA, "1");
+        Map<String, Object> kpiA = dashboardBiz.getDashboardKpi(null, null, ctxA);
+        assertEquals(1L, kpiA.get("inProcessCount"), "org A 视角在制 = 自身 1（143 不计入）");
+        assertEquals(1L, kpiA.get("stockPartialCount"), "org A 视角齐套待产 = 1");
+    }
+
     // ---------- helpers ----------
 
     private void seedWorkOrder(String id, String docStatus, BigDecimal completedQty,
                                LocalDate actualEndDate, LocalDate plannedEndDate) {
+        seedWorkOrderInOrg(id, docStatus, "1", completedQty, actualEndDate, plannedEndDate);
+    }
+
+    private void seedWorkOrderInOrg(String id, String docStatus, String orgId) {
+        seedWorkOrderInOrg(id, docStatus, orgId, null, null, null);
+    }
+
+    private void seedWorkOrderInOrg(String id, String docStatus, String orgId, BigDecimal completedQty,
+                                    LocalDate actualEndDate, LocalDate plannedEndDate) {
         IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
         ErpMfgWorkOrder o = dao.newEntity();
         o.orm_propValue(1, id);
         o.setCode("WO-" + id);
-        o.setOrgId("1");
+        o.setOrgId(orgId);
         o.setProductId("1");
         o.setPlannedQuantity(new BigDecimal("1000"));
         o.setCompletedQuantity(completedQty != null ? completedQty : BigDecimal.ZERO);

@@ -43,12 +43,16 @@ public class ErpMfgCostVarianceCalculateVariancesProcessor {
                     .param(ErpMfgErrors.ARG_CURRENT_STATUS, wo.getDocStatus());
         }
         // 重算幂等闭环（plan 2026-07-18-2251-1）：先红冲既有 PRODUCTION_VARIANCE 凭证 → 再删差异旧行 → 再重算 → 再派发新凭证。
-        productionVarianceDispatcher.reverseIfExists(workOrderId);
+        // P2-CK-mfg3-009（plan 2026-09-17-0800-1）：红冲真实失败时中止派发段——旧凭证未冲销占位会使新差异行
+        // 经 fin 侧 post 幂等命中误标 posted=true；数据行重算照常完成（posted=false 诚实态），下次重算自动重试红冲。
+        boolean reversalOk = productionVarianceDispatcher.reverseIfExists(workOrderId);
         // 幂等：先删该工单全部差异旧行，再重算
         productionVarianceCalculator.deleteByWorkOrder(workOrderId);
         List<ErpMfgCostVariance> lines = productionVarianceCalculator.calculateVariances(workOrderId);
         // 差异过账（承接 PPV 范式，失败隔离吞异常保持 posted=false）
-        productionVarianceDispatcher.dispatchIfApplicable(workOrderId);
+        if (reversalOk) {
+            productionVarianceDispatcher.dispatchIfApplicable(workOrderId);
+        }
         return lines;
     }
 }

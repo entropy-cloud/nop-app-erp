@@ -93,11 +93,11 @@
 `ErpMfgCostVariance__calculateVariances` 重算路径采用「红冲→删旧→重算→派发」四步链，确保**数据行新金额与 GL 凭证金额始终一致**（消除重算前「数据新 + 凭证旧」分叉缺陷）：
 
 1. **`ProductionVarianceDispatcher.reverseIfExists(workOrderId)`**：构造 `billHeadCode = wo.code + "-PV"`（与正向 `buildEvent` 对称）→ 调 `MfgPostingExecutor.reverse(billHeadCode, PRODUCTION_VARIANCE)` → 平台 `IErpFinVoucherBiz.reverse` 红冲既有 NORMAL 凭证（原 `isReversed=true` + 新建 REVERSAL 红字凭证，行同向取负）。
-   - **异常处理范式**：`reverseIfExists` 内部 `try { ... } catch (Exception e) { LOG.warn(...) }` 守护吞所有异常。`IErpFinVoucherBiz.reverse` 在无原已过账凭证时抛 `NopException(ERR_REVERSE_SOURCE_NOT_FOUND)`（非 no-op），由本地 catch 吞此异常 + 真实红冲失败异常（如事务冲突/网络异常），log warn 不阻断重算后续步骤。范式对齐 `dispatchIfApplicable:109-115` 过账失败 try/catch（数据一致性语义对称：过账失败=新凭证未生成，红冲失败=旧凭证未撤销，两者均吞异常保回退/前进路径继续可观测）。
-   - **红冲失败孤儿凭证风险可观测**：失败时新凭证正常生成但旧凭证成孤儿；log warn 含 workOrderId + billHeadCode + 异常 message，归 finance 5.1 异常工作台兜底。
+   - **门控与异常分级（P2-CK-mfg3-009 修订，plan 2026-09-17-0800-1；原「吞一切异常不阻断派发」范式废止）**：门控按「该工单存在差异行」判定（不再要求 `posted=true` 行）——红冲失败后重算重建的差异行均为 `posted=false`，旧行门控会跳过红冲重试，与 fin 侧 post 幂等命中（源单已过账返回既有凭证 ID）复合成「一次红冲失败后差异永久悬挂」。凭证存在性由 fin 侧 reverse 权威判定：无凭证抛 `ERR_REVERSE_SOURCE_NOT_FOUND`（良性，log info 返回 `true` 放行派发）；真实红冲失败（期间锁定等）log warn 返回 `false`，**调用方（两个 call site）据其中止派发段**——旧凭证未冲销占位时若照旧派发，fin 侧幂等命中会返回旧凭证 ID 并把新金额差异行误标 `posted=true`（GL 与差异行金额分叉）。中止后差异行诚实保持 `posted=false`，下次重算自动重试红冲（悬挂解除路径：期间重开 → reverse 成功 → 正常派发收敛）。
+   - **红冲失败孤儿凭证风险可观测**：失败时派发段中止（新凭证不生成、旧行已删除重建为 `posted=false`）；log warn 含 workOrderId + billHeadCode + 异常 message，归 finance 5.1 异常工作台兜底。
 2. **`deleteByWorkOrder(workOrderId)`**：物理删除该工单全部 `ErpMfgCostVariance` 旧行。
 3. **`calculateVariances(workOrderId)`**：按当前工单成本重新计算差异行。
-4. **`dispatchIfApplicable(workOrderId)`**：派发新 NORMAL 凭证，成功回写数据行 `posted=true`。
+4. **`dispatchIfApplicable(workOrderId)`**：派发新 NORMAL 凭证，成功回写数据行 `posted=true`；**仅在步骤 1 红冲返回 `true` 时执行**（P2-CK-mfg3-009，见上）。
 
 两同型 call site 共享同一缺陷机制 + 同一修复 + 同一 dispatcher：
 
