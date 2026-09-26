@@ -140,9 +140,12 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-schedule-button" label="排程" i18n-en:label="Schedule" level="primary" icon="fa fa-calendar">
-                    <api url="@mutation:ErpApsOperationOrder__scheduleForward?scheduleId=0"/>
-                    <confirmText>排程操作请在排程方案详情页执行</confirmText>
+                <!-- 排程（perf-ux 2026-09-27 P1-4）：原 mutation 硬编码 scheduleId 为 0，为死按钮
+                     （排程语义在排程方案页），改 link 跳排程方案列表（ErpPurOrder link 范式）。 -->
+                <action actionType="link" id="row-schedule-button" label="去排程" i18n-en:label="Go to Scheduling"
+                        level="primary" icon="fa fa-calendar"
+                        tooltip="排程操作在排程方案页执行，点击跳转排程方案列表"
+                        link="/ErpApsSchedule-main">
                     <visibleOn>${status == 'DRAFT'}</visibleOn>
                 </action>
                 <action id="row-start-button" label="开始" i18n-en:label="Start" level="primary" icon="fa fa-play">

@@ -131,6 +131,26 @@
                 <cell id="ncrDate" filterOp="date-between"/>
             </cells>
         </form>
+
+        <!-- NCR 解决参数表单（perf-ux 2026-09-27 P1-2 同构）：resolution 必填 + noCapaReason 选填，
+             替换原 resolution= 空串直提。 -->
+        <form id="resolveNcr" editMode="add" title="解决 NCR" i18n-en:title="Resolve NCR" size="md">
+            <layout>
+ resolution[解决方案] noCapaReason[无CAPA原因]
+</layout>
+            <cells>
+                <cell id="resolution" label="解决方案" i18n-en:label="Resolution" domain="string" custom="true" mandatory="true">
+                    <gen-control>
+                        <textarea placeholder="必填：解决方案描述（记入 NCR 解决记录）" minRows="2"/>
+                    </gen-control>
+                </cell>
+                <cell id="noCapaReason" label="无 CAPA 原因" i18n-en:label="No-CAPA Reason" domain="string" custom="true">
+                    <gen-control>
+                        <input-text placeholder="选填：未启动 CAPA 的原因说明"/>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
     </forms>
 
     <pages>
@@ -146,12 +166,10 @@
                     </messages>
                     <visibleOn>${status == 'OPEN'}</visibleOn>
                 </action>
-                <action id="row-resolve-button" label="解决" i18n-en:label="Resolve" level="success" icon="fa fa-check">
-                    <api url="@mutation:ErpQaNonConformance__resolve?ncrId=$id&amp;resolution="/>
-                    <confirmText>确认解决此 NCR？</confirmText>
-                    <messages>
-                        <success>NCR 已解决</success>
-                    </messages>
+                <!-- 解决（perf-ux 2026-09-27 P1-2 同构）：dialog 收集解决方案与无 CAPA 原因。 -->
+                <action id="row-resolve-button" label="解决" i18n-en:label="Resolve" level="success" icon="fa fa-check"
+                        actionType="dialog">
+                    <dialog page="resolveNcr" size="md"/>
                     <visibleOn>${status == 'IN_REVIEW'}</visibleOn>
                 </action>
                 <action id="row-reject-button" label="拒绝" i18n-en:label="Refuse" level="warning" icon="fa fa-times">
@@ -173,6 +191,18 @@
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>
+        <!-- NCR 解决提交页（perf-ux 2026-09-27 P1-2 同构）：resolution/noCapaReason 经 resolveNcr 表单收集 -->
+        <simple name="resolveNcr" form="resolveNcr" useFormActions="true">
+            <api url="@mutation:ErpQaNonConformance__resolve?ncrId=$id" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认解决" i18n-en:label="Confirm Resolve" actionType="submit" level="success">
+                    <messages>
+                        <success>NCR 已解决</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
         <picker name="picker"/>
     </pages>
 </view>

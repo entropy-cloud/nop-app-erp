@@ -184,11 +184,20 @@
                 <action id="row-approve-button" label="审核通过" i18n-en:label="Audit Passed" level="primary" icon="fa fa-check">
                     <api url="@mutation:ErpFinBudgetScenario__approve?id=$id"/>
                 </action>
+                <!-- 驳回/作废二次确认（perf-ux 2026-09-27 P1-6）：danger 动作对齐全库确认范式。 -->
                 <action id="row-reject-button" label="驳回" i18n-en:label="Reject" level="danger" icon="fa fa-times">
                     <api url="@mutation:ErpFinBudgetScenario__reject?id=$id"/>
+                    <confirmText>确认驳回此预算方案？驳回后须重新提交审核。</confirmText>
+                    <messages>
+                        <success>预算方案已驳回</success>
+                    </messages>
                 </action>
                 <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpFinBudgetScenario__cancel?id=$id"/>
+                    <confirmText>确认作废此预算方案？作废后不可恢复。</confirmText>
+                    <messages>
+                        <success>预算方案已作废</success>
+                    </messages>
                 </action>
                 <!-- A2 滚动预算复制（budget.md §滚动预算自动复制引擎）：drawer 收集 newFiscalYear + strategy -->
                 <action id="row-roll-forward-button" label="滚动复制" i18n-en:label="Rolling Copy" level="info" icon="fa fa-copy"

@@ -323,9 +323,27 @@
  batchInfo[批次信息] quantity[不合格数量] severity[严重程度]
 </layout>
             <cells>
+                <!-- 物料选择改 picker（perf-ux 2026-09-27 P1-5）：gen-control 输出 flux PickerSchema
+                     v3.2 契约（与 delta flux-control.xlib edit-ref-id 输出同构，pickerUrl 内联——
+                     custom cell 无 propMeta，edit-ref-id 脚本会 NPE 回落默认控件），
+                     复用 ErpMdMaterial picker 页异步渲染，替换原 input-number 手输物料 ID。 -->
                 <cell id="materialId" label="物料" i18n-en:label="Material" domain="long" custom="true" mandatory="true">
                     <gen-control>
-                        <input-number placeholder="必填：缺陷物料 ID"/>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'materialId',
+                                pickerPopup: { type: 'dialog', title: '@i18n:control.picker.materialSelect|选择物料', size: 'lg' },
+                                valueField: 'id',
+                                labelField: 'name',
+                                multiple: false,
+                                pickerSchema: {
+                                    type: 'dynamic-renderer',
+                                    autoLoad: true,
+                                    loadAction: { action: 'ajax', args: { url: '/erp/md/pages/ErpMdMaterial/picker.page.yaml' } }
+                                }
+                            };
+                        ]]></c:script>
                     </gen-control>
                 </cell>
                 <cell id="defectDescription" label="缺陷描述" i18n-en:label="Defect Description" domain="string" custom="true" mandatory="true">
@@ -371,6 +389,31 @@
                 </cell>
             </cells>
         </form>
+
+        <!-- 分派参数表单（perf-ux 2026-09-27 P1-1）：assignedToId 经 edit-userId 平台用户 picker 选人。 -->
+        <form id="assignTicket" editMode="add" title="分派工单" i18n-en:title="Assign Ticket" size="md">
+            <layout>
+ assignedToId[处理人]
+</layout>
+            <cells>
+                <cell id="assignedToId" label="处理人" i18n-en:label="Assignee" domain="string" custom="true" mandatory="true"
+                      control="userId"/>
+            </cells>
+        </form>
+
+        <!-- 解决说明表单（perf-ux 2026-09-27 P1-2）：resolution 必填，替换原 resolution= 空串直提。 -->
+        <form id="resolveTicket" editMode="add" title="解决工单" i18n-en:title="Resolve Ticket" size="md">
+            <layout>
+ resolution[解决说明]
+</layout>
+            <cells>
+                <cell id="resolution" label="解决说明" i18n-en:label="Resolution" domain="string" custom="true" mandatory="true">
+                    <gen-control>
+                        <textarea placeholder="必填：解决方案描述（记入操作历史）" minRows="2"/>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
     </forms>
 
     <pages>
@@ -378,12 +421,12 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-assign-button" label="分派" i18n-en:label="Dispatch" level="primary" icon="fa fa-user">
-                    <api url="@mutation:ErpCsTicket__assign?ticketId=$id&amp;assignedToId=0"/>
-                    <confirmText>确认分派此工单？</confirmText>
-                    <messages>
-                        <success>工单已分派</success>
-                    </messages>
+                <!-- 分派（perf-ux 2026-09-27 P1-1）：dialog 经 assignTicket 表单收集处理人
+                    （edit-userId 平台用户 picker），替换原硬编码 assignedToId 为 0——"0" 非空绕过
+                     后端回落语义（ErpCsTicketBizModel assign），曾把工单分派给不存在的用户 ID 0。 -->
+                <action id="row-assign-button" label="分派" i18n-en:label="Dispatch" level="primary" icon="fa fa-user"
+                        actionType="dialog">
+                    <dialog page="assignTicket" size="md"/>
                 </action>
                 <action id="row-start-button" label="开始处理" i18n-en:label="Start Processing" level="primary" icon="fa fa-play">
                     <api url="@mutation:ErpCsTicket__start?ticketId=$id"/>
@@ -392,12 +435,11 @@
                         <success>工单已开始处理</success>
                     </messages>
                 </action>
-                <action id="row-resolve-button" label="解决" i18n-en:label="Resolve" level="success" icon="fa fa-check">
-                    <api url="@mutation:ErpCsTicket__resolve?ticketId=$id&amp;resolution="/>
-                    <confirmText>确认解决此工单？</confirmText>
-                    <messages>
-                        <success>工单已解决</success>
-                    </messages>
+                <!-- 解决（perf-ux 2026-09-27 P1-2）：dialog 经 resolveTicket 表单收集解决说明
+                    （原 resolution= 空串直提，操作历史无解决记录）。 -->
+                <action id="row-resolve-button" label="解决" i18n-en:label="Resolve" level="success" icon="fa fa-check"
+                        actionType="dialog">
+                    <dialog page="resolveTicket" size="md"/>
                 </action>
                 <!-- 质量问题升级（RC-R1.68，P1-RC-057，UC-CS-06 ①-④）：IN_PROCESS 可用，dialog 收集
                      materialId/缺陷描述（必填）+ 批次/数量/严重度（可选）后调 escalateToQuality 创建 NCR。 -->
@@ -471,6 +513,30 @@
                 <action id="confirm" label="确认采纳" i18n-en:label="Confirm Adopt" actionType="submit" level="primary">
                     <messages>
                         <success>已采纳知识库文章</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
+        <!-- 分派提交页（perf-ux 2026-09-27 P1-1）：assignedToId 经 assignTicket 表单收集 -->
+        <simple name="assignTicket" form="assignTicket" useFormActions="true">
+            <api url="@mutation:ErpCsTicket__assign?ticketId=$id" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认分派" i18n-en:label="Confirm Assign" actionType="submit" level="primary">
+                    <messages>
+                        <success>工单已分派</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
+        <!-- 解决提交页（perf-ux 2026-09-27 P1-2）：resolution 经 resolveTicket 表单收集 -->
+        <simple name="resolveTicket" form="resolveTicket" useFormActions="true">
+            <api url="@mutation:ErpCsTicket__resolve?ticketId=$id" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认解决" i18n-en:label="Confirm Resolve" actionType="submit" level="success">
+                    <messages>
+                        <success>工单已解决</success>
                     </messages>
                 </action>
             </actions>

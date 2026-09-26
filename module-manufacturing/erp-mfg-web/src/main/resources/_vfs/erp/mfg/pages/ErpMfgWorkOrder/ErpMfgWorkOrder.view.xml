@@ -157,6 +157,21 @@
                 <cell id="businessDate" filterOp="date-between"/>
             </cells>
         </form>
+
+        <!-- 报完工参数表单（perf-ux 2026-09-27 P1-3）：completedQty 必填收集实际完工数量，
+             替换原硬编码 completedQty 为 0（用户无法报实际数量，按钮语义退化为"标记完工"）。 -->
+        <form id="reportCompletion" editMode="add" title="报告完工" i18n-en:title="Report Completion" size="md">
+            <layout>
+ completedQty[完工数量]
+</layout>
+            <cells>
+                <cell id="completedQty" label="完工数量" i18n-en:label="Completed Quantity" domain="decimal" custom="true" mandatory="true">
+                    <gen-control>
+                        <input-number placeholder="必填：本次实际完工数量"/>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
     </forms>
 
     <pages>
@@ -212,12 +227,10 @@
                     </messages>
                     <visibleOn>${approveStatus == 'APPROVED' &amp;&amp; (docStatus == 'NOT_STARTED' || docStatus == 'STOCK_RESERVED' || docStatus == 'STOCK_PARTIAL')}</visibleOn>
                 </action>
-                <action id="row-report-completion-button" label="报告完工" i18n-en:label="Report Completion" level="success" icon="fa fa-check-circle">
-                    <api url="@mutation:ErpMfgWorkOrder__reportCompletion?workOrderId=$id&amp;completedQty=0"/>
-                    <confirmText>确认报告此工单完工？</confirmText>
-                    <messages>
-                        <success>工单已报告完工</success>
-                    </messages>
+                <!-- 报告完工（perf-ux 2026-09-27 P1-3）：dialog 收集实际完工数量。 -->
+                <action id="row-report-completion-button" label="报告完工" i18n-en:label="Report Completion" level="success" icon="fa fa-check-circle"
+                        actionType="dialog">
+                    <dialog page="reportCompletion" size="md"/>
                     <visibleOn>${docStatus == 'IN_PROCESS'}</visibleOn>
                 </action>
                 <action id="row-close-button" label="结案" i18n-en:label="Close Case" level="info" icon="fa fa-stop">
@@ -267,6 +280,18 @@
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>
+        <!-- 报完工提交页（perf-ux 2026-09-27 P1-3）：completedQty 经 reportCompletion 表单收集 -->
+        <simple name="reportCompletion" form="reportCompletion" useFormActions="true">
+            <api url="@mutation:ErpMfgWorkOrder__reportCompletion?workOrderId=$id" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认报完工" i18n-en:label="Confirm Completion" actionType="submit" level="success">
+                    <messages>
+                        <success>工单已报告完工</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
         <picker name="picker"/>
     </pages>
 </view>
