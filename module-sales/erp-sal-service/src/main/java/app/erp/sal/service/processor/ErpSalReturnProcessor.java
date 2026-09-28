@@ -498,14 +498,29 @@ public class ErpSalReturnProcessor {
      */
     protected void updateUndeliveredQuantity(ErpSalReturn returnOrder, IServiceContext context) {
         List<ErpSalReturnLine> lines = loadLines(returnOrder.getId());
-        Set<String> orderLineIds = new HashSet<>();
-        IEntityDao<ErpSalDeliveryLine> deliveryLineDao = daoProvider.daoFor(ErpSalDeliveryLine.class);
+        // perf-ux plan 0835-1 B3：原循环逐行 getEntityById（:508/:519 两处 N+1）改 in(id) 批量预载建 Map
+        // （单退货行数≪500 不分块；null deliveryLineId/orderLineId 跳过与 null 实体跳过语义逐字保留）
+        Set<String> deliveryLineIds = new HashSet<>();
         for (ErpSalReturnLine line : lines) {
-            String deliveryLineId = line.getDeliveryLineId();
-            if (deliveryLineId == null) {
+            if (line.getDeliveryLineId() != null) {
+                deliveryLineIds.add(line.getDeliveryLineId());
+            }
+        }
+        Map<String, ErpSalDeliveryLine> deliveryLineById = new HashMap<>();
+        if (!deliveryLineIds.isEmpty()) {
+            IEntityDao<ErpSalDeliveryLine> deliveryLineDao = daoProvider.daoFor(ErpSalDeliveryLine.class);
+            QueryBean dlQuery = new QueryBean();
+            dlQuery.addFilter(in("id", deliveryLineIds));
+            for (ErpSalDeliveryLine deliveryLine : deliveryLineDao.findAllByQuery(dlQuery)) {
+                deliveryLineById.put(deliveryLine.getId(), deliveryLine);
+            }
+        }
+        Set<String> orderLineIds = new HashSet<>();
+        for (ErpSalReturnLine line : lines) {
+            if (line.getDeliveryLineId() == null) {
                 continue;
             }
-            ErpSalDeliveryLine deliveryLine = deliveryLineDao.getEntityById(deliveryLineId);
+            ErpSalDeliveryLine deliveryLine = deliveryLineById.get(line.getDeliveryLineId());
             if (deliveryLine != null && deliveryLine.getOrderLineId() != null) {
                 orderLineIds.add(deliveryLine.getOrderLineId());
             }
@@ -515,8 +530,14 @@ public class ErpSalReturnProcessor {
         }
         Map<String, BigDecimal> deliveredByOrderLine = aggregateApprovedDelivered(orderLineIds);
         IEntityDao<ErpSalOrderLine> orderLineDao = daoProvider.daoFor(ErpSalOrderLine.class);
+        QueryBean olQuery = new QueryBean();
+        olQuery.addFilter(in("id", orderLineIds));
+        Map<String, ErpSalOrderLine> orderLineById = new HashMap<>();
+        for (ErpSalOrderLine orderLine : orderLineDao.findAllByQuery(olQuery)) {
+            orderLineById.put(orderLine.getId(), orderLine);
+        }
         for (String orderLineId : orderLineIds) {
-            ErpSalOrderLine orderLine = orderLineDao.getEntityById(orderLineId);
+            ErpSalOrderLine orderLine = orderLineById.get(orderLineId);
             if (orderLine != null) {
                 BigDecimal delivered = deliveredByOrderLine.getOrDefault(orderLineId, BigDecimal.ZERO);
                 orderLine.setDeliveredQuantity(delivered);

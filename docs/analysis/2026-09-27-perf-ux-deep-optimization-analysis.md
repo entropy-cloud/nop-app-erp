@@ -25,6 +25,7 @@
 ## 2. 后端性能发现（全量清单）
 
 > **状态回填（2026-09-27）**：§2.1 A1/A2/A3/A6/A7/A8/B1/D1-G1 中读路径项与 §2.2 A9/B2 等已由 plan `2026-09-27-0325-2` 处置（sal/pur/inv/fin 看板 SQL 聚合 + 三单匹配 N+1 消除 + 8 文件无界治理 + 汇率 HTTP 事务内问题归 Plan 3；D1 的 SUM 聚合接口部分为该计划内 Deferred/白名单处置）；A4/A5/G2/G3/C1/B6/I2 按 §6 Deferred 裁决保留。
+> **状态回填（2026-09-28）**：§2.1 G1 批量部分与 §2.2 E2/E3/B3/B4/B5/J1-J3 已由 plan `2026-09-28-0835-1` 处置（5 站点批量预载 + notify 循环外提升 + fin KPI scope 单次解析 + J1 实证零站点更正 + J3 平台 bytesToHex）；G1 事务外重排改判 Deferred（实时基线：factory 仅 mock provider、config 默认关；触发=真实 provider 立项，按 external-api-integration-pattern §6.3/AP5 落地）。
 
 ### 2.1 P1——数据量增长会直接拖垮
 
@@ -40,7 +41,7 @@
 | A8 | 滞销预警全量出库记录扫描求每物料最后出库日 | 同文件 `:417-439` | `loadLastOutgoingDates` | SQL `MAX(businessDate) GROUP BY materialId` |
 | B1 | 采购三单匹配预警 N+1：每张发票 3-4 次子查询（invoiceLine→receiveLine→orderLine + 循环外 partner 查询） | `ErpPurDashboardBizModel.java:189-208,:314-358` | `for(inv) hasPriceVariance(inv.getId())` 内三连查 | 一次性 `in("invoiceId", ids)` 批量取三类行内存建 Map；supplier 名批量 Map |
 | D1 | `findOpenItems` 无界返回财务最大表（无 limit、无 org scope），6 处生产调用 | `ErpFinArApItemBizModel.java:53-61`（接口 `IErpFinArApItemBiz.java:51`） | `findList(query, null, context)` | 余额场景改 SUM 聚合接口；明细场景调用方治理。**接口契约面：新增方法属加法；不改既有方法语义** |
-| G1 | `@BizMutation refreshRatesFromApi` 事务内同步外部汇率 HTTP + 循环内逐汇率 findExistingRate + 逐行 save/update | `module-master-data/.../ErpMdCurrencyBizModel.java:28-33` → `ErpMdCurrencyRefreshRatesFromApiProcessor.java:60,:77,:90-92` | HTTP 超时 5-30s 期间占用 DB 连接+事务 | HTTP 移到事务外（先 fetch 后落库）；findExistingRate 改 `in("toCurrencyId", ids)` 预载 |
+| G1 | `@BizMutation refreshRatesFromApi` 事务内同步外部汇率 HTTP + 循环内逐汇率 findExistingRate + 逐行 save/update | `module-master-data/.../ErpMdCurrencyBizModel.java:28-33` → `ErpMdCurrencyRefreshRatesFromApiProcessor.java:60,:77,:90-92` | HTTP 超时 5-30s 期间占用 DB 连接+事务 | **批次 3 部分处置（plan 2026-09-28-0835-1）**：findExistingRate 已改 in() 单次批载；事务外重排经实时基线（factory 仅 mock provider、config 默认关）改判 Deferred——触发=真实 provider 立项时按 §6.3/AP5 落「事务外取数+事务内落库」 |
 
 ### 2.2 P2/P3——批量治理项
 

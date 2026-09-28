@@ -15,6 +15,7 @@ import app.erp.b2b.service.spi.IErpB2bEdiProvider;
 import app.erp.b2b.service.spi.model.ParsedPayload;
 import app.erp.b2b.service.spi.model.ParsedPayload.ParsedLine;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.commons.util.StringHelper;
 import java.util.List;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -221,11 +222,9 @@ public class ErpB2bAsnHandleInboundWebhookProcessor {
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
             byte[] raw = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder(raw.length * 2);
-            for (byte b : raw) {
-                sb.append(String.format("%02x", b));
-            }
-            String expected = sb.toString();
+            // perf-ux plan 0835-1 J3：原 String.format("%02x") 逐字节格式化循环改平台工具
+            // StringHelper.bytesToHex（小写输出逐位等价）。
+            String expected = StringHelper.bytesToHex(raw);
             return MessageDigest.isEqual(expected.getBytes(StandardCharsets.UTF_8),
                     signature.toLowerCase().getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {

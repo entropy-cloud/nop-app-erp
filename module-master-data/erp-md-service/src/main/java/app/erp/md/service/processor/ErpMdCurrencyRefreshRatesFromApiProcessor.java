@@ -66,6 +66,12 @@ public class ErpMdCurrencyRefreshRatesFromApiProcessor {
         LocalDate validFrom = today;
         LocalDate validTo = today.plusDays(1);
 
+        // perf-ux plan 0835-1 G1：原逐汇率 findExistingRate eq×3 查询（每汇率 1 次往返）改单次
+        // in(toCurrencyId) 批载建 Map（币种数≪500 不分块，单 provider 全量币种量级）。
+        // 等价性以幂等键唯一性为界：历史重复行时 Map 取一与原 list.get(0) 同为非确定取一。
+        Map<String, ErpMdExchangeRate> existingByTargetId = findExistingRates(rateDao,
+                baseCurrencyEntity.getId(), codeToCurrency.values(), validFrom);
+
         for (Map.Entry<String, BigDecimal> entry : rates.entrySet()) {
             String targetCode = entry.getKey();
             BigDecimal rate = entry.getValue();
@@ -74,8 +80,7 @@ public class ErpMdCurrencyRefreshRatesFromApiProcessor {
                 continue;
             }
 
-            ErpMdExchangeRate rateEntity = findExistingRate(rateDao, baseCurrencyEntity.getId(),
-                    targetCurrency.getId(), validFrom);
+            ErpMdExchangeRate rateEntity = existingByTargetId.get(targetCurrency.getId());
             boolean isNew = rateEntity == null;
             if (isNew) {
                 rateEntity = rateDao.newEntity();
@@ -97,14 +102,29 @@ public class ErpMdCurrencyRefreshRatesFromApiProcessor {
         return result;
     }
 
-    protected ErpMdExchangeRate findExistingRate(IEntityDao<ErpMdExchangeRate> rateDao,
-                                                  String fromCurrencyId, String toCurrencyId, LocalDate validFrom) {
+    /**
+     * 批量预载当日既有汇率（同域子实体直接查，绕过 IBiz 管道的 Map 投影；与
+     * ErpMdMaterialCustomsBizModel 唯一性查重同模式），按 toCurrencyId 键控。
+     */
+    protected Map<String, ErpMdExchangeRate> findExistingRates(IEntityDao<ErpMdExchangeRate> rateDao,
+                                                               String fromCurrencyId,
+                                                               java.util.Collection<ErpMdCurrency> targetCurrencies,
+                                                               LocalDate validFrom) {
+        Set<String> toCurrencyIds = new HashSet<>();
+        for (ErpMdCurrency c : targetCurrencies) {
+            toCurrencyIds.add(c.getId());
+        }
+        if (toCurrencyIds.isEmpty()) {
+            return new HashMap<>();
+        }
         QueryBean query = new QueryBean();
         query.addFilter(FilterBeans.eq("fromCurrencyId", fromCurrencyId));
-        query.addFilter(FilterBeans.eq("toCurrencyId", toCurrencyId));
+        query.addFilter(FilterBeans.in("toCurrencyId", toCurrencyIds));
         query.addFilter(FilterBeans.eq("validFrom", validFrom));
-        // 同域子实体直接查（绕过 IBiz 管道的 Map 投影；与 ErpMdMaterialCustomsBizModel 唯一性查重同模式）
-        List<ErpMdExchangeRate> list = rateDao.findAllByQuery(query);
-        return list.isEmpty() ? null : list.get(0);
+        Map<String, ErpMdExchangeRate> ret = new HashMap<>();
+        for (ErpMdExchangeRate rate : rateDao.findAllByQuery(query)) {
+            ret.put(rate.getToCurrencyId(), rate);
+        }
+        return ret;
     }
 }

@@ -23,9 +23,14 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.in;
 
 /**
  * ErpB2bAsn createReceiveFromAsn per-mutation Processor。
@@ -132,6 +137,23 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
         IEntityDao<ErpPurReceiveLine> lineDao = daoProvider.daoFor(ErpPurReceiveLine.class);
         IEntityDao<ErpMdMaterial> materialDao = daoProvider.daoFor(ErpMdMaterial.class);
 
+        // perf-ux plan 0835-1 B4：原 AsnLine 循环逐行 getEntityById 改 in(id) 批量预载建 Map
+        // （单 ASN 行数≪500 不分块）；materialId 为 null / Map 未命中两类异常与参数逐字保留。
+        Set<String> materialIds = new LinkedHashSet<>();
+        for (ErpB2bAsnLine asnLine : asnLines) {
+            if (asnLine.getMaterialId() != null) {
+                materialIds.add(asnLine.getMaterialId());
+            }
+        }
+        Map<String, ErpMdMaterial> materialById = new HashMap<>();
+        if (!materialIds.isEmpty()) {
+            QueryBean materialQuery = new QueryBean();
+            materialQuery.addFilter(in("id", materialIds));
+            for (ErpMdMaterial material : materialDao.findAllByQuery(materialQuery)) {
+                materialById.put(material.getId(), material);
+            }
+        }
+
         for (ErpB2bAsnLine asnLine : asnLines) {
             String materialId = asnLine.getMaterialId();
             if (materialId == null) {
@@ -140,7 +162,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
                         .param(ErpB2bErrors.ARG_LINE_NO, asnLine.getLineNo())
                         .param(ErpB2bErrors.ARG_MATERIAL_ID, null);
             }
-            ErpMdMaterial material = materialDao.getEntityById(materialId);
+            ErpMdMaterial material = materialById.get(materialId);
             if (material == null) {
                 throw new NopException(ErpB2bErrors.ERR_B2B_ASN_LINE_MATERIAL_REQUIRED)
                         .param(ErpB2bErrors.ARG_ASN_CODE, asn.getCode())

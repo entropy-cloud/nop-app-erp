@@ -99,10 +99,16 @@ public class NotificationDispatcher {
             return Collections.emptyList();
         }
 
+        // perf-ux plan 0835-1 E3：channelSet 解析与 merge 开关 config 读取原在接收人循环内
+        // 逐人重复（:103-107/:144-145），提升到循环外单次解析传参（config 值请求内静态，
+        // 读取位置移动零语义差）。
+        Set<String> channels = parseChannelSet(template.getChannelSet());
+        boolean mergeEnabled = AppConfig.var(
+                ErpNotifyConfigs.CONFIG_NOTIFY_MERGE_ENABLED, ErpNotifyConfigs.DEFAULT_NOTIFY_MERGE_ENABLED);
+
         List<ErpSysNotification> notifications = new ArrayList<>();
         for (String userId : recipients) {
-            ErpSysNotification n = mergeOrPersist(template, userId, subject, body, context,
-                    parseChannelSet(template.getChannelSet()));
+            ErpSysNotification n = mergeOrPersist(template, userId, subject, body, context, channels, mergeEnabled);
             notifications.add(n);
         }
         return notifications;
@@ -113,8 +119,14 @@ public class NotificationDispatcher {
      * 由调用方在持久化之后调用（P1-CK-notify-001 时序契约）。
      */
     public void dispatchExternal(List<ErpSysNotification> notifications, Set<String> channels) {
+        // perf-ux plan 0835-1 E3：EMAIL/SMS 开关 config 读取原逐通知逐通道重复（:179/:188），
+        // 提升到循环外各读一次传参。
+        boolean emailEnabled = AppConfig.var(ErpNotifyConfigs.CONFIG_NOTIFY_EMAIL_ENABLED,
+                ErpNotifyConfigs.DEFAULT_NOTIFY_EMAIL_ENABLED);
+        boolean smsEnabled = AppConfig.var(ErpNotifyConfigs.CONFIG_NOTIFY_SMS_ENABLED,
+                ErpNotifyConfigs.DEFAULT_NOTIFY_SMS_ENABLED);
         for (ErpSysNotification n : notifications) {
-            dispatchExternalChannels(n, channels);
+            dispatchExternalChannels(n, channels, emailEnabled, smsEnabled);
         }
     }
 
@@ -140,10 +152,7 @@ public class NotificationDispatcher {
 
     private ErpSysNotification mergeOrPersist(ErpSysNotificationTemplate template, String userId,
                                               String subject, String body, Map<String, Object> context,
-                                              Set<String> channels) {
-        boolean mergeEnabled = AppConfig.var(
-                ErpNotifyConfigs.CONFIG_NOTIFY_MERGE_ENABLED, ErpNotifyConfigs.DEFAULT_NOTIFY_MERGE_ENABLED);
-
+                                              Set<String> channels, boolean mergeEnabled) {
         if (mergeEnabled && ErpNotifyConstants.MERGE_BY_USER_TYPE.equals(template.getMergeStrategy())) {
             ErpSysNotification existing = mergeCoordinator.findMergeable(
                     template.getMergeStrategy(),
@@ -174,10 +183,10 @@ public class NotificationDispatcher {
         return n;
     }
 
-    private void dispatchExternalChannels(ErpSysNotification n, Set<String> channels) {
+    private void dispatchExternalChannels(ErpSysNotification n, Set<String> channels,
+                                          boolean emailEnabled, boolean smsEnabled) {
         if (channels.contains(ErpNotifyConstants.CHANNEL_EMAIL)) {
-            if (AppConfig.var(ErpNotifyConfigs.CONFIG_NOTIFY_EMAIL_ENABLED,
-                    ErpNotifyConfigs.DEFAULT_NOTIFY_EMAIL_ENABLED)) {
+            if (emailEnabled) {
                 sendEmailIfPossible(n);
             } else {
                 LOG.warn("notify.dispatch: notification[{}] channel EMAIL not enabled by config (erp-notify.email-enabled=false), skipping dispatch",
@@ -185,8 +194,7 @@ public class NotificationDispatcher {
             }
         }
         if (channels.contains(ErpNotifyConstants.CHANNEL_SMS)) {
-            if (AppConfig.var(ErpNotifyConfigs.CONFIG_NOTIFY_SMS_ENABLED,
-                    ErpNotifyConfigs.DEFAULT_NOTIFY_SMS_ENABLED)) {
+            if (smsEnabled) {
                 sendSmsIfPossible(n);
             } else {
                 LOG.warn("notify.dispatch: notification[{}] channel SMS not enabled by config (erp-notify.sms-enabled=false), skipping dispatch",

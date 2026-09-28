@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
@@ -66,8 +67,15 @@ public class NotificationMergeCoordinator {
 
         IEntityDao<ErpSysNotification> dao = daoProvider.daoFor(ErpSysNotification.class);
         List<ErpSysNotification> candidates = dao.findAllByQuery(q);
+        if (candidates.isEmpty()) {
+            return null;
+        }
+        // perf-ux plan 0835-1 B5：原逐候选 isRead（每候选 1 次查询，每接收人 ≤11 次往返）改单次
+        // in(notificationId) 批载已读集，内存按候选原序（createTime desc）取首个未读——
+        // 成员判定与顺序无关，与逐候选短路逐位等价（候选 ≤10 不分块，留痕）。
+        Set<String> readIds = findReadNotificationIds(candidates, recipientUserId);
         for (ErpSysNotification n : candidates) {
-            if (!isRead(n.getId(), recipientUserId)) {
+            if (!readIds.contains(n.getId())) {
                 return n;
             }
         }
@@ -94,11 +102,19 @@ public class NotificationMergeCoordinator {
         return existing;
     }
 
-    private boolean isRead(String notificationId, String userId) {
+    /** 批量查已读通知 id 集（等价替代逐候选 isRead 短路查询）。 */
+    private Set<String> findReadNotificationIds(List<ErpSysNotification> candidates, String userId) {
+        List<String> ids = new java.util.ArrayList<>(candidates.size());
+        for (ErpSysNotification n : candidates) {
+            ids.add(n.getId());
+        }
         QueryBean q = new QueryBean();
-        q.addFilter(eq("notificationId", notificationId));
         q.addFilter(eq("userId", userId));
-        q.setLimit(1);
-        return !daoProvider.daoFor(ErpSysNotificationRead.class).findAllByQuery(q).isEmpty();
+        q.addFilter(in("notificationId", ids));
+        Set<String> ret = new java.util.HashSet<>();
+        for (ErpSysNotificationRead r : daoProvider.daoFor(ErpSysNotificationRead.class).findAllByQuery(q)) {
+            ret.add(r.getNotificationId());
+        }
+        return ret;
     }
 }

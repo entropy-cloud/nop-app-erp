@@ -10,6 +10,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.lang.json.JsonTool;
+import io.nop.commons.util.StringHelper;
 import jakarta.inject.Inject;
 
 import javax.crypto.Mac;
@@ -75,11 +76,9 @@ public class ErpLogShipmentHandleTrackingWebhookProcessor extends AbstractErpLog
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
             byte[] raw = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder(raw.length * 2);
-            for (byte b : raw) {
-                sb.append(String.format("%02x", b));
-            }
-            String expected = sb.toString();
+            // perf-ux plan 0835-1 J3：原 String.format("%02x") 逐字节格式化循环改平台工具
+            // StringHelper.bytesToHex（小写输出逐位等价）。
+            String expected = StringHelper.bytesToHex(raw);
             return MessageDigest.isEqual(expected.getBytes(StandardCharsets.UTF_8),
                     signature.toLowerCase().getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {

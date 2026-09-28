@@ -67,7 +67,11 @@ public class ErpFinDashboardBizModel {
             // DB 级 GROUP BY subjectId 聚合（perf-ux plan 0325-2：原全量 GlBalance 实体物化+
             // to-one 科目导航内存分类改为投影聚合（行数=科目数）+ 科目映射内存桶装；
             // activity 符号按科目 direction 常量，Σ±(d−c) = ±(Σd−Σc) 逐位等价）
-            PnlAgg pnl = aggPnlActivityBySubject(periodId);
+            // perf-ux plan 0835-1 E2：三腿共用同一 periodId 基准的 org/schema scope，单次解析传递
+            // （原 sumArApOpen×2 + 损益腿各重复 resolvePeriodOrgId+resolvePrimarySchemaId；
+            // orgId 不可解析跳过 filter 的语义逐字保留）
+            OrgSchemaScope scope = resolveOrgAndSchemaScope(periodId);
+            PnlAgg pnl = aggPnlActivityBySubject(periodId, scope);
             BigDecimal revenue = pnl.revenue;
             BigDecimal expense = pnl.expense;
             kpi.put("periodId", periodId);
@@ -75,8 +79,8 @@ public class ErpFinDashboardBizModel {
             kpi.put("expense", expense);
             kpi.put("netProfit", revenue.subtract(expense));
             kpi.put("bankBalance", sumBankBalance());
-            kpi.put("arBalance", sumArApOpen(ErpFinConstants.DIRECTION_RECEIVABLE, periodId));
-            kpi.put("apBalance", sumArApOpen(ErpFinConstants.DIRECTION_PAYABLE, periodId));
+            kpi.put("arBalance", sumArApOpen(ErpFinConstants.DIRECTION_RECEIVABLE, scope));
+            kpi.put("apBalance", sumArApOpen(ErpFinConstants.DIRECTION_PAYABLE, scope));
             return kpi;
         });
     }
@@ -232,7 +236,7 @@ public class ErpFinDashboardBizModel {
     }
 
     /** 单期间损益聚合（KPI 用）：GROUP BY subjectId 投影 + 科目映射，收入/支出桶装。 */
-    private PnlAgg aggPnlActivityBySubject(String periodId) {
+    private PnlAgg aggPnlActivityBySubject(String periodId, OrgSchemaScope scope) {
         PnlAgg agg = new PnlAgg();
         // 与 loadGlBalances 相同的过滤（periodId 缺省取最近期间 + org/schema scope），投影聚合替代实体物化
         String effectivePeriodId = periodId;
@@ -243,7 +247,7 @@ public class ErpFinDashboardBizModel {
         QueryBean q = new QueryBean();
         q.setSourceName(ErpFinGlBalance.class.getName());
         q.addFilter(eq("periodId", effectivePeriodId));
-        applyOrgAndSchemaScope(q, effectivePeriodId);
+        applyScope(q, scope);
         QueryFieldBean dim = QueryFieldBean.mainField("subjectId");
         QueryFieldBean sumDebit = QueryFieldBean.mainField("periodDebit").sum().alias("periodDebit");
         QueryFieldBean sumCredit = QueryFieldBean.mainField("periodCredit").sum().alias("periodCredit");
@@ -383,16 +387,17 @@ public class ErpFinDashboardBizModel {
         return sum;
     }
 
-    private BigDecimal sumArApOpen(String direction, String periodId) {
+    private BigDecimal sumArApOpen(String direction, OrgSchemaScope scope) {
         // 按有界维度（status，过滤后 ≤2 组）分组 SQL sum 后内存汇总（perf-ux plan 0325-2：
-        // 原 OPEN+PARTIAL 全量实体物化内存求和改为投影聚合；applyOrgAndSchemaScope 语义逐字保留）
+        // 原 OPEN+PARTIAL 全量实体物化内存求和改为投影聚合；org/schema scope 语义逐字保留，
+        // perf-ux plan 0835-1 E2 起 scope 由 KPI 入口单次解析传入）
         QueryBean q = new QueryBean();
         q.setSourceName(ErpFinArApItem.class.getName());
         q.addFilter(eq("direction", direction));
         q.addFilter(in("status", Arrays.asList(
                 ErpFinConstants.AR_AP_STATUS_OPEN,
                 ErpFinConstants.AR_AP_STATUS_PARTIAL)));
-        applyOrgAndSchemaScope(q, periodId);
+        applyScope(q, scope);
         QueryFieldBean dim = QueryFieldBean.mainField("status");
         QueryFieldBean sumOpen = QueryFieldBean.mainField("openAmountFunctional").sum().alias("openAmount");
         q.setFields(Arrays.asList(dim, sumOpen));
@@ -427,6 +432,40 @@ public class ErpFinDashboardBizModel {
         String schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
         if (schemaId != null) {
             q.addFilter(eq("acctSchemaId", schemaId));
+        }
+    }
+
+    /** org/schema scope 解析结果（perf-ux plan 0835-1 E2：请求内单次解析、多腿复用）。 */
+    private static final class OrgSchemaScope {
+        static final OrgSchemaScope EMPTY = new OrgSchemaScope(null, null);
+        final String orgId;
+        final String schemaId;
+
+        OrgSchemaScope(String orgId, String schemaId) {
+            this.orgId = orgId;
+            this.schemaId = schemaId;
+        }
+    }
+
+    /**
+     * 单次解析 org/schema scope：orgId 不可解析（period 无 org 等）时返回 EMPTY，
+     * 调用方跳过 filter——与 applyOrgAndSchemaScope 的跳过语义逐字一致。
+     */
+    private OrgSchemaScope resolveOrgAndSchemaScope(String periodId) {
+        String orgId = resolvePeriodOrgId(periodId);
+        if (orgId == null) {
+            return OrgSchemaScope.EMPTY;
+        }
+        return new OrgSchemaScope(orgId, AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId));
+    }
+
+    private void applyScope(QueryBean q, OrgSchemaScope scope) {
+        if (scope.orgId == null) {
+            return;
+        }
+        q.addFilter(eq("orgId", scope.orgId));
+        if (scope.schemaId != null) {
+            q.addFilter(eq("acctSchemaId", scope.schemaId));
         }
     }
 

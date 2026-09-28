@@ -119,6 +119,33 @@ public class TestErpSysNotificationDispatch extends JunitAutoTestCase {
     }
 
     @Test
+    public void testMergeSkipsReadNotifications() {
+        // perf-ux plan 0835-1 B5 守护：窗口内候选若全部已读，findMergeable 不命中 → 新建第二行
+        // （已读成员判定语义在 isRead 批量化前后必须逐位一致）
+        seedTemplate(7005L, "merge-skip-read", "已读跳过合并",
+                "已读跳过合并实例",
+                ErpNotifyConstants.RESOLVER_USER_LIST,
+                "{\"userIds\":[\"" + USER_1 + "\"]}",
+                ErpNotifyConstants.CHANNEL_IN_APP, ErpNotifyConstants.MERGE_BY_USER_TYPE, 3600);
+
+        notify("merge-skip-read", Map.of());
+        ErpSysNotification first = findNotification(USER_1, "merge-skip-read");
+        assertNotNull(first);
+        markRead(first.getId());
+
+        notify("merge-skip-read", Map.of());
+
+        List<ErpSysNotification> list = notificationsOf(USER_1, "merge-skip-read");
+        assertEquals(2, list.size(), "窗口内候选全部已读时应新建而非合并: " + list.size());
+        for (ErpSysNotification n : list) {
+            if (n.getId().equals(first.getId())) {
+                assertEquals(1, n.getMergeCount() == null ? 1 : n.getMergeCount(),
+                        "已读首条不应被合并: " + n.getMergeCount());
+            }
+        }
+    }
+
+    @Test
     public void testEmailChannelConfigGatedSkipsAndMarkRead() {
         // channelSet 含 EMAIL，但 bootstrap 默认 email-enabled=false → 跳过派发仅 WARN，不抛错、不阻断
         seedTemplate(7004L, "credit-over", "信用超额度",
