@@ -281,3 +281,14 @@ npm run validate:flux
 - `../nop-entropy/docs/dev-guide/cli.md` —「根据 page.yaml 文件生成页面 json 文件」（本设计 J3/J5 使其落地）
 - `../nop-chaos-flux/flux-guide/scripts/validate.mjs` — Node 批量 validateSchema 的既有实证
 - `../nop-chaos-flux/flux-guide/13-testing.md` — flux 测试设施与严格校验开关
+
+## 12. XDSL 结构不变量静态门禁（GATE-01，`tools/check-xdsl-invariants.mjs`）
+
+> 来源：perf-ux mission 收官防复发门禁批（roadmap `docs/backlog/perf-ux-debt-consolidation-roadmap.md` GATE-01；计划 `docs/plans/2026-09-28-1710-1-gate01-xdsl-invariants.md`）。本节登记该脚本的架构位置与调用契约；脚本实现细节以 `tools/check-xdsl-invariants.mjs` 头注为准。
+
+本节所述 JS 编译验证（§6 validate-pages.mjs）只判定页面 JSON 的 **flux 编译合法性**；mission 批次 5 实证的另一族损坏——**XDSL 布局层结构损坏**（表单误插 `<pages>` 段、同 form 重复 cell id、组头/表达式文本损坏）——在导出前后均可能不被编译器拒绝，此前只能靠审计层人肉发现。`tools/check-xdsl-invariants.mjs` 作为**叠加断言层**补此盲区，不修改本文件前述任何验证语义。
+
+- **扫描面**：全部手写 `view.xml`（`git ls-files` ∩ `/src/main/resources/`，排除 `_gen` 路径、`/target/`、`_` 前缀生成基文件）。
+- **五条不变量（零容忍，任一命中 exit 1）**：I1 `<form>` 直接父段必须为 `<forms>`；I2 `<form id="edit|add">` 每文件各 ≤1（空白容忍）；I3 同一 `<form>` 内 `<cell id>` 不重复（跨 form 同名合法）；I4 无 `@[a-zA-Z]+\[\[` 表达式双括号损坏（CDATA/注释豁免）；I5 layout 组头行无标记符后紧跟 `@` 的误标（`=+[=>^]@` 行锚定，`<url>@query:` 类合法文本不误报）。
+- **调用方式（唯一接线位置 = 根 `package.json`，与 `validate:flux` 门禁链同面）**：`npm run check:xdsl`（gate）/ `npm run check:xdsl:self-test`（反假绿自证）。退出码 0=净 / 1=违规 / 2=运行失败。基线形态：零容忍无快照（冻结时 HEAD 全净已实测留痕；`actual ≤ 0` 隐含单向收紧）。
+- **配套义务**：`--self-test` 对五类不变量双向断言（损坏注入必报、合法形态放行）；文件注入重放（工作树内非 ignored 路径投放损坏 fixture → 必报且扫描计数递增 → 移除恢复）。

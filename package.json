@@ -8,6 +8,8 @@
     "e2e:dashboards": "E2E_ENGINE=flux playwright test tests/e2e/dashboards/",
     "e2e:reports": "E2E_ENGINE=flux playwright test tests/e2e/reports/",
     "validate:flux": "bash scripts/validate-flux-pages.sh",
+    "check:xdsl": "node tools/check-xdsl-invariants.mjs",
+    "check:xdsl:self-test": "node tools/check-xdsl-invariants.mjs --self-test",
     "report": "playwright show-report"
   },
   "devDependencies": {
