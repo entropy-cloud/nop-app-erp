@@ -112,10 +112,13 @@ body:
       method: post
       selection: materialCode materialName status
   - type: crud
+    empty: "暂无数据"
     name: materialWithoutSkuCrud
     className: m-3
     title: "无 SKU 物料预警（数据质量）"
-    i18nEn: "Material Without SKU Alert (Data Quality)"
+    i18nEn:
+      title: "Material Without SKU Alert (Data Quality)"
+      empty: "No data"
     source: ${materialAlertData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -139,10 +142,13 @@ body:
       method: post
       selection: skuCode materialId
   - type: crud
+    empty: "暂无数据"
     name: skuWithoutPriceCrud
     className: m-3
     title: "无价格 SKU 预警（数据质量）"
-    i18nEn: "SKU Without Price Alert (Data Quality)"
+    i18nEn:
+      title: "SKU Without Price Alert (Data Quality)"
+      empty: "No data"
     source: ${skuAlertData ?? []}
     syncLocation: false
     headerToolbar: []

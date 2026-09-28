@@ -128,11 +128,11 @@
  carrierId[承运商ID] carrierConfigId[承运商配置ID]
  relatedBillType[关联单据类型] relatedBillCode[关联单据号]
  shipmentDate[发运日期] businessDate[业务日期]
- status[状态]
+ @status[状态]
 ==========>freight[承运信息]======
  trackingNo[运单号] labelUrl[面单URL]
  freightAmount[运费] freightCurrencyId[运费币种]
- freightTerms[运费条款] freightSettlementStatus[运费结算状态]
+ freightTerms[运费条款] @freightSettlementStatus[运费结算状态]
  totalWeight[总重量(kg)] totalVolume[总体积(m³)]
  totalParcels[总包裹数]
 ==========>receiver[收货信息]======
@@ -166,7 +166,40 @@
                 </cell>
             </cells>
         </form>
-        <form id="add"/>
+        <form  id="add">
+            <layout>
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ carrierId[承运商ID] carrierConfigId[承运商配置ID]
+ relatedBillType[关联单据类型] relatedBillCode[关联单据号]
+ shipmentDate[发运日期] businessDate[业务日期]
+ status[状态]
+==========>freight[承运信息]======
+ trackingNo[运单号] labelUrl[面单URL]
+ freightAmount[运费] freightCurrencyId[运费币种]
+ freightTerms[运费条款] freightSettlementStatus[运费结算状态]
+ totalWeight[总重量(kg)] totalVolume[总体积(m³)]
+ totalParcels[总包裹数]
+==========>receiver[收货信息]======
+ receiverName[收货人] receiverPhone[收货人电话]
+ receiverAddress[收货地址] receiverCountry[国家]
+ receiverProvince[省份] receiverCity[城市]
+ receiverDistrict[区县]
+==========>sender[发货信息]======
+ senderName[发货人] senderPhone[发货人电话]
+ senderAddress[发货地址] shipperId[发货员(职员)]
+==========>delivery[送达信息]======
+ estimatedDeliveryDate[预计送达日期] actualDeliveryDate[实际送达日期]
+ signedBy[签收人]
+=========>lines[明细行]======
+ lines[明细行](2)
+=========>parcels[包裹]======
+ parcels[包裹](2)
+=========>logs[操作日志]======
+ logs[操作日志](2)
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="asideFilter" editMode="query" submitOnChange="true">
             <layout>
  carrierId[承运商ID] relatedBillType[关联单据类型]
@@ -185,10 +218,15 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] trackingNo[运单号]
-            </layout>
+            
+ freightSettlementStatus
+ status</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="trackingNo" filterOp="like"/>
+            
+                <cell id="freightSettlementStatus" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -197,7 +235,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-advise-button" label="发运" i18n-en:label="Shipment" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpLogShipment__advise?shipmentId=$id"/>
                     <confirmText>确认发送此运单给承运商？</confirmText>

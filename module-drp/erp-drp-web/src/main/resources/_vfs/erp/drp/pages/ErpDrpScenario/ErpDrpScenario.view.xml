@@ -80,7 +80,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-run-simulation-button" label="运行仿真" i18n-en:label="Run Simulation" level="primary" icon="fa fa-cogs">
                     <api url="@mutation:ErpDrpScenario__runSimulation?scenarioId=$id"/>
                     <confirmText>确认运行此 DRP 仿真？将基于当前场景参数生成新版本。</confirmText>

@@ -106,7 +106,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-start-button" label="开始" i18n-en:label="Start" level="primary" icon="fa fa-play">
                     <api url="@mutation:ErpPrjTask__startTask?taskId=$id"/>
                     <confirmText>确认开始此任务？</confirmText>

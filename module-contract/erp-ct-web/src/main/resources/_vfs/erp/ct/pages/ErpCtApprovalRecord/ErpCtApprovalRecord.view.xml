@@ -43,8 +43,32 @@
  updatedBy[修改人] updateTime[修改时间]
             </layout>
         </form>
-        <form id="edit" x:abstract="true"/>
-        <form id="add" x:abstract="true"/>
+        <form  id="edit">
+            <layout x:override="replace">
+ contractId[合同]
+ orgId[业务组织]
+ approvalMatrixId[审批矩阵]
+ approvalOrder[顺序号]
+ approverId[审批人]
+ @approvalStatus[审批状态]
+ comment[审批意见]
+ rejectedAt[驳回时间]
+ remark[备注]
+            </layout>
+        </form>
+        <form id="add" x:abstract="true">
+            <layout x:override="replace">
+ contractId[合同]
+ orgId[业务组织]
+ approvalMatrixId[审批矩阵]
+ approvalOrder[顺序号]
+ approverId[审批人]
+ approvalStatus[审批状态]
+ comment[审批意见]
+ rejectedAt[驳回时间]
+ remark[备注]
+            </layout>
+        </form>
         <form id="asideFilter" editMode="query" submitOnChange="true">
             <layout>
  contractId[合同] approvalMatrixId[审批矩阵]
@@ -63,9 +87,12 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  approvalOrder[顺序号]
-            </layout>
+            
+ approvalStatus</layout>
             <cells>
                 <cell id="approvalOrder" filterOp="eq"/>
+            
+                <cell id="approvalStatus" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -74,8 +101,8 @@
         <crud name="main">
             <listActions x:override="bounded-merge"/>
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button" level="primary" label="@i18n:common.view">
-                    <dialog page="view"/>
+                <action id="row-view-button" level="primary" label="@i18n:common.view" actionType="drawer">
+                    <drawer page="view" size="lg"/>
                 </action>
             </rowActions>
         </crud>

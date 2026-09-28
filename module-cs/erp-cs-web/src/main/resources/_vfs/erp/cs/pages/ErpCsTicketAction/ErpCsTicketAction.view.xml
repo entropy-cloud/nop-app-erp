@@ -46,6 +46,18 @@
 =========>baseInfo[基本信息]======
  ticketId[工单ID] actionType[操作类型]
 =========>transition[状态迁移]======
+ @fromStatus[起始状态] @toStatus[目标状态]
+ operatorId[操作人] content[操作内容]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form  id="add" x:prototype="edit">
+            <layout>
+=========>baseInfo[基本信息]======
+ ticketId[工单ID] actionType[操作类型]
+=========>transition[状态迁移]======
  fromStatus[起始状态] toStatus[目标状态]
  operatorId[操作人] content[操作内容]
 ========^audit[审计信息]=========
@@ -53,7 +65,6 @@
  updatedBy[修改人] updateTime[修改时间]
             </layout>
         </form>
-        <form id="add" x:prototype="edit"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  ticketId[工单ID] actionType[操作类型]

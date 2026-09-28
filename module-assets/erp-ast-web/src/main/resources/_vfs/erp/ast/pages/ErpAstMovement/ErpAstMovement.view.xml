@@ -66,6 +66,32 @@
  currencyId[币种] exchangeRate[汇率]
  amountSource[源币种金额] amountFunctional[本位币金额]
 =========>status[状态信息]======
+ @docStatus[单据状态] @approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form  id="add" x:prototype="edit">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[调拨单号] orgId[业务组织]
+ assetId[资产] businessDate[业务日期]
+ fromDate[生效起始日] thruDate[生效截止日]
+=========>transfer[调拨信息]======
+ fromDepartmentId[源部门] toDepartmentId[目标部门]
+ fromStaffId[源使用人] toStaffId[目标使用人]
+ fromLocationId[源地点] toLocationId[目标地点]
+ handlerId[经办人]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
  docStatus[单据状态] approveStatus[审核状态]
  approvedBy[审核人] approvedAt[审核时间]
 =========>posting[过账信息]======
@@ -77,7 +103,6 @@
  updatedBy[修改人] updateTime[修改时间]
             </layout>
         </form>
-        <form id="add" x:prototype="edit"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[调拨单号] docStatus[单据状态]

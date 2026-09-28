@@ -7,6 +7,7 @@ title: "质量概览"
 i18nEn: "Quality Overview"
 body:
   - type: form
+    submitOnChange: true
     name: filterForm
     valuesPath: filterForm
     title: ""
@@ -146,9 +147,12 @@ body:
         months: 12
       selection: month passRate
   - type: chart
+    empty: "暂无数据"
     chartType: line
     title: "合格率趋势（近12月）"
-    i18nEn: "Pass Rate Trend (Last 12 Months)"
+    i18nEn:
+      title: "Pass Rate Trend (Last 12 Months)"
+      empty: "No data"
     source: ${trendData ?? []}
     xAxis: { dataKey: month }
     yAxis:
@@ -171,9 +175,12 @@ body:
         limit: 10
       selection: dispositionType count
   - type: chart
+    empty: "暂无数据"
     chartType: pie
     title: "不合格原因 TOP（按处置决定聚合）"
-    i18nEn: "Top Defect Causes (Aggregated by Disposal Decision)"
+    i18nEn:
+      title: "Top Defect Causes (Aggregated by Disposal Decision)"
+      empty: "No data"
     source: ${defectData ?? []}
     height: 300
     series:
@@ -248,9 +255,12 @@ body:
       selection: chartName chartType samples ucl lcl cl
 
   - type: chart
+    empty: "暂无数据"
     chartType: line
     title: "SPC 控制图"
-    i18nEn: "SPC Control Chart"
+    i18nEn:
+      title: "SPC Control Chart"
+      empty: "No data"
     visibleOn: "${filterForm?.chartId}"
     source: ${spcChartData?.samples ?? []}
     xAxis: { dataKey: subgroupNo }
@@ -272,9 +282,12 @@ body:
       selection: actionType dueDate status overdueDays
 
   - type: crud
+    empty: "暂无数据"
     className: m-3
     title: "CAPA 逾期预警（阈值经 erp-dash.qa-capa-overdue-days 配置）"
-    i18nEn: "CAPA Overdue Alert (threshold via erp-dash.qa-capa-overdue-days)"
+    i18nEn:
+      title: "CAPA Overdue Alert (threshold via erp-dash.qa-capa-overdue-days)"
+      empty: "No data"
     source: ${capaOverdueData ?? []}
     syncLocation: false
     headerToolbar: []

@@ -41,11 +41,25 @@
 =========>amount[金额信息]======
  currencyId[币种]
 =========>status[状态信息]======
+ @docStatus[单据状态]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form  id="add">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ transferType[转移类型] partnerId[往来单位]
+ businessDate[业务日期] warehouseId[仓库]
+ sourceLocId[源库位] destLocId[目标库位]
+ fromOwnershipType[源所有权] toOwnershipType[目标所有权]
+=========>amount[金额信息]======
+ currencyId[币种]
+=========>status[状态信息]======
  docStatus[单据状态]
  remark[备注](2)
             </layout>
         </form>
-        <form id="add"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] partnerId[往来单位]

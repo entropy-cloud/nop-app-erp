@@ -111,9 +111,12 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[协议编号]
-            </layout>
+            
+ status</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -122,7 +125,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-run-accrual-button" label="运行计提" i18n-en:label="Run Accrual" level="primary" icon="fa fa-cogs">
                     <api url="@mutation:ErpCtRebateAgreement__runAccrual?agreementId=$id&amp;asOfDate="/>
                     <confirmText>确认运行此返利协议的计提？</confirmText>

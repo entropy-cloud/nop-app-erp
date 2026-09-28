@@ -78,9 +78,12 @@ body:
     i18nEn: '<div class="text-muted p-3">Enter a valid DRP plan ID and click Load Net Requirement. If there is no data, the plan has not yet run the DrpEngine.runDrp calculation.</div>'
 
   - type: crud
+    empty: "暂无数据"
     className: m-3
     title: "净需求明细"
-    i18nEn: "Net Requirement Details"
+    i18nEn:
+      title: "Net Requirement Details"
+      empty: "No data"
     source: ${linesData?.items ?? []}
     syncLocation: false
     headerToolbar: []

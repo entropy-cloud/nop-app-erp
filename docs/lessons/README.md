@@ -36,6 +36,7 @@ When a bug, retrospective, or audit reveals a repeatable pattern, consider promo
 - `23-snapshot-surgical-text-transform-no-full-rerecord.md` — **`_cases` 快照对齐必须外科式文本变换**：载体文案变更仅消息/名称/摘要列旧值→新值、保留 `*`/`@var:` 断言自由度，禁 `force-save-output` 全量重录（实测窄化通配符断言，MI.6 批 1 实证）。含 RFC 4180 重引号 / seed 字典真相收敛 / 语义树等价重序列化协议（r3 四批实录）+ 与 lesson 06 / seed-data.md 双面重录义务划界。
 - `24-concurrent-session-interference-isolated-full-verification.md` — **同机姊妹会话并发干扰下的全量验证须隔离鉴别**：并发编辑/构建产出伪失败、共享 `~/.m2` 并发 install 污染（09-02 typo 态混态 + 09-08 MI.9 四次全量伪失败两案实录）——涉事模块隔离复跑鉴别 + `git clone` 钉 HEAD（0 脏文件）隔离重跑 + Git State 干扰面披露。与 lesson 05（日志优先）/22（断言范围）划界。
 - `25-closure-audit-gate-precheck-bulk-tick.md` — **批量勾选计划检查框须排除结束审计门控**（2026-09-28 perf-ux mission 两案实录：批次 2 round 1 + 批次 4 Blocker B1，均系 sed/批量替换覆盖门控而非主观自我审计）——批量替换前列门控排除集 + 置位前三问（审计事件是否发生/证据行是否占位/日志是否写「待审计」）+ 审计方廉价前置检查（门控状态与证据行矛盾即 Blocker）。与 lesson 22（closure 断言全门控表）互链。
+- `26-stale-m2-jar-invalidates-frontend-validation.md` — **前端资源改动后未经模块重装的验证链验证的是旧态**（2026-09-28 perf-ux 批次 5 三案实录：全仓构建后改源未重装/单模块修复未重装/审计方以 manifest failedPages+报告 mtime 交叉证伪）——修正→重装→校验三步显式串联 + 报告新鲜度自证 + failedPages 与 totals 同时核对。与 lesson 24（并发污染）同族划界：24 是并发污染、26 是时序陈旧。
 
 > **2026-08-28 提升裁决（ai-check-r2 M0.7 自审）**：M0 阶段执行后沉淀方法学——三路交叉审计范式入课为 `17`。
 

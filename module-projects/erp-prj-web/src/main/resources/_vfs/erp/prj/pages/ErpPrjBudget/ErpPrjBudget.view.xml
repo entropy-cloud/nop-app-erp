@@ -70,6 +70,21 @@
  orgId[业务组织] businessDate[业务日期]
  currencyId[币种] totalAmount[预算总额]
 =========>status[状态信息]======
+ @docStatus[单据状态] @approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form  id="add" x:prototype="edit">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[预算单号] projectId[项目]
+ orgId[业务组织] businessDate[业务日期]
+ currencyId[币种] totalAmount[预算总额]
+=========>status[状态信息]======
  docStatus[单据状态] approveStatus[审核状态]
  approvedBy[审核人] approvedAt[审核时间]
 ========^audit[审计信息]=========
@@ -78,7 +93,6 @@
  updatedBy[修改人] updateTime[修改时间]
             </layout>
         </form>
-        <form id="add" x:prototype="edit"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[预算单号] docStatus[单据状态]

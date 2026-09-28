@@ -104,7 +104,7 @@
 =========>amount[金额信息]======
  totalAmount[金额合计]
 =========>status[状态信息]======
- docStatus[单据状态] approveStatus[审核状态]
+ @docStatus[单据状态] @approveStatus[审核状态]
  approvedBy[审核人] approvedAt[审核时间]
 =========>posting[过账信息]======
  posted[已过账] postedAt[过账时间]
@@ -120,7 +120,27 @@
                 </cell>
             </cells>
         </form>
-        <form id="add" x:prototype="edit"/>
+        <form  id="add" x:prototype="edit">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ visitId[维护访问] requestId[维护请求]
+ equipmentId[设备] businessDate[消耗日期]
+ warehouseId[领料仓库]
+=========>amount[金额信息]======
+ totalAmount[金额合计]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+=========>lines[备件消耗行]======
+ lines[备件消耗行](2)
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] docStatus[单据状态]

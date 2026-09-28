@@ -155,7 +155,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-screening-button" label="筛选" i18n-en:label="Filter" level="primary" icon="fa fa-filter">
                     <api url="@mutation:ErpHrRecruitment__moveToScreening?id=$id"/>
                     <confirmText>确认推进到简历筛选？</confirmText>

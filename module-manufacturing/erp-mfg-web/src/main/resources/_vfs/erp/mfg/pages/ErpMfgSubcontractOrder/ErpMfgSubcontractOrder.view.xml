@@ -90,6 +90,30 @@
  processingFee[加工费] totalAmount[总金额]
  amountSource[源币种金额] amountFunctional[本位币金额]
 =========>status[状态信息]======
+ @docStatus[单据状态] @approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+=========>posting[过账信息]======
+ posted[已过账] @postedStatus[过账状态]
+ postedAt[过账时间] postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form  id="add" x:prototype="edit">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[委外单号] orgId[业务组织]
+ workOrderId[工单] supplierId[供应商]
+ workcenterId[工作中心] routingId[工艺路线]
+ productionVersionId[生产版本] productId[产品]
+ businessDate[业务日期]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ processingFee[加工费] totalAmount[总金额]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
  docStatus[单据状态] approveStatus[审核状态]
  approvedBy[审核人] approvedAt[审核时间]
 =========>posting[过账信息]======
@@ -101,7 +125,6 @@
  updatedBy[修改人] updateTime[修改时间]
             </layout>
         </form>
-        <form id="add" x:prototype="edit"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[委外单号] docStatus[单据状态]
@@ -161,7 +184,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
 
                 <!-- 审批轴 5 按钮（镜像 ErpMfgWorkOrder.view.xml :81–120 范式，参数名 id） -->
                 <action id="row-submit-button" label="提交" i18n-en:label="Submit" level="primary" icon="fa fa-paper-plane">
@@ -214,15 +239,15 @@
                     </messages>
                     <visibleOn>${docStatus == 'DRAFT' || docStatus == 'SUBMITTED' || docStatus == 'APPROVED'}</visibleOn>
                 </action>
-                <action id="row-issue-materials-button" label="发料" i18n-en:label="Issue" level="primary" icon="fa fa-outdent">
-                    <dialog page="issueMaterials"/>
+                <action id="row-issue-materials-button" label="发料" i18n-en:label="Issue" level="primary" icon="fa fa-outdent" actionType="drawer">
+                    <drawer page="issueMaterials" size="lg"/>
                     <messages>
                         <success>委外单已发料</success>
                     </messages>
                     <visibleOn>${docStatus == 'APPROVED'}</visibleOn>
                 </action>
-                <action id="row-receive-finished-button" label="收货" i18n-en:label="Goods Receipt" level="primary" icon="fa fa-inbox">
-                    <dialog page="receiveFinished"/>
+                <action id="row-receive-finished-button" label="收货" i18n-en:label="Goods Receipt" level="primary" icon="fa fa-inbox" actionType="drawer">
+                    <drawer page="receiveFinished" size="lg"/>
                     <messages>
                         <success>委外单已收货</success>
                     </messages>

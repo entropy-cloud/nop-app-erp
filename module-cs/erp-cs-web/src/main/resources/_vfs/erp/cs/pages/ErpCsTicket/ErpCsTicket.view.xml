@@ -204,8 +204,8 @@
  subject[工单主题] customerId[客户]
  ticketTypeId[工单类型] priority[优先级]
  source[来源] assignedToId[分配处理人]
- status[工单状态] docStatus[单据状态]
- approveStatus[审核状态] contactId[联系人]
+ @status[工单状态] @docStatus[单据状态]
+ @approveStatus[审核状态] contactId[联系人]
  catalogItemId[服务目录项]
  description[问题描述](2)
 =========>sla[SLA与处理]======
@@ -308,10 +308,17 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] customerId[客户]
-            </layout>
+            
+ status
+ docStatus
+ approveStatus</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="customerId" filterOp="eq"/>
+            
+                <cell id="status" filterOp="eq"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
             </cells>
         </form>
 
@@ -419,8 +426,12 @@
     <pages>
         <crud name="main">
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-button" actionType="drawer">
+                <drawer page="view" size="xl"/>
+            </action>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="xl"/>
+            </action>
                 <!-- 分派（perf-ux 2026-09-27 P1-1）：dialog 经 assignTicket 表单收集处理人
                     （edit-userId 平台用户 picker），替换原硬编码 assignedToId 为 0——"0" 非空绕过
                      后端回落语义（ErpCsTicketBizModel assign），曾把工单分派给不存在的用户 ID 0。 -->

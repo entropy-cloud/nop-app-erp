@@ -68,23 +68,40 @@
  amountSource[借款金额(源币种)] amountFunctional[借款金额(本位币)]
  settledAmount[已结算金额] outstandingAmount[未还金额]
 =========>status[状态信息]======
+ @docStatus[单据状态] @approveStatus[审核状态]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form  id="add">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ employeeId[员工] advanceType[借款类型]
+ businessDate[业务日期] projectId[项目]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[借款金额(源币种)] amountFunctional[借款金额(本位币)]
+ settledAmount[已结算金额] outstandingAmount[未还金额]
+=========>status[状态信息]======
  docStatus[单据状态] approveStatus[审核状态]
  remark[备注](2)
             </layout>
         </form>
-        <form id="add"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] employeeId[员工]
  advanceType[借款类型] docStatus[单据状态]
  businessDate[业务日期]
-            </layout>
+            
+ approveStatus</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="employeeId" filterOp="eq"/>
                 <cell id="advanceType" filterOp="eq"/>
                 <cell id="docStatus" filterOp="eq"/>
                 <cell id="businessDate" filterOp="date-between"/>
+            
+                <cell id="approveStatus" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -93,7 +110,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-submit-button" label="提交" i18n-en:label="Submit" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpFinEmployeeAdvance__submitForApproval?id=$id"/>
                     <confirmText>确认提交此员工借款单审批？</confirmText>

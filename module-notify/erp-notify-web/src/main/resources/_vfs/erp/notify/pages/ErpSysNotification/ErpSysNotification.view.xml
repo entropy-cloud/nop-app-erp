@@ -39,14 +39,23 @@
         </form>
         <form id="edit"/>
         <form id="add"/>
-    </forms>
+            <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
+            <layout>
+ status
+            </layout>
+            <cells>
+
+                <cell id="status" filterOp="eq"/>
+            </cells>
+        </form>
+</forms>
 
     <pages>
         <crud name="main">
             <listActions x:override="bounded-merge"/>
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button" level="primary" label="@i18n:common.view">
-                    <dialog page="view"/>
+                <action id="row-view-button" level="primary" label="@i18n:common.view" actionType="drawer">
+                    <drawer page="view" size="lg"/>
                 </action>
             </rowActions>
         </crud>

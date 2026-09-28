@@ -100,8 +100,8 @@
  orderId[采购订单] supplierId[供应商]
  warehouseId[入库仓库] businessDate[入库日期]
  currencyId[币种] exchangeRate[汇率]
- receiveType[入库类型] docStatus[单据状态]
- approveStatus[审核状态] receiveStatus[收货状态]
+ receiveType[入库类型] @docStatus[单据状态]
+ @approveStatus[审核状态] @receiveStatus[收货状态]
 =========>amount[金额信息]======
  @amountSource[合计金额(源币)] @amountFunctional[合计金额(本位币)]
  @totalAmount[合计金额(不含税)] @totalTaxAmount[合计税额]
@@ -179,16 +179,40 @@
                 </cell>
             </cells>
         </form>
-        <form id="add"/>
+        <form  id="add">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ orderId[采购订单] supplierId[供应商]
+ warehouseId[入库仓库] businessDate[入库日期]
+ currencyId[币种] exchangeRate[汇率]
+ receiveType[入库类型] docStatus[单据状态]
+ approveStatus[审核状态] receiveStatus[收货状态]
+=========>amount[金额信息]======
+ @amountSource[合计金额(源币)] @amountFunctional[合计金额(本位币)]
+ @totalAmount[合计金额(不含税)] @totalTaxAmount[合计税额]
+ @totalAmountWithTax[合计金额(含税)]
+=========>copyFromOrder[从订单导入]======
+ copyFromOrder[从订单导入](2)
+=========>lines[明细行]======
+ lines[明细行](2)
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] docStatus[单据状态]
  supplierId[供应商] approveStatus[审核状态]
  businessDate[入库日期]
-            </layout>
+            
+ receiveStatus</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="businessDate" filterOp="date-between"/>
+            
+                <cell id="receiveStatus" filterOp="eq"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -197,7 +221,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-submit-button" label="提交" i18n-en:label="Submit" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpPurReceive__submitForApproval?id=$id"/>
                     <confirmText>确认提交此采购入库单审批？</confirmText>

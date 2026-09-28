@@ -95,7 +95,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-retry-button" label="重试" i18n-en:label="Retry" level="primary" icon="fa fa-repeat">
                     <api url="@mutation:ErpB2bEdiDoc__retry?ediDocId=$id"/>
                     <confirmText>确认重试此 EDI 文档发送？</confirmText>

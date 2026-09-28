@@ -6,6 +6,7 @@ title: "采购概览"
 i18nEn: "Purchase Overview"
 body:
   - type: form
+    submitOnChange: true
     name: filterForm
     valuesPath: filterForm
     title: ""
@@ -134,9 +135,12 @@ body:
         months: 12
       selection: month purchaseAmount
   - type: chart
+    empty: "暂无数据"
     chartType: line
     title: "采购趋势（近12月）"
-    i18nEn: "Purchase Trend (Last 12 Months)"
+    i18nEn:
+      title: "Purchase Trend (Last 12 Months)"
+      empty: "No data"
     source: ${trendData ?? []}
     xAxis: { dataKey: month }
     yAxis:
@@ -159,9 +163,12 @@ body:
         limit: 10
       selection: supplierId supplierName purchaseAmount
   - type: chart
+    empty: "暂无数据"
     chartType: pie
     title: "供应商 TOP10 采购占比"
-    i18nEn: "Top 10 Suppliers by Purchase Share"
+    i18nEn:
+      title: "Top 10 Suppliers by Purchase Share"
+      empty: "No data"
     source: ${topNVendorData ?? []}
     height: 300
     series:
@@ -178,10 +185,13 @@ body:
       method: post
       selection: invoiceCode supplierName varianceType
   - type: crud
+    empty: "暂无数据"
     name: threeWayMatchCrud
     className: m-3
     title: "三单匹配价格差异预警（阈值经 erp-pur.match-price-tolerance 配置）"
-    i18nEn: "Three-Way Match Price Variance Alert (threshold via erp-pur.match-price-tolerance)"
+    i18nEn:
+      title: "Three-Way Match Price Variance Alert (threshold via erp-pur.match-price-tolerance)"
+      empty: "No data"
     source: ${threeWayMatchData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -205,10 +215,13 @@ body:
       method: post
       selection: partnerName sourceBillCode openAmount ageDays
   - type: crud
+    empty: "暂无数据"
     name: apOverdueCrud
     className: m-3
     title: "应付超期预警（阈值经 erp-dash.pur-ap-overdue-days 配置）"
-    i18nEn: "AP Overdue Alert (threshold via erp-dash.pur-ap-overdue-days)"
+    i18nEn:
+      title: "AP Overdue Alert (threshold via erp-dash.pur-ap-overdue-days)"
+      empty: "No data"
     source: ${apOverdueData ?? []}
     syncLocation: false
     headerToolbar: []

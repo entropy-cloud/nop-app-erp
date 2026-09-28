@@ -136,8 +136,12 @@
     <pages>
         <crud name="main">
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-button" actionType="drawer">
+                <drawer page="view" size="xl"/>
+            </action>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="xl"/>
+            </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

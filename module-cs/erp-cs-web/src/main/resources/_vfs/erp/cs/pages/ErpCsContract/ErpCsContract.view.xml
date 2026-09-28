@@ -86,7 +86,8 @@
  code[编码] name[名称]
  orgId[业务组织] partnerId[签约客户]
  contractType[合同类型] businessDate[业务日期]
-            </layout>
+            
+ status</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="name" filterOp="like"/>
@@ -94,6 +95,8 @@
                 <cell id="partnerId" filterOp="eq"/>
                 <cell id="contractType" filterOp="eq"/>
                 <cell id="businessDate" filterOp="date-between"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>

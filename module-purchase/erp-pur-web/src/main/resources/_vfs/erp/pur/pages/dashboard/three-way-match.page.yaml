@@ -53,10 +53,13 @@ body:
       selection: invoiceId invoiceCode supplierId supplierName varianceType
 
   - type: crud
+    empty: "暂无数据"
     name: threeWayMatchCrud
     className: m-3
     title: "① 差异预警（发票单价 vs 订单单价超容差）"
-    i18nEn: "① Variance Alert (invoice unit price vs order unit price over tolerance)"
+    i18nEn:
+      title: "① Variance Alert (invoice unit price vs order unit price over tolerance)"
+      empty: "No data"
     source: ${diffAlertData ?? []}
     headerToolbar: []
     footerToolbar: []
@@ -94,10 +97,13 @@ body:
       selection: id code businessDate deliveryDate totalAmount docStatus approveStatus
 
   - type: crud
+    empty: "暂无数据"
     name: poCrud
     className: m-3
     title: "② 采购订单"
-    i18nEn: "② Purchase Order"
+    i18nEn:
+      title: "② Purchase Order"
+      empty: "No data"
     source: ${poData?.items ?? []}
     headerToolbar: []
     footerToolbar: ["statistics"]
@@ -140,10 +146,13 @@ body:
       selection: id code businessDate totalAmount docStatus approveStatus
 
   - type: crud
+    empty: "暂无数据"
     name: receiveCrud
     className: m-3
     title: "③ 采购入库单"
-    i18nEn: "③ Purchase Inbound Order"
+    i18nEn:
+      title: "③ Purchase Inbound Order"
+      empty: "No data"
     source: ${receiveData?.items ?? []}
     headerToolbar: []
     footerToolbar: ["statistics"]
@@ -181,10 +190,13 @@ body:
       selection: id code businessDate totalAmount docStatus approveStatus
 
   - type: crud
+    empty: "暂无数据"
     name: invoiceCrud
     className: m-3
     title: "④ 采购发票"
-    i18nEn: "④ Purchase Invoice"
+    i18nEn:
+      title: "④ Purchase Invoice"
+      empty: "No data"
     source: ${invoiceData?.items ?? []}
     headerToolbar: []
     footerToolbar: ["statistics"]

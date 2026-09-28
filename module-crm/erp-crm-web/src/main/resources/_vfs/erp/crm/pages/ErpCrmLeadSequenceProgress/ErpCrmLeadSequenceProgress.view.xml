@@ -41,10 +41,13 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  leadId[关联线索] sequenceId[销售序列]
-            </layout>
+            
+ status</layout>
             <cells>
                 <cell id="leadId" filterOp="eq"/>
                 <cell id="sequenceId" filterOp="eq"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -53,8 +56,8 @@
         <crud name="main">
             <listActions x:override="bounded-merge"/>
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button" level="primary" label="@i18n:common.view">
-                    <dialog page="view"/>
+                <action id="row-view-button" level="primary" label="@i18n:common.view" actionType="drawer">
+                    <drawer page="view" size="lg"/>
                 </action>
             </rowActions>
         </crud>

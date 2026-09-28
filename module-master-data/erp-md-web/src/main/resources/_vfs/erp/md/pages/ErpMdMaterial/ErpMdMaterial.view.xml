@@ -326,7 +326,9 @@
             </listActions>
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-delete-button" level="danger" label="删除" i18n-en:label="Delete">
                     <api url="@mutation:ErpMdMaterial__delete?id=$id"/>
                     <confirmText>确认删除此物料？</confirmText>

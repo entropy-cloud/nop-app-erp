@@ -249,6 +249,7 @@
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="fullName" filterOp="like"/>
+            
             </cells>
         </form>
 
@@ -305,23 +306,27 @@
     <pages>
         <crud name="main">
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-button" actionType="drawer">
+                <drawer page="view" size="xl"/>
+            </action>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="xl"/>
+            </action>
                 <action id="row-view-employee-archive-button" label="完整档案" i18n-en:label="Full Profile" level="info" icon="fa fa-id-card-o"
                         actionType="drawer">
-                    <dialog page="employeeArchive" size="xl">
+                    <drawer page="employeeArchive" size="xl">
                         <data>
                             <id>${'$'}{id}</id>
                         </data>
-                    </dialog>
+                    </drawer>
                 </action>
                 <action id="row-transfer-button" label="调动" i18n-en:label="Transfer" level="primary" icon="fa fa-exchange"
                         actionType="drawer">
-                    <dialog page="transfer" size="lg">
+                    <drawer page="transfer" size="lg">
                         <data>
                             <employeeId>$id</employeeId>
                         </data>
-                    </dialog>
+                    </drawer>
                 </action>
                 <!-- F7 §3 删除引用阻断（blocker 范式，对齐 ErpMdMaterial）：
                      ErpHrEmployee 与 master-data ErpMdEmployee 为不同表，故经 HR 域实体级 countReferences

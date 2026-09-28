@@ -62,13 +62,24 @@
             </cells>
         </form>
         <form id="add" x:prototype="edit" editMode="add"/>
-    </forms>
+            <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
+            <layout>
+ status
+            </layout>
+            <cells>
+
+                <cell id="status" filterOp="eq"/>
+            </cells>
+        </form>
+</forms>
 
     <pages>
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-view-line-button" label="盘点明细" i18n-en:label="Inventory Lines" level="info" icon="fa fa-list"
                         actionType="drawer">
                     <drawer page="/erp/ast/pages/ErpAstInventoryLine/ref-inventory.page.yaml" size="xl">

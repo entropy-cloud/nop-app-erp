@@ -6,6 +6,7 @@ title: "销售概览"
 i18nEn: "Sales Overview"
 body:
   - type: form
+    submitOnChange: true
     name: filterForm
     valuesPath: filterForm
     title: ""
@@ -131,9 +132,12 @@ body:
         months: 12
       selection: month salesAmount
   - type: chart
+    empty: "暂无数据"
     chartType: line
     title: "销售趋势（近12月）"
-    i18nEn: "Sales Trend (Last 12 Months)"
+    i18nEn:
+      title: "Sales Trend (Last 12 Months)"
+      empty: "No data"
     source: ${trendData ?? []}
     xAxis: { dataKey: month }
     yAxis:
@@ -156,9 +160,12 @@ body:
         limit: 10
       selection: customerId customerName salesAmount
   - type: chart
+    empty: "暂无数据"
     chartType: pie
     title: "客户 TOP10 销售占比"
-    i18nEn: "Customer Top 10 Sales Share"
+    i18nEn:
+      title: "Customer Top 10 Sales Share"
+      empty: "No data"
     source: ${topNCustomerData ?? []}
     height: 300
     series:
@@ -175,10 +182,13 @@ body:
       method: post
       selection: partnerName sourceBillCode openAmount ageDays
   - type: crud
+    empty: "暂无数据"
     name: arOverdueCrud
     className: m-3
     title: "应收超期预警（阈值经 erp-dash.sal-ar-overdue-days / sal-ar-overdue-amount 配置）"
-    i18nEn: "AR Overdue Alert (thresholds configured via erp-dash.sal-ar-overdue-days / sal-ar-overdue-amount)"
+    i18nEn:
+      title: "AR Overdue Alert (thresholds configured via erp-dash.sal-ar-overdue-days / sal-ar-overdue-amount)"
+      empty: "No data"
     source: ${arOverdueData ?? []}
     syncLocation: false
     headerToolbar: []

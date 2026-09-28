@@ -72,7 +72,7 @@
  code[凭证号] voucherType[凭证字]
  voucherDate[凭证日期] voucherNo[凭证编号]
  orgId[核算组织] acctSchemaId[账套]
- periodId[会计期间] docStatus[凭证状态]
+ periodId[会计期间] @docStatus[凭证状态]
 =========>posting[过账信息]=========
  @totalDebit[借方合计] @totalCredit[贷方合计]
  balanceBadge[平衡校验]
@@ -140,7 +140,22 @@
                 </cell>
             </cells>
         </form>
-        <form id="add"/>
+        <form  id="add">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[凭证号] voucherType[凭证字]
+ voucherDate[凭证日期] voucherNo[凭证编号]
+ orgId[核算组织] acctSchemaId[账套]
+ periodId[会计期间] docStatus[凭证状态]
+=========>posting[过账信息]=========
+ @totalDebit[借方合计] @totalCredit[贷方合计]
+ balanceBadge[平衡校验]
+=========>lines[分录行]======
+ quickTemplate[快捷模板](2)
+ lines[分录行](2)
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="asideFilter" editMode="query" submitOnChange="true">
             <layout>
  voucherType[凭证字] docStatus[凭证状态]
@@ -159,10 +174,13 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[凭证号] voucherDate[凭证日期]
-            </layout>
+            
+ docStatus</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="voucherDate" filterOp="date-between"/>
+            
+                <cell id="docStatus" filterOp="eq"/>
             </cells>
         </form>
         <!-- 红字冲销预览（row-reverse-button 的 dialog 载体；plan 2026-08-30-2238-1 flux 原生化重写） -->
@@ -228,8 +246,12 @@ previewBody[预览]
     <pages>
         <crud name="main">
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-button" actionType="drawer">
+                <drawer page="view" size="xl"/>
+            </action>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="xl"/>
+            </action>
                 <action id="row-post-button" label="过账" i18n-en:label="Post" level="success" icon="fa fa-check-circle"
                         tooltip="借贷不平衡时无法过账（列表「平衡状态」列显示差额）">
                     <api url="@mutation:ErpFinVoucher__postVoucher?voucherId=$id"/>

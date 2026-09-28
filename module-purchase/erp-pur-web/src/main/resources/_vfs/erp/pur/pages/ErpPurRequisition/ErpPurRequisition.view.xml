@@ -69,11 +69,20 @@
  code[单号] orgId[业务组织]
  requesterId[请购人(职员)] departmentId[请购部门]
  businessDate[请购日期] requiredDate[需求日期]
+ @docStatus[单据状态] @approveStatus[审核状态]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form  id="add">
+            <layout>
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ requesterId[请购人(职员)] departmentId[请购部门]
+ businessDate[请购日期] requiredDate[需求日期]
  docStatus[单据状态] approveStatus[审核状态]
  remark[备注](2)
             </layout>
         </form>
-        <form id="add"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] docStatus[单据状态]
@@ -82,6 +91,9 @@
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="businessDate" filterOp="date-between"/>
+            
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -90,7 +102,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-submit-button" label="提交" i18n-en:label="Submit" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpPurRequisition__submitForApproval?id=$id"/>
                     <confirmText>确认提交此采购请购单审批？</confirmText>

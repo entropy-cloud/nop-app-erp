@@ -119,10 +119,13 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[ASN 编码] trackingNo[物流单号]
-            </layout>
+            
+ status</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="trackingNo" filterOp="like"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>

@@ -112,7 +112,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-query-status-button" label="查询状态" i18n-en:label="Query Status" level="primary" icon="fa fa-search">
                     <api url="@mutation:ErpCtSignatureRequest__queryAndUpdateStatus?requestId=$id"/>
                     <confirmText>确认从签署提供商查询并更新状态？</confirmText>

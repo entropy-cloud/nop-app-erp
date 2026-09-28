@@ -123,15 +123,19 @@
     <pages>
         <crud name="main">
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-button" actionType="drawer">
+                <drawer page="view" size="xl"/>
+            </action>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="xl"/>
+            </action>
                 <action id="row-view-asset-dashboard-button" label="完整仪表板" i18n-en:label="Full Dashboard" level="info" icon="fa fa-tachometer"
                         actionType="drawer">
-                    <dialog page="assetDashboard" size="xl">
+                    <drawer page="assetDashboard" size="xl">
                         <data>
                             <id>${'$'}{id}</id>
                         </data>
-                    </dialog>
+                    </drawer>
                 </action>
                 <action id="row-transfer-button" label="移动" i18n-en:label="Move" level="primary" icon="fa fa-arrows-alt">
                     <api url="@mutation:ErpAstAsset__save/id"/>

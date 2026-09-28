@@ -176,9 +176,12 @@ body:
       selection: status count
 
   - type: chart
+    empty: "暂无数据"
     chartType: pie
     title: "项目状态分布"
-    i18nEn: "Project Status Distribution"
+    i18nEn:
+      title: "Project Status Distribution"
+      empty: "No data"
     source: ${statusData ?? []}
     height: 300
     series:
@@ -195,9 +198,12 @@ body:
       selection: projectCode projectName budget incurredCost overrunAmount
 
   - type: crud
+    empty: "暂无数据"
     className: m-3
     title: "成本超支项目预警"
-    i18nEn: "Cost Overrun Alert"
+    i18nEn:
+      title: "Cost Overrun Alert"
+      empty: "No data"
     source: ${costOverrunData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -227,9 +233,12 @@ body:
       selection: projectCode projectName endDate status overdueDays
 
   - type: crud
+    empty: "暂无数据"
     className: m-3
     title: "项目延期预警（计划完成日 < 今天 且 未 COMPLETED）"
-    i18nEn: "Delayed Project Alert (planned end < today and not COMPLETED)"
+    i18nEn:
+      title: "Delayed Project Alert (planned end < today and not COMPLETED)"
+      empty: "No data"
     source: ${delayedProjectData ?? []}
     syncLocation: false
     headerToolbar: []

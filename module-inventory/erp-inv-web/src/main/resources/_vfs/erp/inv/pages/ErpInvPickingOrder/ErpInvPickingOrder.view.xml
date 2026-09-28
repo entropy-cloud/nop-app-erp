@@ -34,11 +34,23 @@
 =========>reference[业务关联]======
  relatedBillType[源单类型] relatedBillCode[源单编号]
 =========>status[状态信息]======
+ @docStatus[单据状态]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form  id="add">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ businessDate[业务日期] warehouseId[仓库]
+ pickerId[拣货人]
+=========>reference[业务关联]======
+ relatedBillType[源单类型] relatedBillCode[源单编号]
+=========>status[状态信息]======
  docStatus[单据状态]
  remark[备注](2)
             </layout>
         </form>
-        <form id="add"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] warehouseId[仓库]

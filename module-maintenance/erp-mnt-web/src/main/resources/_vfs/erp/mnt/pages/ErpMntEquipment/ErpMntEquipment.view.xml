@@ -137,13 +137,15 @@
  code[设备编码] name[设备名称]
  status[状态] categoryId[分类]
  orgId[所属组织]
-            </layout>
+            
+</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="name" filterOp="like"/>
                 <cell id="status" filterOp="eq"/>
                 <cell id="categoryId" filterOp="eq"/>
                 <cell id="orgId" filterOp="eq"/>
+            
             </cells>
         </form>
     </forms>
@@ -151,15 +153,19 @@
     <pages>
         <crud name="main">
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-button" actionType="drawer">
+                <drawer page="view" size="xl"/>
+            </action>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="xl"/>
+            </action>
                 <action id="row-view-equipment-dashboard-button" label="完整仪表板" i18n-en:label="Full Dashboard" level="info" icon="fa fa-tachometer"
                         actionType="drawer">
-                    <dialog page="equipmentDashboard" size="xl">
+                    <drawer page="equipmentDashboard" size="xl">
                         <data>
                             <id>${'$'}{id}</id>
                         </data>
-                    </dialog>
+                    </drawer>
                 </action>
                 <action actionType="link" id="row-create-request-button" label="创建维修请求" i18n-en:label="Create Request" level="primary" icon="fa fa-plus"
                         tooltip="跳转到维修请求列表（带设备上下文筛选），新建请求时自动预填设备"

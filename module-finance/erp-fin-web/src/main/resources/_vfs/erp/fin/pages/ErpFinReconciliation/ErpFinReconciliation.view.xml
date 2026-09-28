@@ -59,6 +59,20 @@
  acctSchemaId[账套] direction[应收应付]
  partnerId[往来单位] businessDate[业务日期]
  currencyId[币种] exchangeRate[汇率]
+ @docStatus[状态]
+==========>amount[金额信息]======
+ totalAmountSource[核销总额(源币)] totalAmountFunctional[核销总额(本位币)]
+ fxGainLoss[汇兑损益]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form  id="add">
+            <layout>
+==========>baseInfo[基本信息]======
+ code[单号] orgId[组织]
+ acctSchemaId[账套] direction[应收应付]
+ partnerId[往来单位] businessDate[业务日期]
+ currencyId[币种] exchangeRate[汇率]
  docStatus[状态]
 ==========>amount[金额信息]======
  totalAmountSource[核销总额(源币)] totalAmountFunctional[核销总额(本位币)]
@@ -66,7 +80,6 @@
  remark[备注](2)
             </layout>
         </form>
-        <form id="add"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] docStatus[状态]
@@ -75,6 +88,8 @@
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="businessDate" filterOp="date-between"/>
+            
+                <cell id="docStatus" filterOp="eq"/>
             </cells>
         </form>
         <!-- 冲销预览弹窗（F7 §3，plan 2026-08-30-2238-1 flux 原生化重写）：

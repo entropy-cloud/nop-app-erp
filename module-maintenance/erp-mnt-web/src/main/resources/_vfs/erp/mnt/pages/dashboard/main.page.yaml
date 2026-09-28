@@ -7,6 +7,7 @@ title: "维护概览"
 i18nEn: "Maintenance Overview"
 body:
   - type: form
+    submitOnChange: true
     name: filterForm
     valuesPath: filterForm
     title: ""
@@ -162,9 +163,12 @@ body:
       selection: status count
 
   - type: chart
+    empty: "暂无数据"
     chartType: pie
     title: "设备状态分布"
-    i18nEn: "Equipment Status Distribution"
+    i18nEn:
+      title: "Equipment Status Distribution"
+      empty: "No data"
     source: ${statusData ?? []}
     height: 300
     series:
@@ -181,9 +185,12 @@ body:
       selection: equipmentCode equipmentName status
 
   - type: crud
+    empty: "暂无数据"
     className: m-3
     title: "设备停机预警（状态=DOWN 且停机未恢复）"
-    i18nEn: "Equipment Downtime Alert (status = DOWN and not yet recovered)"
+    i18nEn:
+      title: "Equipment Downtime Alert (status = DOWN and not yet recovered)"
+      empty: "No data"
     source: ${downtimeData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -207,9 +214,12 @@ body:
       selection: scheduleCode scheduleName equipmentId nextDueDate overdueDays
 
   - type: crud
+    empty: "暂无数据"
     className: m-3
     title: "维护逾期预警（阈值经 erp-dash.mnt-maintenance-overdue-days 配置）"
-    i18nEn: "Maintenance Overdue Alert (threshold configured via erp-dash.mnt-maintenance-overdue-days)"
+    i18nEn:
+      title: "Maintenance Overdue Alert (threshold configured via erp-dash.mnt-maintenance-overdue-days)"
+      empty: "No data"
     source: ${overdueData ?? []}
     syncLocation: false
     headerToolbar: []

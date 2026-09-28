@@ -6,6 +6,7 @@ title: "财务概览"
 i18nEn: "Finance Overview"
 body:
   - type: form
+    submitOnChange: true
     name: filterForm
     valuesPath: filterForm
     title: ""
@@ -152,6 +153,7 @@ body:
         months: 12
       selection: month revenue expense netProfit
   - type: chart
+    empty: "暂无数据"
     chartType: line
     title: "收支与利润趋势（近12月）"
     source: ${trendData ?? []}
@@ -165,7 +167,9 @@ body:
     series:
       - dataRegionKey: revenue
         name: "收入"
-        i18nEn: "Revenue"
+        i18nEn:
+          title: "Revenue"
+          empty: "No data"
       - dataRegionKey: expense
         name: "支出"
         i18nEn: "Expense"
@@ -181,9 +185,12 @@ body:
       method: post
       selection: alertType bankBalance threshold shortfall
   - type: crud
+    empty: "暂无数据"
     className: m-3 erp-alert-card
     title: "现金流预警"
-    i18nEn: "Cash Flow Alert"
+    i18nEn:
+      title: "Cash Flow Alert"
+      empty: "No data"
     source: ${cashFlowData ?? []}
     syncLocation: false
     headerToolbar: []

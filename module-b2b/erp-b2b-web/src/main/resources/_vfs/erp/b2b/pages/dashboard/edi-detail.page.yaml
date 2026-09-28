@@ -110,10 +110,13 @@ body:
     i18nEn: '<hr/><h4 class="m-t-md">Payload Detail (requestPayload / responsePayload)</h4><div class="text-muted">Plain text display.</div>'
 
   - type: crud
+    empty: "暂无数据"
     className: m-3
     visibleOn: "${filterForm?.showPayload}"
     title: "报文列表"
-    i18nEn: "Payload List"
+    i18nEn:
+      title: "Payload List"
+      empty: "No data"
     source: ${ediLogsData?.items ?? []}
     syncLocation: false
     headerToolbar: []

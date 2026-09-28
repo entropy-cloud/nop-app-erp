@@ -79,6 +79,8 @@
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>

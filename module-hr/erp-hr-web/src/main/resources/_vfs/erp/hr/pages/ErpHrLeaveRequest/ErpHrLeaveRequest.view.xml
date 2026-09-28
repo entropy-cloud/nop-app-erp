@@ -99,10 +99,13 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] businessDate[业务日期]
-            </layout>
+            
+ status</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="businessDate" filterOp="date-between"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -111,7 +114,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-submit-button" label="提交" i18n-en:label="Submit" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpHrLeaveRequest__submit?id=$id"/>
                     <confirmText>确认提交此休假申请？</confirmText>

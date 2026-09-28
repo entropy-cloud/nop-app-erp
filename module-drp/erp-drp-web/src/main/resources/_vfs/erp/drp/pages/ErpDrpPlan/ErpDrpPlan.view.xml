@@ -111,10 +111,13 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[编号] planName[计划名称]
-            </layout>
+            
+ status</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="planName" filterOp="like"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -122,13 +125,15 @@
     <pages>
         <crud name="main">
             <listActions x:override="bounded-merge">
-                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
-                    <dialog page="add"/>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left" actionType="drawer">
+                    <drawer page="add" size="lg"/>
                 </action>
             </listActions>
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-run-drp-button" label="运行DRP" i18n-en:label="Run DRP" level="primary" icon="fa fa-cogs">
                     <api url="@mutation:ErpDrpPlan__runDrp?planId=$id"/>
                     <confirmText>确认运行此 DRP 计算？</confirmText>

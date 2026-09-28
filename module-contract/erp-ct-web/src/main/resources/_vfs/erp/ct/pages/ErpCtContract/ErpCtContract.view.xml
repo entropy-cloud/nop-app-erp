@@ -139,10 +139,13 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[合同编号] contractName[合同名称]
-            </layout>
+            
+ status</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="contractName" filterOp="like"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -150,8 +153,12 @@
     <pages>
         <crud name="main">
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-button" actionType="drawer">
+                <drawer page="view" size="xl"/>
+            </action>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="xl"/>
+            </action>
                 <action id="row-activate-button" label="生效" i18n-en:label="Active" level="success" icon="fa fa-check-circle">
                     <api url="@mutation:ErpCtContract__activate?contractId=$id"/>
                     <confirmText>确认生效此合同？</confirmText>

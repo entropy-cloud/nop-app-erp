@@ -62,6 +62,8 @@
             </layout>
             <cells>
                 <cell id="assetId" filterOp="like"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>

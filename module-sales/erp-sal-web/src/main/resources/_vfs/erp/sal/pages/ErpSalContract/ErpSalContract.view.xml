@@ -40,11 +40,26 @@
  totalAmount[合计金额(不含税)] totalTaxAmount[合计税额]
  totalAmountWithTax[合计金额(含税)]
 =========>status[状态信息]======
+ @docStatus[单据状态] @approveStatus[审核状态]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form  id="add">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[合同编号] contractName[合同名称]
+ orgId[业务组织] customerId[客户]
+ signedBy[签约人] businessDate[签约日期]
+ validFrom[生效日] validTo[失效日]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ totalAmount[合计金额(不含税)] totalTaxAmount[合计税额]
+ totalAmountWithTax[合计金额(含税)]
+=========>status[状态信息]======
  docStatus[单据状态] approveStatus[审核状态]
  remark[备注](2)
             </layout>
         </form>
-        <form id="add"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[合同编号] customerId[客户]

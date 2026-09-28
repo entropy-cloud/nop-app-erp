@@ -63,6 +63,8 @@
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="name" filterOp="like"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -71,7 +73,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <!-- F7 §3 删除引用阻断（blocker 范式，对齐 ErpMdMaterial）：
                      有引用时弹 dialog 阻断 + "知道了"，无引用时静默放行走原 __delete。 -->
                 <action id="row-delete-button" level="danger" label="删除" i18n-en:label="Delete">

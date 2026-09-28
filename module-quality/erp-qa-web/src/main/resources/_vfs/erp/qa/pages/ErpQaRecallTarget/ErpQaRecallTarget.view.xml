@@ -43,6 +43,23 @@
  shippedQty[发货数量] notifiedAt[通知时间]
  notifiedBy[通知人]
 =========>status[状态信息]======
+ @returnStatus[退货状态] generatedReturnId[退货单]
+=========>reference[业务关联]======
+ recallId[召回事件]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form  id="add" x:prototype="edit">
+            <layout>
+=========>baseInfo[基本信息]======
+ partnerId[客户] batchNo[批次号]
+ serialNo[序列号] salesDeliveryId[发货单]
+ shippedQty[发货数量] notifiedAt[通知时间]
+ notifiedBy[通知人]
+=========>status[状态信息]======
  returnStatus[退货状态] generatedReturnId[退货单]
 =========>reference[业务关联]======
  recallId[召回事件]
@@ -52,7 +69,6 @@
  updatedBy[修改人] updateTime[修改时间]
             </layout>
         </form>
-        <form id="add" x:prototype="edit"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  partnerId[客户] returnStatus[退货状态]

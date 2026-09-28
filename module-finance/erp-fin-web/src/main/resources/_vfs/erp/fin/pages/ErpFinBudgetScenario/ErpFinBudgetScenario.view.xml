@@ -92,18 +92,40 @@
  budgetGroupCode[预算组编码] closedAt[结转时间]
  carryForwardRule[结转规则] rollForwardStrategy[滚动复制策略]
 ========>status[状态信息]======
+ @docStatus[方案状态] @approveStatus[审核状态]
+ voucherId[关联预算凭证ID]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form  id="add">
+            <layout>
+========>baseInfo[基本信息]======
+ code[方案编码] name[方案名称]
+ orgId[核算组织] acctSchemaId[账套]
+ fiscalYear[预算年度] scenarioType[方案类型]
+ parentScenarioId[源方案] validFrom[生效日期]
+ validTo[失效日期]
+========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[预算金额(源币种)] amountFunctional[预算金额(本位币)]
+========>control[控制信息]======
+ controlLevel[控制级别]
+========>multiYear[多年度/结转信息(A2)]======
+ budgetGroupCode[预算组编码] closedAt[结转时间]
+ carryForwardRule[结转规则] rollForwardStrategy[滚动复制策略]
+========>status[状态信息]======
  docStatus[方案状态] approveStatus[审核状态]
  voucherId[关联预算凭证ID]
  remark[备注](2)
             </layout>
         </form>
-        <form id="add"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[方案编码] fiscalYear[预算年度]
  scenarioType[方案类型] controlLevel[控制级别]
  budgetGroupCode[预算组编码] docStatus[方案状态]
-            </layout>
+            
+ approveStatus</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="fiscalYear" filterOp="eq"/>
@@ -111,6 +133,8 @@
                 <cell id="controlLevel" filterOp="eq"/>
                 <cell id="budgetGroupCode" filterOp="eq"/>
                 <cell id="docStatus" filterOp="eq"/>
+            
+                <cell id="approveStatus" filterOp="eq"/>
             </cells>
         </form>
 

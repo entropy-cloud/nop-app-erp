@@ -144,7 +144,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-finalize-button" label="定稿" i18n-en:label="Finalize" level="primary" icon="fa fa-check">
                     <api url="@mutation:ErpCtContractVersion__finalizeVersion?versionId=$id"/>
                     <confirmText>确认定稿此合同版本？</confirmText>

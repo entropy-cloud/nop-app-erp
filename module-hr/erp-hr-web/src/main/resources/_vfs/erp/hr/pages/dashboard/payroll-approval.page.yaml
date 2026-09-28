@@ -159,9 +159,12 @@ body:
             text: "${(salaryData?.items ?? []).reduce((s, r) => s + (Number(r.netSalary) || 0), 0) ?? 0}"
 
   - type: crud
+    empty: "暂无数据"
     className: m-3
     title: "薪酬明细（按年月过滤）"
-    i18nEn: "Payroll Detail (filtered by year/month)"
+    i18nEn:
+      title: "Payroll Detail (filtered by year/month)"
+      empty: "No data"
     source: ${salaryData?.items ?? []}
     headerToolbar: []
     footerToolbar: ["statistics"]

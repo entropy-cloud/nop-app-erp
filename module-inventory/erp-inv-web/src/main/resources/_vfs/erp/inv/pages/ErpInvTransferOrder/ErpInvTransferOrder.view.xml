@@ -35,8 +35,8 @@
             <layout x:override="replace">
 ==========>baseInfo[基本信息]======
  code[单号] orgId[业务组织]
- businessDate[业务日期] docStatus[单据状态]
- approveStatus[审核状态]
+ businessDate[业务日期] @docStatus[单据状态]
+ @approveStatus[审核状态]
 ==========>transfer[调拨信息]======
  fromWarehouseId[调出仓库] toWarehouseId[调入仓库]
  inTransitWarehouseId[在途仓库]
@@ -50,7 +50,20 @@
                 </cell>
             </cells>
         </form>
-        <form id="add"/>
+        <form  id="add">
+            <layout>
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ businessDate[业务日期] docStatus[单据状态]
+ approveStatus[审核状态]
+==========>transfer[调拨信息]======
+ fromWarehouseId[调出仓库] toWarehouseId[调入仓库]
+ inTransitWarehouseId[在途仓库]
+==========>lines[明细行]======
+ lines[明细行](2)
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] docStatus[单据状态]
@@ -67,7 +80,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-confirm-button" label="确认" i18n-en:label="Confirm" level="primary" icon="fa fa-check">
                     <api url="@mutation:ErpInvTransferOrder__confirm?transferOrderId=$id"/>
                     <confirmText>确认审核此调拨单？</confirmText>

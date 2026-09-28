@@ -90,11 +90,27 @@
  amountWithoutTax[金额(不含税)] taxAmount[税额]
  amountWithTax[金额(含税)] settleAdvanceId[抵扣借款]
 =========>status[状态信息]======
+ @docStatus[单据状态] @approveStatus[审核状态]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form  id="add">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ claimantId[报销人] departmentId[部门]
+ businessDate[业务日期] paymentMode[付款方式]
+ reason[报销事由]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[金额(源币种)] amountFunctional[金额(本位币)]
+ amountWithoutTax[金额(不含税)] taxAmount[税额]
+ amountWithTax[金额(含税)] settleAdvanceId[抵扣借款]
+=========>status[状态信息]======
  docStatus[单据状态] approveStatus[审核状态]
  remark[备注](2)
             </layout>
         </form>
-        <form id="add"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] claimantId[报销人]
@@ -115,7 +131,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-submit-button" label="提交" i18n-en:label="Submit" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpFinExpenseClaim__submitForApproval?id=$id"/>
                     <confirmText>确认提交此费用报销单审批？</confirmText>

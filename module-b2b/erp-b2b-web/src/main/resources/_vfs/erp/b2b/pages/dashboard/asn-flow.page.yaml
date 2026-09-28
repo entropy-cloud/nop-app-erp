@@ -58,9 +58,12 @@ body:
       selection: id code status partnerId sourceEdiDocId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode businessDate
 
   - type: crud
+    empty: "暂无数据"
     className: m-3
     title: "ASN 列表"
-    i18nEn: "ASN List"
+    i18nEn:
+      title: "ASN List"
+      empty: "No data"
     source: ${asnData?.items ?? []}
     headerToolbar: []
     footerToolbar: ["statistics"]
@@ -152,8 +155,11 @@ body:
                       i18nEn: "Inbound"
                       status: "${asnDetail?.status === 'RECEIVED_TO_STOCK' ? 'finish' : 'wait'}"
                 - type: crud
+                  empty: "暂无数据"
                   title: "明细行匹配状态（quantity vs shippedQty）"
-                  i18nEn: "Line Match State (quantity vs shippedQty)"
+                  i18nEn:
+                    title: "Line Match State (quantity vs shippedQty)"
+                    empty: "No data"
                   source: ${asnLinesData?.items ?? []}
                   syncLocation: false
                   headerToolbar: []

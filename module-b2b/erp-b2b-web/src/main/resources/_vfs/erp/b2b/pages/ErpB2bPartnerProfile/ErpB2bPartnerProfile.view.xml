@@ -126,7 +126,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-activate-button" label="上线" i18n-en:label="Go-Live" level="success" icon="fa fa-power-off">
                     <api url="@mutation:ErpB2bPartnerProfile__activate?profileId=$id"/>
                     <confirmText>确认将此合作伙伴上线到生产环境？</confirmText>

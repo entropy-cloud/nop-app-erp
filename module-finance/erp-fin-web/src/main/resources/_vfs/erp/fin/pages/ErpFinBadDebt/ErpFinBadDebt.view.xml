@@ -53,12 +53,27 @@
  amount[坏账金额] currencyId[币种]
  exchangeRate[汇率]
 =========>status[状态信息]======
+ @approvalStatus[审批状态] periodId[会计期间]
+ voucherId[凭证ID]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form  id="add">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ acctSchemaId[账套] docType[单据类型]
+ partnerId[往来单位] sourceArApItemId[应收应付明细ID]
+ businessDate[业务日期] reason[坏账原因]
+=========>amount[金额信息]======
+ amount[坏账金额] currencyId[币种]
+ exchangeRate[汇率]
+=========>status[状态信息]======
  approvalStatus[审批状态] periodId[会计期间]
  voucherId[凭证ID]
  remark[备注](2)
             </layout>
         </form>
-        <form id="add"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] partnerId[往来单位]

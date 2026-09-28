@@ -134,7 +134,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-view-question-button" label="问卷题目" i18n-en:label="Survey Questions" level="info" icon="fa fa-question-circle"
                         actionType="drawer">
                     <drawer page="/erp/hr/pages/ErpHrSurveyQuestion/ref-survey.page.yaml" size="xl">

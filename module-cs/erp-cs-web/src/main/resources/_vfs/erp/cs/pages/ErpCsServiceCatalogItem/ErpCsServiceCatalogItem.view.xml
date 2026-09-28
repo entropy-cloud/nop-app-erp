@@ -64,7 +64,7 @@
             </table>
             <rowActions>
                 <action id="row-add-child-button" level="primary" label="新增子节点" i18n-en:label="Add Child Node">
-                    <dialog page="add-child"/>
+                    <dialog page="add-child" size="md"/>
                 </action>
             </rowActions>
         </crud>

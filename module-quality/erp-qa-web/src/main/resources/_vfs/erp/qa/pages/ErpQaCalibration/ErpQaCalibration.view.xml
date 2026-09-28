@@ -81,6 +81,26 @@
 =========>schedule[计划信息]======
  nextCalibrationDate[下次校准日期] calibratedBy[校准人]
 =========>status[状态信息]======
+ @docStatus[单据状态] @approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form  id="add" x:prototype="edit">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[校准编码] orgId[业务组织]
+ instrumentName[仪器名称] instrumentCode[仪器编码]
+ businessDate[业务日期] standardRef[标准参考]
+=========>measure[测量信息]======
+ measuredValue[测量值] targetValue[目标值]
+ tolerance[容差] result[结果]
+=========>schedule[计划信息]======
+ nextCalibrationDate[下次校准日期] calibratedBy[校准人]
+=========>status[状态信息]======
  docStatus[单据状态] approveStatus[审核状态]
  approvedBy[审核人] approvedAt[审核时间]
 ========^audit[审计信息]=========
@@ -89,7 +109,6 @@
  updatedBy[修改人] updateTime[修改时间]
             </layout>
         </form>
-        <form id="add" x:prototype="edit"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[校准编码] docStatus[单据状态]

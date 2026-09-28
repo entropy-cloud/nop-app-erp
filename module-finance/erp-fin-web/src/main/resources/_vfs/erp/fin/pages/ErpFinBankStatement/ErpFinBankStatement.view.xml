@@ -61,11 +61,23 @@
  beginningBalance[期初余额] endingBalance[期末余额]
  totalDebit[借方合计] totalCredit[贷方合计]
 =========>status[状态信息]======
+ @docStatus[单据状态] importTime[导入时间]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form  id="add">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ fundAccountId[资金账户] statementDate[对账单日期]
+=========>amount[金额信息]======
+ beginningBalance[期初余额] endingBalance[期末余额]
+ totalDebit[借方合计] totalCredit[贷方合计]
+=========>status[状态信息]======
  docStatus[单据状态] importTime[导入时间]
  remark[备注](2)
             </layout>
         </form>
-        <form id="add"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] fundAccountId[资金账户]

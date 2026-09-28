@@ -6,6 +6,7 @@ title: "资产概览"
 i18nEn: "Asset Overview"
 body:
   - type: form
+    submitOnChange: true
     name: filterForm
     valuesPath: filterForm
     title: ""
@@ -132,9 +133,12 @@ body:
       selection: categoryId categoryName netBookValue
 
   - type: chart
+    empty: "暂无数据"
     chartType: pie
     title: "资产类别分布（按净值）"
-    i18nEn: "Asset Category Distribution (by Net Value)"
+    i18nEn:
+      title: "Asset Category Distribution (by Net Value)"
+      empty: "No data"
     source: ${categoryData ?? []}
     height: 300
     series:
@@ -153,9 +157,12 @@ body:
         months: 12
       selection: period depreciationAmount
   - type: chart
+    empty: "暂无数据"
     chartType: line
     title: "折旧趋势（近12月）"
-    i18nEn: "Depreciation Trend (last 12 months)"
+    i18nEn:
+      title: "Depreciation Trend (last 12 months)"
+      empty: "No data"
     source: ${trendData ?? []}
     xAxis: { dataKey: period }
     yAxis:
@@ -176,9 +183,12 @@ body:
       selection: assetCode assetName period originalValue
 
   - type: crud
+    empty: "暂无数据"
     className: m-3
     title: "折旧未计提预警（在用资产本期无 EXECUTED 折旧计划）"
-    i18nEn: "Missing Depreciation Alert (in-use assets with no EXECUTED depreciation plan this period)"
+    i18nEn:
+      title: "Missing Depreciation Alert (in-use assets with no EXECUTED depreciation plan this period)"
+      empty: "No data"
     source: ${depreciationMissingData ?? []}
     syncLocation: false
     headerToolbar: []

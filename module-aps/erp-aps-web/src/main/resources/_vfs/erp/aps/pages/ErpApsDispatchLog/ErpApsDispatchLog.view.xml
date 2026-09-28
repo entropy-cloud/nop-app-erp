@@ -79,8 +79,8 @@
         <crud name="main">
             <listActions x:override="bounded-merge"/>
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button" level="primary" label="@i18n:common.view">
-                    <dialog page="view"/>
+                <action id="row-view-button" level="primary" label="@i18n:common.view" actionType="drawer">
+                    <drawer page="view" size="lg"/>
                 </action>
             </rowActions>
         </crud>

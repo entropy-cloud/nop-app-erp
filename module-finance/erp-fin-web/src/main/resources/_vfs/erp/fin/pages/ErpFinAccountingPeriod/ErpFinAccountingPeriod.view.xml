@@ -75,7 +75,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-close-period-button" label="结账" i18n-en:label="Close Account" level="primary" icon="fa fa-lock">
                     <api url="@mutation:ErpFinAccountingPeriod__closePeriod?periodId=$id"/>
                     <confirmText>确认结账此会计期间？结账后该期间凭证不可修改。</confirmText>

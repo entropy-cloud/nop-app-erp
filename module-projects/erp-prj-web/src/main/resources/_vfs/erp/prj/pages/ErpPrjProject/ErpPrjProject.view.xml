@@ -113,6 +113,8 @@
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="name" filterOp="like"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
         <form id="pick-query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
@@ -132,8 +134,12 @@
     <pages>
         <crud name="main">
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-button" actionType="drawer">
+                <drawer page="view" size="xl"/>
+            </action>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="xl"/>
+            </action>
                 <action id="row-start-button" label="启动" i18n-en:label="Launch" level="primary" icon="fa fa-play">
                     <api url="@mutation:ErpPrjProject__startProject?projectId=$id"/>
                     <confirmText>确认启动此项目？</confirmText>

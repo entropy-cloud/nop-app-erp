@@ -85,7 +85,7 @@
  currencyId[币种] exchangeRate[汇率]
  totalCostAmount[到岸成本合计]
 =========>status[状态信息]======
- docStatus[单据状态] approveStatus[审核状态]
+ @docStatus[单据状态] @approveStatus[审核状态]
 =========>lines[明细行]======
  lines[明细行](2)
  remark[备注](2)
@@ -134,11 +134,11 @@
     <pages>
         <crud name="main">
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button" level="primary" label="@i18n:common.view">
-                    <dialog page="view"/>
+                <action id="row-view-button" level="primary" label="@i18n:common.view" actionType="drawer">
+                    <drawer page="view" size="lg"/>
                 </action>
-                <action id="row-update-button" level="primary" label="@i18n:common.edit">
-                    <dialog page="update"/>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" actionType="drawer">
+                    <drawer page="update" size="lg"/>
                 </action>
                 <action id="row-approve-button" label="审核" i18n-en:label="Audit" level="success"
                         icon="fa fa-check">

@@ -118,7 +118,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <action id="row-complete-button" label="完成" i18n-en:label="Complete" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpCrmEvent__complete?eventId=$id"/>
                     <confirmText>确认完成此活动？</confirmText>

@@ -7,6 +7,7 @@ title: "库存概览"
 i18nEn: "Inventory Overview"
 body:
   - type: form
+    submitOnChange: true
     name: filterForm
     valuesPath: filterForm
     title: ""
@@ -138,6 +139,7 @@ body:
         months: 12
       selection: month netValueChange
   - type: chart
+    empty: "暂无数据"
     chartType: bar
     title: "库存价值月度变动（近12月）"
     source: ${trendData ?? []}
@@ -151,7 +153,9 @@ body:
     series:
       - dataRegionKey: netValueChange
         name: "净变动成本"
-        i18nEn: "Net Cost Change"
+        i18nEn:
+          title: "Net Cost Change"
+          empty: "No data"
 
   - type: data-source
     name: warehouseData
@@ -161,9 +165,12 @@ body:
       method: post
       selection: warehouseId warehouseName totalValue
   - type: chart
+    empty: "暂无数据"
     chartType: pie
     title: "仓库库存价值分布"
-    i18nEn: "Inventory Value Distribution by Warehouse"
+    i18nEn:
+      title: "Inventory Value Distribution by Warehouse"
+      empty: "No data"
     source: ${warehouseData ?? []}
     height: 300
 
@@ -175,10 +182,13 @@ body:
       method: post
       selection: materialName warehouseName availableQuantity safetyStock
   - type: crud
+    empty: "暂无数据"
     name: shortageCrud
     className: m-3
     title: "缺料预警（availableQty < material.safetyStock）"
-    i18nEn: "Material Shortage Alert (availableQty < material.safetyStock)"
+    i18nEn:
+      title: "Material Shortage Alert (availableQty < material.safetyStock)"
+      empty: "No data"
     source: ${shortageData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -205,10 +215,13 @@ body:
       method: post
       selection: materialName warehouseName totalQuantity lastOutDate
   - type: crud
+    empty: "暂无数据"
     name: slowMovingCrud
     className: m-3
     title: "滞销库存预警（阈值经 erp-dash.inv-slow-moving-days 配置）"
-    i18nEn: "Slow-Moving Inventory Alert (threshold configured via erp-dash.inv-slow-moving-days)"
+    i18nEn:
+      title: "Slow-Moving Inventory Alert (threshold configured via erp-dash.inv-slow-moving-days)"
+      empty: "No data"
     source: ${slowMovingData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -235,10 +248,13 @@ body:
       method: post
       selection: batchNo materialName warehouseName expiryDate remainingDays availableQuantity
   - type: crud
+    empty: "暂无数据"
     name: batchExpiryCrud
     className: m-3
     title: "批次效期预警（阈值经 erp-dash.inv-batch-expiry-days 配置）"
-    i18nEn: "Batch Expiry Alert (threshold configured via erp-dash.inv-batch-expiry-days)"
+    i18nEn:
+      title: "Batch Expiry Alert (threshold configured via erp-dash.inv-batch-expiry-days)"
+      empty: "No data"
     source: ${batchExpiryData ?? []}
     syncLocation: false
     headerToolbar: []

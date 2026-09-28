@@ -75,7 +75,7 @@
  code[归集单号] projectId[项目]
  orgId[业务组织] businessDate[业务日期]
  currencyId[币种] totalAmount[合计金额]
- docStatus[单据状态] approveStatus[审核状态]
+ @docStatus[单据状态] @approveStatus[审核状态]
 =========>lines[明细行]======
  lines[明细行](2)
  remark[备注](2)
@@ -86,8 +86,30 @@
                 </cell>
             </cells>
         </form>
-        <form id="add" x:prototype="edit" editMode="add"/>
-    </forms>
+        <form  id="add" x:prototype="edit" editMode="add">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[归集单号] projectId[项目]
+ orgId[业务组织] businessDate[业务日期]
+ currencyId[币种] totalAmount[合计金额]
+ docStatus[单据状态] approveStatus[审核状态]
+=========>lines[明细行]======
+ lines[明细行](2)
+ remark[备注](2)
+            </layout>
+        </form>
+            <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
+            <layout>
+ approveStatus
+ docStatus
+            </layout>
+            <cells>
+
+                <cell id="approveStatus" filterOp="eq"/>
+                <cell id="docStatus" filterOp="eq"/>
+            </cells>
+        </form>
+</forms>
 
     <pages>
         <crud name="main"/>

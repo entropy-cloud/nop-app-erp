@@ -79,6 +79,33 @@
  code[编码] orgId[业务组织]
  leadType[线索/商机类型] partnerId[客户]
  leadStatusId[线索状态] stageId[漏斗阶段]
+ @docStatus[单据状态]
+==========>contact[联系方式]======
+ contactName[联系人姓名] contactPhone[联系电话]
+ contactEmail[联系邮箱] companyName[公司名称]
+ jobTitle[职位] department[部门]
+==========>revenue[收入预测]======
+ expectedRevenue[预期收入] probability[成交概率]
+ bestCaseAmount[乐观预期] worstCaseAmount[悲观预期]
+ recurringRevenue[周期性收入] recurringPlan[周期性计划]
+ expectedCloseDate[预期签单日]
+==========^tracking[来源跟踪]=========
+ sourceId[线索来源] campaignId[营销活动]
+ utmMedium[UTM Medium] utmSource[UTM Source]
+ ownerId[负责人] teamId[销售团队]
+ territoryId[销售区域] lastContactDate[最后联系日期]
+ nextActivityDate[下次活动日期]
+==========^lostInfo[丢单信息]=========
+ lostReasonId[丢单原因] lostReasonDesc[丢单描述]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form  id="add">
+            <layout>
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ leadType[线索/商机类型] partnerId[客户]
+ leadStatusId[线索状态] stageId[漏斗阶段]
  docStatus[单据状态]
 ==========>contact[联系方式]======
  contactName[联系人姓名] contactPhone[联系电话]
@@ -100,7 +127,6 @@
  remark[备注](2)
             </layout>
         </form>
-        <form id="add"/>
         <form id="asideFilter" editMode="query" submitOnChange="true">
             <layout>
  leadType[线索/商机类型] sourceId[线索来源]
@@ -119,10 +145,13 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[编码] leadStatusId[线索状态]
-            </layout>
+            
+ docStatus</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="leadStatusId" filterOp="eq"/>
+            
+                <cell id="docStatus" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -130,8 +159,12 @@
     <pages>
         <crud name="main">
             <rowActions x:override="bounded-merge">
-                <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-button" actionType="drawer">
+                <drawer page="view" size="xl"/>
+            </action>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="xl"/>
+            </action>
                 <action id="row-qualify-button" label="资质认定" i18n-en:label="Qualification" level="primary" icon="fa fa-thumbs-up">
                     <api url="@mutation:ErpCrmLead__qualify?leadId=$id"/>
                     <confirmText>确认对此线索进行资质认定？</confirmText>

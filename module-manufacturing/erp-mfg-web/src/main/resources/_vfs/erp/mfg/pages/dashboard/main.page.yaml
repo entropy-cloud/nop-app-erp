@@ -7,6 +7,7 @@ title: "制造概览"
 i18nEn: "Manufacturing Overview"
 body:
   - type: form
+    submitOnChange: true
     name: filterForm
     valuesPath: filterForm
     title: ""
@@ -141,9 +142,12 @@ body:
       selection: status count
 
   - type: chart
+    empty: "暂无数据"
     chartType: pie
     title: "工单状态分布"
-    i18nEn: "Work Order Status Distribution"
+    i18nEn:
+      title: "Work Order Status Distribution"
+      empty: "No data"
     source: ${statusData ?? []}
     height: 300
     series:
@@ -164,9 +168,12 @@ body:
       selection: month completedQty
 
   - type: chart
+    empty: "暂无数据"
     chartType: line
     title: "产成品产出趋势（近12月）"
-    i18nEn: "Finished Goods Output Trend (Last 12 Months)"
+    i18nEn:
+      title: "Finished Goods Output Trend (Last 12 Months)"
+      empty: "No data"
     source: ${trendData ?? []}
     xAxis: { dataKey: month }
     yAxis:
@@ -193,9 +200,12 @@ body:
       selection: overallLoadRate series
 
   - type: chart
+    empty: "暂无数据"
     chartType: bar
     title: "CRP 负荷/产能对比图"
-    i18nEn: "CRP Load/Capacity Comparison Chart"
+    i18nEn:
+      title: "CRP Load/Capacity Comparison Chart"
+      empty: "No data"
     source: ${crpLoadData?.series ?? []}
     xAxis: { dataKey: loadDate }
     yAxis:
@@ -221,9 +231,12 @@ body:
       selection: workOrderCode plannedEndDate docStatus overdueDays
 
   - type: crud
+    empty: "暂无数据"
     className: m-3
     title: "工单延期预警（计划完成日 < 今天 且 未完工）"
-    i18nEn: "Delayed Work Order Alert (planned end date < today and not completed)"
+    i18nEn:
+      title: "Delayed Work Order Alert (planned end date < today and not completed)"
+      empty: "No data"
     source: ${delayedWorkOrderData ?? []}
     syncLocation: false
     headerToolbar: []

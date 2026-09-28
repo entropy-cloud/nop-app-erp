@@ -127,10 +127,13 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[编号] operationName[工序名称]
-            </layout>
+            
+ status</layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="operationName" filterOp="like"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -139,7 +142,9 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-update-button" actionType="drawer">
+                <drawer page="update" size="lg"/>
+            </action>
                 <!-- 排程（perf-ux 2026-09-27 P1-4）：原 mutation 硬编码 scheduleId 为 0，为死按钮
                      （排程语义在排程方案页），改 link 跳排程方案列表（ErpPurOrder link 范式）。 -->
                 <action actionType="link" id="row-schedule-button" label="去排程" i18n-en:label="Go to Scheduling"

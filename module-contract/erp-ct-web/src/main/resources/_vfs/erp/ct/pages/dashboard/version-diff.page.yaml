@@ -140,10 +140,13 @@ body:
     i18nEn: '<h4 class="m-t-md">Version Metadata Diff (v${versionA?.versionNo} vs v${versionB?.versionNo})</h4><div class="text-muted">Field-level diff: see the table below. Changed fields are highlighted in yellow.</div>'
 
   - type: crud
+    empty: "暂无数据"
     className: m-3
     visibleOn: "${versionA && versionB}"
     title: "版本元数据对比"
-    i18nEn: "Version Metadata Diff"
+    i18nEn:
+      title: "Version Metadata Diff"
+      empty: "No data"
     source:
       -
         field: "版本号"

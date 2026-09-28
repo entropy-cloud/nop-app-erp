@@ -63,9 +63,12 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  batchNo[批次号]
-            </layout>
+            
+ status</layout>
             <cells>
                 <cell id="batchNo" filterOp="like"/>
+            
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>
