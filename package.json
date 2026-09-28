@@ -8,8 +8,13 @@
     "e2e:dashboards": "E2E_ENGINE=flux playwright test tests/e2e/dashboards/",
     "e2e:reports": "E2E_ENGINE=flux playwright test tests/e2e/reports/",
     "validate:flux": "bash scripts/validate-flux-pages.sh",
+    "validate:flux:fresh": "bash tools/validate-flux-fresh.sh",
     "check:xdsl": "node tools/check-xdsl-invariants.mjs",
     "check:xdsl:self-test": "node tools/check-xdsl-invariants.mjs --self-test",
+    "check:plan-gates": "node tools/check-plan-gates.mjs",
+    "check:plan-gates:self-test": "node tools/check-plan-gates.mjs --self-test",
+    "check:unbounded-queries": "node tools/enum-unbounded-queries.mjs",
+    "check:unbounded-queries:self-test": "node tools/enum-unbounded-queries.mjs --self-test",
     "report": "playwright show-report"
   },
   "devDependencies": {

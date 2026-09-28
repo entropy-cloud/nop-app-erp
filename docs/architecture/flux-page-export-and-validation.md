@@ -292,3 +292,15 @@ npm run validate:flux
 - **五条不变量（零容忍，任一命中 exit 1）**：I1 `<form>` 直接父段必须为 `<forms>`；I2 `<form id="edit|add">` 每文件各 ≤1（空白容忍）；I3 同一 `<form>` 内 `<cell id>` 不重复（跨 form 同名合法）；I4 无 `@[a-zA-Z]+\[\[` 表达式双括号损坏（CDATA/注释豁免）；I5 layout 组头行无标记符后紧跟 `@` 的误标（`=+[=>^]@` 行锚定，`<url>@query:` 类合法文本不误报）。
 - **调用方式（唯一接线位置 = 根 `package.json`，与 `validate:flux` 门禁链同面）**：`npm run check:xdsl`（gate）/ `npm run check:xdsl:self-test`（反假绿自证）。退出码 0=净 / 1=违规 / 2=运行失败。基线形态：零容忍无快照（冻结时 HEAD 全净已实测留痕；`actual ≤ 0` 隐含单向收紧）。
 - **配套义务**：`--self-test` 对五类不变量双向断言（损坏注入必报、合法形态放行）；文件注入重放（工作树内非 ignored 路径投放损坏 fixture → 必报且扫描计数递增 → 移除恢复）。
+
+## 13. 验证链新鲜度包装（GATE-03，`tools/validate-flux-fresh.sh`）
+
+> 来源：perf-ux 收尾 roadmap GATE-03（stale jar 三案防线，lessons/26）；计划 `docs/plans/2026-09-28-1735-1-gate03-validate-flux-fresh.md`。本节登记包装脚本的调用契约；实现细节以脚本头注为准。
+
+§7 的一键验证链（`validate:flux`）消费 `.m2` 构件而非源文件——源文件修复与构件重装是两个必须显式串联的步骤（lessons/26 防御规则 1）。`tools/validate-flux-fresh.sh` 把该纪律机制化，**不修改 validate:flux 任何语义**（其退出码原样捕获透传；§7 的「零新增对照 325 基线」口径仍属 validate:flux 自身门禁）：
+
+- **调用**：`npm run validate:flux:fresh [-- --check-only | 模块目录...]`。全链模式 = 触及模块 `mvn -pl <module> install -DskipTests`（位置参数或 git 脏文件 pom 祖先推导；根 pom/`packaging=pom` 聚合 pom 跳过计数；`module-<domain>/model/` 命中时提示 ORM 保护区全量构建义务）→ `npm run validate:flux` → 新鲜度断言。
+- **断言**：A1 产物出具（报告 `totals.validated>0`、manifest `pageCount>0`）；A2 `manifest.failedPages=0`（导出层健康独立信号，lesson 26 穿帮点）；A3 全树页面族源文件（`.view.xml`/`.page.yaml`/`.flux.yaml`，含未跟踪）逐一不晚于两产物——「改了任何源文件就必须重跑全链」的机械化身；链完成断言（产物 mtime ≥ 链起始，防 mvn 失败经 `set -e` 冒充已知基线族）。
+- **退出码**：0=新鲜且链净；1=策略违规（stale/failedPages>0/validate:flux rc=1 已知基线族）；2=环境或链断裂。rc=1 时输出 `known 325 baseline family` 注记 + `totals.errors` 实时值。
+- **`--check-only` 复验模式**：仅断言既有产物新鲜度。**仅在全链运行后或全量手工构建后有效；严禁在裸 validate:flux 之后当作完成判据**（lesson 26 案②复活路径：先裸跑 validate:flux 刷新报告再 check-only，mtime 全绿而 jar 旧）。
+- **配套义务**：`--self-test` /tmp 沙箱五场景故障注入（新鲜通过/源新于产物/failedPages>0/totals 缺失/产物缺席）。
