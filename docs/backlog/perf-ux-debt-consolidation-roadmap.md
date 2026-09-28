@@ -1,7 +1,8 @@
 # 性能/UX 收尾技术债与门禁 Roadmap（台账合并 / 门禁脚本 / doc-only 清理）
 
 > 最后更新：2026-09-28
-> 来源：性能与 UI/UX 深度优化 mission 收官（分析报告 `docs/analysis/2026-09-27-perf-ux-deep-optimization-analysis.md` + 6 个已完成计划 2026-09-27-0318-1 / 2026-09-27-0325-2 / 2026-09-28-0835-1 / 2026-09-28-0852-2 / 2026-09-28-0906-3 / 2026-09-28-1418-4，提交 f11c3d5ae→f3955fc16）+ 收官增量重扫描结论（无新可优化项，残留全部为触发条件驱动的已登记债）
+>
+> **mission 收官（2026-09-28）**：六工作项全部 done 并独立提交——GATE-01 `8de7d4040`（XDSL 五不变量门禁）/GATE-02 `11092d636`（计划门控勾选状态检查+82 文件基线快照）/GATE-03 `4d3e6de52`（验证链新鲜度包装）/GATE-04 `b2afc2d3f`（A9 无界查询可重放枚举+71 站台账）/DOC-01 `295e33d61`（dashboards.md 漂移校正+D-21 登记行）/DOC-02 `d11f2c9ac`（GROUP BY chartId 措辞归一）。每项均经独立草案审查（1-3 轮）与独立结束审计（1-2 轮，三轮 Blocker 均为审计层捕获执行者自身台账/门控失真——脚本防御价值自证）。状态块归零（todo=0/ready=0/done=6），完成口径达成；§3 登记表（D-01~D-21）永久存续，触发命中经 plan-first 升格。新门禁日常入口：`npm run check:xdsl` / `check:plan-gates --strict` / `validate:flux:fresh` / `check:unbounded-queries`。> 来源：性能与 UI/UX 深度优化 mission 收官（分析报告 `docs/analysis/2026-09-27-perf-ux-deep-optimization-analysis.md` + 6 个已完成计划 2026-09-27-0318-1 / 2026-09-27-0325-2 / 2026-09-28-0835-1 / 2026-09-28-0852-2 / 2026-09-28-0906-3 / 2026-09-28-1418-4，提交 f11c3d5ae→f3955fc16）+ 收官增量重扫描结论（无新可优化项，残留全部为触发条件驱动的已登记债）
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
 > Skill: none（roadmap 起草无匹配技能；GATE-xx 脚本实施时参照 `tools/check-hardcoded-cjk.mjs` 先例）
 > 关联：`docs/backlog/optimization-audit-roadmap.md`（工作项全部 ready 的深度调研框架，**不被本 roadmap 吞并**；本 roadmap 只收编 perf-ux mission 产生/暴露的债与防复发门禁）
@@ -24,9 +25,9 @@ mission 收官时遗留三类收尾资产，本 roadmap 将其转为三个可交
 
 | 状态 | 数量 |
 | --- | --- |
-| todo | 5 |
+| todo | 0 |
 | ready | 0 |
-| done | 1 |
+| done | 6 |
 
 ### M1 门禁脚本批（防复发）
 
@@ -42,7 +43,7 @@ mission 收官时遗留三类收尾资产，本 roadmap 将其转为三个可交
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 | --- | --- | --- | --- | --- | --- |
 | DOC-01 | `docs/design/dashboards.md` 两处事实漂移校正：①:76/:266「orderLine.deliveryDate」实为订单头级 `ErpPurOrder.deliveryDate`（`ErpPurOrderLine` 无此字段）；②:263 purchaseAmount 状态轴补全 `approveStatus=APPROVED AND docStatus≠CANCELLED`（现文仅 docStatus='ACTIVE'，外延等价但文本失准）（计划 `2026-09-28-1755-1` completed：草案审查 2 轮收敛 + 独立结束审计 1 轮通过[orderCount 4 站点显式后继登记 D-21]） | done | `docs/design/dashboards.md` | — | none |
-| DOC-02 | 「GROUP BY chartId」措辞归一至执行形态「单列投影+内存去重」（草案审查 F-3 实核重定靶点：分析报告 §2.4 **无**该失准表述无需改动；失准措辞位于 1418-4 计划文件 :16 机制先例行/:23 Goals F-4 孪生行/:58 Phase 1 Fix F-4 条目/:62——该计划已 completed，属闭包后化妆品级文本归一；lessons/26 引用系 stale jar 主题与此无关不动） | todo | `docs/plans/2026-09-28-1418-4-a9-addendum-unbounded-queries.md` | — | none |
+| DOC-02 | 「GROUP BY chartId」措辞归一至执行形态「单列投影+内存去重」（草案审查 F-3 实核重定靶点：分析报告 §2.4 **无**该失准表述无需改动；失准措辞位于 1418-4 计划文件 :16 机制先例行/:23 Goals F-4 孪生行/:58 Phase 1 Fix F-4 条目/:62——该计划已 completed，属闭包后化妆品级文本归一；lessons/26 引用系 stale jar 主题与此无关不动）（计划 `2026-09-28-1800-1` completed：草案审查 3 轮收敛[B-1/B-2 两 Blocker 均为复审活代码实读拦截] + 独立结束审计 2 轮收敛[台账 Blocker 整改后凭增量复审授权置位]） | done | `docs/plans/2026-09-28-1418-4-a9-addendum-unbounded-queries.md` | — | none |
 
 ## 3. 触发条件驱动的技术债登记表（无状态监控表面，非工作项）
 

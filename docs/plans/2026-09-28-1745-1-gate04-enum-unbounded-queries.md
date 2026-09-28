@@ -120,13 +120,13 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（Phase 1-2 全部退出标准达成）
-- [ ] 相关文档对齐（分析报告 A9 行注记；日志已更新）
-- [ ] 已运行验证（diff 模式 HEAD exit 0 + self-test 含 builder 样本 + 新站点检出 + npm 链路 + checker 零漂移）
-- [ ] **LEDGER 块 git diff 逐条对照**（F-3）：提交前对本计划对 LEDGER 的每条增改与裁决指针逐一核验（台账人工列不可重生成，此为唯一防线）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 范围内行为完成（Phase 1-2 全部退出标准达成）
+- [x] 相关文档对齐（分析报告 §2.2 A9 门禁注记已落盘；日志已更新）
+- [x] 已运行验证（diff 模式 HEAD exit 0 + self-test 含 builder 样本 + 新站点检出 + npm 链路 + checker 零漂移）
+- [x] **LEDGER 块 git diff 逐条对照**（F-3）：20 行增改逐一核验均为 source/shape/pointer 语义列修正、key 列零变化（复审计结构性证明：round-1 keys≡live keys≡round-2 keys 多重集相等 + 20 行目检与 round 1 逐字一致）；指针文件存在性抽核通过
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
 - [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
 - [x] 结束证据存在于文件中
 
