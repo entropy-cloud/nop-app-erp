@@ -13,14 +13,14 @@
 - **F-3 [P3]** `module-maintenance/erp-mnt-service/.../report/ErpMntReportBizModel.java`：`loadVisits`（:291-299，已按 visitDate desc+code desc 排序）与 `loadDowntimeEntries`（:353-359，**无任何 orderBy**——草案审查 B-1 实核更正）全量物化；`countTasksByVisit/countUsagesByVisit`（:301-311/:313-323）以全部 visitId 无分块 `in()` 跟随。护栏：`TestErpMntReportDatasets`/`TestErpMntReportRendering` 在位。
 - **F-4 [P3]** `module-quality/erp-qa-service/.../dashboard/ErpQaDashboardBizModel.java`：`countOutOfControlCharts`（:287-296）载入全部 `isOutOfControl=true` 的 SPC 样本（增长最快表的高基数子集）仅求 distinct chartId。护栏：`TestErpQaDashboard`/`TestErpQaDashboardSpc` 在位（testOutOfControlChartCount :88 断言 distinct 计数）。
 - **B-3 补遗完备性（草案审查实核追加）**：同文件同模式站点一并纳入——`ErpQaDashboardBizModel.countInadequateCapabilityCharts`（:333-342，F-4 精确孪生：capabilityLevel=INADEQUATE 全量物化求 distinct chartId）、`ErpQaDashboardBizModel.findCapaOverdueAlert`（:176-179，status!=COMPLETED 全量物化+内存 dueDate 截止过滤的预警列表型）；`ErpPrjReportBizModel.loadProjects`（:295-302，主数据小表+可选过滤+code 排序）登记豁免（批次 2 ③类）。
-- 机制先例（批次 2 全部落仓）：①维度分组投影聚合（`sumBalanceTotalCost`/ast `loadAssetIdsWithExecutedDepreciationInPeriod`——F-2/F-4 直接同款）；②明细/聚合型 cap（各域 `REPORT_LIST_MAX_ROWS=5000`/`ALERT_MAX_ROWS` 常量范式——F-1/F-3a 同款；F-3b 由先例 ① 投影覆盖），onTimeRate cap 的「截断方向留痕」义务）；③无维度 SUM 非法 SQL 坑（ErpInvDashboardBizModel.java:501-503 注释，维度分组纪律；另见 ErpSalDashboardBizModel.java:266、ErpFinDashboardBizModel.java:375）。
+- 机制先例（批次 2 全部落仓）：①**维度分组投影聚合**（`sumBalanceTotalCost` warehouseId 维度分组 SUM+内存合计 / F-2 的 (projectId,userId) 分组投影）；ast `loadAssetIdsWithExecutedDepreciationInPeriod` 与 F-4 实为 chartId/assetId **单列投影+内存 HashSet 去重**（平台对纯维度投影仍注入主键维度，详见 1418-4 执行期留痕）——F-2 与 F-4 形态不同；②明细/聚合型 cap（各域 `REPORT_LIST_MAX_ROWS=5000`/`ALERT_MAX_ROWS` 常量范式——F-1/F-3a 同款；F-3b 由先例 ① 投影覆盖），onTimeRate cap 的「截断方向留痕」义务）；③无维度 SUM 非法 SQL 坑（ErpInvDashboardBizModel.java:501-503 注释，维度分组纪律；另见 ErpSalDashboardBizModel.java:266、ErpFinDashboardBizModel.java:375）。
 - 重扫描回归面抽验：五批次终态无回归（批次 1-5 全部抽验站点在位；唯一的既有裁决残留 mnt `loadScheduleIdsWithVisit` setLimit(5000) 无排序截断挂 watch-only 备注，见 Deferred）。
 - 剩余差距：非核心域 4 站点随数据量线性恶化（CLOSED 工单/timesheet/SPC 样本均为持续增长表）。
 
 ## Goals
 
 - F-4：`countOutOfControlCharts` 改 chartId 单列投影 + 内存 HashSet 去重（**执行形态**：平台对纯维度投影仍注入主键维度，无 SQL GROUP BY——照 ast 先例「投影减列+内存去重」；null chartId 用 `notNull("chartId")` 过滤，实证原语 ErpCsQualityDashboardBizModel.java:319），distinct 语义逐位等价。
-- F-4 孪生：`countInadequateCapabilityCharts` 同法 `GROUP BY chartId` 投影（B-3 纳入）。
+- F-4 孪生：`countInadequateCapabilityCharts` 同法 chartId 单列投影+内存 HashSet 去重（见 F-4 主条目执行形态；B-3 纳入）。
 - F-2：`loadTimesheets` 聚合改 `(projectId,userId)` 维度分组投影 `SUM(hours)/SUM(costAmount)`，**保持 `ORDER BY projectId,userId`（B-2：行序为报表/API 用户可见契约，不因投影漂移）**；BigDecimal 求和逐位等价；移除内存 Aggregator。
 - F-1：`loadClosedTickets` 加 `orderBy createTime desc` + 命名常量 `CS_DASHBOARD_SCAN_CAP=5000`（截断=仅计最近 5000 张关闭工单，确定性语义，留痕注释；`in("ticketId")` 跟随随之有界）。
 - F-3 拆分（B-1 更正）：`loadVisits` 加 mnt 域 `REPORT_LIST_MAX_ROWS=5000` cap（visitDate desc 在位=确定性截断）；**`loadDowntimeEntries` 改 `(equipmentId,reason)` 分组投影 `SUM(totalMinutes)`+entry 计数**（原无排序，无排序 cap=非确定性聚合截断=本计划自己登记的 watch-only 反模式；投影行数=组合数天然有界、精确等价零损失），跟随 `in()` 随投影有界。
@@ -55,11 +55,11 @@ Skill: none
 - Item Types: `Fix`×3
 - Prereqs: none
 
-- [x] Fix F-4：`GROUP BY chartId` 投影 + `notNull("chartId")` 过滤（原语实证 ErpCsQualityDashboardBizModel.java:319；形态按先例 `loadAssetIdsWithExecutedDepreciationInPeriod`）→ `size()` 即 distinct 计数
+- [x] Fix F-4：chartId 单列投影（减传输列）+ `notNull("chartId")` 过滤 + 内存 HashSet 去重（原语实证 `ErpQaDashboardBizModel.java:304` notNull 过滤——被归一实现自身；形态按 ast 先例 `loadAssetIdsWithExecutedDepreciationInPeriod`）→ 去重后 `size()` 即 distinct 计数
       - Skill: none
 - [x] Fix F-2：`GROUP BY (projectId,userId)` 双维投影 `SUM(hours)/SUM(costAmount)`，替代全量物化+Aggregator（BigDecimal 求和交换律精确）；输出行字段名保持 projectId/userId/hours/costAmount 且 **`ORDER BY projectId,userId` 保持（B-2）**
       - Skill: none
-- [x] Fix F-4 孪生：`countInadequateCapabilityCharts` 同法 `GROUP BY chartId` 投影（B-3 纳入；护栏 TestErpQaDashboardSpc.testInadequateCapabilityCount :70 在位）
+- [x] Fix F-4 孪生：同 F-4——chartId 单列投影+`notNull` 过滤+内存 HashSet 去重（B-3 纳入；护栏 TestErpQaDashboardSpc.testInadequateCapabilityCount :70 在位）
       - Skill: none
 
 Exit Criteria:
