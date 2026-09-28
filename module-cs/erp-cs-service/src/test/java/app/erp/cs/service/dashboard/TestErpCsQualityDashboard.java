@@ -275,4 +275,18 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
         s.setRespondedAt(java.sql.Timestamp.valueOf(java.time.LocalDateTime.of(2026, 7, 1, 12, 0)));
         dao.saveEntity(s);
     }
+    @Test
+    public void testClosedTicketQueryRecencyOrderAndCap() {
+        // A9 补遗 B-1 护栏：截断方向白盒断言——createTime DESC（保留最近 N 张）+ cap 生效。
+        // cap=5000 下种子≪上限，截断行为不可黑盒观测，故对 QueryBean 构造做白盒断言。
+        ErpCsQualityDashboardBizModel biz = new ErpCsQualityDashboardBizModel();
+        io.nop.api.core.beans.query.QueryBean q = biz.buildClosedTicketQuery(null, null);
+        assertNotNull(q.getOrderBy(), "应有排序字段");
+        assertEquals(1, q.getOrderBy().size());
+        io.nop.api.core.beans.query.OrderFieldBean order = q.getOrderBy().get(0);
+        assertEquals("createTime", order.getName());
+        assertTrue(order.isDesc(), "必须 createTime DESC=保留最近 N 张（ASC 将截掉最新数据）");
+        assertEquals(5000, q.getLimit(), "CS_DASHBOARD_SCAN_CAP");
+    }
+
 }

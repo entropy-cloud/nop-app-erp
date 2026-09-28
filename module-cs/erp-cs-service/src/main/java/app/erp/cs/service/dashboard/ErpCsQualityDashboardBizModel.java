@@ -57,6 +57,9 @@ public class ErpCsQualityDashboardBizModel {
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    /** A9 补遗 F-1：关闭工单扫描上限（仅计最近 N 张，超 cap 历史 SLA/CSAT 聚合下偏——留痕）。 */
+    private static final int CS_DASHBOARD_SCAN_CAP = 5000;
+
     @Inject
     IDaoProvider daoProvider;
     @Inject
@@ -257,6 +260,12 @@ public class ErpCsQualityDashboardBizModel {
     // ===================== helpers =====================
 
     private List<ErpCsTicket> loadClosedTickets(String startDate, String endDate) {
+        QueryBean q = buildClosedTicketQuery(startDate, endDate);
+        return daoProvider.daoFor(ErpCsTicket.class).findAllByQuery(q);
+    }
+
+    /** 包级可见供护栏断言排序方向（A9 补遗 B-1：desc=保留最近 N 张，Platform addOrderField true=DESC）。 */
+    QueryBean buildClosedTicketQuery(String startDate, String endDate) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("status", ErpCsConstants.TICKET_STATUS_CLOSED));
         LocalDate[] range = parseRange(startDate, endDate);
@@ -268,7 +277,10 @@ public class ErpCsQualityDashboardBizModel {
                 q.addFilter(lt("createTime", endTs));
             }
         }
-        return daoProvider.daoFor(ErpCsTicket.class).findAllByQuery(q);
+        // A9 补遗 F-1：原全量历史关闭工单物化改「最近 N 张」确定性截断（createTime desc + limit）。
+        q.addOrderField("createTime", true);
+        q.setLimit(CS_DASHBOARD_SCAN_CAP);
+        return q;
     }
 
     private Map<String, String> loadSlaPolicyTeamMap(Set<String> slaPolicyIds) {

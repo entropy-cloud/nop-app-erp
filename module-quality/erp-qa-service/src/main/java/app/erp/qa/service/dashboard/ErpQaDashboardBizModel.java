@@ -37,7 +37,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
+import static io.nop.api.core.beans.FilterBeans.lt;
 import static io.nop.api.core.beans.FilterBeans.ne;
+import static io.nop.api.core.beans.FilterBeans.notNull;
 
 /**
  * 质量看板聚合入口（{@code dashboards.md §9}）。服务型 BizObject（非实体聚合），
@@ -59,6 +61,9 @@ import static io.nop.api.core.beans.FilterBeans.ne;
  */
 @BizModel("ErpQaDashboard")
 public class ErpQaDashboardBizModel {
+
+    /** A9 补遗 B-3：CAPA 逾期预警行上限（最早逾期优先，确定性截断）。 */
+    private static final int QA_ALERT_CAP = 5000;
 
     @Inject
     IDaoProvider daoProvider;
@@ -173,9 +178,14 @@ public class ErpQaDashboardBizModel {
         LocalDate today = CoreMetrics.currentDate();
         LocalDate cutoff = today.minusDays(overdueDays);
         return ormTemplate.runInSession(session -> {
+            // A9 补遗 B-3：原全量物化未完成 Action + 内存日期过滤改 SQL 下推
+            //（lt 对 NULL dueDate 不命中=与内存 null 跳过对齐）+ 最早逾期优先排序 + cap。
             IEntityDao<ErpQaAction> dao = daoProvider.daoFor(ErpQaAction.class);
             QueryBean q = new QueryBean();
             q.addFilter(ne("status", ErpQaConstants.ACTION_STATUS_COMPLETED));
+            q.addFilter(lt("dueDate", cutoff));
+            q.addOrderField("dueDate", false);
+            q.setLimit(QA_ALERT_CAP);
             List<ErpQaAction> actions = dao.findAllByQuery(q);
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpQaAction a : actions) {
@@ -285,12 +295,19 @@ public class ErpQaDashboardBizModel {
     // ===================== helpers =====================
 
     private long countOutOfControlCharts() {
-        IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
+        // A9 补遗 F-4：原全量实体物化改 chartId 单列投影（传输列裁剪；平台对维度投影注入主键维度，
+        // 无 SQL GROUP BY——去重由内存 HashSet 完成，对齐 ast loadAssetIdsWithExecutedDepreciationInPeriod 先例；
+        // notNull 对齐原 null chartId 跳过语义，计数逐位等价）。
         QueryBean q = new QueryBean();
+        q.setSourceName(ErpQaSpcSample.class.getName());
         q.addFilter(eq("isOutOfControl", Boolean.TRUE));
+        q.addFilter(notNull("chartId"));
+        QueryFieldBean dim = QueryFieldBean.mainField("chartId");
+        q.setFields(Arrays.asList(dim));
         Set<String> chartIds = new HashSet<>();
-        for (ErpQaSpcSample s : dao.findAllByQuery(q)) {
-            if (s.getChartId() != null) chartIds.add(s.getChartId());
+        for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {
+            Object cid = row.get("chartId");
+            if (cid != null) chartIds.add(String.valueOf(cid));
         }
         return chartIds.size();
     }
@@ -331,12 +348,17 @@ public class ErpQaDashboardBizModel {
     }
 
     private long countInadequateCapabilityCharts() {
-        IEntityDao<ErpQaSpcCapability> dao = daoProvider.daoFor(ErpQaSpcCapability.class);
+        // A9 补遗 F-4 孪生（草案审查 B-3）：同 countOutOfControlCharts 改单列投影+内存去重。
         QueryBean q = new QueryBean();
+        q.setSourceName(ErpQaSpcCapability.class.getName());
         q.addFilter(eq("capabilityLevel", ErpQaConstants.SPC_CAPABILITY_INADEQUATE));
+        q.addFilter(notNull("chartId"));
+        QueryFieldBean dim = QueryFieldBean.mainField("chartId");
+        q.setFields(Arrays.asList(dim));
         Set<String> chartIds = new HashSet<>();
-        for (ErpQaSpcCapability c : dao.findAllByQuery(q)) {
-            if (c.getChartId() != null) chartIds.add(c.getChartId());
+        for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {
+            Object cid = row.get("chartId");
+            if (cid != null) chartIds.add(String.valueOf(cid));
         }
         return chartIds.size();
     }

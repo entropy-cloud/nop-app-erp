@@ -48,6 +48,8 @@
 | # | 发现 | 位置 | 修复方向 |
 |---|------|------|---------|
 | A9 | 8+ 个域 Report/Dashboard 查询无 limit 全量：inv report `:235,:250,:278`、mfg report `:377,:393,:407,:414`、qa `:331,:338,:350,:362`、cs `:253,:262,:295`、crm `:297,:345,:352,:366`、hr `:349,:365`、ast dashboard+report 全文 0 处 setLimit | 各域 `Erp*ReportBizModel.java` | 报表类 SQL 聚合；预警类设每域硬上限常量（inv 域 `ALERT_MAX_ROWS=5000` 先例，cap 值各自裁决留痕） |
+
+> **A9 补遗回填（2026-09-28，plan `2026-09-28-1418-4`）**：收官全局重扫描发现 A9 枚举漏盘 4 站点并已收口——cs 质量看板 `ErpCsQualityDashboardBizModel.loadClosedTickets`（createTime desc+`CS_DASHBOARD_SCAN_CAP=5000`，三入口 SLA/CSAT 聚合 SQL 重写 Deferred）；prj `ErpPrjReportBizModel.loadTimesheets`（(projectId,userId) 分组投影+行序保持，旧 loadTimesheets/Aggregator 移除；`loadProjects` 主数据小表豁免登记）；mnt `ErpMntReportBizModel.loadVisits`（`REPORT_LIST_MAX_ROWS=5000` cap）/`loadDowntimeEntries`（(equipmentId,reason) 分组投影——原无 orderBy 禁无排序 cap）；qa `ErpQaDashboardBizModel.countOutOfControlCharts`+孪生 `countInadequateCapabilityCharts`（chartId 单列投影+内存去重——**平台对纯维度投影仍注入主键维度的坑二度变体**，ast 先例实为投影减列+内存去重）；`findCapaOverdueAlert` 日期下推+排序+`QA_ALERT_CAP=5000`。mnt `loadScheduleIdsWithVisit` 既有无排序截断挂 watch-only（截断方向为错误数据非保守下偏）。
 | B2 | 超期预警逐行查 partner 名称（sal `:204` / pur `:236`） | 两个 dashboard | distinct partnerId 批量 `in("id", ids)` 建 Map |
 | B3 | 销售退货 processor 行循环逐行取 delivery/order line | `ErpSalReturnProcessor.java:508,:519` | 循环前按 id 集合批量预载 |
 | B4 | B2B ASN 生成收货单行循环逐行查物料 | `ErpB2bAsnCreateReceiveFromAsnProcessor.java:143` | 批量预载（`batchLoadProps` 先例 `ErpSalOrderBizModel.java:399`） |

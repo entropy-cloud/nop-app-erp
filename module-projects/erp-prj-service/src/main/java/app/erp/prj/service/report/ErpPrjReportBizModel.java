@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.WebContentBean;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.commons.concurrent.executor.GlobalExecutors;
 import io.nop.commons.util.StringHelper;
@@ -263,29 +264,34 @@ public class ErpPrjReportBizModel {
      */
     List<Map<String, Object>> buildTimesheetDetailDataset(String projectId, LocalDate startDate, LocalDate endDate) {
         return ormTemplate.runInSession(session -> {
-            List<ErpPrjTimesheet> timesheets = loadTimesheets(projectId, startDate, endDate);
-            if (timesheets.isEmpty()) {
-                return Collections.emptyList();
-            }
-            Map<String, Aggregator> agg = new LinkedHashMap<>();
-            Map<String, String> projectIdByUser = new HashMap<>();
-            for (ErpPrjTimesheet t : timesheets) {
-                String pid = t.getProjectId();
-                String uid = t.getUserId();
-                String key = pid + "|" + uid;
-                Aggregator a = agg.computeIfAbsent(key, k -> new Aggregator(pid, uid));
-                a.hours = a.hours.add(nz(t.getHours()));
-                a.costAmount = a.costAmount.add(nz(t.getCostAmount()));
-            }
-            List<Map<String, Object>> rows = new ArrayList<>(agg.size());
-            for (Aggregator a : agg.values()) {
+            // A9 补遗 F-2：原全量物化 timesheet + 内存 (projectId,userId) 聚合改 SQL 分组投影
+            //（行数=组合数天然有界；SQL SUM 忽略 NULL ≡ nz() 零元，BigDecimal 逐位等价；
+            // 输出行序经内存排序确定性保持原 ORDER BY projectId,userId 契约）。
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpPrjTimesheet.class.getName());
+            if (projectId != null) q.addFilter(eq("projectId", projectId));
+            if (startDate != null) q.addFilter(ge("workDate", startDate));
+            if (endDate != null) q.addFilter(le("workDate", endDate));
+            QueryFieldBean dimProject = QueryFieldBean.mainField("projectId");
+            QueryFieldBean dimUser = QueryFieldBean.mainField("userId");
+            QueryFieldBean sumHours = QueryFieldBean.mainField("hours").sum().alias("hours");
+            QueryFieldBean sumCost = QueryFieldBean.mainField("costAmount").sum().alias("costAmount");
+            q.setFields(Arrays.asList(dimProject, dimUser, sumHours, sumCost));
+            List<Map<String, Object>> aggRows = ormTemplate.findListByQuery(q);
+            List<Map<String, Object>> rows = new ArrayList<>(aggRows.size());
+            for (Map<String, Object> row : aggRows) {
                 Map<String, Object> r = new LinkedHashMap<>();
-                r.put("projectId", a.projectId);
-                r.put("userId", a.userId);
-                r.put("hours", a.hours);
-                r.put("costAmount", a.costAmount);
+                r.put("projectId", row.get("projectId"));
+                r.put("userId", row.get("userId"));
+                r.put("hours", nz((BigDecimal) row.get("hours")));
+                r.put("costAmount", nz((BigDecimal) row.get("costAmount")));
                 rows.add(r);
             }
+            rows.sort((a, b) -> {
+                int c = ((String) a.get("projectId")).compareTo((String) b.get("projectId"));
+                if (c != 0) return c;
+                return ((String) a.get("userId")).compareTo((String) b.get("userId"));
+            });
             return rows;
         });
     }
@@ -301,29 +307,7 @@ public class ErpPrjReportBizModel {
         return daoProvider.daoFor(ErpPrjProject.class).findAllByQuery(q);
     }
 
-    private List<ErpPrjTimesheet> loadTimesheets(String projectId, LocalDate startDate, LocalDate endDate) {
-        QueryBean q = new QueryBean();
-        if (projectId != null) q.addFilter(eq("projectId", projectId));
-        if (startDate != null) q.addFilter(ge("workDate", startDate));
-        if (endDate != null) q.addFilter(le("workDate", endDate));
-        q.addOrderField("projectId", false);
-        q.addOrderField("userId", false);
-        return daoProvider.daoFor(ErpPrjTimesheet.class).findAllByQuery(q);
-    }
-
     private static BigDecimal nz(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
-    }
-
-    private static class Aggregator {
-        final String projectId;
-        final String userId;
-        BigDecimal hours = BigDecimal.ZERO;
-        BigDecimal costAmount = BigDecimal.ZERO;
-
-        Aggregator(String projectId, String userId) {
-            this.projectId = projectId;
-            this.userId = userId;
-        }
     }
 }

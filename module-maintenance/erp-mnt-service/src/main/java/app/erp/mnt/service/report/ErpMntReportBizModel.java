@@ -22,6 +22,7 @@ import io.nop.core.resource.ResourceHelper;
 import io.nop.core.resource.tpl.ITemplateOutput;
 import io.nop.core.resource.tpl.ITextTemplateOutput;
 import io.nop.dao.api.IDaoProvider;
+import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.orm.IOrmTemplate;
 import io.nop.report.core.engine.IReportEngine;
 import io.nop.xlang.api.XLang;
@@ -77,6 +78,9 @@ public class ErpMntReportBizModel {
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
+
+    /** A9 补遗 F-3：报表扫描行上限（visitDate desc 确定性截断）。 */
+    private static final int REPORT_LIST_MAX_ROWS = 5000;
 
     // ===================== 渲染入口 =====================
 
@@ -258,28 +262,39 @@ public class ErpMntReportBizModel {
      */
     List<Map<String, Object>> buildDowntimeSummaryDataset(String equipmentId, LocalDate startDate, LocalDate endDate) {
         return ormTemplate.runInSession(session -> {
-            List<ErpMntDowntimeEntry> entries = loadDowntimeEntries(equipmentId, startDate, endDate);
-            if (entries.isEmpty()) {
+            // A9 补遗 F-3b：原全量物化 downtime + 内存 (equipmentId,reason) 聚合改 SQL 分组投影
+            //（原 loader 无 orderBy，禁无排序 cap——投影行数=组合数天然有界；reason null 组映射 "(unspecified)"；
+            // SQL SUM 忽略 NULL ≡ nz() 零元，COUNT(id) ≡ 行计数，逐位等价）。
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpMntDowntimeEntry.class.getName());
+            if (equipmentId != null) q.addFilter(eq("equipmentId", equipmentId));
+            if (startDate != null) q.addFilter(ge("startTime", startDate.atStartOfDay()));
+            if (endDate != null) q.addFilter(le("startTime", endDate.plusDays(1).atStartOfDay()));
+            QueryFieldBean dimEq = QueryFieldBean.mainField("equipmentId");
+            QueryFieldBean dimReason = QueryFieldBean.mainField("reason");
+            QueryFieldBean sumMinutes = QueryFieldBean.mainField("totalMinutes").sum().alias("totalMinutes");
+            QueryFieldBean cnt = QueryFieldBean.mainField("id").count().alias("entryCount");
+            q.setFields(Arrays.asList(dimEq, dimReason, sumMinutes, cnt));
+            List<Map<String, Object>> aggRows = ormTemplate.findListByQuery(q);
+            if (aggRows.isEmpty()) {
                 return Collections.emptyList();
             }
-            Map<String, DowntimeAggregator> agg = new LinkedHashMap<>();
-            for (ErpMntDowntimeEntry e : entries) {
-                String eqId = e.getEquipmentId();
-                String reason = e.getReason() != null ? e.getReason() : "(unspecified)";
-                String key = eqId + "|" + reason;
-                DowntimeAggregator a = agg.computeIfAbsent(key, k -> new DowntimeAggregator(eqId, reason));
-                a.totalMinutes = a.totalMinutes.add(nz(e.getTotalMinutes()));
-                a.entryCount++;
+            Set<String> equipmentIds = new HashSet<>();
+            for (Map<String, Object> row : aggRows) {
+                String eqId = (String) row.get("equipmentId");
+                if (eqId != null) equipmentIds.add(eqId);
             }
-            Map<String, String> equipmentNames = resolveEquipmentNamesByIds(collectEquipmentIds(agg));
-            List<Map<String, Object>> rows = new ArrayList<>(agg.size());
-            for (DowntimeAggregator a : agg.values()) {
+            Map<String, String> equipmentNames = resolveEquipmentNamesByIds(equipmentIds);
+            List<Map<String, Object>> rows = new ArrayList<>(aggRows.size());
+            for (Map<String, Object> agg : aggRows) {
+                String eqId = (String) agg.get("equipmentId");
+                String reason = agg.get("reason") != null ? (String) agg.get("reason") : "(unspecified)";
                 Map<String, Object> r = new LinkedHashMap<>();
-                r.put("equipmentId", a.equipmentId);
-                r.put("equipmentName", equipmentNames.getOrDefault(a.equipmentId, ""));
-                r.put("reason", a.reason);
-                r.put("downtimeMinutes", a.totalMinutes);
-                r.put("entryCount", a.entryCount);
+                r.put("equipmentId", eqId);
+                r.put("equipmentName", equipmentNames.getOrDefault(eqId == null ? "" : eqId, ""));
+                r.put("reason", reason);
+                r.put("downtimeMinutes", nz((BigDecimal) agg.get("totalMinutes")));
+                r.put("entryCount", ((Number) agg.get("entryCount")).intValue());
                 rows.add(r);
             }
             return rows;
@@ -295,6 +310,8 @@ public class ErpMntReportBizModel {
         if (endDate != null) q.addFilter(le("visitDate", endDate));
         q.addOrderField("visitDate", false);
         q.addOrderField("code", false);
+        // A9 补遗 F-3a：全量物化改确定性 cap（排序在位）。
+        q.setLimit(REPORT_LIST_MAX_ROWS);
         return daoProvider.daoFor(ErpMntVisit.class).findAllByQuery(q);
     }
 
@@ -330,14 +347,6 @@ public class ErpMntReportBizModel {
         return resolveEquipmentNamesByIds(eqIds);
     }
 
-    private Set<String> collectEquipmentIds(Map<String, DowntimeAggregator> agg) {
-        Set<String> ids = new HashSet<>();
-        for (DowntimeAggregator a : agg.values()) {
-            if (a.equipmentId != null) ids.add(a.equipmentId);
-        }
-        return ids;
-    }
-
     private Map<String, String> resolveEquipmentNamesByIds(Set<String> eqIds) {
         if (eqIds.isEmpty()) return Collections.emptyMap();
         QueryBean q = new QueryBean();
@@ -350,27 +359,8 @@ public class ErpMntReportBizModel {
         return names;
     }
 
-    private List<ErpMntDowntimeEntry> loadDowntimeEntries(String equipmentId, LocalDate startDate, LocalDate endDate) {
-        QueryBean q = new QueryBean();
-        if (equipmentId != null) q.addFilter(eq("equipmentId", equipmentId));
-        if (startDate != null) q.addFilter(ge("startTime", startDate.atStartOfDay()));
-        if (endDate != null) q.addFilter(le("startTime", endDate.plusDays(1).atStartOfDay()));
-        return daoProvider.daoFor(ErpMntDowntimeEntry.class).findAllByQuery(q);
-    }
-
     private static BigDecimal nz(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
     }
 
-    private static class DowntimeAggregator {
-        final String equipmentId;
-        final String reason;
-        BigDecimal totalMinutes = BigDecimal.ZERO;
-        int entryCount = 0;
-
-        DowntimeAggregator(String equipmentId, String reason) {
-            this.equipmentId = equipmentId;
-            this.reason = reason;
-        }
-    }
 }
