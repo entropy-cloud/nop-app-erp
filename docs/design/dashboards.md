@@ -73,7 +73,7 @@
 | 本期采购额 | ErpPurInvoice | Σ amountFunctional | KPI + 同比 |
 | 本期订单量 | ErpPurOrder | count(ACTIVE) | KPI |
 | 应付余额 | ErpFinArApItem | Σ 余额(partnerType=VENDOR) | KPI |
-| 到货及时率 | ErpPurReceive/Order | 按期到货数 / 订单数(receiveDate ≤ orderLine.deliveryDate) | KPI |
+| 到货及时率 | ErpPurReceive/Order | 按期收货单数 / 有 orderId 的收货单数(businessDate ≤ 订单头 ErpPurOrder.deliveryDate) | KPI |
 | 采购趋势 | ErpPurInvoice | 按月聚合(近12月) | 趋势图 |
 | 供应商 TOP10 | ErpPurInvoice | 按 partner 聚合金额降序 | 占比图+列表 |
 | 三单匹配差异 | three-way-match | 价格/数量差异待处理数(见 three-way-match §差异处理) | 预警卡片 |
@@ -260,10 +260,10 @@
 
 | 指标 key | 名称 | 定义公式 | 数据来源（表+过滤） | 单位 | 口径说明 |
 |---|---|---|---|---|---|
-| purchaseAmount | 本期采购额 | Σ amountFunctional | `ErpPurInvoice`，`docStatus='ACTIVE'` + `businessDate ∈ [startDate,endDate]` | 本位币 | **docStatus 口径**（与销售发票 posted 布尔位不同，易混淆） |
+| purchaseAmount | 本期采购额 | Σ amountFunctional | `ErpPurInvoice`，`approveStatus=APPROVED AND docStatus≠CANCELLED` + `businessDate ∈ [startDate,endDate]` | 本位币 | **approveStatus+docStatus 双轴口径**（与销售发票 posted 布尔位不同，易混淆） |
 | orderCount | 本期订单量 | count(*) | `ErpPurOrder`，`docStatus='ACTIVE'` | count | 无日期过滤 |
 | apBalance | 应付余额 | Σ openAmountFunctional | `ErpFinArApItem`（findOpenItems），`direction='PAYABLE'` + `status ∈ ('OPEN','PARTIAL')` | 本位币 | 与财务域 apBalance 同源同式 |
-| onTimeRate | 到货及时率 | count(receive.businessDate ≤ 关联 orderLine.deliveryDate) / count(有 orderId 的 receive) | `ErpPurReceive`(docStatus='ACTIVE') ⟕ `ErpPurOrder` | 比率 | 分母仅计 `orderId != null` 的收货单 |
+| onTimeRate | 到货及时率 | count(receive.businessDate ≤ 关联订单头 deliveryDate) / count(有 orderId 的 receive) | `ErpPurReceive`(approveStatus=APPROVED AND docStatus≠CANCELLED) ⟕ `ErpPurOrder`（deliveryDate 为订单头级字段，`ErpPurOrderLine` 无此字段） | 比率 | 分母仅计 `orderId != null` 的收货单 |
 | 趋势（purchaseAmount/month） | 采购趋势 | 按 businessDate 月分组 Σ amountFunctional | 同 purchaseAmount，近 N 月 | 本位币 | — |
 | 供应商 TOP10 | 供应商排行 | 按 supplierId Σ amountFunctional 降序 | 同 purchaseAmount（DB 级 GROUP BY supplierId 聚合 + 内存排序截取 TopN） | 本位币 | — |
 | 三单匹配差异 | 预警卡片 | 发票行 unitPrice vs 关联订单行 unitPrice，`|diff|/orderPrice > tolerance` | `ErpPurInvoiceLine` → `receiveLineId → ErpPurReceiveLine.orderLineId → ErpPurOrderLine` | 比率 | `erp-pur.match-price-tolerance` 默认 0.05 |

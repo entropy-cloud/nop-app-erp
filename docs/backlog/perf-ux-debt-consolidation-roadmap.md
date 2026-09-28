@@ -41,7 +41,7 @@ mission 收官时遗留三类收尾资产，本 roadmap 将其转为三个可交
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 | --- | --- | --- | --- | --- | --- |
-| DOC-01 | `docs/design/dashboards.md` 两处事实漂移校正：①:76/:266「orderLine.deliveryDate」实为订单头级 `ErpPurOrder.deliveryDate`（`ErpPurOrderLine` 无此字段）；②:263 purchaseAmount 状态轴补全 `approveStatus=APPROVED AND docStatus≠CANCELLED`（现文仅 docStatus='ACTIVE'，外延等价但文本失准） | todo | `docs/design/dashboards.md` | — | none |
+| DOC-01 | `docs/design/dashboards.md` 两处事实漂移校正：①:76/:266「orderLine.deliveryDate」实为订单头级 `ErpPurOrder.deliveryDate`（`ErpPurOrderLine` 无此字段）；②:263 purchaseAmount 状态轴补全 `approveStatus=APPROVED AND docStatus≠CANCELLED`（现文仅 docStatus='ACTIVE'，外延等价但文本失准）（计划 `2026-09-28-1755-1` completed：草案审查 2 轮收敛 + 独立结束审计 1 轮通过[orderCount 4 站点显式后继登记 D-21]） | done | `docs/design/dashboards.md` | — | none |
 | DOC-02 | 「GROUP BY chartId」措辞归一至执行形态「单列投影+内存去重」（草案审查 F-3 实核重定靶点：分析报告 §2.4 **无**该失准表述无需改动；失准措辞位于 1418-4 计划文件 :16 机制先例行/:23 Goals F-4 孪生行/:58 Phase 1 Fix F-4 条目/:62——该计划已 completed，属闭包后化妆品级文本归一；lessons/26 引用系 stale jar 主题与此无关不动） | todo | `docs/plans/2026-09-28-1418-4-a9-addendum-unbounded-queries.md` | — | none |
 
 ## 3. 触发条件驱动的技术债登记表（无状态监控表面，非工作项）
@@ -72,6 +72,7 @@ mission 收官时遗留三类收尾资产，本 roadmap 将其转为三个可交
 | D-18 | 平台 auth 页渲染失败 2 处（NopAuthLoginAttempt/NopAuthRateLimitCounter，flux-web.xlib 层） | 批次 1 验证期发现 | nop-entropy 侧修复排期 | 跨仓库 |
 | D-19 | compliance 基线记账同步（R3/R10/R2c 残余归属 f3.10 预存遗留） | 批次 2 结束审计登记 | 基线裁决 successor 启动 | plan-first |
 | D-20 | reportCompletion 默认带出计划剩余量（UX 跟进候选） | 0318-1 Deferred（Successor Required: no） | 确认 findPage gql:selection 含计划/完工数量字段（源裁决触发措辞） | plan-first |
+| D-21 | orderCount approveStatus 轴漂移校正（dashboards.md 4 站点 :55/:74/:251/:264）；附带 ErpPurDashboardBizModel:414 javadoc「/ 总 receive 数」实为「有 orderId 的收货单数」 | DOC-01 计划实核发现（实现证据 ErpPurDashboardBizModel.java:398-403、ErpSalDashboardBizModel.java:300-303） | 下一 doc-only 清理批或 document-audit 复核 dashboards.md | plan-first |
 
 
 ## 4. 执行顺序与完成口径
