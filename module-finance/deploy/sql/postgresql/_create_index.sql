@@ -32,6 +32,7 @@ CREATE INDEX IDX_FIN_AR_AP_ITEM_ACCT_SCHEMA_ID ON erp_fin_ar_ap_item (acct_schem
 CREATE INDEX IDX_FIN_AR_AP_ITEM_PARTNER_ID ON erp_fin_ar_ap_item (partner_id);
 CREATE INDEX IDX_FIN_AR_AP_ITEM_CURRENCY_ID ON erp_fin_ar_ap_item (currency_id);
 CREATE INDEX IDX_FIN_AR_AP_ITEM_PERIOD_ID ON erp_fin_ar_ap_item (period_id);
+CREATE INDEX IDX_FIN_AR_AP_ITEM_DIRECTION_STATUS ON erp_fin_ar_ap_item (direction, status);
 CREATE INDEX IDX_FIN_RECONCILIATION_ORG_DOC_STATUS ON erp_fin_reconciliation (org_id, doc_status);
 CREATE INDEX IDX_FIN_RECONCILIATION_ORG_BUSINESS_DATE ON erp_fin_reconciliation (org_id, business_date);
 CREATE INDEX IDX_FIN_RECONCILIATION_ACCT_SCHEMA_ID ON erp_fin_reconciliation (acct_schema_id);

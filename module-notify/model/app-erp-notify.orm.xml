@@ -120,9 +120,10 @@
                 <index name="IDX_SYS_NOTIFY_MERGE_GROUP" unique="false">
                     <column name="mergeGroupId"/>
                 </index>
-                <index name="IDX_SYS_NOTIFY_TYPE_USER" unique="false">
+                <index name="IDX_SYS_NOTIFY_TYPE_USER_TIME" unique="false">
                     <column name="notificationType"/>
                     <column name="recipientUserId"/>
+                    <column name="createTime"/>
                 </index>
             </indexes>
         </entity>

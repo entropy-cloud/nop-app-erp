@@ -832,6 +832,10 @@
                 <index name="IDX_FIN_AR_AP_ITEM_PERIOD_ID" unique="false">
                     <column name="periodId"/>
                 </index>
+                <index name="IDX_FIN_AR_AP_ITEM_DIRECTION_STATUS" unique="false">
+                    <column name="direction"/>
+                    <column name="status"/>
+                </index>
             </indexes>
         </entity>
 

@@ -63,6 +63,8 @@
 
 ### 2.3 索引（orm.xml 保护区）
 
+> **状态回填（2026-09-28）**：F1/F2 已由 plan `2026-09-28-0852-2` 处置（保护区双独立子代理批准 GRANT 后实施：erp_fin_ar_ap_item +IDX_FIN_AR_AP_ITEM_DIRECTION_STATUS、erp_sys_notification TYPE_USER 替换为含 createTime 三列 + 三方言 deploy SQL 派生物同步）；F2 最初描述的「order desc」经平台源码实裁正确（QueryBean.addOrderField true=DESC）。
+
 - **总体健康**：19/19 orm.xml 定义索引共 313 处，核心大表（stock_move/stock_ledger/ar_ap_item 等）高频列已覆盖。
 - **F1 [P2]**：`erp_fin_ar_ap_item` 缺 `(direction, status)` 复合索引——`findOpenItems`/`findArApAging` 的 where `direction=? AND status IN(...)` 无法命中现有 `(orgId,status)` 索引（查询不带 orgId）→ 全表扫描+排序。修复 = **仅加索引，不改查询语义**（加 org scope 会改变多公司隔离下的结果语义，不做）。
 - **F2 [P3]**：`erp_sys_notification` 缺 createTime 复合索引——`findMergeable` 的 `ge(createTime)` + `order by createTime desc` 无索引覆盖，append-only 表持续增长。
