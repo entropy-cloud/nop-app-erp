@@ -27,12 +27,15 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -71,14 +74,11 @@ public class ErpSalDashboardBizModel {
             LocalDate from = startDate != null ? startDate : today.withDayOfMonth(1);
             LocalDate to = endDate != null ? endDate : today;
 
-            List<ErpSalInvoice> invoices = loadPostedInvoicesInRange(from, to);
-            BigDecimal salesAmount = BigDecimal.ZERO;
-            for (ErpSalInvoice inv : invoices) {
-                salesAmount = salesAmount.add(DashboardUtil.nz(inv.getAmountFunctional()));
-            }
+            InvoiceAgg agg = aggPostedInvoicesInRange(from, to);
+            BigDecimal salesAmount = agg.sum;
 
             long orderCount = countActiveOrders();
-            long invoiceCount = invoices.size();
+            long invoiceCount = agg.count;
             double conversionRate = orderCount > 0 ? (double) invoiceCount / (double) orderCount : 0.0;
 
             BigDecimal arBalance = sumArApOpen(ErpFinConstants.DIRECTION_RECEIVABLE, context);
@@ -102,13 +102,27 @@ public class ErpSalDashboardBizModel {
         LocalDate today = CoreMetrics.currentDate();
         LocalDate from = today.minusMonths(n - 1L).withDayOfMonth(1);
         return ormTemplate.runInSession(session -> {
-            List<ErpSalInvoice> invoices = loadPostedInvoicesInRange(from, today);
+            // DB 级 GROUP BY businessDate 聚合（perf-ux plan 0325-2：原 12 个月全量实体物化内存分桶
+            // 改为日期维度分组聚合，行数 ≤ 区间天数，消除 OOM；业务日期为普通列维度，与
+            // sumBalanceTotalCost 的 warehouseId 维度同一 fields 机制），null 业务日期行跳过（原语义）。
+            IEntityDao<ErpSalInvoice> dao = daoProvider.daoFor(ErpSalInvoice.class);
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpSalInvoice.class.getName());
+            q.addFilter(eq("posted", Boolean.TRUE));
+            q.addFilter(ge("businessDate", from));
+            q.addFilter(le("businessDate", today));
+            QueryFieldBean dim = QueryFieldBean.mainField("businessDate");
+            QueryFieldBean sumAmt = QueryFieldBean.mainField("amountFunctional").sum().alias("salesAmount");
+            q.setFields(Arrays.asList(dim, sumAmt));
+            List<Map<String, Object>> aggRows = ormTemplate.findListByQuery(q);
+
             Map<String, BigDecimal> amountByMonth = new LinkedHashMap<>();
-            for (ErpSalInvoice inv : invoices) {
-                LocalDate d = inv.getBusinessDate();
+            for (Map<String, Object> row : aggRows) {
+                Object d = row.get("businessDate");
                 if (d == null) continue;
-                String key = d.getYear() + "-" + String.format("%02d", d.getMonthValue());
-                amountByMonth.merge(key, DashboardUtil.nz(inv.getAmountFunctional()), BigDecimal::add);
+                LocalDate date = toLocalDate(d);
+                String key = date.getYear() + "-" + String.format("%02d", date.getMonthValue());
+                amountByMonth.merge(key, DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("salesAmount"))), BigDecimal::add);
             }
             List<Map<String, Object>> rows = new ArrayList<>();
             for (int i = 0; i < n; i++) {
@@ -187,6 +201,7 @@ public class ErpSalDashboardBizModel {
         List<ErpFinArApItem> items = arApItemBiz.findOpenItems(
                 ErpFinConstants.DIRECTION_RECEIVABLE, context);
         List<Map<String, Object>> rows = new ArrayList<>();
+        Set<String> hitPartnerIds = new LinkedHashSet<>();
         for (ErpFinArApItem it : items) {
             LocalDate base = it.getDueDate() != null ? it.getDueDate() : it.getBusinessDate();
             long age = base != null ? ChronoUnit.DAYS.between(base, today) : 0L;
@@ -199,30 +214,87 @@ public class ErpSalDashboardBizModel {
             if (dayHit || amountHit) {
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("partnerId", it.getPartnerId());
-                String partnerName = null;
-                if (it.getPartnerId() != null) {
-                    ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).getEntityById(it.getPartnerId());
-                    partnerName = p != null ? p.getName() : null;
-                }
-                row.put("partnerName", partnerName);
                 row.put("sourceBillCode", it.getSourceBillCode());
                 row.put("openAmount", open);
                 row.put("ageDays", age);
                 rows.add(row);
+                if (it.getPartnerId() != null)
+                    hitPartnerIds.add(it.getPartnerId());
             }
+        }
+        // 命中行 partner 名称批量预载（perf-ux plan 0325-2：消除逐行 getEntityById N+1）
+        Map<String, String> nameByPartner = loadPartnerNames(hitPartnerIds);
+        for (Map<String, Object> row : rows) {
+            String pid = (String) row.get("partnerId");
+            row.put("partnerName", pid != null ? nameByPartner.get(pid) : null);
         }
         return rows;
     }
 
     // ===================== helpers =====================
 
-    private List<ErpSalInvoice> loadPostedInvoicesInRange(LocalDate from, LocalDate to) {
-        IEntityDao<ErpSalInvoice> dao = daoProvider.daoFor(ErpSalInvoice.class);
+    /** in() 列表分块上限（perf-ux plan 0325-2 Decision-a 分块纪律）。 */
+    private static final int IN_CLAUSE_CHUNK = 500;
+
+    /** 批量预载 partner 名称（distinct id → name Map；id 超 500 分块查询后合并）。 */
+    private Map<String, String> loadPartnerNames(Collection<String> partnerIds) {
+        Map<String, String> nameByPartner = new HashMap<>();
+        if (partnerIds == null || partnerIds.isEmpty())
+            return nameByPartner;
+        IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
+        List<String> ids = new ArrayList<>(partnerIds);
+        for (int i = 0; i < ids.size(); i += IN_CLAUSE_CHUNK) {
+            List<String> chunk = ids.subList(i, Math.min(ids.size(), i + IN_CLAUSE_CHUNK));
+            QueryBean q = new QueryBean();
+            q.addFilter(in("id", chunk));
+            for (ErpMdPartner p : partnerDao.findAllByQuery(q)) {
+                nameByPartner.put((String) p.orm_id(), p.getName());
+            }
+        }
+        return nameByPartner;
+    }
+
+    /** 单趟聚合结果（SUM + COUNT），消除全量实体物化。 */
+    private static final class InvoiceAgg {
+        BigDecimal sum = BigDecimal.ZERO;
+        long count = 0L;
+    }
+
+    /**
+     * DB 级聚合期内已过票发票（SUM(amountFunctional) + COUNT），按 businessDate 维度分组后内存汇总
+     * （perf-ux plan 0325-2：原 findAllByQuery 全量实体物化内存求和改为 SQL 聚合，行数 ≤ 区间天数；
+     * 维度分组规避无维度聚合被强制注入主键维度的平台坑）。null 业务日期行单独成组，SUM 天然计入，
+     * 与原全量加载语义一致。
+     */
+    private InvoiceAgg aggPostedInvoicesInRange(LocalDate from, LocalDate to) {
+        InvoiceAgg agg = new InvoiceAgg();
         QueryBean q = new QueryBean();
+        q.setSourceName(ErpSalInvoice.class.getName());
         q.addFilter(eq("posted", Boolean.TRUE));
         if (from != null) q.addFilter(ge("businessDate", from));
         if (to != null) q.addFilter(le("businessDate", to));
-        return dao.findAllByQuery(q);
+        QueryFieldBean dim = QueryFieldBean.mainField("businessDate");
+        QueryFieldBean sumAmt = QueryFieldBean.mainField("amountFunctional").sum().alias("salesAmount");
+        QueryFieldBean cnt = QueryFieldBean.mainField("id").count().alias("invoiceCount");
+        q.setFields(Arrays.asList(dim, sumAmt, cnt));
+        List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
+        for (Map<String, Object> row : rows) {
+            agg.sum = agg.sum.add(DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("salesAmount"))));
+            Object c = row.get("invoiceCount");
+            if (c instanceof Number)
+                agg.count += ((Number) c).longValue();
+        }
+        return agg;
+    }
+
+    private static LocalDate toLocalDate(Object value) {
+        if (value instanceof LocalDate)
+            return (LocalDate) value;
+        if (value instanceof java.sql.Date)
+            return ((java.sql.Date) value).toLocalDate();
+        if (value instanceof java.util.Date)
+            return new java.sql.Date(((java.util.Date) value).getTime()).toLocalDate();
+        return null;
     }
 
     private long countActiveOrders() {

@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -192,10 +193,15 @@ public class ErpFinReportBizModel {
                 break;
             case "cash-flow-statement":
                 // 直接法行（section=OPERATING/INVESTING/FINANCING）+ 间接法行（section=INDIRECT）双数据集
-                if (!data.containsKey(DS_VAR)) {
-                    data.put(DS_VAR, buildCashFlowDataset(asId(data, "periodId")));
-                }
-                data.put("indirectDs", buildIndirectCashFlowDataset(asId(data, "periodId")));
+                // （perf-ux plan 0325-2：共享同一未过滤超集单次加载，间接法内存重应用影子排除）
+                ormTemplate.runInSession(session -> {
+                    VoucherLineSet cfSet = loadPostedVoucherLineSet(asId(data, "periodId"));
+                    if (!data.containsKey(DS_VAR)) {
+                        data.put(DS_VAR, directCashFlowRows(cfSet.lines));
+                    }
+                    data.put("indirectDs", indirectRowsFromSet(cfSet, true));
+                    return null;
+                });
                 break;
             case "ar-ap-aging":
                 data.put(DS_VAR, buildArApAgingDataset(asDate(data, "asOfDate")));
@@ -259,9 +265,14 @@ public class ErpFinReportBizModel {
     /** 现金流量表数据集：现金类科目本期净变动（直接法），按科目 cashFlowType 三分类（经营/投资/筹资）。 */
     @BizQuery
     public List<Map<String, Object>> cashFlowStatementData(@Name("periodId") String periodId, IServiceContext context) {
-        List<Map<String, Object>> rows = new ArrayList<>(buildCashFlowDataset(periodId));
-        rows.addAll(buildIndirectCashFlowDataset(periodId));
-        return rows;
+        // perf-ux plan 0325-2：直接/间接两法共享同一超集单次加载（原同请求两份全量凭证+行物化），
+        // 加载与两法行计算（含 to-one 科目导航）必须同 session（跨 session 懒加载 session-closed）
+        return ormTemplate.runInSession(session -> {
+            VoucherLineSet cfSet = loadPostedVoucherLineSet(periodId);
+            List<Map<String, Object>> rows = new ArrayList<>(directCashFlowRows(cfSet.lines));
+            rows.addAll(indirectRowsFromSet(cfSet, true));
+            return rows;
+        });
     }
 
     /** 间接法现金流量数据集：净利润 + 非现金项目 + 营运资金变动（RC-R1.45 / P1-RC-007）。 */
@@ -321,9 +332,15 @@ public class ErpFinReportBizModel {
      * 与 {@link #buildIndirectCashFlowDataset} 同源（loadPostedVoucherLines），模板双数据集渲染。
      */
     List<Map<String, Object>> buildCashFlowDataset(String periodId) {
-        return ormTemplate.runInSession(session -> {
+        return ormTemplate.runInSession(session ->
+                directCashFlowRows(loadPostedVoucherLineSet(periodId).lines));
+    }
+
+
+    /** 直接法行计算（perf-ux plan 0325-2：从 buildCashFlowDataset 提取，支持超集共享单次加载）。 */
+    private List<Map<String, Object>> directCashFlowRows(List<ErpFinVoucherLine> lines) {
+        {
             List<Map<String, Object>> rows = new ArrayList<>();
-            List<ErpFinVoucherLine> lines = loadPostedVoucherLines(periodId);
             for (ErpFinVoucherLine l : lines) {
                 if (l.getSubjectCode() == null) continue;
                 if (!isCashSubjectCode(l.getSubjectCode())) continue;
@@ -349,7 +366,7 @@ public class ErpFinReportBizModel {
                 return String.valueOf(a.get("code")).compareTo(String.valueOf(b.get("code")));
             });
             return rows;
-        });
+        }
     }
 
     /**
@@ -369,10 +386,24 @@ public class ErpFinReportBizModel {
      */
     List<Map<String, Object>> buildIndirectCashFlowDataset(String periodId) {
         return ormTemplate.runInSession(session -> {
+            VoucherLineSet lineSet = loadPostedVoucherLineSet(periodId);
+            return indirectRowsFromSet(lineSet, true);
+        });
+    }
+
+    /**
+     * 间接法行计算（perf-ux plan 0325-2：支持超集共享单次加载——{@code reapplyShadowFilter=true} 时
+     * 在内存按 voucher 头侧 postingType 重应用 D3 影子凭证排除，与 SQL 侧
+     * isNull(postingType) or notIn(BUDGET, COMMITMENT) 语义逐字等价；直接法传 false 消费未过滤超集）。
+     */
+    private List<Map<String, Object>> indirectRowsFromSet(VoucherLineSet lineSet, boolean reapplyShadowFilter) {
+        {
             BigDecimal netProfit = BigDecimal.ZERO;
             BigDecimal nonCash = BigDecimal.ZERO;
             BigDecimal workingCapital = BigDecimal.ZERO;
-            List<ErpFinVoucherLine> lines = loadPostedVoucherLines(periodId, true);
+            List<ErpFinVoucherLine> lines = reapplyShadowFilter
+                    ? filterShadowPostings(lineSet)
+                    : lineSet.lines;
             for (ErpFinVoucherLine l : lines) {
                 ErpMdSubject s = l.getSubject();
                 if (s == null) continue;
@@ -401,7 +432,7 @@ public class ErpFinReportBizModel {
             rows.add(indirectRow(ErpFinConstants.CASH_FLOW_INDIRECT_NET,
                     "Net operating cash flow (indirect)", netProfit.add(nonCash).add(workingCapital)));
             return rows;
-        });
+        }
     }
 
     List<Map<String, Object>> buildArApAgingDataset(LocalDate asOfDate) {
@@ -499,34 +530,58 @@ public class ErpFinReportBizModel {
         return latest.isEmpty() ? null : latest.get(0).getId();
     }
 
-    private List<ErpFinVoucherLine> loadPostedVoucherLines(String periodId) {
-        return loadPostedVoucherLines(periodId, false);
+    /** 凭证头 + 行超集（perf-ux plan 0325-2：现金流量表直接/间接法共享单次加载的载体）。 */
+    private static final class VoucherLineSet {
+        final List<ErpFinVoucher> vouchers;
+        final List<ErpFinVoucherLine> lines;
+
+        VoucherLineSet(List<ErpFinVoucher> vouchers, List<ErpFinVoucherLine> lines) {
+            this.vouchers = vouchers;
+            this.lines = lines;
+        }
     }
 
     /**
-     * 加载已过账凭证行。{@code excludeShadowPostings=true} 时在 voucher 头侧过滤
-     * postingType notIn(BUDGET, COMMITMENT)（D3 子裁决——间接法三组件共享该过滤，
-     * BUDGET/COMMITMENT 影子凭证的损益类行不得污染净利润聚合；直接法保持不过滤零回归）。
+     * 加载已过账凭证头+行**未过滤超集**（perf-ux plan 0325-2 D3 过滤不对称裁决：
+     * 直接法 = 超集；间接法经 {@link #filterShadowPostings} 在内存重应用影子排除，
+     * 两法共享单次加载消除 prepareDataset/cashFlowStatementData 同请求双份全量物化）。
      */
-    private List<ErpFinVoucherLine> loadPostedVoucherLines(String periodId, boolean excludeShadowPostings) {
+    private VoucherLineSet loadPostedVoucherLineSet(String periodId) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean vq = new QueryBean();
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
-        if (excludeShadowPostings) {
-            vq.addFilter(or(isNull("postingType"), notIn("postingType",
-                    Arrays.asList(ErpFinConstants.POSTING_TYPE_BUDGET, ErpFinConstants.POSTING_TYPE_COMMITMENT))));
-        }
         if (periodId != null) {
             vq.addFilter(eq("periodId", periodId));
             applyOrgAndSchemaScope(vq, periodId);
         }
         List<ErpFinVoucher> vouchers = vDao.findAllByQuery(vq);
-        if (vouchers.isEmpty()) return Collections.emptyList();
+        if (vouchers.isEmpty()) return new VoucherLineSet(Collections.emptyList(), Collections.emptyList());
         Set<String> voucherIds = new HashSet<>();
         for (ErpFinVoucher v : vouchers) voucherIds.add(v.getId());
         QueryBean lq = new QueryBean();
         lq.addFilter(in("voucherId", voucherIds));
-        return daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(lq);
+        List<ErpFinVoucherLine> lines = daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(lq);
+        return new VoucherLineSet(vouchers, lines);
+    }
+
+    /**
+     * 在内存对超集重应用影子凭证排除（D3 子裁决的内存等价：保留 postingType=null，
+     * 排除 BUDGET/COMMITMENT），行集与 SQL 侧 notIn 过滤逐字等价。
+     */
+    private List<ErpFinVoucherLine> filterShadowPostings(VoucherLineSet lineSet) {
+        Map<String, String> postingTypeByVoucher = new HashMap<>();
+        for (ErpFinVoucher v : lineSet.vouchers) {
+            postingTypeByVoucher.put(v.getId(), v.getPostingType());
+        }
+        List<ErpFinVoucherLine> result = new ArrayList<>(lineSet.lines.size());
+        for (ErpFinVoucherLine l : lineSet.lines) {
+            String pt = postingTypeByVoucher.get(l.getVoucherId());
+            if (pt == null || (!ErpFinConstants.POSTING_TYPE_BUDGET.equals(pt)
+                    && !ErpFinConstants.POSTING_TYPE_COMMITMENT.equals(pt))) {
+                result.add(l);
+            }
+        }
+        return result;
     }
 
     private QueryBean openItemsQuery() {

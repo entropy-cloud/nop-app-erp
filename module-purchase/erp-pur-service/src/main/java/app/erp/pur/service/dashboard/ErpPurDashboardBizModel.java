@@ -25,11 +25,16 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
+import io.nop.api.core.beans.query.QueryFieldBean;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -80,15 +85,7 @@ public class ErpPurDashboardBizModel {
             LocalDate from = startDate != null ? startDate : today.withDayOfMonth(1);
             LocalDate to = endDate != null ? endDate : today;
 
-            List<ErpPurInvoice> invoices = loadActiveInvoicesInRange(from, to);
-            BigDecimal purchaseAmount = BigDecimal.ZERO;
-            Map<String, BigDecimal> bySupplier = new HashMap<>();
-            for (ErpPurInvoice inv : invoices) {
-                purchaseAmount = purchaseAmount.add(DashboardUtil.nz(inv.getAmountFunctional()));
-                if (inv.getSupplierId() != null) {
-                    bySupplier.merge(inv.getSupplierId(), DashboardUtil.nz(inv.getAmountFunctional()), BigDecimal::add);
-                }
-            }
+            BigDecimal purchaseAmount = sumActiveInvoiceAmounts(from, to);
 
             long orderCount = countActiveOrders();
             BigDecimal apBalance = sumArApOpen(ErpFinConstants.DIRECTION_PAYABLE, context);
@@ -112,13 +109,25 @@ public class ErpPurDashboardBizModel {
         LocalDate today = CoreMetrics.currentDate();
         LocalDate from = today.minusMonths(n - 1L).withDayOfMonth(1);
         return ormTemplate.runInSession(session -> {
-            List<ErpPurInvoice> invoices = loadActiveInvoicesInRange(from, today);
+            // DB 级 GROUP BY businessDate 聚合（perf-ux plan 0325-2：原 12 个月全量实体物化内存分桶
+            // 改为日期维度分组聚合，行数 ≤ 区间天数；null 业务日期行跳过，与原语义一致）。
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpPurInvoice.class.getName());
+            q.addFilter(and(eq("approveStatus", ErpPurConstants.APPROVE_STATUS_APPROVED), ne("docStatus", ErpPurConstants.DOC_STATUS_CANCELLED)));
+            q.addFilter(ge("businessDate", from));
+            q.addFilter(le("businessDate", today));
+            QueryFieldBean dim = QueryFieldBean.mainField("businessDate");
+            QueryFieldBean sumAmt = QueryFieldBean.mainField("amountFunctional").sum().alias("purchaseAmount");
+            q.setFields(Arrays.asList(dim, sumAmt));
+            List<Map<String, Object>> aggRows = ormTemplate.findListByQuery(q);
+
             Map<String, BigDecimal> amountByMonth = new LinkedHashMap<>();
-            for (ErpPurInvoice inv : invoices) {
-                LocalDate d = inv.getBusinessDate();
+            for (Map<String, Object> row : aggRows) {
+                Object d = row.get("businessDate");
                 if (d == null) continue;
-                String key = d.getYear() + "-" + String.format("%02d", d.getMonthValue());
-                amountByMonth.merge(key, DashboardUtil.nz(inv.getAmountFunctional()), BigDecimal::add);
+                LocalDate date = toLocalDate(d);
+                String key = date.getYear() + "-" + String.format("%02d", date.getMonthValue());
+                amountByMonth.merge(key, DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("purchaseAmount"))), BigDecimal::add);
             }
             List<Map<String, Object>> rows = new ArrayList<>();
             for (int i = 0; i < n; i++) {
@@ -139,12 +148,20 @@ public class ErpPurDashboardBizModel {
                                                      IServiceContext context) {
         int topN = limit == null || limit <= 0 ? 10 : limit;
         return ormTemplate.runInSession(session -> {
-            List<ErpPurInvoice> invoices = loadActiveInvoicesInRange(null, null);
+            // DB 级 GROUP BY supplierId 聚合（perf-ux plan 0325-2：原全表发票物化内存分组改为
+            // SQL 聚合；行数=供应商数，天然有界；DB 端 ORDER BY 聚合列支持不确定，内存排序兜底）。
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpPurInvoice.class.getName());
+            q.addFilter(and(eq("approveStatus", ErpPurConstants.APPROVE_STATUS_APPROVED), ne("docStatus", ErpPurConstants.DOC_STATUS_CANCELLED)));
+            QueryFieldBean dim = QueryFieldBean.mainField("supplierId");
+            QueryFieldBean sumAmt = QueryFieldBean.mainField("amountFunctional").sum().alias("purchaseAmount");
+            q.setFields(Arrays.asList(dim, sumAmt));
+            List<Map<String, Object>> aggRows = ormTemplate.findListByQuery(q);
             Map<String, BigDecimal> bySupplier = new LinkedHashMap<>();
-            for (ErpPurInvoice inv : invoices) {
-                String sid = inv.getSupplierId();
+            for (Map<String, Object> row : aggRows) {
+                Object sid = row.get("supplierId");
                 if (sid == null) continue;
-                bySupplier.merge(sid, DashboardUtil.nz(inv.getAmountFunctional()), BigDecimal::add);
+                bySupplier.merge((String) sid, DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("purchaseAmount"))), BigDecimal::add);
             }
             List<Map<String, Object>> rows = new ArrayList<>();
             bySupplier.entrySet().stream()
@@ -186,24 +203,61 @@ public class ErpPurDashboardBizModel {
                 ErpPurConstants.CONFIG_MATCH_PRICE_TOLERANCE, new BigDecimal("5"));
         final BigDecimal tolerance = configured != null ? configured : new BigDecimal("5");
         return ormTemplate.runInSession(session -> {
-            List<ErpPurInvoice> invoices = loadActiveInvoicesInRange(null, null);
-            IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
+            // 批量预载三类行 + 内存 Map 比对（perf-ux plan 0325-2：原逐发票 hasPriceVariance
+            // 三连查 = 每发票 3-4 次往返的 N+1，改 in() 分块批量化；逐行比较逻辑逐字平移，纯等价变换）。
+            // 发票头改投影查询（id/code/supplierId 三列，perf-ux 结束审计 Blocker-1 整改：
+            // 消除对交易大表的无投影全量实体物化——命中行仅需头三字段）。
+            List<Map<String, Object>> invoiceHeads = loadActiveInvoiceHeadProjections();
+            Map<String, List<ErpPurInvoiceLine>> linesByInvoice = loadInvoiceLinesByInvoice(invoiceHeads);
+            Set<String> receiveLineIds = new HashSet<>();
+            for (List<ErpPurInvoiceLine> lines : linesByInvoice.values()) {
+                for (ErpPurInvoiceLine il : lines) {
+                    if (il.getReceiveLineId() != null) receiveLineIds.add(il.getReceiveLineId());
+                }
+            }
+            // receiveLineId → orderLineId
+            Map<String, String> orderLineIdByReceiveLine = new HashMap<>();
+            IEntityDao<ErpPurReceiveLine> rlDao = daoProvider.daoFor(ErpPurReceiveLine.class);
+            for (java.util.Collection<String> chunkId : chunkIds(receiveLineIds)) {
+                QueryBean rlq = new QueryBean();
+                rlq.addFilter(in("id", chunkId));
+                for (ErpPurReceiveLine rl : rlDao.findAllByQuery(rlq)) {
+                    if (rl.getOrderLineId() != null)
+                        orderLineIdByReceiveLine.put(rl.getId(), rl.getOrderLineId());
+                }
+            }
+            // orderLineId → unitPrice
+            Map<String, BigDecimal> orderLinePrice = new HashMap<>();
+            IEntityDao<ErpPurOrderLine> olDao = daoProvider.daoFor(ErpPurOrderLine.class);
+            for (java.util.Collection<String> chunkId : chunkIds(orderLineIdByReceiveLine.values())) {
+                QueryBean olq = new QueryBean();
+                olq.addFilter(in("id", chunkId));
+                for (ErpPurOrderLine ol : olDao.findAllByQuery(olq)) {
+                    orderLinePrice.put(ol.getId(), ol.getUnitPrice());
+                }
+            }
             List<Map<String, Object>> rows = new ArrayList<>();
-            for (ErpPurInvoice inv : invoices) {
-                if (hasPriceVariance(inv.getId(), tolerance)) {
+            for (Map<String, Object> head : invoiceHeads) {
+                String invoiceId = (String) head.get("id");
+                if (hasPriceVariance(linesByInvoice.get(invoiceId), orderLineIdByReceiveLine, orderLinePrice, tolerance)) {
                     Map<String, Object> row = new LinkedHashMap<>();
-                    row.put("invoiceId", inv.getId());
-                    row.put("invoiceCode", inv.getCode());
-                    row.put("supplierId", inv.getSupplierId());
-                    String supplierName = null;
-                    if (inv.getSupplierId() != null) {
-                        ErpMdPartner p = partnerDao.getEntityById(inv.getSupplierId());
-                        supplierName = p != null ? p.getName() : null;
-                    }
-                    row.put("supplierName", supplierName);
+                    row.put("invoiceId", invoiceId);
+                    row.put("invoiceCode", head.get("code"));
+                    row.put("supplierId", head.get("supplierId"));
                     row.put("varianceType", "PRICE");
                     rows.add(row);
                 }
+            }
+            // 命中行 supplier 名称批量预载（消除循环内逐行 getEntityById）
+            Set<String> supplierIds = new LinkedHashSet<>();
+            for (Map<String, Object> row : rows) {
+                String sid = (String) row.get("supplierId");
+                if (sid != null) supplierIds.add(sid);
+            }
+            Map<String, String> nameBySupplier = loadPartnerNames(supplierIds);
+            for (Map<String, Object> row : rows) {
+                String sid = (String) row.get("supplierId");
+                row.put("supplierName", sid != null ? nameBySupplier.get(sid) : null);
             }
             return rows;
         });
@@ -224,6 +278,7 @@ public class ErpPurDashboardBizModel {
         List<ErpFinArApItem> items = arApItemBiz.findOpenItems(
                 ErpFinConstants.DIRECTION_PAYABLE, context);
         List<Map<String, Object>> rows = new ArrayList<>();
+        Set<String> hitPartnerIds = new LinkedHashSet<>();
         for (ErpFinArApItem it : items) {
             LocalDate base = it.getDueDate() != null ? it.getDueDate() : it.getBusinessDate();
             long age = base != null ? ChronoUnit.DAYS.between(base, today) : 0L;
@@ -231,30 +286,113 @@ public class ErpPurDashboardBizModel {
             if (age > daysThreshold) {
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("partnerId", it.getPartnerId());
-                String partnerName = null;
-                if (it.getPartnerId() != null) {
-                    ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).getEntityById(it.getPartnerId());
-                    partnerName = p != null ? p.getName() : null;
-                }
-                row.put("partnerName", partnerName);
                 row.put("sourceBillCode", it.getSourceBillCode());
                 row.put("openAmount", DashboardUtil.nz(it.getOpenAmountFunctional()));
                 row.put("ageDays", age);
                 rows.add(row);
+                if (it.getPartnerId() != null)
+                    hitPartnerIds.add(it.getPartnerId());
             }
+        }
+        // 命中行 partner 名称批量预载（perf-ux plan 0325-2：消除逐行 getEntityById N+1）
+        Map<String, String> nameByPartner = loadPartnerNames(hitPartnerIds);
+        for (Map<String, Object> row : rows) {
+            String pid = (String) row.get("partnerId");
+            row.put("partnerName", pid != null ? nameByPartner.get(pid) : null);
         }
         return rows;
     }
 
     // ===================== helpers =====================
 
-    private List<ErpPurInvoice> loadActiveInvoicesInRange(LocalDate from, LocalDate to) {
-        IEntityDao<ErpPurInvoice> dao = daoProvider.daoFor(ErpPurInvoice.class);
+    /** in() 列表分块上限（perf-ux plan 0325-2 Decision-a 分块纪律）。 */
+    private static final int IN_CLAUSE_CHUNK = 500;
+
+    /** 到货及时率订单扫描硬上限（perf-ux plan 0325-2 Decision：内存比对算法逐位保留；
+     * 超 cap 订单的 receive 计入分母但永不计入分子 = 准时率下偏（保守方向），语义登记于 plan。 */
+    private static final int ON_TIME_RATE_SCAN_CAP = 5000;
+
+    /** 批量预载 partner 名称（distinct id → name Map；id 超 500 分块查询后合并）。 */
+    private Map<String, String> loadPartnerNames(Collection<String> partnerIds) {
+        Map<String, String> nameByPartner = new HashMap<>();
+        if (partnerIds == null || partnerIds.isEmpty())
+            return nameByPartner;
+        IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
+        for (java.util.Collection<String> chunkId : chunkIds(partnerIds)) {
+            QueryBean q = new QueryBean();
+            q.addFilter(in("id", chunkId));
+            for (ErpMdPartner p : partnerDao.findAllByQuery(q)) {
+                nameByPartner.put((String) p.orm_id(), p.getName());
+            }
+        }
+        return nameByPartner;
+    }
+
+    /** 分块 IN 查询辅助：把 id 集合切成 ≤500 的子集合列表。 */
+    private static List<java.util.Collection<String>> chunkIds(Collection<String> ids) {
+        List<String> list = new ArrayList<>(ids);
+        List<java.util.Collection<String>> chunks = new ArrayList<>();
+        for (int i = 0; i < list.size(); i += IN_CLAUSE_CHUNK) {
+            chunks.add(new HashSet<>(list.subList(i, Math.min(list.size(), i + IN_CLAUSE_CHUNK))));
+        }
+        return chunks;
+    }
+
+    /** DB 级聚合期内活跃发票总额（GROUP BY businessDate 维度分组后内存汇总，行数 ≤ 区间天数）。 */
+    private BigDecimal sumActiveInvoiceAmounts(LocalDate from, LocalDate to) {
         QueryBean q = new QueryBean();
+        q.setSourceName(ErpPurInvoice.class.getName());
         q.addFilter(and(eq("approveStatus", ErpPurConstants.APPROVE_STATUS_APPROVED), ne("docStatus", ErpPurConstants.DOC_STATUS_CANCELLED)));
         if (from != null) q.addFilter(ge("businessDate", from));
         if (to != null) q.addFilter(le("businessDate", to));
-        return dao.findAllByQuery(q);
+        QueryFieldBean dim = QueryFieldBean.mainField("businessDate");
+        QueryFieldBean sumAmt = QueryFieldBean.mainField("amountFunctional").sum().alias("purchaseAmount");
+        q.setFields(Arrays.asList(dim, sumAmt));
+        BigDecimal total = BigDecimal.ZERO;
+        for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {
+            total = total.add(DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("purchaseAmount"))));
+        }
+        return total;
+    }
+
+    private static LocalDate toLocalDate(Object value) {
+        if (value instanceof LocalDate)
+            return (LocalDate) value;
+        if (value instanceof java.sql.Date)
+            return ((java.sql.Date) value).toLocalDate();
+        if (value instanceof java.util.Date)
+            return new java.sql.Date(((java.util.Date) value).getTime()).toLocalDate();
+        return null;
+    }
+
+    /** 活跃发票头投影（id/code/supplierId 三列，无聚合普通投影；替代全量实体物化）。 */
+    private List<Map<String, Object>> loadActiveInvoiceHeadProjections() {
+        QueryBean q = new QueryBean();
+        q.setSourceName(ErpPurInvoice.class.getName());
+        q.addFilter(and(eq("approveStatus", ErpPurConstants.APPROVE_STATUS_APPROVED), ne("docStatus", ErpPurConstants.DOC_STATUS_CANCELLED)));
+        q.setFields(Arrays.asList(
+                QueryFieldBean.mainField("id"),
+                QueryFieldBean.mainField("code"),
+                QueryFieldBean.mainField("supplierId")));
+        return ormTemplate.findListByQuery(q);
+    }
+
+    /** 批量预载全部活跃发票的发票行（in(invoiceId) 分块），按 invoiceId 分组。 */
+    private Map<String, List<ErpPurInvoiceLine>> loadInvoiceLinesByInvoice(List<Map<String, Object>> invoiceHeads) {
+        Set<String> invoiceIds = new HashSet<>();
+        for (Map<String, Object> head : invoiceHeads) {
+            invoiceIds.add((String) head.get("id"));
+        }
+        Map<String, List<ErpPurInvoiceLine>> byInvoice = new HashMap<>();
+        IEntityDao<ErpPurInvoiceLine> ilDao = daoProvider.daoFor(ErpPurInvoiceLine.class);
+        for (java.util.Collection<String> chunkId : chunkIds(invoiceIds)) {
+            QueryBean q = new QueryBean();
+            q.addFilter(in("invoiceId", chunkId));
+            for (ErpPurInvoiceLine il : ilDao.findAllByQuery(q)) {
+                byInvoice.computeIfAbsent(il.getInvoiceId(), k -> new ArrayList<>()).add(il);
+            }
+        }
+        return byInvoice;
     }
 
     private long countActiveOrders() {
@@ -300,7 +438,7 @@ public class ErpPurDashboardBizModel {
     private Map<String, LocalDate> loadOrderDeliveryDates() {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         QueryBean q = new QueryBean();
-        q.setLimit(5000);
+        q.setLimit(ON_TIME_RATE_SCAN_CAP);
         Map<String, LocalDate> map = new HashMap<>();
         for (ErpPurOrder o : dao.findAllByQuery(q)) {
             if (o.getDeliveryDate() != null) {
@@ -310,41 +448,24 @@ public class ErpPurDashboardBizModel {
         return map;
     }
 
-    /** 检测发票是否存在价格差异行（发票行 unitPrice vs 关联 order line unitPrice）。 */
-    private boolean hasPriceVariance(String invoiceId, BigDecimal tolerance) {
-        IEntityDao<ErpPurInvoiceLine> ilDao = daoProvider.daoFor(ErpPurInvoiceLine.class);
-        QueryBean ilq = new QueryBean();
-        ilq.addFilter(eq("invoiceId", invoiceId));
-        List<ErpPurInvoiceLine> invLines = ilDao.findAllByQuery(ilq);
-        if (invLines.isEmpty()) return false;
-        Set<String> receiveLineIds = new HashSet<>();
+    /** 检测发票是否存在价格差异行（批量预载 Map 版本，逐行比较逻辑与原逐发票查询版逐字等价）。 */
+    private boolean hasPriceVariance(List<ErpPurInvoiceLine> invLines,
+                                     Map<String, String> orderLineIdByReceiveLine,
+                                     Map<String, BigDecimal> orderLinePrice,
+                                     BigDecimal tolerance) {
+        if (invLines == null || invLines.isEmpty()) return false;
+        boolean hasReceiveLine = false;
         for (ErpPurInvoiceLine il : invLines) {
-            if (il.getReceiveLineId() != null) receiveLineIds.add(il.getReceiveLineId());
+            if (il.getReceiveLineId() != null) {
+                hasReceiveLine = true;
+                break;
+            }
         }
-        if (receiveLineIds.isEmpty()) return false;
-        IEntityDao<ErpPurReceiveLine> rlDao = daoProvider.daoFor(ErpPurReceiveLine.class);
-        QueryBean rlq = new QueryBean();
-        rlq.addFilter(in("id", receiveLineIds));
-        List<ErpPurReceiveLine> receiveLines = rlDao.findAllByQuery(rlq);
-        Set<String> orderLineIds = new HashSet<>();
-        for (ErpPurReceiveLine rl : receiveLines) {
-            if (rl.getOrderLineId() != null) orderLineIds.add(rl.getOrderLineId());
-        }
-        if (orderLineIds.isEmpty()) return false;
-        IEntityDao<ErpPurOrderLine> olDao = daoProvider.daoFor(ErpPurOrderLine.class);
-        QueryBean olq = new QueryBean();
-        olq.addFilter(in("id", orderLineIds));
-        Map<String, BigDecimal> orderLinePrice = new HashMap<>();
-        for (ErpPurOrderLine ol : olDao.findAllByQuery(olq)) {
-            orderLinePrice.put(ol.getId(), ol.getUnitPrice());
-        }
-        Map<String, BigDecimal> receiveToOrderPrice = new HashMap<>();
-        for (ErpPurReceiveLine rl : receiveLines) {
-            receiveToOrderPrice.put(rl.getId(), orderLinePrice.get(rl.getOrderLineId()));
-        }
+        if (!hasReceiveLine) return false;
         for (ErpPurInvoiceLine il : invLines) {
             BigDecimal invPrice = il.getUnitPrice();
-            BigDecimal orderPrice = receiveToOrderPrice.get(il.getReceiveLineId());
+            String orderLineId = orderLineIdByReceiveLine.get(il.getReceiveLineId());
+            BigDecimal orderPrice = orderLineId != null ? orderLinePrice.get(orderLineId) : null;
             if (invPrice == null || orderPrice == null || orderPrice.signum() == 0) continue;
             // P2-CK-pur-007：与 ThreeWayMatcher#priceDiffPercent 同式（×100 百分比，HALF_UP 4 位）
             BigDecimal diff = invPrice.subtract(orderPrice).abs();

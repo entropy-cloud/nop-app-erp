@@ -80,6 +80,23 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
         // 周转率 = 出库成本 200 / 平均库存 1000 = 0.2
         assertEquals(0, ((BigDecimal) kpi.get("turnoverRate")).compareTo(new BigDecimal("0.2000")));
     }
+    /**
+     * perf-ux plan 0325-2 Decision-a 数学等价守护：同一 moveType 内正负 qty 混合时，
+     * 符号拆分 GROUP BY 聚合的 outgoing = Σ|qty| 必须与行级 abs 求和一致（outgoing 500，
+     * 正 300 + 负 -200 的绝对值和）。
+     */
+    @Test
+    public void testKpiOutgoingQtyMixedSign() {
+        ormTemplate.runInSession(() -> {
+            seedMaterial("151", BigDecimal.ZERO);
+            ErpInvStockMove m = seedMove("351", ErpInvConstants.MOVE_TYPE_OUTGOING, ErpInvConstants.DOC_STATUS_DONE, CoreMetrics.currentDate());
+            seedMoveLine("451", "351", "151", new BigDecimal("300"), new BigDecimal("3000"));
+            seedMoveLine("452", "351", "151", new BigDecimal("-200"), new BigDecimal("-2000"));
+        });
+        Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, null, CTX);
+        assertEquals(0, ((BigDecimal) kpi.get("outgoingQty")).compareTo(new BigDecimal("500")),
+                "混合符号出库量 = 行级 abs 求和 300+200=500（符号拆分聚合等价性）");
+    }
 
     @Test
     public void testWarehouseDistribution() {

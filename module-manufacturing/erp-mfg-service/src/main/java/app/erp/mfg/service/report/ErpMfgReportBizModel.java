@@ -366,6 +366,9 @@ public class ErpMfgReportBizModel {
         return new LocalDate[]{min, max};
     }
 
+    /** 明细列表型硬上限（perf-ux plan 2026-09-27-0325-2 Decision：各域各自声明 cap=5000，不跨域引用）。 */
+    private static final int REPORT_LIST_MAX_ROWS = 5000;
+
     private List<ErpMfgCostVariance> loadVarianceLines(String workOrderId, LocalDate startDate, LocalDate endDate) {
         IEntityDao<ErpMfgCostVariance> dao = daoProvider.daoFor(ErpMfgCostVariance.class);
         QueryBean q = new QueryBean();
@@ -374,6 +377,7 @@ public class ErpMfgReportBizModel {
         if (endDate != null) q.addFilter(le("businessDate", endDate));
         q.addOrderField("workOrderId", false);
         q.addOrderField("varianceType", false);
+        q.setLimit(REPORT_LIST_MAX_ROWS);
         return dao.findAllByQuery(q);
     }
 
@@ -411,6 +415,9 @@ public class ErpMfgReportBizModel {
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED));
         if (materialId != null) q.addFilter(eq("productId", materialId));
+        // 求和型但期间重叠谓词（periodOverlaps 跨列比较）不可 SQL 化——cap 硬上限
+        // （perf-ux plan 2026-09-27-0325-2 Decision；cap 截断时 forecast-vs-actual 差异为下偏方向）
+        q.setLimit(REPORT_LIST_MAX_ROWS);
         List<ErpMfgWorkOrder> orders = daoProvider.daoFor(ErpMfgWorkOrder.class).findAllByQuery(q);
         Map<String, BigDecimal> map = new HashMap<>();
         for (ErpMfgWorkOrder wo : orders) {

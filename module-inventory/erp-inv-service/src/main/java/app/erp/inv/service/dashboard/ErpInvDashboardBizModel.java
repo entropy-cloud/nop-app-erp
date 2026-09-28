@@ -21,6 +21,7 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
@@ -40,6 +41,8 @@ import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
+import static io.nop.api.core.beans.FilterBeans.gt;
+import static io.nop.api.core.beans.FilterBeans.lt;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
 import app.erp.common.service.DashboardUtil;
@@ -79,11 +82,14 @@ public class ErpInvDashboardBizModel {
 
             BigDecimal totalValue = sumBalanceTotalCost();
 
-            BigDecimal[] inOut = sumMoveQtyInRange(from, to);
-            BigDecimal incomingQty = inOut[0];
-            BigDecimal outgoingQty = inOut[1];
-
-            BigDecimal outgoingCost = sumOutgoingCostInRange(from, to);
+            // 单趟合并聚合（perf-ux plan 0325-2 Decision-a：原 KPI 请求内两次全量扫描
+            // （sumMoveQtyInRange + sumOutgoingCostInRange 各自 loadDoneMoves+loadMoveLines 巨型 IN）
+            // 合并为一次符号拆分 GROUP BY moveId 聚合 + 一次 moves 范围映射，行级 abs 求和语义
+            // 经 Σ|qᵢ| = Σₘ(P(m)−N(m)) 数学等价保持；单 test 混合符号守护 testKpiOutgoingQtyMixedSign）。
+            MoveAgg agg = aggDoneMoveLinesInRange(from, to);
+            BigDecimal incomingQty = agg.incomingQty;
+            BigDecimal outgoingQty = agg.outgoingQtyAbs;
+            BigDecimal outgoingCost = agg.outgoingCost;
             BigDecimal avgInventory = totalValue;
             // 周转率 = 出库成本 / 平均库存（平均库存以当前 totalCost 近似；为 0 时周转率 0）
             BigDecimal turnoverRate = (avgInventory != null && avgInventory.signum() > 0)
@@ -108,14 +114,25 @@ public class ErpInvDashboardBizModel {
         LocalDate today = CoreMetrics.currentDate();
         LocalDate from = today.minusMonths(n - 1L).withDayOfMonth(1);
         return ormTemplate.runInSession(session -> {
-            // 月度库存价值趋势：以 StockLedger 月度净变动成本近似（incoming 正 / outgoing 负）
-            List<ErpInvStockLedger> ledgers = loadLedgersInRange(from, today);
+            // 月度库存价值趋势：以 StockLedger 月度净变动成本近似（incoming 正 / outgoing 负）。
+            // DB 级 GROUP BY businessDate 聚合（perf-ux plan 0325-2：原 12 个月 ledger 全量实体物化
+            // 改为日期维度分组聚合，行数 ≤ 区间天数；null 业务日期行跳过，与原语义一致）。
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpInvStockLedger.class.getName());
+            q.addFilter(ge("businessDate", from));
+            q.addFilter(le("businessDate", today));
+            QueryFieldBean dim = QueryFieldBean.mainField("businessDate");
+            QueryFieldBean sumCost = QueryFieldBean.mainField("totalCost").sum().alias("netValueChange");
+            q.setFields(Arrays.asList(dim, sumCost));
+            List<Map<String, Object>> aggRows = ormTemplate.findListByQuery(q);
+
             Map<String, BigDecimal> valueByMonth = new LinkedHashMap<>();
-            for (ErpInvStockLedger l : ledgers) {
-                LocalDate d = l.getBusinessDate();
+            for (Map<String, Object> row : aggRows) {
+                Object d = row.get("businessDate");
                 if (d == null) continue;
-                String key = d.getYear() + "-" + String.format("%02d", d.getMonthValue());
-                valueByMonth.merge(key, DashboardUtil.nz(l.getTotalCost()), BigDecimal::add);
+                LocalDate date = toLocalDate(d);
+                String key = date.getYear() + "-" + String.format("%02d", date.getMonthValue());
+                valueByMonth.merge(key, DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("netValueChange"))), BigDecimal::add);
             }
             List<Map<String, Object>> rows = new ArrayList<>();
             for (int i = 0; i < n; i++) {
@@ -294,76 +311,109 @@ public class ErpInvDashboardBizModel {
 
     // ===================== helpers =====================
 
-    /** 返回 [incomingQty, outgoingQty（绝对值）]：基于 DONE 移动单行，按 moveType 区分。 */
-    private BigDecimal[] sumMoveQtyInRange(LocalDate from, LocalDate to) {
-        List<ErpInvStockMove> moves = loadDoneMovesInRange(from, to);
-        if (moves.isEmpty()) return new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO};
-        Set<String> moveIds = new HashSet<>();
-        Set<String> incomingMoveIds = new HashSet<>();
-        Set<String> outgoingMoveIds = new HashSet<>();
-        for (ErpInvStockMove m : moves) {
-            moveIds.add(m.getId());
-            if (ErpInvConstants.MOVE_TYPE_INCOMING.equals(m.getMoveType())) {
-                incomingMoveIds.add(m.getId());
-            } else if (ErpInvConstants.MOVE_TYPE_OUTGOING.equals(m.getMoveType())) {
-                outgoingMoveIds.add(m.getId());
-            }
-        }
-        List<ErpInvStockMoveLine> lines = loadMoveLines(moveIds);
-        BigDecimal incoming = BigDecimal.ZERO;
-        BigDecimal outgoing = BigDecimal.ZERO;
-        for (ErpInvStockMoveLine l : lines) {
-            BigDecimal qty = DashboardUtil.nz(l.getQuantity());
-            if (incomingMoveIds.contains(l.getMoveId())) {
-                incoming = incoming.add(qty);
-            } else if (outgoingMoveIds.contains(l.getMoveId())) {
-                outgoing = outgoing.add(qty.abs());
-            }
-        }
-        return new BigDecimal[]{incoming, outgoing};
+    /** 合并聚合结果：入/出库量（出库为行级 abs 语义）+ 出库成本。 */
+    private static final class MoveAgg {
+        BigDecimal incomingQty = BigDecimal.ZERO;
+        BigDecimal outgoingQtyAbs = BigDecimal.ZERO;
+        BigDecimal outgoingCost = BigDecimal.ZERO;
     }
 
-    private BigDecimal sumOutgoingCostInRange(LocalDate from, LocalDate to) {
+    /**
+     * 合并聚合 DONE 移动单行（perf-ux plan 0325-2 Decision-a）：符号拆分 GROUP BY moveId 投影聚合
+     * （①qty&gt;0 SUM(quantity) ②qty&lt;0 SUM(quantity) ③无过滤 SUM(totalCost) 三条）+ moves 范围查询做
+     * moveType 映射，内存按 moveType 桶装并合成。数学等价：出库量 Σ|qᵢ| = Σₘ(P(m)−N(m))、
+     * 入库量 Σqᵢ = Σₘ(P(m)+N(m))（BigDecimal 精确无舍入）；投影聚合不携 in(moveId) 过滤
+     * （行数=move_line 去重 moveId 数，天然有界，优于原计划 in() 分块多趟方案）。
+     */
+    private MoveAgg aggDoneMoveLinesInRange(LocalDate from, LocalDate to) {
+        MoveAgg agg = new MoveAgg();
         List<ErpInvStockMove> moves = loadDoneMovesInRange(from, to);
-        if (moves.isEmpty()) return BigDecimal.ZERO;
-        Set<String> outgoingMoveIds = new HashSet<>();
+        if (moves.isEmpty()) return agg;
+        Map<String, String> moveTypeByMoveId = new HashMap<>();
         Set<String> allMoveIds = new HashSet<>();
         for (ErpInvStockMove m : moves) {
+            moveTypeByMoveId.put(m.getId(), m.getMoveType());
             allMoveIds.add(m.getId());
-            if (ErpInvConstants.MOVE_TYPE_OUTGOING.equals(m.getMoveType())) {
-                outgoingMoveIds.add(m.getId());
+        }
+
+        // 单实体投影聚合三条（GROUP BY moveId，维度分组先例机制）：
+        // ① 正 qty 行 SUM(quantity)（qty>0）；② 负 qty 行 SUM(quantity)（qty<0）；
+        // ③ 全部行 SUM(totalCost)（无 qty 过滤——出库成本原语义=出库 move 所有行 totalCost 求和，
+        //    不能用 ① 的 qty>0 投影替代：出库行 qty 常为负会被排除）。
+        Map<String, BigDecimal> posQtyByMove = new HashMap<>();
+        Map<String, BigDecimal> negQtyByMove = new HashMap<>();
+        Map<String, BigDecimal> costByMove = new HashMap<>();
+        {
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpInvStockMoveLine.class.getName());
+            q.addFilter(gt("quantity", BigDecimal.ZERO));
+            QueryFieldBean dim = QueryFieldBean.mainField("moveId");
+            QueryFieldBean sumQty = QueryFieldBean.mainField("quantity").sum().alias("posQty");
+            q.setFields(Arrays.asList(dim, sumQty));
+            for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {
+                String moveId = (String) row.get("moveId");
+                if (moveId == null) continue;
+                posQtyByMove.put(moveId, DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("posQty"))));
             }
         }
-        List<ErpInvStockMoveLine> lines = loadMoveLines(allMoveIds);
-        BigDecimal sum = BigDecimal.ZERO;
-        for (ErpInvStockMoveLine l : lines) {
-            if (outgoingMoveIds.contains(l.getMoveId())) {
-                sum = sum.add(DashboardUtil.nz(l.getTotalCost()));
+        {
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpInvStockMoveLine.class.getName());
+            q.addFilter(lt("quantity", BigDecimal.ZERO));
+            QueryFieldBean dim = QueryFieldBean.mainField("moveId");
+            QueryFieldBean sumQty = QueryFieldBean.mainField("quantity").sum().alias("negQty");
+            q.setFields(Arrays.asList(dim, sumQty));
+            for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {
+                String moveId = (String) row.get("moveId");
+                if (moveId == null) continue;
+                negQtyByMove.put(moveId, DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("negQty"))));
             }
         }
-        return sum;
+        {
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpInvStockMoveLine.class.getName());
+            QueryFieldBean dim = QueryFieldBean.mainField("moveId");
+            QueryFieldBean sumCost = QueryFieldBean.mainField("totalCost").sum().alias("lineCost");
+            q.setFields(Arrays.asList(dim, sumCost));
+            for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {
+                String moveId = (String) row.get("moveId");
+                if (moveId == null) continue;
+                costByMove.put(moveId, DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("lineCost"))));
+            }
+        }
+
+        for (Map.Entry<String, String> e : moveTypeByMoveId.entrySet()) {
+            String moveId = e.getKey();
+            String moveType = e.getValue();
+            BigDecimal pos = posQtyByMove.getOrDefault(moveId, BigDecimal.ZERO);
+            BigDecimal neg = negQtyByMove.getOrDefault(moveId, BigDecimal.ZERO);
+            if (ErpInvConstants.MOVE_TYPE_INCOMING.equals(moveType)) {
+                // 入库量 = 行级原值求和 = Σ(pos+neg)
+                agg.incomingQty = agg.incomingQty.add(pos).add(neg);
+            } else if (ErpInvConstants.MOVE_TYPE_OUTGOING.equals(moveType)) {
+                // 出库量 = 行级 abs 求和 = Σ(pos−neg)（neg ≤ 0）
+                agg.outgoingQtyAbs = agg.outgoingQtyAbs.add(pos).subtract(neg);
+                // 出库成本 = 出库 move 所有行 totalCost 求和（原语义，无 qty 符号过滤）
+                agg.outgoingCost = agg.outgoingCost.add(costByMove.getOrDefault(moveId, BigDecimal.ZERO));
+            }
+        }
+        return agg;
+    }
+
+    private static LocalDate toLocalDate(Object value) {
+        if (value instanceof LocalDate)
+            return (LocalDate) value;
+        if (value instanceof java.sql.Date)
+            return ((java.sql.Date) value).toLocalDate();
+        if (value instanceof java.util.Date)
+            return new java.sql.Date(((java.util.Date) value).getTime()).toLocalDate();
+        return null;
     }
 
     private List<ErpInvStockMove> loadDoneMovesInRange(LocalDate from, LocalDate to) {
         IEntityDao<ErpInvStockMove> dao = daoProvider.daoFor(ErpInvStockMove.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", ErpInvConstants.DOC_STATUS_DONE));
-        if (from != null) q.addFilter(ge("businessDate", from));
-        if (to != null) q.addFilter(le("businessDate", to));
-        return dao.findAllByQuery(q);
-    }
-
-    private List<ErpInvStockMoveLine> loadMoveLines(Set<String> moveIds) {
-        if (moveIds.isEmpty()) return Collections.emptyList();
-        IEntityDao<ErpInvStockMoveLine> dao = daoProvider.daoFor(ErpInvStockMoveLine.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(in("moveId", moveIds));
-        return dao.findAllByQuery(q);
-    }
-
-    private List<ErpInvStockLedger> loadLedgersInRange(LocalDate from, LocalDate to) {
-        IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
-        QueryBean q = new QueryBean();
         if (from != null) q.addFilter(ge("businessDate", from));
         if (to != null) q.addFilter(le("businessDate", to));
         return dao.findAllByQuery(q);
@@ -413,7 +463,12 @@ public class ErpInvDashboardBizModel {
         return loadWarehouseNames(warehouseIds);
     }
 
-    /** 加载 cutoff 之后的最近出库日期，按 materialId → lastOutDate（StockMoveLine 无 warehouseId，故物料级聚合）。 */
+    /**
+     * 加载 cutoff 之后的最近出库日期，按 materialId → lastOutDate（StockMoveLine 无 warehouseId，故物料级聚合）。
+     * perf-ux plan 0325-2 Decision-b：原 cutoff 后全部出库 move+line 全量物化改为
+     * 「outgoing DONE moves 范围查询（move 级，行数=出库单数）+ move_line GROUP BY moveId 投影聚合」，
+     * 行级物化消除；物料维度天然有界，不加 setLimit（无序 limit=非确定截断）。
+     */
     private Map<String, LocalDate> loadLastOutgoingDates(LocalDate cutoff) {
         IEntityDao<ErpInvStockMove> mDao = daoProvider.daoFor(ErpInvStockMove.class);
         QueryBean mq = new QueryBean();
@@ -422,18 +477,23 @@ public class ErpInvDashboardBizModel {
         if (cutoff != null) mq.addFilter(ge("businessDate", cutoff));
         List<ErpInvStockMove> moves = mDao.findAllByQuery(mq);
         if (moves.isEmpty()) return Collections.emptyMap();
-        Set<String> moveIds = new HashSet<>();
-        for (ErpInvStockMove m : moves) moveIds.add(m.getId());
-        List<ErpInvStockMoveLine> lines = loadMoveLines(moveIds);
         Map<String, LocalDate> moveDateByMoveId = new HashMap<>();
         for (ErpInvStockMove m : moves) {
             moveDateByMoveId.put(m.getId(), m.getBusinessDate());
         }
+        // move_line 按 moveId 维度投影聚合（行数=出库 move 数 ×物料数，天然有界）
+        QueryBean lq = new QueryBean();
+        lq.setSourceName(ErpInvStockMoveLine.class.getName());
+        QueryFieldBean dimMove = QueryFieldBean.mainField("moveId");
+        QueryFieldBean dimMat = QueryFieldBean.mainField("materialId");
+        lq.setFields(Arrays.asList(dimMove, dimMat));
         Map<String, LocalDate> result = new HashMap<>();
-        for (ErpInvStockMoveLine l : lines) {
-            LocalDate d = moveDateByMoveId.get(l.getMoveId());
-            if (d == null || l.getMaterialId() == null) continue;
-            result.merge(l.getMaterialId(), d, (a, b) -> a.isAfter(b) ? a : b);
+        for (Map<String, Object> row : ormTemplate.findListByQuery(lq)) {
+            String moveId = (String) row.get("moveId");
+            Object mat = row.get("materialId");
+            LocalDate d = moveId != null ? moveDateByMoveId.get(moveId) : null;
+            if (d == null || mat == null) continue;
+            result.merge((String) mat, d, (a, b) -> a.isAfter(b) ? a : b);
         }
         return result;
     }

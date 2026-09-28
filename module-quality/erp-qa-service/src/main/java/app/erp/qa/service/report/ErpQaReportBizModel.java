@@ -323,11 +323,15 @@ public class ErpQaReportBizModel {
 
     // ===================== helpers =====================
 
+    /** 明细列表型硬上限（perf-ux plan 2026-09-27-0325-2 Decision：各域各自声明 cap=5000，不跨域引用）。 */
+    private static final int REPORT_LIST_MAX_ROWS = 5000;
+
     private List<ErpQaInspection> loadInspections(String materialId, LocalDate startDate, LocalDate endDate) {
         QueryBean q = new QueryBean();
         if (materialId != null) q.addFilter(eq("materialId", materialId));
         if (startDate != null) q.addFilter(ge("inspectionDate", startDate));
         if (endDate != null) q.addFilter(le("inspectionDate", endDate));
+        q.setLimit(REPORT_LIST_MAX_ROWS);
         return daoProvider.daoFor(ErpQaInspection.class).findAllByQuery(q);
     }
 
@@ -335,6 +339,7 @@ public class ErpQaReportBizModel {
         QueryBean q = new QueryBean();
         if (startDate != null) q.addFilter(ge("ncrDate", startDate));
         if (endDate != null) q.addFilter(le("ncrDate", endDate));
+        q.setLimit(REPORT_LIST_MAX_ROWS);
         return daoProvider.daoFor(ErpQaNonConformance.class).findAllByQuery(q);
     }
 

@@ -21,6 +21,7 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,13 +61,11 @@ public class ErpAstDashboardBizModel {
                                                 IServiceContext context) {
         return ormTemplate.runInSession(session -> {
             String period = periodId != null ? periodId : currentPeriod();
-            List<ErpAstAsset> inServiceAssets = loadInServiceAssets(resolveOrgId(context));
-            BigDecimal originalValue = BigDecimal.ZERO;
-            BigDecimal accumulatedDepreciation = BigDecimal.ZERO;
-            for (ErpAstAsset a : inServiceAssets) {
-                originalValue = originalValue.add(DashboardUtil.nz(a.getOriginalValue()));
-                accumulatedDepreciation = accumulatedDepreciation.add(DashboardUtil.nz(a.getAccumulatedDepreciation()));
-            }
+            // DB 级投影聚合（perf-ux plan 0325-2：原在役资产全量实体物化内存求和改为
+            // GROUP BY status 维度分组求和——过滤后单组，Σ 原值/累计折旧一次取回）
+            BigDecimal[] valueAgg = sumInServiceAssetValues(resolveOrgId(context));
+            BigDecimal originalValue = valueAgg[0];
+            BigDecimal accumulatedDepreciation = valueAgg[1];
             BigDecimal netBookValue = originalValue.subtract(accumulatedDepreciation);
             BigDecimal periodDepreciation = sumPeriodDepreciation(period);
             BigDecimal cipBalance = sumCipBalance();
@@ -86,13 +85,26 @@ public class ErpAstDashboardBizModel {
     @BizQuery
     public List<Map<String, Object>> getAssetCategoryDistribution(IServiceContext context) {
         return ormTemplate.runInSession(session -> {
-            List<ErpAstAsset> assets = loadInServiceAssets(resolveOrgId(context));
+            // DB 级 GROUP BY categoryId 投影聚合（perf-ux plan 0325-2：原全量资产物化内存分组
+            // 改为 SQL 聚合，行数=科目类别数；Σ(a−b) = Σa−Σb 逐位等价），null 类别组跳过（原语义）
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpAstAsset.class.getName());
+            q.addFilter(eq("status", ErpAstConstants.ASSET_STATUS_IN_SERVICE));
+            String orgId = resolveOrgId(context);
+            if (orgId != null) {
+                q.addFilter(eq("orgId", orgId));
+            }
+            QueryFieldBean dim = QueryFieldBean.mainField("categoryId");
+            QueryFieldBean sumOrig = QueryFieldBean.mainField("originalValue").sum().alias("originalValue");
+            QueryFieldBean sumAcc = QueryFieldBean.mainField("accumulatedDepreciation").sum().alias("accumulatedDepreciation");
+            q.setFields(Arrays.asList(dim, sumOrig, sumAcc));
             Map<String, BigDecimal> netByCategory = new LinkedHashMap<>();
-            for (ErpAstAsset a : assets) {
-                String cid = a.getCategoryId();
+            for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {
+                Object cid = row.get("categoryId");
                 if (cid == null) continue;
-                BigDecimal net = DashboardUtil.nz(a.getOriginalValue()).subtract(DashboardUtil.nz(a.getAccumulatedDepreciation()));
-                netByCategory.merge(cid, net, BigDecimal::add);
+                BigDecimal net = DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("originalValue")))
+                        .subtract(DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("accumulatedDepreciation"))));
+                netByCategory.merge((String) cid, net, BigDecimal::add);
             }
             Map<String, String> categoryNames = loadCategoryNames(netByCategory.keySet());
             List<Map<String, Object>> rows = new ArrayList<>();
@@ -117,12 +129,19 @@ public class ErpAstDashboardBizModel {
         LocalDate today = CoreMetrics.currentDate();
         LocalDate from = today.minusMonths(n - 1L).withDayOfMonth(1);
         return ormTemplate.runInSession(session -> {
-            List<ErpAstDepreciationSchedule> schedules = loadExecutedSchedulesInRange(from, today);
+            // DB 级 GROUP BY period 投影聚合（perf-ux plan 0325-2：原全部已执行折旧计划实体物化
+            // 内存分桶改为 SQL 聚合，行数=期间数；null period 组跳过，与原语义一致）
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpAstDepreciationSchedule.class.getName());
+            q.addFilter(eq("status", ErpAstConstants.SCHEDULE_STATUS_EXECUTED));
+            QueryFieldBean dim = QueryFieldBean.mainField("period");
+            QueryFieldBean sumAmt = QueryFieldBean.mainField("actualAmount").sum().alias("amount");
+            q.setFields(Arrays.asList(dim, sumAmt));
             Map<String, BigDecimal> amountByPeriod = new LinkedHashMap<>();
-            for (ErpAstDepreciationSchedule s : schedules) {
-                String p = s.getPeriod();
+            for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {
+                Object p = row.get("period");
                 if (p == null) continue;
-                amountByPeriod.merge(p, DashboardUtil.nz(s.getActualAmount()), BigDecimal::add);
+                amountByPeriod.merge((String) p, DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("amount"))), BigDecimal::add);
             }
             List<Map<String, Object>> rows = new ArrayList<>();
             for (int i = 0; i < n; i++) {
@@ -144,7 +163,9 @@ public class ErpAstDashboardBizModel {
     public List<Map<String, Object>> findDepreciationMissingAlert(IServiceContext context) {
         return ormTemplate.runInSession(session -> {
             String period = currentPeriod();
-            List<ErpAstAsset> inServiceAssets = loadInServiceAssets(resolveOrgId(context));
+            // 明细列表型硬上限（perf-ux plan 0325-2 Decision：行级字段进列表行，cap 5000；
+            // 尾部数据价值低于 OOM 风险，cap 截断登记于计划留痕区）
+            List<ErpAstAsset> inServiceAssets = loadInServiceAssets(resolveOrgId(context), ALERT_LIST_MAX_ROWS);
             Set<String> assetIdsWithDepreciation = loadAssetIdsWithExecutedDepreciationInPeriod(period);
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpAstAsset a : inServiceAssets) {
@@ -184,7 +205,10 @@ public class ErpAstDashboardBizModel {
         return ErpOrgContext.currentOrgId(context);
     }
 
-    private List<ErpAstAsset> loadInServiceAssets(String orgId) {
+    /** 明细列表型硬上限（perf-ux plan 0325-2：各域各自声明，不跨域引用）。 */
+    private static final int ALERT_LIST_MAX_ROWS = 5000;
+
+    private List<ErpAstAsset> loadInServiceAssets(String orgId, int limit) {
         IEntityDao<ErpAstAsset> dao = daoProvider.daoFor(ErpAstAsset.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("status", ErpAstConstants.ASSET_STATUS_IN_SERVICE));
@@ -192,47 +216,76 @@ public class ErpAstDashboardBizModel {
         if (orgId != null) {
             q.addFilter(eq("orgId", orgId));
         }
+        if (limit > 0) {
+            q.setLimit(limit);
+        }
         return dao.findAllByQuery(q);
     }
 
-    private BigDecimal sumPeriodDepreciation(String period) {
-        IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
+    /** 在役资产原值/累计折旧投影聚合（GROUP BY status 单组；orgId null-skip 语义保留）。 */
+    private BigDecimal[] sumInServiceAssetValues(String orgId) {
         QueryBean q = new QueryBean();
+        q.setSourceName(ErpAstAsset.class.getName());
+        q.addFilter(eq("status", ErpAstConstants.ASSET_STATUS_IN_SERVICE));
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+        }
+        QueryFieldBean dim = QueryFieldBean.mainField("status");
+        QueryFieldBean sumOrig = QueryFieldBean.mainField("originalValue").sum().alias("originalValue");
+        QueryFieldBean sumAcc = QueryFieldBean.mainField("accumulatedDepreciation").sum().alias("accumulatedDepreciation");
+        q.setFields(Arrays.asList(dim, sumOrig, sumAcc));
+        BigDecimal originalValue = BigDecimal.ZERO;
+        BigDecimal accumulatedDepreciation = BigDecimal.ZERO;
+        for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {
+            originalValue = originalValue.add(DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("originalValue"))));
+            accumulatedDepreciation = accumulatedDepreciation.add(DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("accumulatedDepreciation"))));
+        }
+        return new BigDecimal[]{originalValue, accumulatedDepreciation};
+    }
+
+    private BigDecimal sumPeriodDepreciation(String period) {
+        // 投影聚合（perf-ux plan 0325-2：GROUP BY period 单组 SUM，原全量物化消除）
+        QueryBean q = new QueryBean();
+        q.setSourceName(ErpAstDepreciationSchedule.class.getName());
         q.addFilter(eq("status", ErpAstConstants.SCHEDULE_STATUS_EXECUTED));
         q.addFilter(eq("period", period));
+        QueryFieldBean dim = QueryFieldBean.mainField("period");
+        QueryFieldBean sumAmt = QueryFieldBean.mainField("actualAmount").sum().alias("amount");
+        q.setFields(Arrays.asList(dim, sumAmt));
         BigDecimal sum = BigDecimal.ZERO;
-        for (ErpAstDepreciationSchedule s : dao.findAllByQuery(q)) {
-            sum = sum.add(DashboardUtil.nz(s.getActualAmount()));
+        for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {
+            sum = sum.add(DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("amount"))));
         }
         return sum;
     }
 
     private BigDecimal sumCipBalance() {
-        IEntityDao<ErpAstCip> dao = daoProvider.daoFor(ErpAstCip.class);
+        // 投影聚合（perf-ux plan 0325-2：GROUP BY isCompleted 单组 SUM）
         QueryBean q = new QueryBean();
+        q.setSourceName(ErpAstCip.class.getName());
         q.addFilter(eq("isCompleted", Boolean.FALSE));
+        QueryFieldBean dim = QueryFieldBean.mainField("isCompleted");
+        QueryFieldBean sumCost = QueryFieldBean.mainField("accumulatedCost").sum().alias("cipBalance");
+        q.setFields(Arrays.asList(dim, sumCost));
         BigDecimal sum = BigDecimal.ZERO;
-        for (ErpAstCip c : dao.findAllByQuery(q)) {
-            sum = sum.add(DashboardUtil.nz(c.getAccumulatedCost()));
+        for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {
+            sum = sum.add(DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("cipBalance"))));
         }
         return sum;
     }
 
-    private List<ErpAstDepreciationSchedule> loadExecutedSchedulesInRange(LocalDate from, LocalDate to) {
-        IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("status", ErpAstConstants.SCHEDULE_STATUS_EXECUTED));
-        return dao.findAllByQuery(q);
-    }
-
     private Set<String> loadAssetIdsWithExecutedDepreciationInPeriod(String period) {
-        IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
+        // 投影去重（perf-ux plan 0325-2：GROUP BY assetId 维度投影替代全量物化，行数=资产数）
         QueryBean q = new QueryBean();
+        q.setSourceName(ErpAstDepreciationSchedule.class.getName());
         q.addFilter(eq("status", ErpAstConstants.SCHEDULE_STATUS_EXECUTED));
         q.addFilter(eq("period", period));
+        QueryFieldBean dim = QueryFieldBean.mainField("assetId");
+        q.setFields(Arrays.asList(dim));
         Set<String> ids = new HashSet<>();
-        for (ErpAstDepreciationSchedule s : dao.findAllByQuery(q)) {
-            if (s.getAssetId() != null) ids.add(s.getAssetId());
+        for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {
+            Object aid = row.get("assetId");
+            if (aid != null) ids.add((String) aid);
         }
         return ids;
     }

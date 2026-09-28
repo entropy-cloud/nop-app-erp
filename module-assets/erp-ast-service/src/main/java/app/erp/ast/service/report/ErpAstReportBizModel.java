@@ -287,10 +287,14 @@ public class ErpAstReportBizModel {
 
     // ===================== helpers =====================
 
+    /** 明细列表型硬上限（perf-ux plan 2026-09-27-0325-2 Decision：各域各自声明 cap=5000，不跨域引用）。 */
+    private static final int REPORT_LIST_MAX_ROWS = 5000;
+
     private List<ErpAstAsset> loadAssets(String categoryId) {
         QueryBean q = new QueryBean();
         if (categoryId != null) q.addFilter(eq("categoryId", categoryId));
         q.addOrderField("code", false);
+        q.setLimit(REPORT_LIST_MAX_ROWS);
         return daoProvider.daoFor(ErpAstAsset.class).findAllByQuery(q);
     }
 
@@ -341,6 +345,7 @@ public class ErpAstReportBizModel {
         if (endDate != null) q.addFilter(le("businessDate", endDate));
         q.addOrderField("businessDate", false);
         q.addOrderField("code", false);
+        q.setLimit(REPORT_LIST_MAX_ROWS);
         return daoProvider.daoFor(ErpAstDisposal.class).findAllByQuery(q);
     }
 

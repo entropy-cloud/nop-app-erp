@@ -127,6 +127,14 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
         });
         List<Map<String, Object>> trend = dashboardBiz.getDashboardTrend(2, CTX);
         assertEquals(2, trend.size());
+        // 逐月桶断言（perf-ux plan 0325-2：SQL 聚合改造前钉死月桶 key+值，防月桶错位）
+        // 冻结时钟 REFERENCE_DATE=2026-07-17 → 近 2 个月 = 2026-06（-1 月）与 2026-07（当月）
+        assertEquals("2026-06", trend.get(0).get("month"), "首月桶 key=参考月-1");
+        assertEquals(0, ((BigDecimal) trend.get(0).get("purchaseAmount")).compareTo(new BigDecimal("150")),
+                "2026-06 桶 = 150");
+        assertEquals("2026-07", trend.get(1).get("month"), "次月桶 key=当月");
+        assertEquals(0, ((BigDecimal) trend.get(1).get("purchaseAmount")).compareTo(new BigDecimal("250")),
+                "2026-07 桶 = 250");
         BigDecimal total = BigDecimal.ZERO;
         for (Map<String, Object> row : trend) {
             total = total.add((BigDecimal) row.get("purchaseAmount"));

@@ -247,9 +247,13 @@ public class ErpCsReportBizModel {
 
     // ===================== helpers =====================
 
+    /** 明细列表型硬上限（perf-ux plan 2026-09-27-0325-2 Decision：各域各自声明 cap=5000，不跨域引用）。 */
+    private static final int REPORT_LIST_MAX_ROWS = 5000;
+
     private List<ErpCsTicket> loadTickets(String ticketType) {
         QueryBean q = new QueryBean();
         if (ticketType != null) q.addFilter(eq("ticketTypeId", ticketType));
+        q.setLimit(REPORT_LIST_MAX_ROWS);
         return daoProvider.daoFor(ErpCsTicket.class).findAllByQuery(q);
     }
 

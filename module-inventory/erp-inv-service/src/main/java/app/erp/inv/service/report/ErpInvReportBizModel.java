@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -39,6 +40,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.or;
 
 // 族 A/U20 豁免登记：本类为BizModel；daoFor 目标（ErpInvStockMove、ErpInvStockMoveLine）=同域实体批量聚合，只读批量聚合，逐条 I*Biz 管道不适用批量场景。
@@ -263,19 +265,24 @@ public class ErpInvReportBizModel {
 
     private List<Map<String, Object>> toTraceRows(List<ErpInvStockMove> moves, String traceType) {
         if (moves.isEmpty()) return Collections.emptyList();
+        // 批量预载全部 move 行（perf-ux plan 2026-09-27-0325-2：原逐 move loadLinesForMove N+1
+        // 改 in(moveId) 单趟批载分组，行集与逐 move eq 查询并集逐字等价）
         IEntityDao<ErpInvStockMoveLine> lineDao = daoProvider.daoFor(ErpInvStockMoveLine.class);
+        Set<String> moveIds = new LinkedHashSet<>();
+        for (ErpInvStockMove m : moves) {
+            moveIds.add(m.getId());
+        }
+        Map<String, List<ErpInvStockMoveLine>> linesByMove = new HashMap<>();
+        QueryBean batchQ = new QueryBean();
+        batchQ.addFilter(in("moveId", moveIds));
+        for (ErpInvStockMoveLine line : lineDao.findAllByQuery(batchQ)) {
+            linesByMove.computeIfAbsent(line.getMoveId(), k -> new ArrayList<>()).add(line);
+        }
         List<Map<String, Object>> rows = new ArrayList<>(moves.size());
         for (ErpInvStockMove m : moves) {
-            List<ErpInvStockMoveLine> lines = loadLinesForMove(lineDao, m.getId());
-            rows.add(moveToRow(m, lines, traceType));
+            rows.add(moveToRow(m, linesByMove.getOrDefault(m.getId(), Collections.emptyList()), traceType));
         }
         return rows;
-    }
-
-    private List<ErpInvStockMoveLine> loadLinesForMove(IEntityDao<ErpInvStockMoveLine> dao, String moveId) {
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("moveId", moveId));
-        return dao.findAllByQuery(q);
     }
 
     private Map<String, Object> moveToRow(ErpInvStockMove m, List<ErpInvStockMoveLine> lines, String traceType) {

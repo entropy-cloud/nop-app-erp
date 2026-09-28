@@ -265,7 +265,7 @@
 | apBalance | 应付余额 | Σ openAmountFunctional | `ErpFinArApItem`（findOpenItems），`direction='PAYABLE'` + `status ∈ ('OPEN','PARTIAL')` | 本位币 | 与财务域 apBalance 同源同式 |
 | onTimeRate | 到货及时率 | count(receive.businessDate ≤ 关联 orderLine.deliveryDate) / count(有 orderId 的 receive) | `ErpPurReceive`(docStatus='ACTIVE') ⟕ `ErpPurOrder` | 比率 | 分母仅计 `orderId != null` 的收货单 |
 | 趋势（purchaseAmount/month） | 采购趋势 | 按 businessDate 月分组 Σ amountFunctional | 同 purchaseAmount，近 N 月 | 本位币 | — |
-| 供应商 TOP10 | 供应商排行 | 按 supplierId Σ amountFunctional 降序 | 同 purchaseAmount（内存聚合） | 本位币 | — |
+| 供应商 TOP10 | 供应商排行 | 按 supplierId Σ amountFunctional 降序 | 同 purchaseAmount（DB 级 GROUP BY supplierId 聚合 + 内存排序截取 TopN） | 本位币 | — |
 | 三单匹配差异 | 预警卡片 | 发票行 unitPrice vs 关联订单行 unitPrice，`|diff|/orderPrice > tolerance` | `ErpPurInvoiceLine` → `receiveLineId → ErpPurReceiveLine.orderLineId → ErpPurOrderLine` | 比率 | `erp-pur.match-price-tolerance` 默认 0.05 |
 | 应付超期预警 | 预警卡片 | 账龄（dueDate ?? businessDate）> 天阈值 | 同 apBalance | 天 | `erp-dash.pur-ap-overdue-days` 默认 0=禁用 |
 
