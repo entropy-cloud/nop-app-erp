@@ -18,7 +18,7 @@
                         <resource id="ErpMfgBom-main" app:useCases="UC-MFG-02,UC-MFG-10" displayName="BOM"
                                   i18n-en:displayName="BOM" icon="git-branch"
                                   component="FLUX" resourceType="SUBM" orderNo="100"
-                                  url="/erp/mfg/pages/ErpMfgBom/main.page.yaml">
+                                  url="/erp/mfg/pages/ErpMfgBom/main.page.yaml" roles="生产计划员,生产主管">
                                       <children>
                                           <resource id="FNPT:ErpMfgBom:rollupCost" displayName="成本滚算" i18n-en:displayName="Rollup Cost"
                                                     resourceType="FNPT" orderNo="10010" roles="生产主管">
@@ -29,19 +29,19 @@
                         <resource id="mfg-bom-tree" app:useCases="UC-MFG-02,UC-MFG-10" displayName="BOM 展开树"
                                   i18n-en:displayName="BOM Tree" icon="list-tree"
                                   component="FLUX" resourceType="SUBM" orderNo="105"
-                                  url="/erp/mfg/pages/dashboard/bom-tree.page.yaml"/>
+                                  url="/erp/mfg/pages/dashboard/bom-tree.page.yaml" roles="生产计划员,生产主管"/>
                         <resource id="ErpMfgRouting-main" app:useCases="UC-MFG-07" displayName="工艺路线"
                                   i18n-en:displayName="Routing" icon="route"
                                   component="FLUX" resourceType="SUBM" orderNo="110"
-                                  url="/erp/mfg/pages/ErpMfgRouting/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgRouting/main.page.yaml" roles="生产计划员,生产主管"/>
                         <resource id="ErpMfgWorkcenter-main" app:useCases="UC-MFG-07" displayName="工作中心"
                                   i18n-en:displayName="Work Center" icon="cog"
                                   component="FLUX" resourceType="SUBM" orderNo="120"
-                                  url="/erp/mfg/pages/ErpMfgWorkcenter/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgWorkcenter/main.page.yaml" roles="生产计划员,生产主管"/>
                         <resource id="ErpMfgProductionVersion-main" app:useCases="UC-MFG-02" displayName="生产版本"
                                   i18n-en:displayName="Production Version" icon="git-tag"
                                   component="FLUX" resourceType="SUBM" orderNo="130"
-                                  url="/erp/mfg/pages/ErpMfgProductionVersion/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgProductionVersion/main.page.yaml" roles="生产计划员,生产主管"/>
                     </children>
                 </resource>
                 <!-- 工单执行 -->
@@ -51,7 +51,7 @@
                         <resource id="ErpMfgWorkOrder-main" app:useCases="UC-MFG-01,UC-MFG-03,UC-MFG-04,UC-MFG-07,UC-MFG-08,UC-MFG-09,UC-MFG-10,UC-MFG-05" displayName="工单"
                                   i18n-en:displayName="Work Order" icon="factory"
                                   component="FLUX" resourceType="SUBM" orderNo="200"
-                                  url="/erp/mfg/pages/ErpMfgWorkOrder/main.page.yaml">
+                                  url="/erp/mfg/pages/ErpMfgWorkOrder/main.page.yaml" roles="生产计划员,生产主管,作业员">
                             <children>
                                 <resource id="FNPT:ErpMfgWorkOrder:start" displayName="开工" i18n-en:displayName="Start Work Order"
                                           resourceType="FNPT" orderNo="20010" roles="生产主管">
@@ -78,11 +78,11 @@
                         <resource id="ErpMfgJobCard-main" app:useCases="UC-MFG-01,UC-MFG-07" displayName="作业卡"
                                   i18n-en:displayName="Job Card" icon="credit-card"
                                   component="FLUX" resourceType="SUBM" orderNo="210"
-                                  url="/erp/mfg/pages/ErpMfgJobCard/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgJobCard/main.page.yaml" roles="生产计划员,生产主管,作业员"/>
                         <resource id="ErpMfgMaterialIssue-main" app:useCases="UC-MFG-06" displayName="领料单"
                                   i18n-en:displayName="Material Issue" icon="package-minus"
                                   component="FLUX" resourceType="SUBM" orderNo="220"
-                                  url="/erp/mfg/pages/ErpMfgMaterialIssue/main.page.yaml">
+                                  url="/erp/mfg/pages/ErpMfgMaterialIssue/main.page.yaml" roles="生产计划员,生产主管,作业员">
                             <children>
                                 <resource id="FNPT:ErpMfgMaterialIssue:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="生产主管">
                                     <permissions>ErpMfgMaterialIssue:approve</permissions>
@@ -102,7 +102,7 @@
                         <resource id="ErpMfgMrpPlan-main" app:useCases="UC-MFG-03" displayName="MRP计划"
                                   i18n-en:displayName="MRP Plan" icon="calendar-clock"
                                   component="FLUX" resourceType="SUBM" orderNo="300"
-                                  url="/erp/mfg/pages/ErpMfgMrpPlan/main.page.yaml">
+                                  url="/erp/mfg/pages/ErpMfgMrpPlan/main.page.yaml" roles="生产主管">
                                       <children>
                                           <resource id="FNPT:ErpMfgMrpPlan:runMrp" displayName="运行MRP" i18n-en:displayName="Run MRP"
                                                     resourceType="FNPT" orderNo="30010" roles="生产计划员">
@@ -125,11 +125,11 @@
                         <resource id="ErpMfgMrpDemand-main" displayName="MRP独立需求"
                                   i18n-en:displayName="MRP Demand" icon="git-pull-request-arrow"
                                   component="FLUX" resourceType="SUBM" orderNo="310"
-                                  url="/erp/mfg/pages/ErpMfgMrpDemand/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgMrpDemand/main.page.yaml" roles="生产主管"/>
                         <resource id="ErpMfgForecast-main" displayName="需求预测"
                                   i18n-en:displayName="Demand Forecast" icon="trending-up"
                                   component="FLUX" resourceType="SUBM" orderNo="320"
-                                  url="/erp/mfg/pages/ErpMfgForecast/main.page.yaml">
+                                  url="/erp/mfg/pages/ErpMfgForecast/main.page.yaml" roles="生产主管">
                                       <children>
                                           <resource id="FNPT:ErpMfgForecast:approve" displayName="审核需求预测" i18n-en:displayName="Approve Forecast"
                                                     resourceType="FNPT" orderNo="32010" roles="生产计划员">
@@ -150,7 +150,7 @@
                         <resource id="ErpMfgMrpScenario-main" displayName="MRP仿真场景"
                                   i18n-en:displayName="MRP Simulation Scenario" icon="flask-conical"
                                   component="FLUX" resourceType="SUBM" orderNo="350"
-                                  url="/erp/mfg/pages/ErpMfgMrpScenario/main.page.yaml">
+                                  url="/erp/mfg/pages/ErpMfgMrpScenario/main.page.yaml" roles="生产主管">
                                       <children>
                                           <resource id="FNPT:ErpMfgMrpScenario:runSimulation" displayName="运行仿真" i18n-en:displayName="Run Simulation"
                                                     resourceType="FNPT" orderNo="35010" roles="生产主管">
@@ -165,11 +165,11 @@
                         <resource id="ErpMfgMrpScenarioVersion-main" displayName="MRP仿真版本"
                                   i18n-en:displayName="MRP Simulation Version" icon="git-branch"
                                   component="FLUX" resourceType="SUBM" orderNo="360"
-                                  url="/erp/mfg/pages/ErpMfgMrpScenarioVersion/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgMrpScenarioVersion/main.page.yaml" roles="生产主管"/>
                         <resource id="ErpMfgMrpScenarioParam-main" displayName="MRP仿真参数"
                                   i18n-en:displayName="MRP Simulation Param" icon="sliders-horizontal"
                                   component="FLUX" resourceType="SUBM" orderNo="370"
-                                  url="/erp/mfg/pages/ErpMfgMrpScenarioParam/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgMrpScenarioParam/main.page.yaml" roles="生产主管"/>
                     </children>
                 </resource>
                 <!-- 委外 -->
@@ -179,7 +179,7 @@
                         <resource id="ErpMfgSubcontractOrder-main" app:useCases="UC-MFG-01" displayName="委外加工单"
                                   i18n-en:displayName="Subcontract Order" icon="truck"
                                   component="FLUX" resourceType="SUBM" orderNo="400"
-                                  url="/erp/mfg/pages/ErpMfgSubcontractOrder/main.page.yaml">
+                                  url="/erp/mfg/pages/ErpMfgSubcontractOrder/main.page.yaml" roles="生产主管">
                             <children>
                                 <resource id="FNPT:ErpMfgSubcontractOrder:approve" displayName="审批委外加工单" i18n-en:displayName="Approve Subcontract Order"
                                           resourceType="FNPT" orderNo="40010" roles="生产主管">
@@ -220,11 +220,11 @@
                         <resource id="ErpMfgCostRollup-main" app:useCases="UC-MFG-07" displayName="标准成本滚算"
                                   i18n-en:displayName="Cost Rollup" icon="calculator"
                                   component="FLUX" resourceType="SUBM" orderNo="500"
-                                  url="/erp/mfg/pages/ErpMfgCostRollup/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgCostRollup/main.page.yaml" roles="生产主管"/>
                         <resource id="ErpMfgCostVariance-main" app:useCases="UC-MFG-12" displayName="成本差异分析"
                                   i18n-en:displayName="Cost Variance Analysis" icon="bar-chart-2"
                                   component="FLUX" resourceType="SUBM" orderNo="510"
-                                  url="/erp/mfg/pages/ErpMfgCostVariance/main.page.yaml">
+                                  url="/erp/mfg/pages/ErpMfgCostVariance/main.page.yaml" roles="生产主管">
                                       <children>
                                           <resource id="FNPT:ErpMfgCostVariance:calculateVariances" displayName="计算成本差异" i18n-en:displayName="Calculate Variances"
                                                     resourceType="FNPT" orderNo="51010" roles="生产主管">
@@ -241,7 +241,7 @@
                         <resource id="ErpMfgBatchGenealogy-main" app:useCases="UC-MFG-13" displayName="批次追溯"
                                   i18n-en:displayName="Batch Genealogy" icon="git-commit"
                                   component="FLUX" resourceType="SUBM" orderNo="600"
-                                  url="/erp/mfg/pages/ErpMfgBatchGenealogy/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgBatchGenealogy/main.page.yaml" roles="生产主管"/>
                     </children>
                 </resource>
                 <!-- 制造报表 -->
@@ -251,7 +251,7 @@
                         <resource id="crp-load-report" app:useCases="UC-MFG-03,UC-MFG-11" displayName="CRP 负荷报表"
                                   i18n-en:displayName="CRP Load Report" icon="gauge"
                                   component="FLUX" resourceType="SUBM" orderNo="7010"
-                                  url="/erp/mfg/pages/report/crp-load-report.page.yaml">
+                                  url="/erp/mfg/pages/report/crp-load-report.page.yaml" roles="生产主管">
                                       <children>
                                           <resource id="FNPT:ErpMfgCrpLoad:calculateLoad" displayName="计算负荷" i18n-en:displayName="Calculate Load"
                                                     resourceType="FNPT" orderNo="70110" roles="生产主管">
@@ -262,11 +262,11 @@
                         <resource id="production-variance-report" app:useCases="UC-MFG-12" displayName="生产差异报表"
                                   i18n-en:displayName="Production Variance Report" icon="bar-chart-2"
                                   component="FLUX" resourceType="SUBM" orderNo="7020"
-                                  url="/erp/mfg/pages/report/production-variance-report.page.yaml"/>
+                                  url="/erp/mfg/pages/report/production-variance-report.page.yaml" roles="生产主管"/>
                         <resource id="forecast-variance-report" app:useCases="UC-MFG-03,UC-MFG-11" displayName="预测差异报表"
                                   i18n-en:displayName="Forecast Variance Report" icon="trending-down"
                                   component="FLUX" resourceType="SUBM" orderNo="7030"
-                                  url="/erp/mfg/pages/report/forecast-variance-report.page.yaml"/>
+                                  url="/erp/mfg/pages/report/forecast-variance-report.page.yaml" roles="生产主管"/>
                     </children>
                 </resource>
                 <!-- 报表看板 -->
@@ -276,7 +276,7 @@
                         <resource id="mfg-dashboard-main" app:useCases="UC-MFG-11" displayName="制造概览"
                                   i18n-en:displayName="Manufacturing Overview" icon="activity"
                                   component="FLUX" resourceType="SUBM" orderNo="9990"
-                                  url="/erp/mfg/pages/dashboard/main.page.yaml"/>
+                                  url="/erp/mfg/pages/dashboard/main.page.yaml" roles="生产计划员,生产主管,作业员"/>
                     </children>
                 </resource>
             </children>

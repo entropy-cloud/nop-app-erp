@@ -18,7 +18,7 @@
                         <resource id="ErpMntEquipment-main" app:useCases="UC-MAIN-03,UC-MAIN-06,UC-MAIN-08,UC-MAIN-10" displayName="设备"
                                   i18n-en:displayName="Equipment" icon="cog"
                                   component="FLUX" resourceType="SUBM" orderNo="100"
-                                  url="/erp/mnt/pages/ErpMntEquipment/main.page.yaml">
+                                  url="/erp/mnt/pages/ErpMntEquipment/main.page.yaml" roles="维护主管">
                                       <children>
                                           <resource id="FNPT:ErpMntEquipment:changeStatus" displayName="设备状态变更" i18n-en:displayName="Change Status"
                                                     resourceType="FNPT" orderNo="10010" roles="维护主管">
@@ -37,7 +37,7 @@
                         <resource id="ErpMntEquipmentCategory-main" app:useCases="UC-MAIN-08" displayName="设备分类"
                                   i18n-en:displayName="Equipment Category" icon="folder-tree"
                                   component="FLUX" resourceType="SUBM" orderNo="110"
-                                  url="/erp/mnt/pages/ErpMntEquipmentCategory/main.page.yaml"/>
+                                  url="/erp/mnt/pages/ErpMntEquipmentCategory/main.page.yaml" roles="维护主管"/>
                     </children>
                 </resource>
                 <!-- 维护计划 -->
@@ -47,7 +47,7 @@
                         <resource id="ErpMntSchedule-main" app:useCases="UC-MAIN-01,UC-MAIN-02" displayName="维护计划"
                                   i18n-en:displayName="Maintenance Schedule" icon="calendar-clock"
                                   component="FLUX" resourceType="SUBM" orderNo="200"
-                                  url="/erp/mnt/pages/ErpMntSchedule/main.page.yaml">
+                                  url="/erp/mnt/pages/ErpMntSchedule/main.page.yaml" roles="维护主管">
                                       <children>
                                           <resource id="FNPT:ErpMntSchedule:generateDueVisits" displayName="生成到期维护访问" i18n-en:displayName="Generate Due Visits"
                                                     resourceType="FNPT" orderNo="20010" roles="维护主管">
@@ -58,7 +58,7 @@
                         <resource id="ErpMntCalibration-main" app:useCases="UC-MAIN-01" displayName="校准记录"
                                   i18n-en:displayName="Calibration" icon="gauge"
                                   component="FLUX" resourceType="SUBM" orderNo="210"
-                                  url="/erp/mnt/pages/ErpMntCalibration/main.page.yaml">
+                                  url="/erp/mnt/pages/ErpMntCalibration/main.page.yaml" roles="维护主管">
                             <children>
                                 <resource id="FNPT:ErpMntCalibration:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="维护主管">
                                     <permissions>ErpMntCalibration:approve</permissions>
@@ -78,7 +78,7 @@
                         <resource id="ErpMntVisit-main" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-07,UC-MAIN-09" displayName="维护访问"
                                   i18n-en:displayName="Maintenance Visit" icon="clipboard-check"
                                   component="FLUX" resourceType="SUBM" orderNo="300"
-                                  url="/erp/mnt/pages/ErpMntVisit/main.page.yaml">
+                                  url="/erp/mnt/pages/ErpMntVisit/main.page.yaml" roles="维护主管,维护人员">
                                       <children>
                                           <resource id="FNPT:ErpMntVisit:schedule" displayName="排程维护访问" i18n-en:displayName="Schedule Visit"
                                                     resourceType="FNPT" orderNo="31010" roles="维护主管">
@@ -106,11 +106,11 @@
                         <resource id="mnt-visit-wizard" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-07,UC-MAIN-09" displayName="维护访问执行向导"
                                   i18n-en:displayName="Visit Execution Wizard" icon="magic"
                                   component="FLUX" resourceType="SUBM" orderNo="305"
-                                  url="/erp/mnt/pages/visit-wizard/main.page.yaml"/>
+                                  url="/erp/mnt/pages/visit-wizard/main.page.yaml" roles="维护主管,维护人员"/>
                         <resource id="ErpMntRequest-main" app:useCases="UC-MAIN-05" displayName="维护请求"
                                   i18n-en:displayName="Maintenance Request" icon="life-buoy"
                                   component="FLUX" resourceType="SUBM" orderNo="310"
-                                  url="/erp/mnt/pages/ErpMntRequest/main.page.yaml">
+                                  url="/erp/mnt/pages/ErpMntRequest/main.page.yaml" roles="维护主管,维护人员">
                             <children>
                                 <resource id="FNPT:ErpMntRequest:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="维护主管">
                                     <permissions>ErpMntRequest:approve</permissions>
@@ -144,7 +144,7 @@
                         <resource id="ErpMntDowntimeEntry-main" app:useCases="UC-MAIN-06,UC-MAIN-10" displayName="停机记录"
                                   i18n-en:displayName="Downtime Entry" icon="timer-off"
                                   component="FLUX" resourceType="SUBM" orderNo="320"
-                                  url="/erp/mnt/pages/ErpMntDowntimeEntry/main.page.yaml">
+                                  url="/erp/mnt/pages/ErpMntDowntimeEntry/main.page.yaml" roles="维护主管,维护人员">
                                       <children>
                                           <resource id="FNPT:ErpMntDowntimeEntry:record" displayName="记录停机" i18n-en:displayName="Record Downtime"
                                                     resourceType="FNPT" orderNo="34010" roles="维护人员">
@@ -165,7 +165,7 @@
                         <resource id="ErpMntMaintenanceTeam-main" displayName="维护团队"
                                   i18n-en:displayName="Maintenance Team" icon="users"
                                   component="FLUX" resourceType="SUBM" orderNo="400"
-                                  url="/erp/mnt/pages/ErpMntMaintenanceTeam/main.page.yaml"/>
+                                  url="/erp/mnt/pages/ErpMntMaintenanceTeam/main.page.yaml" roles="维护主管"/>
                     </children>
                 </resource>
                 <!-- 备件 -->
@@ -175,7 +175,7 @@
                         <resource id="ErpMntSparePartUsage-main" app:useCases="UC-MAIN-04" displayName="备件消耗"
                                   i18n-en:displayName="Spare Part Usage" icon="package-minus"
                                   component="FLUX" resourceType="SUBM" orderNo="500"
-                                  url="/erp/mnt/pages/ErpMntSparePartUsage/main.page.yaml">
+                                  url="/erp/mnt/pages/ErpMntSparePartUsage/main.page.yaml" roles="维护主管,维护人员">
                                       <children>
                                           <resource id="FNPT:ErpMntSparePartUsage:confirm" displayName="确认备件消耗" i18n-en:displayName="Confirm Usage"
                                                     resourceType="FNPT" orderNo="50010" roles="维护主管">
@@ -196,11 +196,11 @@
                         <resource id="maintenance-history" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-11" displayName="维护历史表"
                                   i18n-en:displayName="Maintenance History" icon="clipboard-check"
                                   component="FLUX" resourceType="SUBM" orderNo="6010"
-                                  url="/erp/mnt/pages/report/maintenance-history.page.yaml"/>
+                                  url="/erp/mnt/pages/report/maintenance-history.page.yaml" roles="维护主管"/>
                         <resource id="downtime-summary" app:useCases="UC-MAIN-06,UC-MAIN-10,UC-MAIN-11" displayName="停机统计表"
                                   i18n-en:displayName="Downtime Summary" icon="timer-off"
                                   component="FLUX" resourceType="SUBM" orderNo="6020"
-                                  url="/erp/mnt/pages/report/downtime-summary.page.yaml"/>
+                                  url="/erp/mnt/pages/report/downtime-summary.page.yaml" roles="维护主管"/>
                     </children>
                 </resource>
                 <!-- 报表看板 -->
@@ -210,7 +210,7 @@
                         <resource id="mnt-dashboard-main" app:useCases="UC-MAIN-11" displayName="维护概览"
                                   i18n-en:displayName="Maintenance Overview" icon="gauge"
                                   component="FLUX" resourceType="SUBM" orderNo="9990"
-                                  url="/erp/mnt/pages/dashboard/main.page.yaml"/>
+                                  url="/erp/mnt/pages/dashboard/main.page.yaml" roles="维护主管"/>
                     </children>
                 </resource>
             </children>

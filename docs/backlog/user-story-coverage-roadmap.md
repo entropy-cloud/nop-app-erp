@@ -29,9 +29,9 @@
 
 | 状态 | 数量 |
 | --- | --- |
-| todo | 8 |
+| todo | 7 |
 | ready | 0 |
-| done | 1 |
+| done | 2 |
 
 ### M1 覆盖基线与缺口裁定
 
@@ -43,7 +43,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 | --- | --- | --- | --- | --- | --- |
-| USC-02a | action-auth 生产灰度 + 菜单/动作完整性收口（US-PL-01） | todo | `docs/design/roles-and-permissions.md` | —（prod 翻转唯一载体；test 环境验收口径承 `permissions-enforcement-roadmap.md`） | nop-backend-dev + nop-testing |
+| USC-02a | action-auth 生产灰度 + 菜单/动作完整性收口（US-PL-01） | done（2026-10-01，plan `2026-10-01-0313-1-usc02a-action-auth-prod-gray` 落地 + 独立草案审查 2 轮 accept + **双独立子代理批准**[A GRANT 附 2 条件/B 条件 GRANT 附 4 必须+1 建议，零 DENY] + 独立结束审计 ACCEPT[0B/0M/3m 已整改]：菜单塌缩缺口收口[6 域 102 SUBM 镜像种子+erp-sys 子树 26 admin 种子，纯属性追加零授权面扩散] + `%prod` enable-action-auth 翻转[DR-1e 保持] + owner doc 四处修订 + 探针脚本 6 组断言全绿 + e1-2-menu-filter 故意红灯转绿；negative 套件 9 失败 HEAD 归因全部预存零回归；残量 successor：7 对照面域 146 节点镜像 + data-auth 归 USC-02b） | `docs/design/roles-and-permissions.md` | —（prod 翻转唯一载体；test 环境验收口径承 `permissions-enforcement-roadmap.md`） | nop-backend-dev + nop-testing（plan 裁决 Skill: none——零 Java/零新 spec，见计划 Task Route） |
 | USC-02b | data-auth 行过滤生产灰度与负向隔离证明（US-PL-02） | todo | `docs/design/roles-and-permissions.md` | —（与 USC-02a 可并行，各自独立 plan） | nop-backend-dev + nop-testing |
 | USC-03 | 审计日志生产化与主数据变更可追溯（US-FN-06 / US-MD-04） | todo | `docs/design/roles-and-permissions.md` | — | nop-backend-dev + nop-testing |
 | USC-04 | 移动可达 Web 审批与待办体验（US-PL-03） | todo | `docs/architecture/approval-framework.md`、`docs/architecture/notification-strategy.md` | — | nop-frontend-dev + nop-testing |

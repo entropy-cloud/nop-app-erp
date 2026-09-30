@@ -18,7 +18,7 @@
                         <resource id="ErpSalQuotation-main" app:useCases="UC-SAL-01" displayName="销售报价单"
                                   i18n-en:displayName="Sales Quotation" icon="file-sign"
                                   component="FLUX" resourceType="SUBM" orderNo="100"
-                                  url="/erp/sal/pages/ErpSalQuotation/main.page.yaml">
+                                  url="/erp/sal/pages/ErpSalQuotation/main.page.yaml" roles="销售员">
                             <children>
                                 <resource id="FNPT:ErpSalQuotation:approve" displayName="审核销售报价单" i18n-en:displayName="Approve Sales Quotation"
                                           resourceType="FNPT" orderNo="10010" roles="审核人">
@@ -39,7 +39,7 @@
                         <resource id="ErpSalContract-main" app:useCases="UC-SAL-01" displayName="销售合同"
                                   i18n-en:displayName="Sales Contract" icon="file-text"
                                   component="FLUX" resourceType="SUBM" orderNo="200"
-                                  url="/erp/sal/pages/ErpSalContract/main.page.yaml">
+                                  url="/erp/sal/pages/ErpSalContract/main.page.yaml" roles="销售员">
                             <children>
                                 <resource id="FNPT:ErpSalContract:approve" displayName="审核销售合同" i18n-en:displayName="Approve Sales Contract"
                                           resourceType="FNPT" orderNo="20010" roles="审核人">
@@ -60,7 +60,7 @@
                         <resource id="ErpSalOrder-main" app:useCases="UC-SAL-01,UC-SAL-02,UC-SAL-03,UC-SAL-08,UC-SAL-10,UC-MD-01,UC-MD-02,UC-MD-03,UC-MD-04,UC-MD-05" displayName="销售订单"
                                   i18n-en:displayName="Sales Order" icon="shopping-cart"
                                   component="FLUX" resourceType="SUBM" orderNo="300"
-                                  url="/erp/sal/pages/ErpSalOrder/main.page.yaml">
+                                  url="/erp/sal/pages/ErpSalOrder/main.page.yaml" roles="销售员">
                             <children>
                                 <resource id="FNPT:ErpSalOrder:approve" displayName="审核销售订单" i18n-en:displayName="Approve Sales Order"
                                           resourceType="FNPT" orderNo="30010" roles="审核人">
@@ -81,7 +81,7 @@
                         <resource id="ErpSalDelivery-main" app:useCases="UC-SAL-01,UC-SAL-02,UC-SAL-03,UC-SAL-08,UC-SAL-10,UC-INV-08" displayName="销售出库单"
                                   i18n-en:displayName="Sales Delivery" icon="package-minus"
                                   component="FLUX" resourceType="SUBM" orderNo="400"
-                                  url="/erp/sal/pages/ErpSalDelivery/main.page.yaml">
+                                  url="/erp/sal/pages/ErpSalDelivery/main.page.yaml" roles="销售员">
                             <children>
                                 <resource id="FNPT:ErpSalDelivery:approve" displayName="审核销售出库单" i18n-en:displayName="Approve Sales Delivery"
                                           resourceType="FNPT" orderNo="40010" roles="审核人">
@@ -102,7 +102,7 @@
                         <resource id="ErpSalInvoice-main" app:useCases="UC-SAL-01,UC-SAL-03,UC-SAL-04,UC-SAL-05" displayName="销售发票"
                                   i18n-en:displayName="Sales Invoice" icon="receipt"
                                   component="FLUX" resourceType="SUBM" orderNo="500"
-                                  url="/erp/sal/pages/ErpSalInvoice/main.page.yaml">
+                                  url="/erp/sal/pages/ErpSalInvoice/main.page.yaml" roles="销售员">
                             <children>
                                 <resource id="FNPT:ErpSalInvoice:approve" displayName="审核销售发票" i18n-en:displayName="Approve Sales Invoice"
                                           resourceType="FNPT" orderNo="50010" roles="审核人">
@@ -123,7 +123,7 @@
                         <resource id="ErpSalReceipt-main" app:useCases="UC-SAL-01,UC-SAL-03,UC-SAL-04" displayName="收款单"
                                   i18n-en:displayName="Receipt" icon="banknote"
                                   component="FLUX" resourceType="SUBM" orderNo="600"
-                                  url="/erp/sal/pages/ErpSalReceipt/main.page.yaml">
+                                  url="/erp/sal/pages/ErpSalReceipt/main.page.yaml" roles="销售员">
                             <children>
                                 <resource id="FNPT:ErpSalReceipt:approve" displayName="审核收款单" i18n-en:displayName="Approve Receipt"
                                           resourceType="FNPT" orderNo="60010" roles="审核人">
@@ -144,7 +144,7 @@
                         <resource id="ErpSalReturn-main" app:useCases="UC-SAL-04,UC-SAL-05,UC-SAL-06,UC-SAL-07,UC-SAL-09,UC-INV-05" displayName="销售退货单"
                                   i18n-en:displayName="Sales Return" icon="undo-2"
                                   component="FLUX" resourceType="SUBM" orderNo="700"
-                                  url="/erp/sal/pages/ErpSalReturn/main.page.yaml">
+                                  url="/erp/sal/pages/ErpSalReturn/main.page.yaml" roles="销售员">
                             <children>
                                 <resource id="FNPT:ErpSalReturn:approve" displayName="审核销售退货单" i18n-en:displayName="Approve Sales Return"
                                           resourceType="FNPT" orderNo="70010" roles="审核人">
@@ -165,11 +165,11 @@
                         <resource id="sales-price-list" app:useCases="UC-SAL-11" displayName="销售价格清单"
                                   i18n-en:displayName="Sales Price List" icon="tag"
                                   component="FLUX" resourceType="SUBM" orderNo="8010"
-                                  url="/erp/sal/pages/sales-price-list/main.page.yaml"/>
+                                  url="/erp/sal/pages/sales-price-list/main.page.yaml" roles="销售员"/>
                         <resource id="pricing-rule" app:useCases="UC-SAL-11" displayName="促销规则"
                                   i18n-en:displayName="Pricing Rule" icon="percent"
                                   component="FLUX" resourceType="SUBM" orderNo="8020"
-                                  url="/erp/sal/pages/pricing-rule/main.page.yaml"/>
+                                  url="/erp/sal/pages/pricing-rule/main.page.yaml" roles="销售员"/>
                     </children>
                 </resource>
                 <!-- 报表看板 -->
@@ -179,7 +179,7 @@
                         <resource id="sal-dashboard-main" app:useCases="UC-SAL-12" displayName="销售概览"
                                   i18n-en:displayName="Sales Overview" icon="trending-up"
                                   component="FLUX" resourceType="SUBM" orderNo="9990"
-                                  url="/erp/sal/pages/dashboard/main.page.yaml"/>
+                                  url="/erp/sal/pages/dashboard/main.page.yaml" roles="销售员"/>
                     </children>
                 </resource>
             </children>

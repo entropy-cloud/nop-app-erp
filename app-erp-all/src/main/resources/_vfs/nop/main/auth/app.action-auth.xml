@@ -42,123 +42,123 @@
             <children>
                 <!-- 用户权限 -->
                 <resource id="sys-user" displayName="用户权限" i18n-en:displayName="User &amp; Role"
-                          icon="users" resourceType="SUBM" orderNo="100">
+                          icon="users" resourceType="SUBM" orderNo="100" roles="admin">
                     <children>
                         <resource id="sys-user-main" displayName="用户管理"
                                   i18n-en:displayName="User" icon="user-round"
                                   component="FLUX" resourceType="SUBM" orderNo="100"
-                                  url="/nop/auth/pages/NopAuthUser/main.page.yaml"/>
+                                  url="/nop/auth/pages/NopAuthUser/main.page.yaml" roles="admin"/>
                         <resource id="sys-role-main" displayName="角色管理"
                                   i18n-en:displayName="Role" icon="shield"
                                   component="FLUX" resourceType="SUBM" orderNo="110"
-                                  url="/nop/auth/pages/NopAuthRole/main.page.yaml"/>
+                                  url="/nop/auth/pages/NopAuthRole/main.page.yaml" roles="admin"/>
                         <resource id="sys-dept-main" displayName="部门管理"
                                   i18n-en:displayName="Department" icon="git-branch"
                                   component="FLUX" resourceType="SUBM" orderNo="120"
-                                  url="/nop/auth/pages/NopAuthDept/main.page.yaml"/>
+                                  url="/nop/auth/pages/NopAuthDept/main.page.yaml" roles="admin"/>
                         <resource id="sys-position-main" displayName="岗位管理"
                                   i18n-en:displayName="Position" icon="briefcase"
                                   component="FLUX" resourceType="SUBM" orderNo="130"
-                                  url="/nop/auth/pages/NopAuthPosition/main.page.yaml"/>
+                                  url="/nop/auth/pages/NopAuthPosition/main.page.yaml" roles="admin"/>
                         <resource id="sys-group-main" displayName="用户组"
                                   i18n-en:displayName="User Group" icon="users"
                                   component="FLUX" resourceType="SUBM" orderNo="140"
-                                  url="/nop/auth/pages/NopAuthGroup/main.page.yaml"/>
+                                  url="/nop/auth/pages/NopAuthGroup/main.page.yaml" roles="admin"/>
                         <resource id="sys-role-data-auth-main" displayName="数据权限"
                                   i18n-en:displayName="Data Auth" icon="database"
                                   component="FLUX" resourceType="SUBM" orderNo="150"
-                                  url="/nop/auth/pages/NopAuthRoleDataAuth/main.page.yaml"/>
+                                  url="/nop/auth/pages/NopAuthRoleDataAuth/main.page.yaml" roles="admin"/>
                     </children>
                 </resource>
 
                 <!-- 资源菜单 -->
                 <resource id="sys-resource" displayName="资源菜单" i18n-en:displayName="Resource"
-                          icon="menu" resourceType="SUBM" orderNo="200">
+                          icon="menu" resourceType="SUBM" orderNo="200" roles="admin">
                     <children>
                         <resource id="sys-resource-main" displayName="菜单资源"
                                   i18n-en:displayName="Menu Resource" icon="panels-top-left"
                                   component="FLUX" resourceType="SUBM" orderNo="200"
-                                  url="/nop/auth/pages/NopAuthResource/main.page.yaml"/>
+                                  url="/nop/auth/pages/NopAuthResource/main.page.yaml" roles="admin"/>
                         <resource id="sys-site-main" displayName="站点管理"
                                   i18n-en:displayName="Site" icon="globe-2"
                                   component="FLUX" resourceType="SUBM" orderNo="210"
-                                  url="/nop/auth/pages/NopAuthSite/main.page.yaml"/>
+                                  url="/nop/auth/pages/NopAuthSite/main.page.yaml" roles="admin"/>
                     </children>
                 </resource>
 
                 <!-- 系统配置 -->
                 <resource id="sys-config" displayName="系统配置" i18n-en:displayName="Config"
-                          icon="sliders-horizontal" resourceType="SUBM" orderNo="300">
+                          icon="sliders-horizontal" resourceType="SUBM" orderNo="300" roles="admin">
                     <children>
                         <resource id="sys-dict-main" displayName="数据字典"
                                   i18n-en:displayName="Dict" icon="book"
                                   component="FLUX" resourceType="SUBM" orderNo="300"
-                                  url="/nop/sys/pages/NopSysDict/main.page.yaml"/>
+                                  url="/nop/sys/pages/NopSysDict/main.page.yaml" roles="admin"/>
                         <resource id="sys-dict-option-main" displayName="字典选项"
                                   i18n-en:displayName="Dict Option" icon="list"
                                   component="FLUX" resourceType="SUBM" orderNo="310"
-                                  url="/nop/sys/pages/NopSysDictOption/main.page.yaml"/>
+                                  url="/nop/sys/pages/NopSysDictOption/main.page.yaml" roles="admin"/>
                         <resource id="sys-sequence-main" displayName="序列号规则"
                                   i18n-en:displayName="Sequence" icon="hash"
                                   component="FLUX" resourceType="SUBM" orderNo="320"
-                                  url="/nop/sys/pages/NopSysSequence/main.page.yaml"/>
+                                  url="/nop/sys/pages/NopSysSequence/main.page.yaml" roles="admin"/>
                         <resource id="sys-i18n-main" displayName="国际化"
                                   i18n-en:displayName="I18n" icon="languages"
                                   component="FLUX" resourceType="SUBM" orderNo="330"
-                                  url="/nop/sys/pages/NopSysI18n/main.page.yaml"/>
+                                  url="/nop/sys/pages/NopSysI18n/main.page.yaml" roles="admin"/>
                     </children>
                 </resource>
 
                 <!-- 工作流 -->
                 <resource id="sys-workflow" displayName="工作流" i18n-en:displayName="Workflow"
-                          icon="git-branch" resourceType="SUBM" orderNo="400">
+                          icon="git-branch" resourceType="SUBM" orderNo="400" roles="admin">
                     <children>
                         <resource id="sys-wf-definition-main" displayName="流程定义"
                                   i18n-en:displayName="Process Definition" icon="workflow"
                                   component="FLUX" resourceType="SUBM" orderNo="400"
-                                  url="/nop/wf/pages/NopWfDefinition/main.page.yaml"/>
+                                  url="/nop/wf/pages/NopWfDefinition/main.page.yaml" roles="admin"/>
                         <resource id="sys-wf-instance-main" displayName="流程实例"
                                   i18n-en:displayName="Process Instance" icon="git-branch"
                                   component="FLUX" resourceType="SUBM" orderNo="410"
-                                  url="/nop/wf/pages/NopWfInstance/main.page.yaml"/>
+                                  url="/nop/wf/pages/NopWfInstance/main.page.yaml" roles="admin"/>
                         <resource id="sys-wf-workflow-main" displayName="我的待办"
                                   i18n-en:displayName="My Todo" icon="list-checks"
                                   component="FLUX" resourceType="SUBM" orderNo="420"
-                                  url="/nop/wf/pages/WorkflowService/main.page.yaml"/>
+                                  url="/nop/wf/pages/WorkflowService/main.page.yaml" roles="admin"/>
                     </children>
                 </resource>
 
                 <!-- 报表中心 -->
                 <resource id="sys-report" displayName="报表中心" i18n-en:displayName="Report"
-                          icon="bar-chart-3" resourceType="SUBM" orderNo="500">
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="500" roles="admin">
                     <children>
                         <resource id="sys-report-definition-main" displayName="报表定义"
                                   i18n-en:displayName="Report Definition" icon="file-bar-chart"
                                   component="FLUX" resourceType="SUBM" orderNo="500"
-                                  url="/nop/report/pages/NopReportDefinition/main.page.yaml"/>
+                                  url="/nop/report/pages/NopReportDefinition/main.page.yaml" roles="admin"/>
                         <resource id="sys-report-datasource-main" displayName="报表数据源"
                                   i18n-en:displayName="Report Datasource" icon="database"
                                   component="FLUX" resourceType="SUBM" orderNo="510"
-                                  url="/nop/report/pages/NopReportDatasource/main.page.yaml"/>
+                                  url="/nop/report/pages/NopReportDatasource/main.page.yaml" roles="admin"/>
                     </children>
                 </resource>
 
                 <!-- 系统监控 -->
                 <resource id="sys-monitor" displayName="系统监控" i18n-en:displayName="Monitor"
-                          icon="activity" resourceType="SUBM" orderNo="700">
+                          icon="activity" resourceType="SUBM" orderNo="700" roles="admin">
                     <children>
                         <resource id="sys-oplog-main" displayName="操作日志"
                                   i18n-en:displayName="Operation Log" icon="list"
                                   component="FLUX" resourceType="SUBM" orderNo="700"
-                                  url="/nop/auth/pages/NopAuthOpLog/main.page.yaml"/>
+                                  url="/nop/auth/pages/NopAuthOpLog/main.page.yaml" roles="admin"/>
                         <resource id="sys-session-main" displayName="在线会话"
                                   i18n-en:displayName="Session" icon="monitor"
                                   component="FLUX" resourceType="SUBM" orderNo="710"
-                                  url="/nop/auth/pages/NopAuthSession/main.page.yaml"/>
+                                  url="/nop/auth/pages/NopAuthSession/main.page.yaml" roles="admin"/>
                         <resource id="sys-extfield-main" displayName="扩展字段"
                                   i18n-en:displayName="Ext Field" icon="columns"
                                   component="FLUX" resourceType="SUBM" orderNo="720"
-                                  url="/nop/sys/pages/NopSysExtField/main.page.yaml"/>
+                                  url="/nop/sys/pages/NopSysExtField/main.page.yaml" roles="admin"/>
                     </children>
                 </resource>
             </children>

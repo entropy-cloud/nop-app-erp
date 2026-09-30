@@ -67,7 +67,7 @@ test.describe('E1.2 menu filter: deny-by-default role filtering', () => {
     expect(ids.has('erp-l10n-cn'), 'erp-l10n-cn should be hidden for role-restricted (roles="admin")').toBe(false);
   });
 
-  test('(b) role-based filtering: 财务员 sees erp-fin, not pur/sal/ct', async ({ page }) => {
+  test('(b) role-based filtering: 财务员 sees erp-fin + erp-ct (M2.8 seeds), not pur/sal/others', async ({ page }) => {
     await loginAsRole(page, '财务员');
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1500);
@@ -77,8 +77,14 @@ test.describe('E1.2 menu filter: deny-by-default role filtering', () => {
     // 财务员 should see erp-fin (FNPT roles="财务员" cascadeUp + TOPM roles="财务员")
     expect(ids.has('erp-fin'), 'erp-fin should be visible for 财务员').toBe(true);
 
-    // 财务员 should NOT see pur/sal/ct/b2b/hr/mfg/ast/prj/qa/mnt (different role domains)
-    const otherDomains = ['erp-pur', 'erp-sal', 'erp-ct', 'erp-b2b', 'erp-hr', 'erp-mfg', 'erp-ast', 'erp-prj', 'erp-qa', 'erp-mnt'];
+    // M2.8 (commit 818759a61) added 3 财务员 FNPT seeds to erp-ct (RebateAgreement.runAccrual /
+    // RebateSettlement.postSettlement / InvoicePlan.triggerInvoice) → cascade-up makes erp-ct
+    // visible for 财务员. USC-02a plan 2026-10-01-0313-1 C4 triage: aligned this assertion with
+    // the already-adjudicated seed semantics (pre-existing red, not caused by USC-02a).
+    expect(ids.has('erp-ct'), 'erp-ct should be visible for 财务员 (M2.8 ct FNPT cascade-up)').toBe(true);
+
+    // 财务员 should NOT see pur/sal/b2b/hr/mfg/ast/prj/qa/mnt (different role domains)
+    const otherDomains = ['erp-pur', 'erp-sal', 'erp-b2b', 'erp-hr', 'erp-mfg', 'erp-ast', 'erp-prj', 'erp-qa', 'erp-mnt'];
     for (const id of otherDomains) {
       expect(ids.has(id), `${id} should be hidden for 财务员 (role-filtered)`).toBe(false);
     }
