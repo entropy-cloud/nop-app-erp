@@ -29,15 +29,15 @@
 
 | 状态 | 数量 |
 | --- | --- |
-| todo | 9 |
+| todo | 8 |
 | ready | 0 |
-| done | 0 |
+| done | 1 |
 
 ### M1 覆盖基线与缺口裁定
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 | --- | --- | --- | --- | --- | --- |
-| USC-01 | 全量 US 三维覆盖矩阵与隐性缺口裁定 | todo | `docs/analysis/2026-09-22-erp-user-story-gap-analysis.md` | — | none |
+| USC-01 | 全量 US 三维覆盖矩阵与隐性缺口裁定 | done（2026-10-01，plan `2026-10-01-0214-1-usc01-us-coverage-matrix` 落地 + 独立草案审查 2 轮收敛 accept + 独立结束审计 ACCEPT：矩阵 `docs/analysis/2026-10-01-0300-1-us-coverage-matrix.md` 53 US 四列证据全实仓核验（判定 ✅40/🔶12/🕒1/❌0，ID 集合 comm 与需求文档精确一致）；分流表承接编号×9（USC-02a/02b/03×2/04/05/06×2/07）+ 归属冲突升级×2（US-PO-01 RFQ→报价→PO 链断 Must⚠、US-SO-06 同屏视图缺 Should，见审查记录段升级登记行）+ 仅登记×36；差异清单 10 项含 gap analysis US-PO-01 ✅→🔶⚠ 降档；结束审计独立复跑 9 锚点全命中） | `docs/analysis/2026-09-22-erp-user-story-gap-analysis.md` | — | none |
 
 ### M2 横切生产化收口（需满足 · 非新功能）
 
@@ -266,4 +266,5 @@ flowchart TD
   - Major M2：USC-02 打包 action+data 等多切片，超过单次交付粒度 → **须拆分**。
   - Minor 已修：§5 补 Owner/Deps 并声明状态只在 §2（m1）；US-PL-07 移入 🕒 消除悬空 🔶（m2）；US-FN-06/US-MD-04 分级注记（m3/m4）；依赖图虚线=对齐非依赖（m5）；USC-01 补 feature-coverage-matrix 冲突权威（m6）；USC-07 接线 comprehensive-test roadmap（m7）；Skill 路径可解析注记（m8）。
 - **2026-09-22 iteration 2（修订）**：按审查意见完成 M1/M2 修复（USC-02 → USC-02a + USC-02b；横切 5 改为「prod 唯一载体 = USC-02a/02b + 前置门控」）及 m1–m8。状态计数 8→9，全部保持 `todo`。
+- **2026-10-01 USC-01 归属冲突升级登记（plan `2026-10-01-0214-1` Phase 3，roadmap §10 规则 6）**：USC-01 覆盖矩阵（`docs/analysis/2026-10-01-0300-1-us-coverage-matrix.md`）发现 2 项真实缺口无 USC-02a..07 既有承接项，按第三分支升级人工裁决（AI 不发明新工作项、不改队列）：① **US-PO-01「RFQ→报价→PO 转单链实现缺」**（Must⚠——实仓仅请购→订单有实现，RFQ/报价单为孤立 CRUD+审批实体；gap analysis 曾记 ✅ 属文档级证据；建议裁决 (a) 新立寻源链收口工作项或 (b) 验收口径收窄为「请购→订单+PO 状态可见」）；② **US-SO-06「预测/配额/实际同屏对比视图缺」**（Should——实现件齐、组合视图载体缺；建议裁决 (a) CRM 报表增量或 (b) 验收口径收窄为「配额聚合与预测报表各自可达」）。两项在裁决前不阻塞本 roadmap 其余工作项推进（USC-06/07 的分流表范围不含这两项）。
 - **后续**：`todo → ready` 仍须针对「将进入实施的工作项对应 plan」再走独立草案审查（本记录的 roadmap 级审查不替代 per-plan 审查）。
