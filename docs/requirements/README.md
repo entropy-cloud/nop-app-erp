@@ -18,6 +18,7 @@
 - `feature-001-<name>.md`
 - `2026-05-21-0900-user-management.md`
 - `2026-05-21-0900-order-refund-flow.md`
+- `2026-09-22-erp-user-stories.md`（联网调研用户故事综合；差距裁决见 `docs/analysis/2026-09-22-erp-user-story-gap-analysis.md`）
 
 建议：
 
