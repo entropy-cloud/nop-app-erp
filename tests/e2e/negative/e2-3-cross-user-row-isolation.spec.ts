@@ -82,7 +82,7 @@ function mntVisitData(code: string, assignedTo: number) {
     code,
     equipmentId: '1',
     visitDate: '2026-08-11',
-    status: 'PLANNED',
+    status: 'SCHEDULED',
     assignedTo,
   };
 }
@@ -99,30 +99,27 @@ test.describe('E2.3 cross-user row isolation (越权不可见深度负向)', () 
     const adminOrder = await createViaSave(page, 'ErpSalOrder', salOrderData(codeAdmin), SAL_FIELDS);
     expect(adminOrder?.code, 'admin order saved').toBe(codeAdmin);
 
-    // 账号 B = 销售员（userId 12）创建自己的单据 → createdBy = "12"
+    // 账号 B 行改由 admin 创建（D1c 重构，plan 2026-10-01-0523-1：creator 过滤下销售员经
+    // GraphQL 无法自建行，B-1 实证 no-data-auth；单向负向隔离证明，「自见正向」显式登记不可达）
+    const ownOrder = await createViaSave(page, 'ErpSalOrder', salOrderData(codeOwn), SAL_FIELDS);
+    expect(ownOrder?.code, 'admin created second order').toBe(codeOwn);
+
+    // 跨用户越权不可见：销售员查询 admin 创建的两行 → 均 absent（非 error）
     await loginAsRole(page, '销售员');
     await page.goto('/#/ErpSalOrder-main', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1500);
-    const ownOrder = await createViaSave(page, 'ErpSalOrder', salOrderData(codeOwn), SAL_FIELDS);
-    expect(ownOrder?.code, 'salesperson own order saved').toBe(codeOwn);
-
-    // 跨用户越权不可见：销售员 B 查询 admin A 的单据 → 越权行 absent（非 error）
     await expectRowsHidden(
       page,
       'ErpSalOrder',
       eqFilter('code', codeAdmin),
       SAL_FIELDS,
     );
-
-    // 自己的行仍可见（createdBy == userId 12）
-    const ownRows = await expectRowsVisible(
+    await expectRowsHidden(
       page,
       'ErpSalOrder',
       eqFilter('code', codeOwn),
       SAL_FIELDS,
-      1,
     );
-    expect(ownRows[0].code).toBe(codeOwn);
 
     // cleanup（admin 删两单）
     await loginAsRole(page, 'admin');
@@ -143,7 +140,7 @@ test.describe('E2.3 cross-user row isolation (越权不可见深度负向)', () 
     const otherOrder = await createViaSave(
       page,
       'ErpQaInspection',
-      qaInspectionData(codeOther, 999),
+      qaInspectionData(codeOther, 17),
       QA_FIELDS,
     );
     expect(otherOrder?.code, 'admin created other inspection').toBe(codeOther);
@@ -202,19 +199,19 @@ test.describe('E2.3 cross-user row isolation (越权不可见深度负向)', () 
     );
     expect(otherVisit?.code, 'admin created other visit').toBe(codeOther);
 
-    // 账号 B = 维护人员（userId 17）创建 assignedTo=17（自己任务）
-    await loginAsRole(page, '维护人员');
-    await page.goto('/#/ErpMntVisit-main', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(1500);
+    // 账号 B 行改由 admin 创建（D1b 重构：mnt 授权面=query only）——assignedTo=17（技术员任务）
     const ownVisit = await createViaSave(
       page,
       'ErpMntVisit',
       mntVisitData(codeOwn, 17),
       MNT_FIELDS,
     );
-    expect(ownVisit?.code, 'technician own visit saved').toBe(codeOwn);
+    expect(ownVisit?.code, 'admin created technician visit').toBe(codeOwn);
 
-    // 跨用户越权不可见：维护人员 B 查询 assignedTo=999 的单据 → 越权行 absent
+    // 跨用户越权不可见：维护人员查询 assignedTo=999 的单据 → 越权行 absent
+    await loginAsRole(page, '维护人员');
+    await page.goto('/#/ErpMntVisit-main', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1500);
     await expectRowsHidden(
       page,
       'ErpMntVisit',

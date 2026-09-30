@@ -66,6 +66,10 @@
                                           resourceType="FNPT" orderNo="30010" roles="审核人">
                                     <permissions>ErpSalOrder:approve</permissions>
                                 </resource>
+                                <resource id="FNPT:ErpSalOrder:query" displayName="查询销售订单" i18n-en:displayName="Query Sales Order"
+                                          resourceType="FNPT" orderNo="30005" roles="销售员">
+                                    <permissions>ErpSalOrder:query</permissions>
+                                </resource>
                                 <resource id="FNPT:ErpSalOrder:reverseApprove" displayName="反审核销售订单" i18n-en:displayName="Reverse Approve"
                                           resourceType="FNPT" orderNo="30020" roles="管理员">
                                     <permissions>ErpSalOrder:reverseApprove</permissions>

@@ -48,6 +48,8 @@ site:
       displayName: Warehouse
     ErpSysConfig-main:
       displayName: System Config
+    FNPT:ErpMdCurrency:query:
+      displayName: Query Currency
     FNPT:ErpMdCurrency:refreshRatesFromApi:
       displayName: Refresh Rates From Api
     FNPT:ErpMdSupplierApproval:apply:

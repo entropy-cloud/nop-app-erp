@@ -63,7 +63,7 @@ function mntVisitData(code: string, assignedTo: number) {
     code,
     equipmentId: '1',
     visitDate: '2026-08-11',
-    status: 'PLANNED',
+    status: 'SCHEDULED',
     assignedTo,
   };
 }
@@ -80,7 +80,7 @@ test.describe('E2.2 employee-id row-filter filter-active smoke', () => {
     const otherOrder = await createViaSave(
       page,
       'ErpQaInspection',
-      qaInspectionData(codeOther, 999),
+      qaInspectionData(codeOther, 17),
       QA_FIELDS,
     );
     expect(otherOrder?.code, 'admin created other inspection').toBe(codeOther);
@@ -146,19 +146,20 @@ test.describe('E2.2 employee-id row-filter filter-active smoke', () => {
     );
     expect(otherVisit?.code, 'admin created other visit').toBe(codeOther);
 
-    // 2. 维护人员（role-mnt-tech, userId 17）建维护访问 assignedTo=17（自己任务）
-    await loginAsRole(page, '维护人员');
-    await page.goto('/#/ErpMntVisit-main', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(1500);
+    // 2. admin 建维护访问 assignedTo=17（技术员任务）——D1b 重构（plan 2026-10-01-0523-1）：
+    //    mnt 授权面=query only（不授 mutation，蓝图对齐），建行统一 admin 承担
     const ownVisit = await createViaSave(
       page,
       'ErpMntVisit',
       mntVisitData(codeOwn, 17),
       MNT_FIELDS,
     );
-    expect(ownVisit?.code, 'technician own visit saved').toBe(codeOwn);
+    expect(ownVisit?.code, 'admin created technician visit').toBe(codeOwn);
 
     // 3. 维护人员视角：查他人单 → 行集收敛为空（越权行被过滤）
+    await loginAsRole(page, '维护人员');
+    await page.goto('/#/ErpMntVisit-main', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1500);
     const otherRows = await findItems(
       page,
       'ErpMntVisit',

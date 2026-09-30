@@ -20,6 +20,14 @@
                                   component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/qa/pages/ErpQaInspection/main.page.yaml" roles="质检员,质量主管">
                             <children>
+                                <resource id="FNPT:ErpQaInspection:query" displayName="查询质检单" i18n-en:displayName="Query Inspection"
+                                          resourceType="FNPT" orderNo="90005" roles="质检员">
+                                    <permissions>ErpQaInspection:query</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpQaInspection:save" displayName="保存质检单" i18n-en:displayName="Save Inspection"
+                                          resourceType="FNPT" orderNo="90006" roles="质检员">
+                                    <permissions>ErpQaInspection:save</permissions>
+                                </resource>
                                 <resource id="FNPT:ErpQaInspection:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="质量主管">
                                     <permissions>ErpQaInspection:approve</permissions>
                                 </resource>
@@ -94,7 +102,14 @@
                         <resource id="ErpQaRiskRegister-main" app:useCases="UC-QA-10" displayName="风险登记"
                                   i18n-en:displayName="Risk Register" icon="alert-triangle"
                                   component="FLUX" resourceType="SUBM" orderNo="510"
-                                  url="/erp/qa/pages/ErpQaRiskRegister/main.page.yaml" roles="质量主管"/>
+                                  url="/erp/qa/pages/ErpQaRiskRegister/main.page.yaml" roles="质量主管">
+                                      <children>
+                                          <resource id="FNPT:ErpQaRiskRegister:query" displayName="查询风险登记" i18n-en:displayName="Query Risk Register"
+                                                    resourceType="FNPT" orderNo="90005" roles="质量主管">
+                                              <permissions>ErpQaRiskRegister:query</permissions>
+                                            </resource>
+                                        </children>
+                                    </resource>
                         <resource id="ErpQaCalibration-main" app:useCases="UC-QA-01" displayName="量具校准"
                                   i18n-en:displayName="Gauge Calibration" icon="gauge"
                                   component="FLUX" resourceType="SUBM" orderNo="520"

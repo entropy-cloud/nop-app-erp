@@ -80,6 +80,10 @@
                                   component="FLUX" resourceType="SUBM" orderNo="300"
                                   url="/erp/mnt/pages/ErpMntVisit/main.page.yaml" roles="维护主管,维护人员">
                                       <children>
+                                          <resource id="FNPT:ErpMntVisit:query" displayName="查询维护访问" i18n-en:displayName="Query Maintenance Visit"
+                                                    resourceType="FNPT" orderNo="90005" roles="维护人员,维护主管">
+                                              <permissions>ErpMntVisit:query</permissions>
+                                          </resource>
                                           <resource id="FNPT:ErpMntVisit:schedule" displayName="排程维护访问" i18n-en:displayName="Schedule Visit"
                                                     resourceType="FNPT" orderNo="31010" roles="维护主管">
                                               <permissions>ErpMntVisit:schedule</permissions>

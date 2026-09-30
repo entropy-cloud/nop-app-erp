@@ -26,8 +26,12 @@ site:
       displayName: Reverse Approve
     FNPT:ErpQaInspection:approve:
       displayName: Approve
+    FNPT:ErpQaInspection:query:
+      displayName: Query Inspection
     FNPT:ErpQaInspection:reverseApprove:
       displayName: Reverse Approve
+    FNPT:ErpQaInspection:save:
+      displayName: Save Inspection
     FNPT:ErpQaRecall:approve:
       displayName: Approve
     FNPT:ErpQaRecall:reverseApprove:
@@ -36,6 +40,8 @@ site:
       displayName: Approve
     FNPT:ErpQaReview:reverseApprove:
       displayName: Reverse Approve
+    FNPT:ErpQaRiskRegister:query:
+      displayName: Query Risk Register
     FNPT:ErpQaSpcChart:approve:
       displayName: Approve
     FNPT:ErpQaSpcChart:reverseApprove:

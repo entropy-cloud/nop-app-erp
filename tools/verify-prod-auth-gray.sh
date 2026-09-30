@@ -209,5 +209,51 @@ expect_error_code "${TOK_PUR}" \
   '{ ErpPurOrder__findPage(query:{offset:0,limit:1}){ total } }' \
   'nop.err.auth.no-permission' "⑤"
 
+# ---- [⑥] data-auth 断言组（USC-02b：窄种子豁免面 + 行过滤活体 + 菜单壳非豁免面维持）----
+TOK_INSPECTOR=$(login_token "role-inspector")
+[ -n "${TOK_INSPECTOR}" ] || { echo "FAIL[⑥]: role-inspector 登录失败" >&2; exit 20; }
+# ⑥ qa 正向活体：质检员保存检验单（inspectorId=21 载荷自见 → checkDataAuth 过检）
+QA_SAVE=$(graphql "${TOK_INSPECTOR}" 'mutation{ ErpQaInspection__save(data:{code:"PROBE-QA-001",inspectionType:"INCOMING",materialId:"1",businessDate:"2026-08-11",inspectionDate:"2026-08-11",inspectorId:"21",result:"PENDING",docStatus:"DRAFT",approveStatus:"UNSUBMITTED"}){ id code } }')
+QA_OK=$(printf '%s' "${QA_SAVE}" | python3 -c 'import json,sys; d=json.load(sys.stdin); print("yes" if (d.get("data") or {}).get("ErpQaInspection__save") else "no")')
+if [ "${QA_OK}" = "yes" ]; then
+  echo "PASS[⑥]: 质检员 ErpQaInspection__save 成功（:save 窄种子 + inspectorId 载荷自见过检）"
+else
+  echo "FAIL[⑥]: 质检员保存检验单失败：${QA_SAVE:0:300}" >&2
+  exit 13
+fi
+QA_ID=$(printf '%s' "${QA_SAVE}" | python3 -c 'import json,sys; d=json.load(sys.stdin); print((d.get("data") or {}).get("ErpQaInspection__save",{}).get("id",""))')
+[ -n "${QA_ID}" ] || { echo "FAIL[⑥]: save 未返回 id" >&2; exit 13; }
+QA_GET=$(graphql "${TOK_INSPECTOR}" "{ ErpQaInspection__get(id: \"${QA_ID}\"){ id code inspectorId } }")
+QA_VISIBLE=$(printf '%s' "${QA_GET}" | python3 -c 'import json,sys; d=json.load(sys.stdin); g=(d.get("data") or {}).get("ErpQaInspection__get"); print("yes" if g and g.get("code")=="PROBE-QA-001" else "no")')
+if [ "${QA_VISIBLE}" = "yes" ]; then
+  echo "PASS[⑥]: 质检员 __get 自建行可见（行过滤 + query 种子协同正例，inspectorId 自见）"
+else
+  echo "FAIL[⑥]: 自建行不可见或载荷不符：${QA_GET:0:300}" >&2
+  exit 13
+fi
+# ⑥' sal 负向：销售员 findPage 成功但全部种子行（createdBy≠12）不可见
+TOK_SAL=$(login_token "role-sal")
+[ -n "${TOK_SAL}" ] || { echo "FAIL[⑥']: role-sal 登录失败" >&2; exit 20; }
+SAL_FIND=$(graphql "${TOK_SAL}" '{ ErpSalOrder__findPage(query:{offset:0,limit:5}){ total } }')
+SAL_TOTAL=$(printf '%s' "${SAL_FIND}" | python3 -c 'import json,sys; d=json.load(sys.stdin); print((d.get("data") or {}).get("ErpSalOrder__findPage",{}).get("total","ERR"))')
+if [ "${SAL_TOTAL}" = "0" ]; then
+  echo "PASS[⑥']: 销售员 findPage 成功且全部种子行不可见（createdBy 行过滤，total=0）"
+else
+  echo "FAIL[⑥']: 期望 total=0，实得 ${SAL_TOTAL}，响应：${SAL_FIND:0:300}" >&2
+  exit 13
+fi
+# ⑥'' 菜单壳非豁免面维持 + md 种子可读
+expect_error_code "${TOK_PUR}"   '{ ErpPurOrder__findPage(query:{offset:0,limit:1}){ total } }'   'nop.err.auth.no-permission' "⑥''pur"
+TOK_FIN=$(login_token "role-finance")
+[ -n "${TOK_FIN}" ] || { echo "FAIL[⑥'']: role-finance 登录失败" >&2; exit 20; }
+CUR_FIND=$(graphql "${TOK_FIN}" '{ ErpMdCurrency__findPage(query:{offset:0,limit:1}){ total } }')
+CUR_OK=$(printf '%s' "${CUR_FIND}" | python3 -c 'import json,sys; d=json.load(sys.stdin); print("yes" if d.get("data") and d.get("data").get("ErpMdCurrency__findPage") is not None else "no")')
+if [ "${CUR_OK}" = "yes" ]; then
+  echo "PASS[⑥'']: 财务员 ErpMdCurrency__findPage 可读（md :query 种子）"
+else
+  echo "FAIL[⑥'']: 财务员查询币种失败：${CUR_FIND:0:300}" >&2
+  exit 13
+fi
+
 echo ""
-echo "== 全部 6 组断言通过（guard + ①②③④⑤）：%prod action-auth 灰度语义验证绿 =="
+echo "== 全部断言通过（guard + ①②③④⑤ + ⑥⑥'⑥''）：%prod action-auth + data-auth 灰度语义验证绿 =="

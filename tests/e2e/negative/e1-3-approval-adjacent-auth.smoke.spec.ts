@@ -22,7 +22,8 @@ import {
  * **修复后期望**：三动作 enforcement 必达（field.auth 非空）→ restricted 拒（NO_PERMISSION）；
  * admin（skip-check 兜底）与持权业务角色通过。
  *
- * **种子现状（抽样角色依据，映射表 §种子现状）**：
+ * **种子现状（抽样角色依据，映射表 §种子现状；USC-02b plan 2026-10-01-0523-1 订正：`:mutation`
+ *   零角色种子不变量字面维持——本批新增的是 :save/:query 独立权限串种子 [6 节点窄种子，零触 :mutation]）**：
  *   - `:mutation` 全 39 实体零角色种子 → submitForApproval 对业务角色 fail-closed admin-only
  *     （映射复用既有权限点、不新增种子 = 计划 Non-Goal 边界内既有姿态）→ 该族正向主体 = admin。
  *   - `:approve` 38 实体有种子（pur/sal=审核人、prj=项目经理 等）→ reject 正向主体 = 持权业务角色。

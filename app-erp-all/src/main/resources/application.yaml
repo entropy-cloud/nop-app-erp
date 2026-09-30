@@ -82,12 +82,19 @@ quarkus:
        # 部署语义：全操作（含查询）经 enforcement 检查 + query/mutation FNPT 零种子 = 业务角色「菜单壳」
        # （菜单可见、数据 403，已验收语义非故障）；skip-check-for-admin 保持省略继承平台默认 false（DR-1e），
        # 平台 admin 可见面 = erp-sys + notify（可见 ≠ 可用：平台实体零权限点）；B 类 crm/cs/drp 零种子 fail-closed。
+       # USC-02b 精化（plan 2026-10-01-0523-1）：实体级窄种子豁免面 = sal ErpSalOrder:query /
+       # qa ErpQaInspection:query+save / qa RiskRegister:query / mnt ErpMntVisit:query / md ErpMdCurrency:query。
        enable-action-auth: true
-       enable-data-auth: false
+       # USC-02b data-auth 三开关同批翻转（行过滤 enabler 依赖：use-user-id-for-audit-fields=false 时
+       # createdBy 戳为 sys-user-name，eq(createdBy,userId) 永不命中——E2.1 实证）。
+       # 已知语义：creator 过滤规则下被过滤角色经 GraphQL 无法自建行（save-under-creator-filter，
+       # B-1 实证，successor 登记）；正反馈 = SoDGuard createdBy==userId 比较开始实际生效。
+       enable-data-auth: true
+       use-user-id-for-audit-fields: true
    # skip-check-for-admin 省略 → 继承平台默认 false（DR-1e 安全姿态）
    erp:
      data-auth:
-       role-row-filter-enabled: false
+       role-row-filter-enabled: true
      audit:
        field-read:
          enabled: false

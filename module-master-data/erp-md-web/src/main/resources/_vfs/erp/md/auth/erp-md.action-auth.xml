@@ -117,6 +117,10 @@
                                   component="FLUX" resourceType="SUBM" orderNo="420"
                                   url="/erp/md/pages/ErpMdCurrency/main.page.yaml" roles="采购员,销售员,库管员,财务员,资产管理员,项目经理,生产计划员,生产主管,作业员,质检员,质量主管,维护主管,维护人员">
                                       <children>
+                                          <resource id="FNPT:ErpMdCurrency:query" displayName="查询币种" i18n-en:displayName="Query Currency"
+                                                    resourceType="FNPT" orderNo="40005" roles="财务员,user">
+                                              <permissions>ErpMdCurrency:query</permissions>
+                                          </resource>
                                           <resource id="FNPT:ErpMdCurrency:refreshRatesFromApi" displayName="从汇率源刷新汇率" i18n-en:displayName="Refresh Rates From Api"
                                                     resourceType="FNPT" orderNo="40010" roles="管理员">
                                               <permissions>ErpMdCurrency:refreshRatesFromApi</permissions>

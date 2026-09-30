@@ -28,6 +28,8 @@ site:
       displayName: Reverse Approve
     FNPT:ErpSalOrder:approve:
       displayName: Approve Sales Order
+    FNPT:ErpSalOrder:query:
+      displayName: Query Sales Order
     FNPT:ErpSalOrder:reverseApprove:
       displayName: Reverse Approve
     FNPT:ErpSalQuotation:approve:
