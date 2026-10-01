@@ -1351,3 +1351,11 @@ tests/e2e/
     ├── reports.amis-download.spec.ts              # AMIS 下载按钮回归层（5 报表抽样 × {xlsx,pdf} = 10 用例，真实按钮→download 事件，0413-1）
     └── *.smoke.spec.ts               # 24 个报表 spec
 ```
+
+
+## 移动视口测试段（USC-04，plan 2026-10-01-0830-1）
+
+- 范式：`page.setViewportSize({ width: 375, height: 812 })`（Desktop Chrome project 内，无需新 project/device）；GraphQL 三原语与 login 路径视口无关。
+- 实测渲染形态（2026-10-01，ErpHrLeaveRequest 列表页 375px）：`data-responsive="narrow"` 标记激活（responsiveMarker=1）；卡片化 DOM（table-responsive-expanded）未触发（cardDom=0）；桌面表格行保留（desktopRows=3）；行级定位失配（FluxAdapter tr/td 契约窄屏失配→行按钮经「更多」dropdown 或裁切不可达）→ D5(b) GraphQL 驱动降级（具名 residual：窄屏行定位方法归 FluxAdapter e2e-shared 改造 successor）。
+- 分层运行：`npx playwright test tests/e2e/mobile`（3 tests）；套件计数 3（mobile 新分层）。
+- 边界：xwf submit 轴不可驱动（2330-1）；%prod 业务角色查询 403（菜单壳语义，权限矩阵 successor）。

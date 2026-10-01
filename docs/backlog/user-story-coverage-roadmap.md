@@ -29,9 +29,9 @@
 
 | 状态 | 数量 |
 | --- | --- |
-| todo | 5 |
+| todo | 4 |
 | ready | 0 |
-| done | 4 |
+| done | 5 |
 
 ### M1 覆盖基线与缺口裁定
 
@@ -46,7 +46,7 @@
 | USC-02a | action-auth 生产灰度 + 菜单/动作完整性收口（US-PL-01） | done（2026-10-01，plan `2026-10-01-0313-1-usc02a-action-auth-prod-gray` 落地 + 独立草案审查 2 轮 accept + **双独立子代理批准**[A GRANT 附 2 条件/B 条件 GRANT 附 4 必须+1 建议，零 DENY] + 独立结束审计 ACCEPT[0B/0M/3m 已整改]：菜单塌缩缺口收口[6 域 102 SUBM 镜像种子+erp-sys 子树 26 admin 种子，纯属性追加零授权面扩散] + `%prod` enable-action-auth 翻转[DR-1e 保持] + owner doc 四处修订 + 探针脚本 6 组断言全绿 + e1-2-menu-filter 故意红灯转绿；negative 套件 9 失败 HEAD 归因全部预存零回归；残量 successor：7 对照面域 146 节点镜像 + data-auth 归 USC-02b） | `docs/design/roles-and-permissions.md` | —（prod 翻转唯一载体；test 环境验收口径承 `permissions-enforcement-roadmap.md`） | nop-backend-dev + nop-testing（plan 裁决 Skill: none——零 Java/零新 spec，见计划 Task Route） |
 | USC-02b | data-auth 行过滤生产灰度与负向隔离证明（US-PL-02） | done（2026-10-01，plan `2026-10-01-0523-1-usc02b-data-auth-prod-gray` 落地 + 独立草案审查 2 轮收敛 + 双独立子代理批准[A：DENY→窄种子修订→GRANT 附 C-1/C-2；B：限域 DENY→B-1 实证→GRANT 附 M-1/M-2] + 独立结束审计两轮收敛[round1 NEEDS REVISION 1B+2M+5m → 整改 → 增量复审 RESOLVED]：6 节点窄种子矩阵 + 3 spec 修复与 D1b/D1c 重构 + %prod 三开关翻转 + owner doc USC-02b 裁决段 + 探针⑥⑥'⑥''；残量 successor：全域读矩阵 / save-under-creator-filter / loginAsRole flake） | `docs/design/roles-and-permissions.md` | —（与 USC-02a 可并行，各自独立 plan） | nop-backend-dev + nop-testing |
 | USC-03 | 审计日志生产化与主数据变更可追溯（US-FN-06 / US-MD-04） | done（2026-10-01，plan `2026-10-01-0723-1-usc03-audit-production` 落地 + 独立草案审查 2 轮 accept + 双独立子代理批准[A/B 双 GRANT 附条件全并入] + 独立结束审计：E4.2 %prod 翻转 + 操作级审计 %prod 单边启用[9 patterns ≈179 项高危族；%test 同批勘误回退——E2E 连接悬挂 successor] + oplog/ChangeLog 读路径窄种子→admin + 「查得到」集成测试 2/2 + US-MD-04 关闭口径登记[两未实现面分离点名]；negative 73/73 + app-erp-all 75/0/0/1 + 探针含 ⑦ 全过；残量 successor：oplog 留存策略/业务角色审计查询/E2E 连接悬挂[平台层]） | `docs/design/roles-and-permissions.md` | — | nop-backend-dev + nop-testing |
-| USC-04 | 移动可达 Web 审批与待办体验（US-PL-03） | todo | `docs/architecture/approval-framework.md`、`docs/architecture/notification-strategy.md` | — | nop-frontend-dev + nop-testing |
+| USC-04 | 移动可达 Web 审批与待办体验（US-PL-03） | done（2026-10-01，plan `2026-10-01-0830-1-usc04-mobile-approval-web` 落地 + 独立草案审查 2 轮 accept + 独立结束审计：移动视口 E2E 3/3 绿[375×812：inbox 类待办面可达/flux 响应式实测证据集/ErpHrLeaveRequest DIRECT 审批轴 submit→approve→status=APPROVED 全链翻转，D5(b) 降级分支实测触发=窄屏行定位失配 GraphQL 驱动] + 移动可达语义段与 0→1 successor 登记[跨域待办聚合页/我发起的=产品设计前置] + e2e-runbook 移动视口段；roadmap 测试链三重阻断替代裁决显式化；mobile 3/3+negative 73/73+hr-leave 4/4 零新增失败；残量 successor：窄屏行定位方法[FluxAdapter 改造]/跨域聚合页/我发起的/审批通知跳转） | `docs/architecture/approval-framework.md`、`docs/architecture/notification-strategy.md` | — | nop-frontend-dev + nop-testing |
 
 ### M3 档位能力设计 / 实现 / 测试（组装档位 Must）
 

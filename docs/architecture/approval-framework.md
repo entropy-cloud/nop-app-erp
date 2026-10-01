@@ -64,3 +64,15 @@
 > - 使用指南：`../nop-entropy/docs-for-ai/03-runbooks/enable-approval-on-entity.md`
 >
 > ERP 应用层落位见 `wf-integration-design.md`。核心：审批流（nop-wf）与业务处理正交分离；业务实体标 `use-approval`，由 codegen 生成标准审批 action；审批通过经 wf 结束事件回调 action；**业务联动在 xbiz 层注入（action source `x:override="append"` / `<observes>`），approveStatus 由标准 action source 迁移，不由 wf 引擎直写业务表**。
+
+
+## 移动可达（US-PL-03，USC-04，plan 2026-10-01-0830-1，2026-10-01）
+
+**语义定义**：「移动可达」= 响应式 Web 待办列表 + 窄屏审批动作可用（375×812 视口 E2E 证明）；不承诺原生 App、推送 SDK 或 PWA。
+
+**实测结论（2026-10-01，`tests/e2e/mobile/approval.mobile.spec.ts`）**：
+- 通知收件箱（现有唯一类待办面）在 375px 可达并渲染未读列表；
+- flux 运行时窄屏标记（`data-responsive="narrow"`）在 375px 激活，但表格行结构保留（卡片化 DOM 未触发），行按钮收进「更多」dropdown 或容器裁切 → **行级定位失配，审批 UI 点击在窄屏降级为 GraphQL 驱动**（D5(b) 具名 residual：行级窄屏定位方法归 FluxAdapter e2e-shared 改造 successor）；
+- DIRECT 域状态机审批轴（载体 ErpHrLeaveRequest）在移动视口下完成 submit→approve→status=APPROVED 全链状态翻转。
+
+**登记（0→1 successor，产品设计前置）**：跨域审批待办聚合页与「我发起的」视图——31 实体异构审批字段聚合查询 + `ErpSysNotification` 通知结构化锚点（link/bizRef）缺失，须产品裁决立项；审批通知「去审批」跳转同族（inbox-patterns.md Successor 延续）。xwf 轴浏览器层不可行（2330-1）维持。
