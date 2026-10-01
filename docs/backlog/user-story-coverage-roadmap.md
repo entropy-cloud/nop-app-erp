@@ -29,9 +29,9 @@
 
 | 状态 | 数量 |
 | --- | --- |
-| todo | 3 |
+| todo | 2 |
 | ready | 0 |
-| done | 6 |
+| done | 7 |
 
 ### M1 覆盖基线与缺口裁定
 
@@ -53,7 +53,7 @@
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 | --- | --- | --- | --- | --- | --- |
 | USC-05 | 条码 / PDA 作业面运行时收口（US-IV-05、US-PL-08） | done（2026-10-01，plan `2026-10-01-0930-1-usc05-barcode-pda-runtime` 落地 + 独立草案审查 3 轮 accept[1B Delivery 跨域 DAG→IBizObjectManager 按名解析+2M+6m→定点清扫] + 独立结束审计：条码解析路由入口 ErpInvBarcodeBizModel.resolveBarcode[SKU-first+四类单据 pur/mfg/inv-take 直查+Delivery 反射+库位 code；`:mutation` 零 FNPT 种子=菜单壳已验收语义] + 4 配置键接线[auto-print WARN no-op 显式化/pda-require-location-scan STOCK_TAKE 分支 locationCode 必填] + PDA 盘点扫码页[表单式规避 D5(b) 网格 residual，场景 5 全链] + JUnit 7/7 + E2E 双视口 2/2 + inv-service 261 全绿 + 档位组装登记[商贸/制造档 Must 随 inventory 模块]；**残量对账表**：场景 5 全链交付，场景 1/4/6 解析层交付+PDA 页残量，场景 3 拣货落点缺失[纯 CRUD]/场景 7 质检联动缺失，批次/序列号/托盘/复合码/条码生成[ORM 或子系统前置]——逐项触发条件见 plan Deferred 对账表；残量 successor：拣货 mutation/质检联动/打印子系统/库位复合码/条码生成/留存策略） | `docs/design/inventory/barcode-integration.md` | — | nop-frontend-dev + nop-testing |
-| USC-06 | 制造链与 B2B 档位验收证据补齐（US-MF-*、US-B2-01） | todo | 各域 owner doc（manufacturing / b2b） | USC-01 | nop-testing |
+| USC-06 | 制造链与 B2B 档位验收证据补齐（US-MF-*、US-B2-01） | done（2026-10-01，plan `2026-10-01-1145-1-usc06-tier-acceptance-registration` 落地[触发条款降级路径：矩阵判已覆盖→档位验收登记] + 独立草案审查 1 轮 accept[2M+5m：档位口径统一制造档 Must/C18 锚点误植删除] + 独立结束审计：矩阵分流表 #8/#9 翻转「已登记」+ 主表 7 行注记 + manufacturing/b2b README 档位验收登记段[证据锚点表格] + USC-01 分流表残量清零） | 各域 owner doc（manufacturing / b2b） | USC-01 | nop-testing |
 
 ### M4 核心主干验证深化（✅ 已满足 · 补测试深度）
 

@@ -154,3 +154,12 @@ B2B 模块本身不产生会计凭证。EDI/ASN 触发的采购入库或销售�
 - `docs/design/l10n/cn-golden-tax.md`（独立工程范式样板）
 - `docs/architecture/integration-pattern.md`（Webhook 出站/入站复用）
 - `docs/requirements/product-scope.md`（延迟范围）
+
+
+## 档位验收登记（USC-06，plan 2026-10-01-1145-1，2026-10-01）
+
+完整档/大客户 **Should**；真实 EDI 网关（MFT transport）= product-scope 延迟段（设计内 Non-Goal）；内部 EDI/ASN 模块为对账协同主证据。
+
+| US | 证据锚点（E2E/JUnit） |
+|----|---------------------|
+| US-B2-01 EDI/ASN 协同 | `b2b-edi-doc`/`b2b-asn-match-receive`/`b2b-asn-line-level-receive-fill` action spec + 看板 value 2 件（b2b-asn-flow/b2b-edi-detail）+ `TestErpC19B2bAsnAutoReceiveLandedCost` 集成 |

@@ -111,3 +111,17 @@
 | 领料/完工写库存的多步骤编排 | Processor（生成移动单 + 更新工单进度 + 触发财务） |
 | 成本结转凭证触发 | 财务域监听（本域实现 `IErpFinAcctDocProvider`） |
 | 完工质检触发 | quality 域监听工单完工事件 |
+
+
+## 档位验收登记（USC-06，plan 2026-10-01-1145-1，2026-10-01）
+
+制造档（核心+第一批扩展组装）**Must**；完整档继承；纯商贸/纯财务轻部署不组装 manufacturing 模块则本面不装配（customization-capabilities.md 能力五）。
+
+| US | 证据锚点（E2E/JUnit） |
+|----|---------------------|
+| US-MF-01 多级 BOM+MRP | `TestErpMfgBomExplosion`/`TestErpMfgMrpEngine/EndToEnd` + `mfg-mrp-simulation.action.spec.ts` + C08 释放集成 |
+| US-MF-02 齐套门控 | `TestErpMfgWorkOrderStateMachine` + `mfg-work-order.action.spec.ts` + orchestration/mfg-chain |
+| US-MF-03 作业卡报工 | orchestration/mfg-chain 报工链（laborCost 回写）+ `TestErpMfgScheduleToJobCard` |
+| US-MF-04 成本滚算差异 | `mfg-variance-recompute-reversal.action.spec.ts` + `mfg-variance.spec.ts`（凭证 6 行数值）+ JUnit 5 类 |
+| US-MF-05 质检 NCR/CAPA | `quality-ncr*` spec 6 件 + `mfg-inspection-gate.spec.ts` + C09 |
+| US-MF-06 批次召回 | `qa-recall.action.spec.ts` 全链 + `quality-recall-generate-returns` + JUnit 4 类 |
