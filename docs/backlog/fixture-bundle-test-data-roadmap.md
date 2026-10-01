@@ -3,7 +3,7 @@
 
 # 测试夹具可移植导出/导入框架路线图（Fixture Bundle：构造→导出→异库回放 + 批量入口 + skill）
 
-> 最后更新：2026-10-01（iteration 2 审查收敛 7 项转 ready + **M0.1/M1.1 done**——spike 六裁决与导出侧闭环均经独立结束审计 ACCEPT；剩余 M1.2/M1.3/M2.1/M2.2/M2.3 五项 `ready`）
+> 最后更新：2026-10-01（iteration 2 审查收敛 7 项转 ready + **M0.1/M1.1/M1.2 done**——spike 六裁决/导出侧/导入侧均经独立结束审计 ACCEPT；剩余 M1.3/M2.1/M2.2/M2.3 四项 `ready`）
 > 来源：用户请求「准备测试数据的 AI 工具/skill」；2026-09-30 deep-interview 5 轮裁定（最终模糊度 15%）
 > 触发条件：出现「测试夹具跨类/跨环境复用」或「夹具化 E2E 环境」需求（用户 2026-09-30 请求「准备测试数据的 AI 工具/skill」；既有 `_cases` 30k+ CSV 全为每方法私有、跨类共享夹具模块为空骨架）
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
@@ -37,7 +37,7 @@
 ## Work Item Status
 
 > 唯一的动态状态块。状态：`todo` / `ready` / `done`。独立草案审查通过转 `ready`；独立结束审计通过转 `done`。AI 不自行重排优先级或发明工作项。
-> 状态：2026-10-01 M0.1/M1.1 `done`、其余 5 项 `ready`（M0.1/M1.1 均经独立结束审计；执行授权 = 用户 2026-10-01 goal 指令「执行 fixture-bundle-test-data-roadmap 直到整个 roadmap 完成，每工作项按 plan guide 拟计划、每计划完成后自动提交一次」）。
+> 状态：2026-10-01 M0.1/M1.1/M1.2 `done`、其余 4 项 `ready`（done 项均经独立结束审计 ACCEPT——M1.2 两轮收敛；执行授权 = 用户 2026-10-01 goal 指令「执行 fixture-bundle-test-data-roadmap 直到整个 roadmap 完成，每工作项按 plan guide 拟计划、每计划完成后自动提交一次」）。
 
 ### Milestone M0 — 前置风险验证（1 项）
 
@@ -50,7 +50,7 @@
 | # | Work Item | Status | Owner Doc | Deps | Guard | Skill |
 |---|-----------|--------|-----------|------|-------|-------|
 | M1.1 | 包格式 + manifest schema + 观测式全行导出器（导出侧闭环） | `done`（2026-10-01，plan `2026-10-01-2049-1`：`io.nop.autotest.bundle` 新包 10 文件[manifest @DataBean JSON 模式/RecordingSession tryLock+ErrorCode/Exporter fresh-session 全行重载+分层 CSV+masked 占位+SHA-256+manifest 合并/Validator 四轴+可扩展敏感规则]；Decisions A-D 回填[11 强制字段全承载+术语桥 snapshots/=payload 层+manifest 唯一序源+原型 7 文件+pom 行随 M1.1 入库]；验收 `TestFixtureBundleExport` 5/5 绿+全模块 14/14 零回归[批准条件 A③]；dual-agent-approval 双批准[A 5 条件+B 2 条件 4 附注全履行]；runbook `../nop-entropy/docs-for-ai/03-runbooks/fixture-bundle.md` 新建+INDEX 路由；独立结束审计 ACCEPT[0B/0M/5m 非阻塞]后转 done；nop-entropy 侧产物按审计关闭义务显式路径 staging 提交入库） | `../nop-entropy/docs-for-ai/03-runbooks/fixture-bundle.md`（新建） | M0.1 | dual-agent-approval | `nop-testing` |
-| M1.2 | 分层导入器（base 业务键对账 + payload 剥 PK 重映射 + 引用重写 + requires 校验） | `ready` | 同上 runbook「导入」节 | M1.1 | dual-agent-approval；若包内含 `erp_fin_*` 表则叠加 plan-first | `nop-testing` |
+| M1.2 | 分层导入器（base 业务键对账 + payload 剥 PK 重映射 + 引用重写 + requires 校验） | `done`（2026-10-01，plan `2026-10-01-2142-1`：`FixtureBundleImporter`[requires 具名校验/漂移指纹 fail-fast-tolerant/base 业务键对账不覆盖/payload 剥 PK 重映射+to-one 重写+悬空引用拒绝+nop_sys_* 拒绝+version·delVersion 置初值+loadOrder 装载序/同实例幂等]+`FixtureBundleImportErrors` 7 具名码+`FixtureBundleImportResult`+同源指纹方法；manifest 扩 columnFingerprint/includeLogicalDeleted[导出器扩面写生产者，Manifest.read 已知键过滤前向兼容]；**执行期发现**：同包重复业务键被逐行对账静默合并→显式拒绝 + NopException.getErrorCode() 返回 String + @DataBean parse 严格拒未知属性；验收 `TestFixtureBundleImport` 7/7+全模块 21/21 零回归；dual-agent-approval 双批准[A 4 条件+B 4 条件附注全履行]；runbook 导入节定稿；结束审计通过后转 done） | 同上 runbook「导入」节 | M1.1 | dual-agent-approval；若包内含 `erp_fin_*` 表则叠加 plan-first | `nop-testing` |
 | M1.3 | 三条验收用例（干净库回放 / 脏环境 base 不覆盖 / requires 缺失报错）+ 平台 runbook 定稿 | `ready` | 同上 runbook | M1.1 + M1.2 | dual-agent-approval | `nop-testing` |
 
 ### Milestone M2 — 入口与消费（3 项）
@@ -258,3 +258,4 @@ graph TD
   - 裁决：三路收敛（无未修复 BLOCKER/MAJOR），7 工作项转 `ready`；执行授权见状态块注记。
 - **M0.1 完成**（2026-10-01，plan `docs/plans/2026-10-01-1853-1-m01-fixture-bundle-spike-six-decisions.md`：六 Decision 落盘 + 原型 A/B 实测 4/4 绿 + 既有测试 5/5 零回归 + dual-agent-approval 双批准（含 pom test-scope `nop-ioc` 单行增量批准）+ §当前基线/§框架/平台复用 事实增补如上；原型保留为 M1.1 参考实现，M0.1 提交足迹零 nop-entropy 文件；独立结束审计 ACCEPT（agent_9821fb53，0B/0M/3m 已整改：证据日志入仓 `_tmp/`、pom 措辞精确化、checker 复跑登记）后 M0.1 转 `done`）。
 - **M1.1 完成**（2026-10-01，plan `docs/plans/2026-10-01-2049-1-m11-fixture-bundle-format-exporter.md`：导出侧闭环——包格式/manifest schema/观测式全行导出器/独立校验器/验收测试 5/5+全模块 14/14 零回归；dual-agent-approval 双批准条件全履行[显式路径 staging/写入面冻结/全模块复验/敏感门控移交留痕登记于 plan Closure/不预设后继]；runbook + INDEX 路由落地；独立结束审计 ACCEPT（agent_e0b4ef03，0B/0M/5m 非阻塞：证据日志缺汇总行/状态断言追溯为真/提交态收敛义务已履行/第 5 测试加向增量/Item Types 标注 nit）后 M1.1 转 `done`）。
+- **M1.2 完成**（2026-10-01，plan `docs/plans/2026-10-01-2142-1-m12-fixture-bundle-importer.md`：分层导入器——base 对账/payload 重映射/引用重写/requires/漂移/幂等/系统表拒绝/版本置初值全承载；manifest 扩列指纹与逻辑删除声明[导出器扩面写生产者]；执行期发现三项[同包重复业务键静默合并→显式拒绝/getErrorCode 返 String/@DataBean 严格 parse→已知键过滤前向兼容]；验收 7/7+全模块 21/21 零回归；runbook 导入节定稿；独立结束审计两轮收敛[round1 NEEDS REVISION：MAJOR-1 Decision G 复合 PK 条款与活码相反零记录→「记录裁决」路径关闭（两趟同拒与 roadmap 一致+重开触发具名）+MINOR-2/3/4/6 整改；round2 ACCEPT：审计方独立复跑 21/21 exit 0×2+plan-gates PASS+五处状态核对]后转 done）。
