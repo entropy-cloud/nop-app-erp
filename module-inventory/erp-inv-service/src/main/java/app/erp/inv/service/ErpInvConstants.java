@@ -164,4 +164,18 @@ public interface ErpInvConstants extends ErpInvDocStatus {
     /** 批次效期预警阈值天数（expiryDate - today < 此值）；默认 0=关闭预警。 */
     String CONFIG_DASH_INV_BATCH_EXPIRY_DAYS = "erp-dash.inv-batch-expiry-days";
     int DEFAULT_DASH_INV_BATCH_EXPIRY_DAYS = 0;
+
+    // ---- 条码/PDA 作业面配置项（barcode-integration.md §配置点，USC-05 plan 2026-10-01-0930-1 接线）----
+    /** 条码扫描总开关（OFF 时 resolveBarcode 抛 ERR_BARCODE_DISABLED）。 */
+    String CONFIG_BARCODE_ENABLED = "erp-inv.barcode-enabled";
+    boolean DEFAULT_BARCODE_ENABLED = true;
+    /** SKU 条码格式声明（v1 仅 EAN13 值做纯数字 13 位校验，其余值不做强制解析前置）。 */
+    String CONFIG_BARCODE_SKU_FORMAT = "erp-inv.barcode-sku-format";
+    String DEFAULT_BARCODE_SKU_FORMAT = "EAN13";
+    /** 收货自动打印标签（v1 显式 no-op：收货流读取时 WARN 日志，无打印子系统——residual 在册）。 */
+    String CONFIG_BARCODE_AUTO_PRINT_ON_RECEIVE = "erp-inv.barcode-auto-print-on-receive";
+    boolean DEFAULT_BARCODE_AUTO_PRINT_ON_RECEIVE = true;
+    /** PDA 操作强制扫描库位（true 时 resolveBarcode 的 STOCK_TAKE 分支要求 locationCode）。 */
+    String CONFIG_PDA_REQUIRE_LOCATION_SCAN = "erp-inv.pda-require-location-scan";
+    boolean DEFAULT_PDA_REQUIRE_LOCATION_SCAN = true;
 }

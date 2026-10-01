@@ -72,6 +72,10 @@
                                   i18n-en:displayName="Stock Take Flow" icon="git-branch"
                                   component="FLUX" resourceType="SUBM" orderNo="401"
                                   url="/erp/inv/pages/stock-take-flow/main.page.yaml"/>
+                        <resource id="pda-stock-take" app:useCases="UC-INV-05,US-IV-05" displayName="PDA 盘点扫码"
+                                  i18n-en:displayName="PDA Stock Take Scan" icon="scan-line"
+                                  component="FLUX" resourceType="SUBM" orderNo="402"
+                                  url="/erp/inv/pages/pda-stock-take/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 预留 -->

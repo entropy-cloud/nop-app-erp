@@ -166,3 +166,14 @@ PDA 质检流程：
 - ⛔ **条码规则硬编码**——不同行业条码格式不同（零售 EAN13 / 物流 128码 / 医药监管码），必须通过配置管理。
 - ⛔ **PDA 同步阻塞**——PDA 操作应支持离线队列（先操作后同步），不依赖实时网络。
 - ⛔ **条码替代业务单据号**——条码是实物标识符，业务单据号是系统标识符，两者共存。
+
+
+## 实现状态（USC-05，plan `2026-10-01-0930-1`，2026-10-01）
+
+**已实现（v1，商贸/制造档 Must）**：
+- 条码解析路由入口 `ErpInvBarcodeBizModel.resolveBarcode(code, locationCode?)`（module-inventory/erp-inv-service，BizObj `ErpInvBarcode`）：SKU-first 解析（SKU 码委托 barcode 列 example 查询 → 单据号三类直查（pur receive/mfg material issue/inv stock take）+ 发货单 Class.forName 反射直查（inv→sal DAG 违规禁 pom 依赖）→ 库位 code 查询）。4 配置键接线进 `ErpInvConstants`（barcode-enabled 门控 / sku-format EAN13 校验 / auto-print-on-receive 显式 WARN no-op / pda-require-location-scan STOCK_TAKE 分支 locationCode 必填）。
+- PDA 作业面代表页：`pda-stock-take/main.page.yaml`（盘点场景——表单式，规避窄屏网格行定位 residual；场景 5「扫 SKU+库位→输实盘数量」）。
+- 测试：`TestErpInvBarcodeResolve`（JUnit 7 场景：pur/mfg/take 单号解析+SKU 委托+LOCATION 主解析+双门控+unresolved 拒绝）；E2E `pda-stock-take.mobile.spec.ts`（双视口表单冒烟）。
+- 档位：商贸档/制造档 Must（随 inventory 模块组装）；纯财务轻部署不组装 inventory 模块则本面不装配。
+
+**残量（设计在册本期不实现，统一触发条件=仓储客户 PDA 部署点名对应场景/码型）**：批次/序列号/托盘码解析（ORM 加列前置）；标签打印子系统（auto-print 键已接线 WARN no-op）；上架库位推荐（ABC/周转率）；FIFO/FEFO 扫码校验；PDA 离线队列（反模式缓做）；拣货场景落点（PickingOrderBiz 需补 mutation）；质检采样扫码（qa 域联动）；库位复合码（v1 以 code 约定解析，设计反模式条款支持）；条码生成（ErpSysDocNumberRule 纯设计）。场景/码型 × 交付面逐项对账表见 plan Deferred 节。

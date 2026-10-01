@@ -58,5 +58,7 @@ site:
       displayName: Transfer
     inventory-trace-report:
       displayName: Inventory Trace Report
+    pda-stock-take:
+      displayName: PDA Stock Take Scan
     stock-take-flow:
       displayName: Stock Take Flow

@@ -252,3 +252,8 @@ nop-app-erp 的定制层设计确保基线升级时不破坏客户化：
 | `../nop-entropy/docs-for-ai/03-modules/nop-dyn.md` | 动态实体权威说明 |
 | `../nop-entropy/docs-for-ai/03-modules/nop-sys.md` | 扩展字段/字典/序列号权威说明 |
 | `../nop-entropy/docs-for-ai/00-start-here/ai-defaults.md` | Model→Delta→Java 决策顺序 |
+
+
+## 条码/PDA 作业面档位归属（USC-05，plan 2026-10-01-0930-1，2026-10-01）
+
+条码/PDA 作业面（US-IV-05、US-PL-08）随 **inventory 模块**组装：纯商贸档与制造档 **Must**（条码解析入口 `ErpInvBarcode__resolveBarcode` + PDA 盘点扫码页 `pda-stock-take`）；完整档继承；纯财务轻部署不组装 inventory 模块则本面自然不装配。残量场景（收/上架/拣/发/领料/质检 PDA 页与批次/托盘码解析）按 USC-05 Deferred 对账表逐项触发（plan 2026-10-01-0930-1）。

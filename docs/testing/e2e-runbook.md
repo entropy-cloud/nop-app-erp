@@ -1357,5 +1357,10 @@ tests/e2e/
 
 - 范式：`page.setViewportSize({ width: 375, height: 812 })`（Desktop Chrome project 内，无需新 project/device）；GraphQL 三原语与 login 路径视口无关。
 - 实测渲染形态（2026-10-01，ErpHrLeaveRequest 列表页 375px）：`data-responsive="narrow"` 标记激活（responsiveMarker=1）；卡片化 DOM（table-responsive-expanded）未触发（cardDom=0）；桌面表格行保留（desktopRows=3）；行级定位失配（FluxAdapter tr/td 契约窄屏失配→行按钮经「更多」dropdown 或裁切不可达）→ D5(b) GraphQL 驱动降级（具名 residual：窄屏行定位方法归 FluxAdapter e2e-shared 改造 successor）。
-- 分层运行：`npx playwright test tests/e2e/mobile`（3 tests）；套件计数 3（mobile 新分层）。
+- 分层运行：`npx playwright test tests/e2e/mobile`（5 tests：3 审批/inbox/responsive + 2 PDA 双视口）；套件计数 5（mobile 新分层）。
+
+### PDA 作业面冒烟（USC-05，plan 2026-10-01-0930-1）
+
+- `tests/e2e/mobile/pda-stock-take.mobile.spec.ts`（2 tests，双视口 375/1280）：`/pda-stock-take` 表单式页面（barcode+库位输入 → `ErpInvBarcode__resolveBarcode` 解析 → StockTakeLine 保存）可达与表单渲染冒烟——表单式 UI 规避 USC-04 D5(b) 窄屏网格行定位 residual。
+- 解析/门控语义断言由 JUnit 承载：`TestErpInvBarcodeResolve`（inv-service 7/7：单号三类/SKU 委托/双门控/unresolved；第四类 Delivery 在 app-erp-all `TestErpBarcodeDeliveryResolve`）+ `TestErpBarcodeDeliveryResolve`（app-erp-all Delivery 集成断言——inv→sal DAG 违规禁 pom 依赖，反射分支在聚合 classpath 验证）。
 - 边界：xwf submit 轴不可驱动（2330-1）；%prod 业务角色查询 403（菜单壳语义，权限矩阵 successor）。

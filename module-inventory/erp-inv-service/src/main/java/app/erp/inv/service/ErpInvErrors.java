@@ -213,4 +213,19 @@ public interface ErpInvErrors {
             "erp.err.inv.stock-take.move-generate",
             "盘点单[{takeId}]差异移动单生成失败：{errorMessage}",
             ARG_TAKE_ID, ARG_ERROR_MESSAGE);
+
+    // ---- 条码/PDA 作业面（USC-05，plan 2026-10-01-0930-1）----
+    String ARG_BARCODE = "barcode";
+    String ARG_LOCATION_CODE = "locationCode";
+
+    ErrorCode ERR_BARCODE_DISABLED = ErrorCode.define("erp.err.inv.barcode.disabled",
+            "条码扫描功能未启用（erp-inv.barcode-enabled=false）");
+
+    ErrorCode ERR_BARCODE_UNRESOLVED = ErrorCode.define("erp.err.inv.barcode.unresolved",
+            "条码[{barcode}]无法解析为任何已注册对象（SKU/单据/库位）",
+            ARG_BARCODE);
+
+    ErrorCode ERR_BARCODE_LOCATION_REQUIRED = ErrorCode.define("erp.err.inv.barcode.location-required",
+            "PDA 强制库位扫描已启用（pda-require-location-scan=true），盘点解析必须提供库位",
+            ARG_LOCATION_CODE);
 }

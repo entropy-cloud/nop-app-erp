@@ -116,6 +116,10 @@
          镜像 finance ErpFinReportBizModel / manufacturing ErpMfgReportBizModel（域隔离 /inv/ vs /fin/ vs /mfg/）。 -->
     <bean id="app.erp.inv.service.report.ErpInvReportBizModel" ioc:type="@bean:id"/>
 
+    <!-- 条码/PDA 解析入口（USC-05，plan 2026-10-01-0930-1）：非实体 BizModel，
+         经 @BizQuery 暴露 resolveBarcode（SKU/单据/库位解析路由）。 -->
+    <bean id="app.erp.inv.service.barcode.ErpInvBarcodeBizModel" ioc:type="@bean:id"/>
+
     <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
     <bean id="app.erp.inv.service.processor.ErpInvCostAdjustSubmitForApprovalProcessor"
           class="app.erp.inv.service.processor.ErpInvCostAdjustSubmitForApprovalProcessor"/>
