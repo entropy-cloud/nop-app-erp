@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- fixture-bundle M2.1 batch entry task (nop-app-erp plan 2026-10-02-0026-1, route (a)).
+     Test/demo-profile only (roadmap Non-Goal: production fixture loading) — NOT
+     registered in the production scheduler directories (no job.yaml entry).
+     Loader drains via the processor's done-flag (ap-document batch lesson: a
+     constantly-non-empty loader loops forever). -->
+<batch taskName="fixture-bundle.import" batchSize="1" transactionScope="process" saveState="true"
+       xmlns:x="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="c" x:validated="true"
+       x:schema="/nop/schema/task/batch.xdef">
+
+    <loader>
+        <source><![CDATA[
+            const p = inject('fixtureBundleImportProcessor');
+            if (p.isDone()) return [];
+            return [{}];
+        ]]></source>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const p = inject('fixtureBundleImportProcessor');
+            return p.runOnce(batchChunkCtx.serviceContext);
+        ]]></source>
+    </processor>
+</batch>

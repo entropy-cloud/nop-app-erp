@@ -387,6 +387,15 @@ erp-fin-period-close（单个作业）
 
 ---
 
+
+
+## fixture-bundle 批量入口（测试/演示 profile，plan 2026-10-02-0026-1）
+
+- **形态**：route (a) test-scope batch-dsl——`app-erp-all/src/test/resources/_vfs/nop/test/batch-task/fixture-bundle.batch.xml`（loader 按 processor done 标记排空，沿 ap-document「恒非空 = 无限 chunk」教训）+ processor bean `fixtureBundleImportProcessor`（`FixtureBundleImportBatchProcessor`，消费侧显式 bean 定义包裹 nop-autotest.bundle 框架类——框架类刻意非 IoC bean，M1.1 批准条件）。beans 经 `@NopTestConfig(testBeansFile=...)` 显式装载（文件名规避 `app*.beans.xml` 扫描规则——静默 no-op 陷阱，M1.3 实证）。
+- **调度边界**：**不进生产调度目录**（无 scheduler.yaml/job.yaml 条目）——roadmap §Non-Goals「生产环境夹具装载」门控；仅测试/演示 profile 下经 `IBatchTaskRunner.execute` 可达（调用证明 = `TestErpFixtureBundleBatchEntry`，经真实调度面 round-trip）。
+- **禁依赖**：processor 仅调用 M1.1/M1.2 框架类，绝不触及 `nop-batch-biz` 的 `IBizEntityImporter` 占位实现（横切 2）。
+- 生产环境夹具装载需求出现时：按 roadmap §Non-Goals 触发条件由人工追加工作项（不自动扩面）。
+
 ## 参考
 
 - 平台契约：`nop-entropy/docs-for-ai/03-modules/nop-job.md`、`nop-batch.md`、`nop-task.md`、`reusable-modules-overview.md`
