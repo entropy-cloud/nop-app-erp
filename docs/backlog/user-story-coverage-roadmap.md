@@ -1,6 +1,6 @@
 # 用户故事覆盖 Roadmap（设计 / 实现 / 测试收口）
 
-> 最后更新：2026-09-22
+> 最后更新：2026-10-01（**roadmap 收官**——M1-M5 九项工作项全部 done[USC-01~08 含 02a/02b 拆分]，状态块归零 todo=0/ready=0/done=9；归属冲突升级登记两项[US-PO-01 RFQ→报价→PO 链断/US-SO-06 同屏视图缺]待人工裁决，roadmap 规则 7 不自动展开；九项各自独立 plan+独立草案审查+独立结束审计[多轮收敛]，各自独立提交）
 > 来源：`docs/requirements/2026-09-22-erp-user-stories.md`（约 50 条 US × 10 Personas × 8+ Epic）、`docs/analysis/2026-09-22-erp-user-story-gap-analysis.md`（✅/🔶/🕒/❌ + Must/Should/Could/Won't 裁决）
 > 产品范围权威：`docs/requirements/product-scope.md`（18 域 + notify；档位组装 `:46`；延迟段 `:72-75`）
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
