@@ -154,6 +154,8 @@
 
 > 非关键属性（如名称、规格、描述）的修改不需要审批，直接生效。
 
+> **US-MD-04 关闭口径（USC-03，plan `2026-10-01-0723-1`，2026-10-01）**：主数据变更可追溯按 roadmap Should·条件触发裁决以「软停用 + 引用约束 + 审计字段」三要素关闭（软停用 status 列 / `IErpMd*ReferenceChecker` 引用约束 SPI / createdBy 系审计字段 + `use-user-id-for-audit-fields` %prod=true），**不立项变更历史独立 UI**。两个未实现面显式点名（B 路 C-2 分离口径）：①「变更前记录原值，变更后记录新值（审计日志）」承诺**不实现**——who/when 审计列 ≠ 值留痕，md 实体未加 audit tagSet（机制已备，未来加 tag 即得 NopSysChangeLog 字段级历史）；②`erp-md.critical-attributes` 配置键为文档声明未接线（全仓零命中）。合规客户点名变更历史时升格（plan-first + 人工批准），不静默升格 Must。
+
 ## 跨域协作
 
 主数据是被引用方，不主动调用其他业务域。所有业务域通过 `IErpMd*Biz` 接口（本域在 `app-erp-master-data-dao` 暴露）查询主数据，不做 ORM 层跨工程 `refEntityName`。

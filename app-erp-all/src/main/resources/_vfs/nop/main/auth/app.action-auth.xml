@@ -150,7 +150,20 @@
                         <resource id="sys-oplog-main" displayName="操作日志"
                                   i18n-en:displayName="Operation Log" icon="list"
                                   component="FLUX" resourceType="SUBM" orderNo="700"
-                                  url="/nop/auth/pages/NopAuthOpLog/main.page.yaml" roles="admin"/>
+                                  url="/nop/auth/pages/NopAuthOpLog/main.page.yaml" roles="admin">
+                            <children>
+                                <!-- USC-03 读路径收口窄种子（plan 2026-10-01-0723-1，双独立子代理批准）：
+                                     %prod 下平台 admin 可查询操作留痕与字段级变更史（此前零种子含 admin 全员 403）。 -->
+                                <resource id="FNPT:NopAuthOpLog:query" displayName="查询操作日志" i18n-en:displayName="Query Operation Log"
+                                          resourceType="FNPT" orderNo="70005" roles="admin">
+                                    <permissions>NopAuthOpLog:query</permissions>
+                                </resource>
+                                <resource id="FNPT:NopSysChangeLog:query" displayName="查询字段级变更史" i18n-en:displayName="Query Change Log"
+                                          resourceType="FNPT" orderNo="70006" roles="admin">
+                                    <permissions>NopSysChangeLog:query</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="sys-session-main" displayName="在线会话"
                                   i18n-en:displayName="Session" icon="monitor"
                                   component="FLUX" resourceType="SUBM" orderNo="710"

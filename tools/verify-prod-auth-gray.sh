@@ -255,5 +255,25 @@ else
   exit 13
 fi
 
+# ---- [⑦] 操作留痕读路径收口（USC-03：admin 可查询 oplog 与字段级变更史）----
+TOK_NOP2=$(login_token "nop")
+[ -n "${TOK_NOP2}" ] || { echo "FAIL[⑦]: nop 登录失败" >&2; exit 20; }
+OPLOG_FIND=$(graphql "${TOK_NOP2}" '{ NopAuthOpLog__findPage(query:{offset:0,limit:1}){ total } }')
+OPLOG_OK=$(printf '%s' "${OPLOG_FIND}" | python3 -c 'import json,sys; d=json.load(sys.stdin); print("yes" if d.get("data") and d.get("data").get("NopAuthOpLog__findPage") is not None else "no")')
+if [ "${OPLOG_OK}" = "yes" ]; then
+  echo "PASS[⑦]: admin NopAuthOpLog__findPage 可查（读路径收口活体）"
+else
+  echo "FAIL[⑦]: admin 查询操作日志失败：${OPLOG_FIND:0:300}" >&2
+  exit 14
+fi
+CL_FIND=$(graphql "${TOK_NOP2}" '{ NopSysChangeLog__findPage(query:{offset:0,limit:1}){ total } }')
+CL_OK=$(printf '%s' "${CL_FIND}" | python3 -c 'import json,sys; d=json.load(sys.stdin); print("yes" if d.get("data") and d.get("data").get("NopSysChangeLog__findPage") is not None else "no")')
+if [ "${CL_OK}" = "yes" ]; then
+  echo "PASS[⑦]: admin NopSysChangeLog__findPage 可查（字段级变更史关闭口径验收）"
+else
+  echo "FAIL[⑦]: admin 查询变更史失败：${CL_FIND:0:300}" >&2
+  exit 14
+fi
+
 echo ""
-echo "== 全部断言通过（guard + ①②③④⑤ + ⑥⑥'⑥''）：%prod action-auth + data-auth 灰度语义验证绿 =="
+echo "== 全部断言通过（guard + ①②③④⑤ + ⑥⑥'⑥'' + ⑦）：%prod action-auth + data-auth + 审计读路径灰度语义验证绿 =="

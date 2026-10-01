@@ -67,6 +67,12 @@ quarkus:
        enable-data-auth: true
        skip-check-for-admin: true
        use-user-id-for-audit-fields: true
+       # USC-03 操作级审计 %test 同批启用经实测回退（plan 2026-10-01-0723-1 执行期勘误）：
+       # enable-audit=true 时 dry-run-impact E2E 系统性 15s 超时（连接层悬挂，平台 GraphQLWebService
+       # 层问题登记 successor）；测试态覆盖由 TestErpAuditProductionPath（@NopTestProperty 自供）承载。
+       graphql:
+         enable-audit: false
+         audit-mutation-patterns: "*__approve,*__reverseApprove,*__reverse*,*__cancel*,*__writeOff,*__void*,*__closePeriod,*__reverseClose,*__post*"
    erp:
      data-auth:
        role-row-filter-enabled: true
@@ -91,10 +97,16 @@ quarkus:
        # B-1 实证，successor 登记）；正反馈 = SoDGuard createdBy==userId 比较开始实际生效。
        enable-data-auth: true
        use-user-id-for-audit-fields: true
+       # USC-03 操作级审计增量启用（plan 2026-10-01-0723-1，双独立子代理批准）：
+       # 高危 mutation 族 9 patterns（命中 ≈179 项；写 NopAuthOpLog 仅操作名+结果+身份，无业务载荷）。
+       graphql:
+         enable-audit: true
+         audit-mutation-patterns: "*__approve,*__reverseApprove,*__reverse*,*__cancel*,*__writeOff,*__void*,*__closePeriod,*__reverseClose,*__post*"
    # skip-check-for-admin 省略 → 继承平台默认 false（DR-1e 安全姿态）
    erp:
      data-auth:
        role-row-filter-enabled: true
      audit:
        field-read:
-         enabled: false
+         # USC-03 E4.2 保密字段读审计 %prod 翻转（唯一 %test ON/%prod OFF 审计键收口）。
+         enabled: true
