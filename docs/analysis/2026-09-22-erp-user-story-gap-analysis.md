@@ -149,7 +149,7 @@
 |-----------|------|
 | US-PL-06 门户 | 设计层已标非基线；B2B 协同故事由内部 EDI 模块部分覆盖 |
 | POS 零售 | coverage 矩阵 🕒；非 18 域 |
-| 电商商城 | 配套 `nop-app-mall`，不进本仓 |
+| 电商商城 | 配套 `nop-app-mall`（实存于 `nop-app-mall-wt` 工作树），不进本仓 |
 | SaaS 多租户启用 | product-scope 延迟（待业务确认） |
 | 原生移动 App | 无产品承诺；Web/PDA 优先 |
 | AI 预测性分析/GenAI 单据 | 调研有、基线无；不阻塞通用 ERP 定义 |

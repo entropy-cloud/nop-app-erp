@@ -29,9 +29,9 @@
 
 | 状态 | 数量 |
 | --- | --- |
-| todo | 1 |
+| todo | 0 |
 | ready | 0 |
-| done | 8 |
+| done | 9 |
 
 ### M1 覆盖基线与缺口裁定
 
@@ -65,7 +65,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 | --- | --- | --- | --- | --- | --- |
-| USC-08 | 延迟/出界故事边界核对与 Non-Goal 登记一致性 | todo | `docs/requirements/product-scope.md`、`docs/design/portal/README.md` | — | none |
+| USC-08 | 延迟/出界故事边界核对与 Non-Goal 登记一致性 | done（2026-10-01，plan `2026-10-01-1400-1-usc08-boundary-consistency` 落地 + 独立草案审查 1 轮 accept[2M+5m：backlog/README+三句语义确认两义务补入/基线三处实仓误述订正] + 独立结束审计：九项四方判定表[product-scope×gap analysis×portal README×coverage 矩阵]+三句语义确认全成立+backlog/README 🕒 误登记核查零命中+roadmap §9 回流交叉确认全维持出界+gap analysis :152 双路径事实限定；残量：AI 预测分析映射缺口显式登记[非矛盾]；**roadmap M1-M5 全部工作项 done，状态块归零**） | `docs/requirements/product-scope.md`、`docs/design/portal/README.md` | — | none |
 
 ## 3. 框架 / 平台复用
 
