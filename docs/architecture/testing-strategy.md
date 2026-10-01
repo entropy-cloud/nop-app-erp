@@ -91,9 +91,9 @@ CHECKING 模式：
 
 三层验证叠加：显式 `assertEquals` 核心业务字段 + `output()` 完整响应快照 + 框架自动数据库状态快照（`output/tables/*.csv`）。
 
-## 四类测试资产边界
+## 五类测试资产边界
 
-> 测试资产与部署资产必须区分。下表定义四类资产的归属、生命周期与发现方式。
+> 测试资产与部署资产必须区分。下表定义五类资产的归属、生命周期与发现方式。
 
 | 资产类 | 位置 | 生命周期 | 发现方式 | 当前状态 |
 |--------|------|----------|----------|----------|
@@ -101,6 +101,7 @@ CHECKING 模式：
 | **共享测试 fixture**（跨类共享主数据） | `app-erp-test-data` 模块 `_vfs/test-data/tables/*.csv` | 测试编译期产物，多测试类共享 | VFS classpath 扫描 | 新建（见下文"app-erp-test-data 模块"） |
 | **`_cases/input`**（单方法库快照） | 各 `-service` 模块 `_cases/<pkg>/<TestClass>/<method>/input/tables/*.csv` | 每测试方法私有，CHECKING 每方法恢复 | `JunitAutoTestCase` 框架自动 | 已就绪（Phase 4 沉淀） |
 | **`_cases/output`**（单方法期望快照） | 各 `-service` 模块 `_cases/.../<method>/output/` | 每测试方法私有，录制后人工审查 | `JunitAutoTestCase` 框架自动 | 已就绪 |
+| **夹具包（fixture bundle）**（跨类/跨实例可移植底数） | 消费方 test-scope classpath（建议 `_vfs/<module>/fixture-bundle/<name>/`）；测试运行时产物落 `target/` | 构造会话导出（manifest+base+snapshots），显式装载导入；仅测试/演示 profile（生产装载为 roadmap §Non-Goals 门控） | manifest.json5 为发现入口与唯一加载序源；独立校验器 | 已就绪（M1.1-M2.2，见 `../nop-entropy/docs-for-ai/03-runbooks/fixture-bundle.md` + skill `nop-fixture-bundle-prompt.md`） |
 
 > **关键区分**：`_cases/{input,output}` 是**每方法私有快照**（录制时的库状态），`app-erp-test-data` 是**跨类共享的主数据夹具**（物料/客户/供应商/科目等）。前者由框架管理，后者需显式声明依赖与加载顺序。
 

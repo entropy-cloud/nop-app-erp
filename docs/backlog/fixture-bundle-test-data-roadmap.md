@@ -3,7 +3,7 @@
 
 # 测试夹具可移植导出/导入框架路线图（Fixture Bundle：构造→导出→异库回放 + 批量入口 + skill）
 
-> 最后更新：2026-10-02（iteration 2 审查收敛 7 项转 ready + **M0.1/M1.1/M1.2/M1.3/M2.1/M2.2 done**；剩余 M2.3 一项 `ready`）
+> 最后更新：2026-10-02（**roadmap 收官**——7/7 工作项全 done 经独立结束审计；M0 spike 六裁决 → M1 框架核心[M1.1 导出/M1.2 导入/M1.3 验收+runbook] → M2 入口与消费[M2.1 批量入口/M2.2 skill/M2.3 消费落地]；Non-Goals 触发条件门控能力按 roadmap §Non-Goals 永久存续）
 > 来源：用户请求「准备测试数据的 AI 工具/skill」；2026-09-30 deep-interview 5 轮裁定（最终模糊度 15%）
 > 触发条件：出现「测试夹具跨类/跨环境复用」或「夹具化 E2E 环境」需求（用户 2026-09-30 请求「准备测试数据的 AI 工具/skill」；既有 `_cases` 30k+ CSV 全为每方法私有、跨类共享夹具模块为空骨架）
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
@@ -37,7 +37,7 @@
 ## Work Item Status
 
 > 唯一的动态状态块。状态：`todo` / `ready` / `done`。独立草案审查通过转 `ready`；独立结束审计通过转 `done`。AI 不自行重排优先级或发明工作项。
-> 状态：2026-10-02 M0.1/M1.1/M1.2/M1.3/M2.1/M2.2 `done`、其余 1 项 `ready`（done 项均经独立结束审计 ACCEPT；执行授权 = 用户 2026-10-01 goal 指令「执行 fixture-bundle-test-data-roadmap 直到整个 roadmap 完成，每工作项按 plan guide 拟计划、每计划完成后自动提交一次」）。
+> 状态：2026-10-02 全部 `done`（**7/7 收官**——done 项均经独立结束审计 ACCEPT[M1.2 两轮/M1.3 双批准三轮/M2.3 两轮]；执行授权 = 用户 2026-10-01 goal 指令「执行 fixture-bundle-test-data-roadmap 直到整个 roadmap 完成，每工作项按 plan guide 拟计划、每计划完成后自动提交一次」）。
 
 ### Milestone M0 — 前置风险验证（1 项）
 
@@ -59,7 +59,7 @@
 |---|-----------|--------|-----------|------|-------|-------|
 | M2.1 | 批量/CLI 导出导入入口（形态裁定 + 可调度调用测试） | `ready` | `docs/architecture/job-scheduling.md` | M1.1 | dual-agent-approval | `nop-backend-dev` |
 | M2.2 | `nop-fixture-bundle` skill（配置推断 → 构造脚本编排 → 导出 → manifest 校验 → 喂测试〔app 装载场景按 §Non-Goals 门控〕） | `done`（2026-10-02，plan `2026-10-02-0030-1`：`docs/skills/nop-fixture-bundle-prompt.md` 落盘[五阶段编排含 app 装载边界声明双落点+触发词 8+不使用场景 4[三向互补]+反模式表 9 行全带后果/正解+必读路由 4 项]+README 注册行[五列]；Skill 列对齐 nop-testing[MAJOR-1 整改]；草案审查 2 轮[2M+2m→accept]；独立结束审计 ACCEPT[0B/0M/3 MINOR：闭包簿记 4 项已履行/前向引用 testing-strategy 扩列留 M2.3/全局缓存教训锚 runbook 已达成]） | `docs/skills/README.md` | M1.1 + M1.2 | none（文档 + 工具 skill） | `nop-testing` | `docs/skills/README.md` | M1.1 + M1.2 | none（文档 + 工具 skill） | `nop-testing` |
-| M2.3 | nop-app-erp 消费落地 + owner doc 对齐（bundle 配置 + ≥2 测试类复用示例 + 资产边界表扩列） | `ready` | `docs/architecture/testing-strategy.md` + `docs/architecture/seed-data.md` | M1.1 + M1.3 | plan-first（seed 联动义务） | `nop-testing` |
+| M2.3 | nop-app-erp 消费落地 + owner doc 对齐（bundle 配置 + ≥2 测试类复用示例 + 资产边界表扩列） | `done`（2026-10-02，plan `2026-10-02-0100-1`：跨类复用示例[ConsumerA/B 独立 Importer 实例×同一共享 bundle×顺序无关——Decision J per-class fresh-DB 语义]+masked 机制链路[NAME 列声明→MASKED-BUNDLE-SEED 占位导出→导入落位+原始值不存在断言]+实测基线[全量主数据 payload 直插路径 25 实体/115 行/25 表/≈25ms——Decision K 登记选型与已测边界；v2 实体补全 25 后重测]；owner doc 对齐[testing-strategy 五类资产表扩夹具包行+seed-data requires 关系/load-order.txt 退役登记/基线诚实口径]；草案审查 2 轮[1 BLOCKER[masked 零承载]+2M+3m→accept]；独立结束审计两轮收敛[round1 NEEDS REVISION[MAJOR-1 基线登记语义三处失实+4 实体缺口+堆承诺未兑现/MAJOR-2 状态流簿记簇]→整改[Decision K/诚实口径/25 实体重测/状态流补记]→round2 ACCEPT[0B/0M/4 MINOR 随闭包订正；审计方独立复跑 elapsedMs=26 rows=115 可复现]]后 M2.3 转 `done`——**roadmap 收官**） | `docs/architecture/testing-strategy.md` + `docs/architecture/seed-data.md` | M1.1 + M1.3 | plan-first（seed 联动义务） | `nop-testing` |
 
 ## 框架/平台复用
 
@@ -262,3 +262,4 @@ graph TD
 - **M1.3 完成**（2026-10-01，plan `docs/plans/2026-10-01-2255-1-m13-fixture-bundle-acceptance-runbook.md`：三条验收用例落位——①③晋升 nop-autotest-core[单调序列 bean 机制 v4：启动期显式 nop.ioc.app-beans.files 点分键+xmlns:ioc+allow-override+正向判别断言，双批准三轮收敛 A round2/B round3 APPROVE，(i)(ii)(iii) 三件套齐]②新增消费者侧 TestErpFixtureBundleDirtyImport[base 对账不覆盖+payload 双分支+seed 不变断言]；执行期发现两项转化为 M1.2 交付缺陷修复[Exporter 系统表静默跳过/normalizeRow 列型转换+base 趟统一]；nop-autotest-core 22/22+app-erp-all 77/0/0 零回归；runbook 定稿[§3 补两字段+执行期增补]+INDEX 全链刷新；独立结束审计 ACCEPT（agent_a5ceea51，0 BLOCKER/1 MAJOR 闭包簿记类+4 MINOR 已整改：状态块引注修正/Phase 1 证据日志补产/appfull 汇总行/范围修订措辞订正）后 M1.3 转 `done`）。
 - **M2.1 完成**（2026-10-02，plan `docs/plans/2026-10-02-0026-1-m21-fixture-bundle-batch-entry.md`：route (a) test-scope batch-dsl 入口[Decision I 双批准一致确认]+调用测试[真实调度面 round-trip]+job-scheduling.md 资产段[不进生产调度目录——N1]；独立结束审计 ACCEPT[0B/0M/3 MINOR：M1.3 遗留验收②测试类从未入库实锤[83a29758b 提交信息失实]→M2.1 闭包收编/证据日志 M2.1 条目补写/回读断言判别力弱化登记]后 M2.1 转 `done`）。
 - **M2.2 完成**（2026-10-02，plan `docs/plans/2026-10-02-0030-1-m22-fixture-bundle-skill.md`：skill 文件+README 注册行[纯文档零代码]；草案审查 2 轮[2M[Skill 列静默偏离对齐 nop-testing/app 装载门控限定语三处收紧]+2m→accept]；独立结束审计 ACCEPT[0B/0M/3 MINOR：闭包簿记 4 项已履行/前向引用 testing-strategy 扩列留 M2.3/全局缓存教训锚 runbook 已达成]后 M2.2 转 `done`）。
+- **M2.3 完成 / roadmap 收官**（2026-10-02，plan `docs/plans/2026-10-02-0100-1-m23-fixture-bundle-consumer.md`：跨类复用示例[ConsumerA/B×同一 bundle×顺序无关 Decision J]+masked 机制链路+全量主数据基线[payload 直插 25 实体/115 行/≈25ms——Decision K]+owner doc 对齐[testing-strategy 五类表扩列/seed-data requires+退役+基线诚实口径]；草案审查 2 轮[1 BLOCKER[masked 零承载]+2M+3m→accept]；独立结束审计两轮收敛[round1 NEEDS REVISION[MAJOR-1 基线登记语义三处失实+4 实体缺口/MAJOR-2 状态流簿记簇/M-1~M-4]→整改[Decision K/实体补全 25 重测 115 行/seed-data 诚实重写/状态流补记/四类→五类]→round2 ACCEPT[0B/0M/4 MINOR 随闭包订正；审计方独立复跑 elapsedMs=26 rows=115 可复现]）后 M2.3 转 `done`——**7/7 收官**）。
