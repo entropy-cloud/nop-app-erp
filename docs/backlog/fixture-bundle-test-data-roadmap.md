@@ -3,7 +3,7 @@
 
 # 测试夹具可移植导出/导入框架路线图（Fixture Bundle：构造→导出→异库回放 + 批量入口 + skill）
 
-> 最后更新：2026-10-01（iteration 2 三路独立审查收敛改稿；工作项状态见 §Work Item Status）
+> 最后更新：2026-10-01（iteration 2 审查收敛 7 项转 ready + **M0.1 done**——spike 六裁决完成经独立结束审计 ACCEPT；剩余 M1.1/M1.2/M1.3/M2.1/M2.2/M2.3 六项 `ready`）
 > 来源：用户请求「准备测试数据的 AI 工具/skill」；2026-09-30 deep-interview 5 轮裁定（最终模糊度 15%）
 > 触发条件：出现「测试夹具跨类/跨环境复用」或「夹具化 E2E 环境」需求（用户 2026-09-30 请求「准备测试数据的 AI 工具/skill」；既有 `_cases` 30k+ CSV 全为每方法私有、跨类共享夹具模块为空骨架）
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
@@ -37,13 +37,13 @@
 ## Work Item Status
 
 > 唯一的动态状态块。状态：`todo` / `ready` / `done`。独立草案审查通过转 `ready`；独立结束审计通过转 `done`。AI 不自行重排优先级或发明工作项。
-> 状态：2026-10-01 全部 `ready`（iteration 2 三路独立审查收敛——规范合规/覆盖面 NEEDS REVISION 两项 Major 类与全部 Minor 类修订已同轮落盘、可执行性 RESOLVED；执行授权 = 用户 2026-10-01 goal 指令「执行 fixture-bundle-test-data-roadmap 直到整个 roadmap 完成，每工作项按 plan guide 拟计划、每计划完成后自动提交一次」）。
+> 状态：2026-10-01 M0.1 `done`、其余 6 项 `ready`（iteration 2 三路独立审查收敛后全部转 ready；M0.1 经独立结束审计 ACCEPT 转 done；执行授权 = 用户 2026-10-01 goal 指令「执行 fixture-bundle-test-data-roadmap 直到整个 roadmap 完成，每工作项按 plan guide 拟计划、每计划完成后自动提交一次」）。
 
 ### Milestone M0 — 前置风险验证（1 项）
 
 | # | Work Item | Status | Owner Doc | Deps | Guard | Skill |
 |---|-----------|--------|-----------|------|-------|-------|
-| M0.1 | Spike 六裁决（录制会话复用 / 并发隔离 / 导入 ID 策略 / 全行导出选型 / 拓扑序与引用完整性边界 / 载体位置与打包可见性） | `ready` | `../nop-entropy/docs-for-ai/02-core-guides/testing.md` | — | dual-agent-approval（跨仓读 + 原型） | `nop-testing` |
+| M0.1 | Spike 六裁决（录制会话复用 / 并发隔离 / 导入 ID 策略 / 全行导出选型 / 拓扑序与引用完整性边界 / 载体位置与打包可见性） | `done`（2026-10-01，plan `2026-10-01-1853-1`：六 Decision 全正向裁决[录制会话可行/JVM 独占+对称注销/remap 主策略+取号无冲突断言口径三件套/ORM+CsvHelper 自写导出/直插不触发 validateRefValue·悬空引用须导入器自带完整性断言/test-scope 载体 runner.jar 不可见]，原型 A/B 4/4 绿 + 既有测试 5/5 零回归，dual-agent-approval 双批准 + pom test-scope nop-ioc 增量批准，独立结束审计 ACCEPT 0B/0M/3m 已整改；原型 7 文件保留为 M1.1 参考实现，M0.1 提交足迹零 nop-entropy 文件） | `../nop-entropy/docs-for-ai/02-core-guides/testing.md` | — | dual-agent-approval（跨仓读 + 原型） | `nop-testing` |
 
 ### Milestone M1 — 框架核心（3 项）
 
@@ -75,6 +75,7 @@
 | `CsvHelper.readCsv/writeCsv` | `../nop-entropy/nop-kernel/nop-core/.../resource/record/csv/CsvHelper.java` | 包内 CSV 读写 | M1.1 |
 | `DataInitInitializer`（`nop.orm.init-database-data(-location)`，拓扑序装载 `/_init-data/`；CSV 装载**不在单事务内**且直插不经 BizModel 校验） | `../nop-entropy/nop-persistence/nop-orm/.../initialize/DataInitInitializer.java` | app 侧 init 装载范式与配置项依据 | Non-Goals（内存库测试应用） |
 | `SysSequenceGenerator` + `NopSysSequence` CRUD（`afterEntityChange` → `removeCache`） | `../nop-entropy/nop-sys/nop-sys-dao/.../seq/SysSequenceGenerator.java`、`nop-sys-service/.../NopSysSequenceBizModel.java` | 序列对齐唯一现成手段（无 `syncCurrentSeq` / `NOP_SEQ` API） | M1.2 |
+| `UuidSequenceGenerator`（nop-dao 内建，随机长整型/UUID） | `../nop-entropy/nop-persistence/nop-dao/.../seq/UuidSequenceGenerator.java` | 无 nop-sys 依赖环境（纯框架测试）的序列生成覆盖（测试 bean 覆盖先例：nop-datav `auth-test.beans.xml`）；非单调，取号无冲突断言用经验口径 | M1.2 / M1.3 |
 | `ExportDbTool` / `CliExportDbCommand`（CLI `export-db`，表 + filter → CSV；**自建 DataSource，不走 ORM**） | `../nop-entropy/nop-batch/nop-batch-exp/.../ExportDbTool.java`、`nop-runner/nop-cli-core/.../CliExportDbCommand.java` | 全行导出的候选实现之一；本仓当前 0 依赖该模块（依赖方向由 M0.1 裁决） | M0.1 |
 | `IBizEntityExporter.exportByQuery`（**已实现**，返回 `CompletionStage<WebContentBean>`） | `../nop-entropy/nop-batch/nop-batch-biz/.../importexport/DefaultBizEntityExporter.java` | 查询式导出候选之一 | M0.1 |
 | nop-batch-dsl `.batch.xml`（12 个）+ `.job.yaml`（35 个，2026-10-01 实测）+ `IBatchTaskRunner.execute` 测试范式 | `module-*/…/nop/batch-task/*.batch.xml`、`app-erp-all/.../nop/job/conf/*.job.yaml`、`module-crm/.../TestErpCrmLeadScoringRecalcJob.java` | 批量入口形态 | M2.1 |
@@ -102,6 +103,14 @@
 - `@var:` 是**期望侧/请求侧**变量引用机制（也用于 `input/init_vars.json5` 与 `request.json5`）；input **tables CSV** 从不写入也从不解析 `@var` → 包的可移植性由**导入时 ID 重映射**承担（与 `@var` 无关）。
 - ID/序列：`tagSet="seq"` 无 seq 行时走 UUID/随机长整型；**手工插入自定义 ID 不消耗也不推进 `nop_sys_sequence`**；不存在 `syncCurrentSeq` / `NOP_SEQ` API；序列修正唯一手段 = `NopSysSequence` CRUD。本仓 default 序列已被推到 100000 → **手工 ID 与后续取号冲突是真实风险**，「后续取号无冲突」必须先定死断言口径。
 - 测试基类**无 HTTP server 起停能力**；E2E 走 8011 runner.jar + Playwright。
+
+**M0.1 spike 结论增补（2026-10-01，plan `2026-10-01-1853-1`，原型实测 + 源码实证）**
+
+- **独立录制会话可行**：非测试类复刻 bootstrap（`beginTest` → ALL_LAZY / H2 内存库 / `nop.orm.init-database-schema=true` 测试配置 → `CoreInitialization.initialize()` → `container.restart()` → `tryGetBean("nopOrmSessionFactory")`）+ hook 注册/收集/注销全链实测通过（nop-autotest-core 测试 4/4 绿）；前置条件 = 模块测试 classpath 须含 IoC 实现（`nop-ioc`，由 nop-autotest-junit 传递获得——IocCoreInitializer priority=4900，纯 core 消费者不补依赖则初始化止于 level 2900 且 `BeanContainer.instance()` 抛 bean-container-not-initialized）。
+- **收集粒度事实**：onSave 行数据落 `EntityRow.changedData`（onLoad 才落 `initData`）→ 全行导出必须在导出前按收集 ID 重载（onSave 仅含已设列，重载后 `orm_forEachInitedProp` 覆盖全部映射列）。
+- **直插不触发 `validateRefValue`**（源码主证据：validator 仅由 `CrudToolProvider.newValidator` 构造、仅被 `CrudBizModel.java:709/:987` 写入口使用；行为佐证：悬空 to-one 直插成功且可回读）→ 拓扑序收益定位为业务前置态可读性 + 确定性装载序（非 DB 约束需要）；**悬空引用直插静默成功 = 导入器必须自带引用完整性断言，不能依赖平台兜底**。
+- **ID 策略冲突面实测确认**：`seq-default` 回落 default 序列单调取号；纯 `seq` 缺行 fail-fast（`ERR_SYS_NO_SEQ`）；`isUuid`/snowflake 非单调。preserve 策略冲突面不可调和（导入 ID 落在目标序列未来取号区间即冲突，且手工 ID 不推进序列）→ remap（剥 PK + oldId→newId）为主策略；「后续取号无冲突」断言口径三件套已定死（新 ID ∉ oldId 集 / 单调序列 `NEXT_VALUE > max(新 ID)` / 再取一号 ∉ 已导入集），见 plan `## Decisions` ③。
+- **VFS 打包可见性**：test-scope 资源 JUnit/集成测试可见（`_vfs/main/orm/app.orm.xml` 被 `OrmModelLoader` 主合并点发现实证）、runner.jar E2E 不可见 → bundle 载体 = 消费方 test-scope classpath（与「生产环境夹具装载」Non-Goal 自洽）。
 
 **主要差距**：无可移植夹具包格式、无独立导出入口、无分层 ID 重映射导入器、无批量导出入口、无夹具编排 skill、owner docs 未定义该资产类别、bundle 载体位置与打包可见性未定。
 
@@ -247,3 +256,4 @@ graph TD
   - **已落实修正（Minor）**：⑧ 最后更新日期对齐基线实测戳（2026-10-01）；⑨ 复用表 job.yaml/batch.xml 计数补实测日期戳；⑩ Non-Goal 查询式条目「①或②任一满足」+ 机制备选复活入口互指情景 A；⑪ snapshot/variant 术语边界定义（M1.1）；⑫ 失败出路表补 ⑤⑥ 负结果收口注记；⑬ M2.3 真增量口径明写「经 M1.2 装载路径消费、零 `_cases` CSV 副本」；⑭ `customize-opencode` 幻影技能名删除（技能注册表实无此名），M2.2 Skill 列改 `nop-testing`；⑮ playwright `-D` 开关计数 41 → 「50+，以文件当前为准」（实测 54）；⑯ 30,964 口径标签改「git-tracked 全量」；⑰ `.xbiz.xml` 字面双扩展名改述为「无导出类任务定义（`.xbiz` 服务定义文件不在此列）」；⑱ 横切 8 `mvn test -pl app-erp-all` 补真实出处（integration-testing.md）；⑲ 横切 5 门控载体预登记（compliance checker 站点或门禁常量表）；⑳ M2.2 Deps 补 M1.2（「喂测试」环节依赖导入器）+ 依赖图补 `M12 --> M22` 边 + Milestones M2 行同步。
   - 可执行性视角全量实核通过：复用表 12 行路径/签名逐一命中、基线数字（15,177 / 476 / 2,479 / 372 / 12 / 35）复算精确一致、M0.1 三耦合点（`caseData` NPE / `container.restart()` / hook 全局注册无关闭项）源码级证实、跨仓命令与 owner doc 锚点全实存。
   - 裁决：三路收敛（无未修复 BLOCKER/MAJOR），7 工作项转 `ready`；执行授权见状态块注记。
+- **M0.1 完成**（2026-10-01，plan `docs/plans/2026-10-01-1853-1-m01-fixture-bundle-spike-six-decisions.md`：六 Decision 落盘 + 原型 A/B 实测 4/4 绿 + 既有测试 5/5 零回归 + dual-agent-approval 双批准（含 pom test-scope `nop-ioc` 单行增量批准）+ §当前基线/§框架/平台复用 事实增补如上；原型保留为 M1.1 参考实现，M0.1 提交足迹零 nop-entropy 文件；独立结束审计 ACCEPT（agent_9821fb53，0B/0M/3m 已整改：证据日志入仓 `_tmp/`、pom 措辞精确化、checker 复跑登记）后 M0.1 转 `done`）。
