@@ -1,0 +1,23 @@
+{
+  "name": "fixture-bundle",
+  "description": "通用测试夹具可移植导出/导入框架（fixture bundle）。目标：在 nop-entropy 的 nop-autotest 中新增「可移植夹具包」能力——包格式 + manifest、观测式全行导出器、base/payload 分层 + 导入时 ID 重映射的分层导入器、批量/CLI 入口、fixture-bundle skill、nop-app-erp 消费示例。核心增量：产物脱离 _cases/<TestClass>/<method>/ 目录结构，可跨环境搬运（现有 CHECKING 模式已覆盖每方法私有快照回放，故单纯再造录制回放无增量）。技术栈：复用 AutoTestOrmHook 收集 + CsvHelper 落盘 + AutoTestCaseDataBaseInitializer 装载范式 + IOrmModel.sortEntityModelInTopoOrder 子集排序；序列对齐走 NopSysSequence CRUD（平台无 syncCurrentSeq API）。平台关键事实：ddl*.xlib 全方言零 FK 约束（<to-one> 为逻辑 join，引用完整性由 ObjMetaBasedValidator.validateRefValue 保障），故插入序非 DB 约束问题；IBizEntityImporter 为占位实现禁依赖，IBizEntityExporter.exportByQuery 已实现可作查询式导出候选。工作流：每个工作项独立 plan-audit + closure audit；跨仓命令走 ../nop-entropy 的 ./mvnw（M0.1/M1.x/M2.1 产物在 nop-entropy），本仓消费侧走 mvn。保护面：nop-entropy 为外部仓库 auto + dual-agent-approval；本仓 ORM 模型零触碰；包内含 erp_fin_* 则叠加 accounting/finance plan-first；触碰 _init-data 触发 seed 快照双面重录义务。动态状态真相源 = roadmap 状态块；按用户闭包导出与内存库测试应用为 §Non-Goals 触发条件门控能力，不预注册工作项。",
+  "roadmapPath": "docs/backlog/fixture-bundle-test-data-roadmap.md",
+  "plansDir": "docs/plans",
+  "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
+  "auditsDir": "docs/audits",
+  "contextDir": "docs/context",
+  "moduleDir": ".",
+  "commands": {
+    "build": "mvn clean install -DskipTests",
+    "test": "mvn test",
+    "compliance": "bash docs/audits/nop-compliance-checker.sh",
+    "platform-test": "cd ../nop-entropy && ./mvnw test -pl nop-autotest/nop-autotest-core -am",
+    "platform-test-batch": "cd ../nop-entropy && ./mvnw test -pl nop-batch/nop-batch-exp -am",
+    "consumer-it": "mvn test -pl app-erp-all"
+  },
+  "prompts": {
+    "multiAudit": "docs/skills/multi-dimensional-audit-prompt.md",
+    "openAudit": "docs/skills/open-ended-audit-prompt.md"
+  },
+  "commitFormat": "<type>: <description>"
+}
