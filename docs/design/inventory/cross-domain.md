@@ -88,6 +88,8 @@
 - **在途对账**：发出方已扣减、接收方未增加的数量在在途库中体现
 - **在途超时**：超过配置天数（`erp-inv.in-transit-timeout-days`）未接收的在途库存自动告警
 
+
+> **运行时边界（USC-07 勘误，plan `2026-10-01-1230-1`，2026-10-01）**：「在途可见」运行时追踪**未实现**——`ErpInvTransferOrder__confirm` 仅翻转 docStatus DRAFT→CONFIRMED + 条件分派跨法人凭证钩子（`ErpInvTransferOrderConfirmProcessor` 74 行）；`inTransitWarehouseId` 实体字段服务层零消费。行为断言已补：`transfer-confirm.action.spec.ts`（confirm 翻转+非法守卫+字段持久化）。successor 触发=多仓在途可见需求立项（需 generateMove 中间态/收发两段 mutation 设计——product+architecture 联合裁决）。
 ### 负库存会计处理
 
 负库存是临时容错机制，不产生独立的会计事件：

@@ -29,9 +29,9 @@
 
 | 状态 | 数量 |
 | --- | --- |
-| todo | 2 |
+| todo | 1 |
 | ready | 0 |
-| done | 7 |
+| done | 8 |
 
 ### M1 覆盖基线与缺口裁定
 
@@ -59,7 +59,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 | --- | --- | --- | --- | --- | --- |
-| USC-07 | 核心主干故事 E2E / 看板回归缺口补齐（P2P·O2C·库存·业财·制造） | todo | `docs/design/feature-inventory.md`、`docs/testing/e2e-runbook.md` | USC-01 | nop-testing |
+| USC-07 | 核心主干故事 E2E / 看板回归缺口补齐（P2P·O2C·库存·业财·制造） | done（2026-10-01，plan `2026-10-01-1230-1-usc07-transfer-confirm-behavior` 落地[分流表 #7 唯一 A 类承接项——US-IV-02 调拨确认行为] + 独立草案审查 2 轮 accept + 独立结束审计：transfer-confirm.action.spec.ts 2/2[confirm docStatus 翻转+非法守卫+inTransitWarehouseId 持久化] + **「在途数量运行时追踪未实现」设计-运行时差距勘误回写**[矩阵 US-IV-02 注记+cross-domain.md 运行时边界登记+successor=多仓在途可见需求立项]；negative 73/73+mobile 5/5 零新增失败；USC-07 清单随之闭合[分流表 #7 唯一承接项]） | `docs/design/feature-inventory.md`、`docs/testing/e2e-runbook.md` | USC-01 | nop-testing |
 
 ### M5 边界固化（不需要满足项 · 防范围回流）
 
