@@ -84,53 +84,56 @@ body:
         label: "开始盘点 (startTake)"
         level: primary
         icon: "fa fa-play"
-        actionType: ajax
-        confirmText: "确认开始盘点？状态将翻转为 IN_PROGRESS。"
+        onClick:
+          action: ajax
+          confirmText: "确认开始盘点？状态将翻转为 IN_PROGRESS。"
+          i18nEn:
+            confirmText: "Confirm starting the stock take? Status will flip to IN_PROGRESS."
+          args:
+            url: '/r/ErpInvStockTake__startTake'
+            method: post
+            data:
+              takeId: "${actionForm?.takeId}"
+          then:
+            - action: refreshSource
+              targetId: stockTakeData
         i18nEn:
           label: "Start Stock Take (startTake)"
-          confirmText: "Confirm starting the stock take? Status will flip to IN_PROGRESS."
-        api:
-          url: '@mutation:ErpInvStockTake__startTake'
-          method: post
-          data:
-            takeId: "${actionForm?.takeId}"
-        onEvent:
-          after-success:
-            action: refreshSource
-            targetId: stockTakeData
       - type: button
         label: "完成盘点 (completeTake)"
         level: success
         icon: "fa fa-check"
-        actionType: ajax
-        confirmText: "确认完成盘点？将自动生成盘盈/盘亏差异移动单（停 CONFIRMED 待库管员二次确认）。"
+        onClick:
+          action: ajax
+          confirmText: "确认完成盘点？将自动生成盘盈/盘亏差异移动单（停 CONFIRMED 待库管员二次确认）。"
+          i18nEn:
+            confirmText: "Confirm completing the stock take? Stock-take gain/loss variance movement orders will be generated automatically (orders stay CONFIRMED pending warehouse keeper double confirmation)."
+          args:
+            url: '/r/ErpInvStockTake__completeTake'
+            method: post
+            data:
+              takeId: "${actionForm?.takeId}"
+          then:
+            - action: refreshSource
+              targetId: stockTakeData
         i18nEn:
           label: "Complete Stock Take (completeTake)"
-          confirmText: "Confirm completing the stock take? Stock-take gain/loss variance movement orders will be generated automatically (orders stay CONFIRMED pending warehouse keeper double confirmation)."
-        api:
-          url: '@mutation:ErpInvStockTake__completeTake'
-          method: post
-          data:
-            takeId: "${actionForm?.takeId}"
-        onEvent:
-          after-success:
-            action: refreshSource
-            targetId: stockTakeData
       - type: button
         label: "取消盘点 (cancelTake)"
         level: danger
         icon: "fa fa-times"
-        actionType: ajax
-        confirmText: "确认取消盘点？"
+        onClick:
+          action: ajax
+          confirmText: "确认取消盘点？"
+          i18nEn:
+            confirmText: "Confirm cancelling the stock take?"
+          args:
+            url: '/r/ErpInvStockTake__cancelTake'
+            method: post
+            data:
+              takeId: "${actionForm?.takeId}"
+          then:
+            - action: refreshSource
+              targetId: stockTakeData
         i18nEn:
           label: "Cancel Stock Take (cancelTake)"
-          confirmText: "Confirm cancelling the stock take?"
-        api:
-          url: '@mutation:ErpInvStockTake__cancelTake'
-          method: post
-          data:
-            takeId: "${actionForm?.takeId}"
-        onEvent:
-          after-success:
-            action: refreshSource
-            targetId: stockTakeData

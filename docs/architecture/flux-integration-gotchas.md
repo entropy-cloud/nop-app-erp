@@ -53,6 +53,59 @@
 
 ---
 
+## G-002 手写复杂页 AMIS 风格接线（actionType/api/onEvent/dialog）在 flux 运行期惰性（2026-10-05）
+
+### 症状
+手写 `*.page.yaml`（整页直写、无 `x:gen-extends` 的 complex 路径页）中按 AMIS 习惯写的按钮不工作：点击 `actionType: ajax` + `api` 按钮无任何网络请求、无报错、无反馈；`actionType: dialog` 按钮点击不弹窗；`onEvent: after-success` 刷新链不执行；`visibleOn`/`disabledOn` 条件显隐/禁用永不生效。导出 JSON 中这些属性原样保留（`actionType`/`api`/`onEvent`/`visibleOn`/`disabledOn`），flux 门禁报 unknown-property warning，但页面渲染正常——静默惰性，极难察觉。
+
+### 根因
+flux button renderer 仅声明 `onClick` 一个事件字段（`nop-chaos-flux/packages/flux-renderers-basic/src/basic-renderer-definitions.ts` button `fields`），AMIS 风格属性不是声明字段 → 编译期分类 unknown 丢弃，不生成 eventPlan（`flux-compiler/src/schema-compiler/node-compiler.ts:171` 仅 `kind === 'event'` 进 `rawEventPlans`）→ `button.tsx:227` 的 `handleClick` 执行 `props.events.onClick?.()` 为空。AMIS→flux 的唯一转换点 `page_simple.xpl`（nop-web）只服务 view.xml GenPage 路径，手写复杂页不经它。迁移指南 `flux-guide/09-amis-migration.md` 的转换表（ajax→`{action:'ajax', confirmText, args}`、dialog→openDialog、onEvent→then 链、visibleOn→visible、disabledOn→disabled）须由**页面作者或生成器**执行。
+
+### 现行 workaround
+手写页一律用 flux 原生 Action Algebra（本仓 6 个手写复杂页〔8 个页面文件，含 2 页 flux.yaml 孪生〕的**被服务内容**已于 2026-10-05 全量迁移，plan `2026-10-05-0400-1`；其中 period-close-wizard 与 visit-wizard 的被服务文件是同名 `main.flux.yaml` 孪生——见下方「孪生遮蔽」——两页的 page.yaml 为非服务 legacy，已同步改写保持一致）：
+
+```yaml
+- type: button
+  label: "提交"
+  onClick:
+    action: ajax
+    confirmText: "确认？"            # args 的兄弟键（运行时读 action.source.confirmText，放 args 内被静默忽略）
+    args:
+      url: '/r/Entity__action'       # 标量参数自定义 mutation：走 /r/ 直发（见下「URL 形态规则」）
+      method: post
+      data: {...}
+    then:                            # 原 onEvent.after-success 刷新链
+      - action: refreshSource
+        targetId: someData
+# actionType: dialog/dialog:{type: drawer} → onClick:{action:'openDialog'|'openDrawer', args:{title,size,body,...}}
+# visibleOn/disabledOn → visible/disabled（表达式字符串）
+```
+
+**URL 形态规则（壳层 nopRpcResolver 语义，plan 2026-10-05-0400-1 运行时实锤）**：
+- `@mutation:Xxx__save|update|...`（operationRegistry 注册后缀）：壳层经 argDataMap 发 `{data: <args.data>}`——args.data 写实体字段平铺即可。
+- 标量参数自定义 mutation（如 `startTake(takeId)`）：**必须写 `/r/Xxx__method` 直发**——`@mutation:` 未注册回退会包一层 `{data: ...}`，服务端报 `unknown-operation-arg: 没有定义参数[data]`（`nop-chaos-next/apps/main/src/services/nopRpcResolver.ts:274-277`）。
+- `@query:` 未注册操作不包裹，args.data 原样直达。
+
+注意：迁移后 confirm 依赖宿主 `env.confirm` 能力（`flux-runtime/src/runtime-action-helpers.ts:142-147`——配置 confirmText 而宿主未提供 env.confirm 时动作显式失败）。本仓宿主已接 env.confirm（2026-10-05 stock-take-flow 确认框实测弹出）。
+
+### 推荐修复（待 nop-chaos-flux）
+验证器 prop 表把 `i18nEn` 等宿主层消费的属性纳入 known 列表，同时对手写路径上出现 `actionType`/`api`/`onEvent` 升级为 **error 级诊断**（当前 warning 淹没在生成页 i18nEn 误报中）。外部仓改动走保护区双批准。
+
+### 关联代码
+- `nop-chaos-flux/packages/flux-renderers-basic/src/button.tsx:227`（handleClick 仅执行 events.onClick）
+- `nop-chaos-flux/packages/flux-compiler/src/schema-compiler/node-compiler.ts:171`（event 字段分类）
+- `nop-entropy/nop-frontend-support/nop-web/.../flux-web/page_simple.xpl:15-28`（唯一 AMIS 转换点，仅 GenPage 路径）
+- 本仓迁移范围：disposal-wizard / lead-conversion / period-close-wizard / stock-take-flow / visit-wizard / ErpSysNotification-inbox（pda-stock-take 随 plan `2026-10-05-0400-2` 重构迁移）
+- 运行时证据：`_tmp/2026-10-05-0400-1-probe/`（服务端日志零请求实锤 + 迁移后复验）
+
+### 孪生遮蔽陷阱（本计划直接踩坑点）
+`render-mode=flux` 下 `PageModelLoaderFactory` 对同名 `*.page.yaml`/`*.flux.yaml` **优先加载 flux.yaml**（`flux-page-export-and-validation.md:15`，本仓 31 个 flux.yaml）。改写 page.yaml 前必须先确认目标页是否存在 flux.yaml 孪生——存在则孪生才是被服务内容，page.yaml 改写对运行期无效，且 flux 门禁验证的也是孪生导出物（陈旧孪生会让「warning 计数持平」被误读为改动无效或既有族）。判别：`ls <page-dir>/`；门禁机械证明 = 修复后该页 unknown-property warning 中 `actionType/action/args` 族消失。
+
+### 修复落地状态
+- 2026-10-05：6 页（pda 随 plan `2026-10-05-0400-2`）被服务内容全量迁移（机械总量 23 ajax 按钮〔14 page.yaml + 2 孪生进入向导 + 3 孪生 start/complete/cancel + 4 孪生镜像〕、26 then 步骤〔19+7〕、6 dialog、19 visibleOn/disabledOn；period-close/visit 双文件一致），`npm run validate:flux` errors=325 零新增。pda 页归 plan `2026-10-05-0400-2`。
+
+---
+
 ## 模板：新增 gotcha 条目
 
 ```markdown

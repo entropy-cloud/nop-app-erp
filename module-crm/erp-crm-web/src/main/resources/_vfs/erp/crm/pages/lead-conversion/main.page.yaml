@@ -53,7 +53,7 @@ body:
         onClick:
           action: refreshSource
           targetId: stagesData
-        disabledOn: "${!step1Form?.leadId}"
+        disabled: "${!step1Form?.leadId}"
 
   # Step 2 + 3：选择目标阶段 + 确认转化
   - type: data-source
@@ -97,14 +97,16 @@ body:
             label: "Step 3 · 确认转化（moveStage）"
             level: danger
             icon: "fa fa-check"
-            actionType: ajax
-            confirmText: "确认将线索转化到目标阶段？"
+            onClick:
+              action: ajax
+              confirmText: "确认将线索转化到目标阶段？"
+              i18nEn:
+                confirmText: "Confirm converting the lead to the target stage?"
+              args:
+                url: '/r/ErpCrmLead__moveStage'
+                method: post
+                data:
+                  leadId: "${step1Form?.leadId}"
+                  toStageId: "${step2Form?.toStageId}"
             i18nEn:
               label: "Step 3 · Confirm Conversion (moveStage)"
-              confirmText: "Confirm converting the lead to the target stage?"
-            api:
-              url: '@mutation:ErpCrmLead__moveStage'
-              method: post
-              data:
-                leadId: "${step1Form?.leadId}"
-                toStageId: "${step2Form?.toStageId}"

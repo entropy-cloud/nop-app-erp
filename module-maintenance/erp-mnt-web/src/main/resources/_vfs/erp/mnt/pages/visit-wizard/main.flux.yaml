@@ -40,16 +40,18 @@ body:
         i18nEn: "Enter Wizard"
         level: primary
         block: true
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpMntVisit__get'
-          method: post
-          data:
-            id: ${visitId ?? 0}
-          selection: id code status visitType visitDate equipmentId assignedTo result remark startTime endTime totalMinutes completedAt completedBy
-        target: visitData
         disabled: ${!visitId}
+        onClick:
+          action: ajax
+          args:
+            url: '@query:ErpMntVisit__get'
+            method: post
+            data:
+              id: ${visitId ?? 0}
+            selection: id code status visitType visitDate equipmentId assignedTo result remark startTime endTime totalMinutes completedAt completedBy
+          then:
+            - action: refreshSource
+              targetId: visitData
 - type: data-source
   name: visitData
   dependsOn:
@@ -96,19 +98,22 @@ body:
       - type: button
         label: 开始执行
         level: primary
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@mutation:ErpMntVisit__start'
-          method: post
-          data:
-            visitId: ${visitId}
-        confirmText: 确认开始执行？设备状态将联动为维护中。
+        visible: ${visitData?.status == "SCHEDULED"}
+        onClick:
+          action: ajax
+          confirmText: 确认开始执行？设备状态将联动为维护中。
+          i18nEn:
+            confirmText: "Confirm starting execution? Equipment status will switch to Under Maintenance."
+          args:
+            url: '/r/ErpMntVisit__start'
+            method: post
+            data:
+              visitId: ${visitId}
+          then:
+            - action: refreshSource
+              targetId: visitData
         i18nEn:
           label: "Start Execution"
-          confirmText: "Confirm starting execution? Equipment status will switch to Under Maintenance."
-        visible: ${visitData?.status == "SCHEDULED"}
-        target: visitData
   - key: spare
     title: 2. 备件消耗
     i18nEn: "2. Spare Part Consumption"
@@ -160,12 +165,11 @@ body:
           label: 保存结果
           i18nEn: "Save Result"
           level: primary
-          actionType: ajax
-          action: ajax
-          args:
-            url: '@mutation:ErpMntVisit__save'
-            method: post
-            data:
+          onClick:
+            action: ajax
+            args:
+              url: '@mutation:ErpMntVisit__save'
+              method: post
               data:
                 id: ${visitId}
                 result: ${wizardData.result.resultValue ?? visitData?.result}
@@ -184,30 +188,36 @@ body:
       - type: button
         label: 确认完成
         level: primary
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@mutation:ErpMntVisit__complete'
-          method: post
-          data:
-            visitId: ${visitId}
-        confirmText: 确认完成？状态将翻转为 COMPLETED，设备恢复运行中。
+        onClick:
+          action: ajax
+          confirmText: 确认完成？状态将翻转为 COMPLETED，设备恢复运行中。
+          i18nEn:
+            confirmText: "Confirm completion? Status will flip to COMPLETED and equipment will resume Running."
+          args:
+            url: '/r/ErpMntVisit__complete'
+            method: post
+            data:
+              visitId: ${visitId}
+          then:
+            - action: refreshSource
+              targetId: visitData
         i18nEn:
           label: "Confirm Completion"
-          confirmText: "Confirm completion? Status will flip to COMPLETED and equipment will resume Running."
-        target: visitData
       - type: button
         label: 取消访问
         level: danger
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@mutation:ErpMntVisit__cancel'
-          method: post
-          data:
-            visitId: ${visitId}
-        confirmText: 确认取消？状态将翻转为 CANCELLED（终态），不可撤销。
+        onClick:
+          action: ajax
+          confirmText: 确认取消？状态将翻转为 CANCELLED（终态），不可撤销。
+          i18nEn:
+            confirmText: "Confirm cancellation? Status will flip to CANCELLED (terminal state) and cannot be undone."
+          args:
+            url: '/r/ErpMntVisit__cancel'
+            method: post
+            data:
+              visitId: ${visitId}
+          then:
+            - action: refreshSource
+              targetId: visitData
         i18nEn:
           label: "Cancel Visit"
-          confirmText: "Confirm cancellation? Status will flip to CANCELLED (terminal state) and cannot be undone."
-        target: visitData

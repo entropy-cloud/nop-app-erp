@@ -38,16 +38,18 @@ body:
       - type: button
         label: 进入向导
         i18nEn: Enter Wizard
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpFinAccountingPeriod__get'
-          method: post
-          data:
-            id: ${periodId ?? 0}
-          selection: id year month status code name
-        target: periodData
         disabled: ${!periodId}
+        onClick:
+          action: ajax
+          args:
+            url: '@query:ErpFinAccountingPeriod__get'
+            method: post
+            data:
+              id: ${periodId ?? 0}
+            selection: id year month status code name
+          then:
+            - action: refreshSource
+              targetId: periodData
 - type: data-source
   name: periodData
   dependsOn:
@@ -112,19 +114,22 @@ body:
       className: text-muted m-b
     - type: button
       label: 执行月度结账
-      actionType: ajax
-      action: ajax
-      args:
-        url: '@mutation:ErpFinAccountingPeriod__closePeriod'
-        method: post
-        data:
-          periodId: ${periodId}
-      confirmText: 确认结账此会计期间？结账后该期间凭证不可修改。
+      visible: ${periodData?.status == "OPEN" || periodData?.status == "CLOSING"}
+      onClick:
+        action: ajax
+        confirmText: 确认结账此会计期间？结账后该期间凭证不可修改。
+        i18nEn:
+          confirmText: Confirm closing this accounting period? Vouchers in this period become immutable once closed.
+        args:
+          url: '/r/ErpFinAccountingPeriod__closePeriod'
+          method: post
+          data:
+            periodId: ${periodId}
+        then:
+          - action: refreshSource
+            targetId: periodData
       i18nEn:
         label: Run Monthly Close
-        confirmText: Confirm closing this accounting period? Vouchers in this period become immutable once closed.
-      visible: ${periodData?.status == "OPEN" || periodData?.status == "CLOSING"}
-      target: periodData
   - key: annualRollover
     title: 3. 年度结转
     i18nEn: 3. Annual Carry-Forward
@@ -159,19 +164,22 @@ body:
       className: text-muted m-b
     - type: button
       label: 执行终关
-      actionType: ajax
-      action: ajax
-      args:
-        url: '@mutation:ErpFinAccountingPeriod__finalizePeriod'
-        method: post
-        data:
-          periodId: ${periodId}
-      confirmText: 确认终关？终关后期间进入 CLOSED_FINAL 最终锁定态。
+      visible: ${periodData?.status == "CLOSED"}
+      onClick:
+        action: ajax
+        confirmText: 确认终关？终关后期间进入 CLOSED_FINAL 最终锁定态。
+        i18nEn:
+          confirmText: Confirm finalize? After finalize the period enters the CLOSED_FINAL final locked state.
+        args:
+          url: '/r/ErpFinAccountingPeriod__finalizePeriod'
+          method: post
+          data:
+            periodId: ${periodId}
+        then:
+          - action: refreshSource
+            targetId: periodData
       i18nEn:
         label: Finalize Period
-        confirmText: Confirm finalize? After finalize the period enters the CLOSED_FINAL final locked state.
-      visible: ${periodData?.status == "CLOSED"}
-      target: periodData
   - key: reverseClose
     title: 反结账
     i18nEn: Un-close
@@ -190,20 +198,23 @@ body:
         placeholder: Enter un-close reason (e.g. correct voucher error)
     - type: button
       label: 执行反结账
-      actionType: ajax
-      action: ajax
-      args:
-        url: '@mutation:ErpFinAccountingPeriod__reverseClose'
-        method: post
-        data:
-          periodId: ${periodId}
-          reason: ${reverseCloseReason}
-      confirmText: 最后确认：执行反结账？此操作将红冲本期结转凭证并重开期间，不可撤销。
+      visible: ${periodData?.status == "CLOSED" || periodData?.status == "CLOSED_FINAL"}
+      onClick:
+        action: ajax
+        confirmText: 最后确认：执行反结账？此操作将红冲本期结转凭证并重开期间，不可撤销。
+        i18nEn:
+          confirmText: "Final confirmation: run un-close? This red-reverses this period's carry-forward vouchers and reopens the period. Irreversible."
+        args:
+          url: '/r/ErpFinAccountingPeriod__reverseClose'
+          method: post
+          data:
+            periodId: ${periodId}
+            reason: ${reverseCloseReason}
+        then:
+          - action: refreshSource
+            targetId: periodData
       i18nEn:
         label: Run Un-close
-        confirmText: 'Final confirmation: run un-close? This red-reverses this period''s carry-forward vouchers and reopens the period. Irreversible.'
-      visible: ${periodData?.status == "CLOSED" || periodData?.status == "CLOSED_FINAL"}
-      target: periodData
 - type: text
   text: '${(statusRows?.total ?? 0) > 0 ? "per-module 关账结果（ErpFinAccountingPeriodStatus）已加载，共 " + (statusRows?.total ?? 0) + " 条" : ""}'
   i18nEn: '${(statusRows?.total ?? 0) > 0 ? "Per-module close result (ErpFinAccountingPeriodStatus) loaded, " + (statusRows?.total ?? 0) + " rows in total" : ""}'

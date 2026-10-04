@@ -79,7 +79,7 @@ body:
         onClick:
           action: refreshSource
           targetId: previewAssetData
-        disabledOn: "${!step1Form?.assetId || !step1Form?.disposalType}"
+        disabled: "${!step1Form?.assetId || !step1Form?.disposalType}"
 
   # Step 2：清理损益预览
   - type: data-source
@@ -118,21 +118,24 @@ body:
         i18nEn: "${(Number(step1Form?.disposalAmount || 0) - Number(previewAssetData?.netBookValue || 0)) >= 0 ? 'Disposal Gain' : 'Disposal Loss'}: ¥${ROUND((Number(step1Form?.disposalAmount || 0) - Number(previewAssetData?.netBookValue || 0)), 2)}"
 
       # Step 3：确认提交
+      # flux 原生接线（G-FLUX-AMIS-ACTION）：AMIS actionType/api 在 flux 运行期惰性，
+      # 迁移表：ajax → onClick:{action:'ajax', confirmText, args}（confirmText 为 args 兄弟键）
       - type: button
         label: "确认提交处置单"
         level: danger
         icon: "fa fa-check"
-        actionType: ajax
-        confirmText: "确认创建资产处置单并提交审批？"
-        i18nEn:
-          label: "Confirm and Submit Disposal Doc"
-          confirmText: "Confirm creating the asset disposal doc and submitting for approval?"
-        api:
-          url: '@mutation:ErpAstDisposal__save'
-          method: post
-          data:
+        onClick:
+          action: ajax
+          confirmText: "确认创建资产处置单并提交审批？"
+          i18nEn:
+            confirmText: "Confirm creating the asset disposal doc and submitting for approval?"
+          args:
+            url: '@mutation:ErpAstDisposal__save'
+            method: post
             data:
               assetId: "${step1Form?.assetId}"
               disposalType: "${step1Form?.disposalType}"
               disposalAmount: "${step1Form?.disposalAmount}"
               businessDate: "${step1Form?.businessDate}"
+        i18nEn:
+          label: "Confirm and Submit Disposal Doc"

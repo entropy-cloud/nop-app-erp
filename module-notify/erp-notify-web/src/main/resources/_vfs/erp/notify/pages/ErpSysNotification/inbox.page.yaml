@@ -26,29 +26,27 @@ body:
     label: "全部标记已读"
     level: primary
     icon: "check-double"
-    confirmText: "确认将所有未读通知标记为已读？"
+    onClick:
+      action: ajax
+      confirmText: "确认将所有未读通知标记为已读？"
+      i18nEn:
+        confirmText: "Confirm marking all unread notifications as read?"
+      args:
+        url: '/r/ErpSysNotification__markAllRead'
+        method: post
+        data:
+          userId: null
+      then:
+        - action: refreshSource
+          targetId: unreadCountData
+        - action: refreshSource
+          targetId: unreadData
+        - action: refreshSource
+          targetId: readData
+        - action: refreshSource
+          targetId: allData
     i18nEn:
       label: "Mark All Read"
-      confirmText: "Confirm marking all unread notifications as read?"
-    actionType: ajax
-    api:
-      url: '@mutation:ErpSysNotification__markAllRead'
-      method: post
-      data:
-        userId: null
-    onEvent:
-      after-success:
-        action: refreshSource
-        targetId: unreadCountData
-        then:
-          action: refreshSource
-          targetId: unreadData
-          then:
-            action: refreshSource
-            targetId: readData
-            then:
-              action: refreshSource
-              targetId: allData
 
   - type: form
     name: filterForm
@@ -166,39 +164,36 @@ body:
                 label: "查看"
                 i18nEn: "View"
                 level: primary
-                actionType: dialog
-                dialog:
-                  type: drawer
-                  title: "${subject}"
-                  size: lg
-                  body:
-                    - type: tpl
-                      tpl: "<p><b>类型:</b> ${notificationType}</p><p><b>渠道:</b> ${channel}</p><p><b>发送时间:</b> ${sentAt}</p><p><b>状态:</b> ${status}</p><hr/><p><b>正文:</b></p><div>${body}</div><hr/><p><b>负载 JSON:</b></p><pre>${payloadJson}</pre>"
-                      i18nEn: "<p><b>Type:</b> ${notificationType}</p><p><b>Channel:</b> ${channel}</p><p><b>Sent At:</b> ${sentAt}</p><p><b>Status:</b> ${status}</p><hr/><p><b>Body:</b></p><div>${body}</div><hr/><p><b>Payload JSON:</b></p><pre>${payloadJson}</pre>"
+                onClick:
+                  action: openDrawer
+                  args:
+                    title: "${subject}"
+                    size: lg
+                    body:
+                      - type: tpl
+                        tpl: "<p><b>类型:</b> ${notificationType}</p><p><b>渠道:</b> ${channel}</p><p><b>发送时间:</b> ${sentAt}</p><p><b>状态:</b> ${status}</p><hr/><p><b>正文:</b></p><div>${body}</div><hr/><p><b>负载 JSON:</b></p><pre>${payloadJson}</pre>"
+                        i18nEn: "<p><b>Type:</b> ${notificationType}</p><p><b>Channel:</b> ${channel}</p><p><b>Sent At:</b> ${sentAt}</p><p><b>Status:</b> ${status}</p><hr/><p><b>Body:</b></p><div>${body}</div><hr/><p><b>Payload JSON:</b></p><pre>${payloadJson}</pre>"
               - type: button
                 label: "标记已读"
                 i18nEn: "Mark Read"
                 level: success
                 icon: "check"
-                actionType: ajax
-                api:
-                  url: '@mutation:ErpSysNotification__markRead'
-                  method: post
-                  data:
-                    notificationId: "${id}"
-                onEvent:
-                  after-success:
-                    action: refreshSource
-                    targetId: unreadCountData
-                    then:
-                      action: refreshSource
+                onClick:
+                  action: ajax
+                  args:
+                    url: '/r/ErpSysNotification__markRead'
+                    method: post
+                    data:
+                      notificationId: "${id}"
+                  then:
+                    - action: refreshSource
+                      targetId: unreadCountData
+                    - action: refreshSource
                       targetId: unreadData
-                      then:
-                        action: refreshSource
-                        targetId: readData
-                        then:
-                          action: refreshSource
-                          targetId: allData
+                    - action: refreshSource
+                      targetId: readData
+                    - action: refreshSource
+                      targetId: allData
 
       -
         title: "已读"
@@ -240,15 +235,15 @@ body:
                 label: "查看"
                 i18nEn: "View"
                 level: primary
-                actionType: dialog
-                dialog:
-                  type: drawer
-                  title: "${subject}"
-                  size: lg
-                  body:
-                    - type: tpl
-                      tpl: "<p><b>类型:</b> ${notificationType}</p><p><b>渠道:</b> ${channel}</p><p><b>发送时间:</b> ${sentAt}</p><p><b>状态:</b> ${status}</p><hr/><p><b>正文:</b></p><div>${body}</div><hr/><p><b>负载 JSON:</b></p><pre>${payloadJson}</pre>"
-                      i18nEn: "<p><b>Type:</b> ${notificationType}</p><p><b>Channel:</b> ${channel}</p><p><b>Sent At:</b> ${sentAt}</p><p><b>Status:</b> ${status}</p><hr/><p><b>Body:</b></p><div>${body}</div><hr/><p><b>Payload JSON:</b></p><pre>${payloadJson}</pre>"
+                onClick:
+                  action: openDrawer
+                  args:
+                    title: "${subject}"
+                    size: lg
+                    body:
+                      - type: tpl
+                        tpl: "<p><b>类型:</b> ${notificationType}</p><p><b>渠道:</b> ${channel}</p><p><b>发送时间:</b> ${sentAt}</p><p><b>状态:</b> ${status}</p><hr/><p><b>正文:</b></p><div>${body}</div><hr/><p><b>负载 JSON:</b></p><pre>${payloadJson}</pre>"
+                        i18nEn: "<p><b>Type:</b> ${notificationType}</p><p><b>Channel:</b> ${channel}</p><p><b>Sent At:</b> ${sentAt}</p><p><b>Status:</b> ${status}</p><hr/><p><b>Body:</b></p><div>${body}</div><hr/><p><b>Payload JSON:</b></p><pre>${payloadJson}</pre>"
 
       -
         title: "全部"
@@ -305,12 +300,12 @@ body:
                 label: "查看"
                 i18nEn: "View"
                 level: primary
-                actionType: dialog
-                dialog:
-                  type: drawer
-                  title: "${subject}"
-                  size: lg
-                  body:
-                    - type: tpl
-                      tpl: "<p><b>类型:</b> ${notificationType}</p><p><b>渠道:</b> ${channel}</p><p><b>发送时间:</b> ${sentAt}</p><p><b>状态:</b> ${status}</p><p><b>已读:</b> ${read}</p><hr/><p><b>正文:</b></p><div>${body}</div><hr/><p><b>负载 JSON:</b></p><pre>${payloadJson}</pre>"
-                      i18nEn: "<p><b>Type:</b> ${notificationType}</p><p><b>Channel:</b> ${channel}</p><p><b>Sent At:</b> ${sentAt}</p><p><b>Status:</b> ${status}</p><p><b>Read:</b> ${read}</p><hr/><p><b>Body:</b></p><div>${body}</div><hr/><p><b>Payload JSON:</b></p><pre>${payloadJson}</pre>"
+                onClick:
+                  action: openDrawer
+                  args:
+                    title: "${subject}"
+                    size: lg
+                    body:
+                      - type: tpl
+                        tpl: "<p><b>类型:</b> ${notificationType}</p><p><b>渠道:</b> ${channel}</p><p><b>发送时间:</b> ${sentAt}</p><p><b>状态:</b> ${status}</p><p><b>已读:</b> ${read}</p><hr/><p><b>正文:</b></p><div>${body}</div><hr/><p><b>负载 JSON:</b></p><pre>${payloadJson}</pre>"
+                        i18nEn: "<p><b>Type:</b> ${notificationType}</p><p><b>Channel:</b> ${channel}</p><p><b>Sent At:</b> ${sentAt}</p><p><b>Status:</b> ${status}</p><p><b>Read:</b> ${read}</p><hr/><p><b>Body:</b></p><div>${body}</div><hr/><p><b>Payload JSON:</b></p><pre>${payloadJson}</pre>"

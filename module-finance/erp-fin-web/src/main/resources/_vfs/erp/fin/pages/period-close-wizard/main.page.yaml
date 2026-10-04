@@ -57,7 +57,7 @@ body:
         onClick:
           action: refreshSource
           targetId: periodData
-        disabledOn: "${!filterForm?.periodId}"
+        disabled: "${!filterForm?.periodId}"
 
   - type: data-source
     name: periodData
@@ -87,7 +87,7 @@ body:
   - type: text
     className: m-3
     tag: div
-    visibleOn: "${periodData}"
+    visible: "${periodData}"
     text: '<div class="alert alert-info"><strong>当前期间：</strong>${periodData?.code || "—"}（${periodData?.year || "—"}年${periodData?.month || "—"}月）· <strong>状态：</strong><span class="label label-${periodData?.status == "CLOSED_FINAL" ? "default" : (periodData?.status == "CLOSED" ? "primary" : (periodData?.status == "CLOSING" ? "warning" : "success"))}">${periodData?.status || "—"}</span></div>'
     i18nEn: '<div class="alert alert-info"><strong>Current Period:</strong>${periodData?.code || "—"} (${periodData?.year || "—"}-${periodData?.month || "—"}) · <strong>Status:</strong><span class="label label-${periodData?.status == "CLOSED_FINAL" ? "default" : (periodData?.status == "CLOSED" ? "primary" : (periodData?.status == "CLOSING" ? "warning" : "success"))}">${periodData?.status || "—"}</span></div>'
 
@@ -126,58 +126,59 @@ body:
         i18nEn: "Run Pre-check"
         level: info
         icon: "fa fa-search"
-        actionType: dialog
-        dialog:
-          title: "前置检查报告 - ${periodData?.code}"
-          i18nEn: "Pre-check Report - ${periodData?.code}"
-          size: lg
-          actions: []
-          body:
-            - type: data-source
-              name: preCheckData
-              action: ajax
-              args:
-                url: '@query:ErpFinAccountingPeriod__preCheck'
-                method: post
-                data:
-                  periodId: "${periodData?.id}"
-                selection: unpostedVoucherCodes unsettledArApCodes unresolvedPostingExceptionKeys allowanceRequired allowanceBalance allowanceShortfall allowanceExcess
-            - type: text
-              className: m-3
-              tag: div
-              text: '<div class="alert alert-${(preCheckData?.unpostedVoucherCodes?.length || 0) > 0 || (preCheckData?.unsettledArApCodes?.length || 0) > 0 || (preCheckData?.unresolvedPostingExceptionKeys?.length || 0) > 0 || (preCheckData?.allowanceShortfall || 0) > 0 ? "danger" : "success"}"><strong>${(preCheckData?.unpostedVoucherCodes?.length || 0) > 0 || (preCheckData?.unsettledArApCodes?.length || 0) > 0 || (preCheckData?.unresolvedPostingExceptionKeys?.length || 0) > 0 || (preCheckData?.allowanceShortfall || 0) > 0 ? "阻断项存在 — 请先处理后再结账" : "前置检查通过，可继续结账"}</strong></div>'
-              i18nEn: '<div class="alert alert-${(preCheckData?.unpostedVoucherCodes?.length || 0) > 0 || (preCheckData?.unsettledArApCodes?.length || 0) > 0 || (preCheckData?.unresolvedPostingExceptionKeys?.length || 0) > 0 || (preCheckData?.allowanceShortfall || 0) > 0 ? "danger" : "success"}"><strong>${(preCheckData?.unpostedVoucherCodes?.length || 0) > 0 || (preCheckData?.unsettledArApCodes?.length || 0) > 0 || (preCheckData?.unresolvedPostingExceptionKeys?.length || 0) > 0 || (preCheckData?.allowanceShortfall || 0) > 0 ? "Blocking items exist — resolve them before closing" : "Pre-check passed, closing can continue"}</strong></div>'
-            - type: text
-              className: m-3
-              tag: hr
-            - type: text
-              className: m-3
-              tag: h6
-              text: "坏账准备充足性"
-              i18nEn: "Bad-Debt Allowance Sufficiency"
-            - type: text
-              className: m-3
-              tag: div
-              text: '<div>必需准备：${preCheckData?.allowanceRequired || 0} · 当前 Allowance 账面：${preCheckData?.allowanceBalance || 0} · <strong class="text-${(preCheckData?.allowanceShortfall || 0) > 0 ? "danger" : "success"}">缺口：${preCheckData?.allowanceShortfall || 0}</strong> · 超额：${preCheckData?.allowanceExcess || 0}</div>'
-              i18nEn: '<div>Required allowance: ${preCheckData?.allowanceRequired || 0} · Current allowance balance: ${preCheckData?.allowanceBalance || 0} · <strong class="text-${(preCheckData?.allowanceShortfall || 0) > 0 ? "danger" : "success"}">Shortfall: ${preCheckData?.allowanceShortfall || 0}</strong> · Excess: ${preCheckData?.allowanceExcess || 0}</div>'
-            - type: text
-              className: m-3
-              tag: div
-              visibleOn: "${(preCheckData?.unpostedVoucherCodes?.length || 0) > 0}"
-              text: "<div class='m-t'><strong>未过账凭证号：</strong>${(preCheckData?.unpostedVoucherCodes || []).join(',')}</div>"
-              i18nEn: "<div class='m-t'><strong>Unposted voucher no.:</strong>${(preCheckData?.unpostedVoucherCodes || []).join(',')}</div>"
-            - type: text
-              className: m-3
-              tag: div
-              visibleOn: "${(preCheckData?.unsettledArApCodes?.length || 0) > 0}"
-              text: "<div class='m-t'><strong>未核销应收应付：</strong>${(preCheckData?.unsettledArApCodes || []).join(',')}</div>"
-              i18nEn: "<div class='m-t'><strong>Unsettled AR/AP:</strong>${(preCheckData?.unsettledArApCodes || []).join(',')}</div>"
-            - type: text
-              className: m-3
-              tag: div
-              visibleOn: "${(preCheckData?.unresolvedPostingExceptionKeys?.length || 0) > 0}"
-              text: "<div class='m-t'><strong>未处置过账异常：</strong>${(preCheckData?.unresolvedPostingExceptionKeys || []).join(',')}</div>"
-              i18nEn: "<div class='m-t'><strong>Unresolved posting exceptions:</strong>${(preCheckData?.unresolvedPostingExceptionKeys || []).join(',')}</div>"
+        onClick:
+          action: openDialog
+          args:
+            title: "前置检查报告 - ${periodData?.code}"
+            i18nEn: "Pre-check Report - ${periodData?.code}"
+            size: lg
+            actions: []
+            body:
+              - type: data-source
+                name: preCheckData
+                action: ajax
+                args:
+                  url: '@query:ErpFinAccountingPeriod__preCheck'
+                  method: post
+                  data:
+                    periodId: "${periodData?.id}"
+                  selection: unpostedVoucherCodes unsettledArApCodes unresolvedPostingExceptionKeys allowanceRequired allowanceBalance allowanceShortfall allowanceExcess
+              - type: text
+                className: m-3
+                tag: div
+                text: '<div class="alert alert-${(preCheckData?.unpostedVoucherCodes?.length || 0) > 0 || (preCheckData?.unsettledArApCodes?.length || 0) > 0 || (preCheckData?.unresolvedPostingExceptionKeys?.length || 0) > 0 || (preCheckData?.allowanceShortfall || 0) > 0 ? "danger" : "success"}"><strong>${(preCheckData?.unpostedVoucherCodes?.length || 0) > 0 || (preCheckData?.unsettledArApCodes?.length || 0) > 0 || (preCheckData?.unresolvedPostingExceptionKeys?.length || 0) > 0 || (preCheckData?.allowanceShortfall || 0) > 0 ? "阻断项存在 — 请先处理后再结账" : "前置检查通过，可继续结账"}</strong></div>'
+                i18nEn: '<div class="alert alert-${(preCheckData?.unpostedVoucherCodes?.length || 0) > 0 || (preCheckData?.unsettledArApCodes?.length || 0) > 0 || (preCheckData?.unresolvedPostingExceptionKeys?.length || 0) > 0 || (preCheckData?.allowanceShortfall || 0) > 0 ? "danger" : "success"}"><strong>${(preCheckData?.unpostedVoucherCodes?.length || 0) > 0 || (preCheckData?.unsettledArApCodes?.length || 0) > 0 || (preCheckData?.unresolvedPostingExceptionKeys?.length || 0) > 0 || (preCheckData?.allowanceShortfall || 0) > 0 ? "Blocking items exist — resolve them before closing" : "Pre-check passed, closing can continue"}</strong></div>'
+              - type: text
+                className: m-3
+                tag: hr
+              - type: text
+                className: m-3
+                tag: h6
+                text: "坏账准备充足性"
+                i18nEn: "Bad-Debt Allowance Sufficiency"
+              - type: text
+                className: m-3
+                tag: div
+                text: '<div>必需准备：${preCheckData?.allowanceRequired || 0} · 当前 Allowance 账面：${preCheckData?.allowanceBalance || 0} · <strong class="text-${(preCheckData?.allowanceShortfall || 0) > 0 ? "danger" : "success"}">缺口：${preCheckData?.allowanceShortfall || 0}</strong> · 超额：${preCheckData?.allowanceExcess || 0}</div>'
+                i18nEn: '<div>Required allowance: ${preCheckData?.allowanceRequired || 0} · Current allowance balance: ${preCheckData?.allowanceBalance || 0} · <strong class="text-${(preCheckData?.allowanceShortfall || 0) > 0 ? "danger" : "success"}">Shortfall: ${preCheckData?.allowanceShortfall || 0}</strong> · Excess: ${preCheckData?.allowanceExcess || 0}</div>'
+              - type: text
+                className: m-3
+                tag: div
+                visible: "${(preCheckData?.unpostedVoucherCodes?.length || 0) > 0}"
+                text: "<div class='m-t'><strong>未过账凭证号：</strong>${(preCheckData?.unpostedVoucherCodes || []).join(',')}</div>"
+                i18nEn: "<div class='m-t'><strong>Unposted voucher no.:</strong>${(preCheckData?.unpostedVoucherCodes || []).join(',')}</div>"
+              - type: text
+                className: m-3
+                tag: div
+                visible: "${(preCheckData?.unsettledArApCodes?.length || 0) > 0}"
+                text: "<div class='m-t'><strong>未核销应收应付：</strong>${(preCheckData?.unsettledArApCodes || []).join(',')}</div>"
+                i18nEn: "<div class='m-t'><strong>Unsettled AR/AP:</strong>${(preCheckData?.unsettledArApCodes || []).join(',')}</div>"
+              - type: text
+                className: m-3
+                tag: div
+                visible: "${(preCheckData?.unresolvedPostingExceptionKeys?.length || 0) > 0}"
+                text: "<div class='m-t'><strong>未处置过账异常：</strong>${(preCheckData?.unresolvedPostingExceptionKeys || []).join(',')}</div>"
+                i18nEn: "<div class='m-t'><strong>Unresolved posting exceptions:</strong>${(preCheckData?.unresolvedPostingExceptionKeys || []).join(',')}</div>"
 
   # Step 2: closePeriod
   - type: wrapper
@@ -196,29 +197,29 @@ body:
         label: "执行月度结账"
         level: primary
         icon: "fa fa-lock"
-        actionType: ajax
-        visibleOn: "${periodData?.status == 'OPEN' || periodData?.status == 'CLOSING'}"
-        confirmText: "确认结账此会计期间？closePeriod 将一次性执行 AR/AP/INV/AST/GL 模块关账 + 损益结账${periodData?.month == 12 ? ' + 年度结账' : ''}。结账后该期间凭证不可修改。"
+        visible: "${periodData?.status == 'OPEN' || periodData?.status == 'CLOSING'}"
+        onClick:
+          action: ajax
+          confirmText: "确认结账此会计期间？closePeriod 将一次性执行 AR/AP/INV/AST/GL 模块关账 + 损益结账${periodData?.month == 12 ? ' + 年度结账' : ''}。结账后该期间凭证不可修改。"
+          i18nEn:
+            confirmText: "Confirm closing this accounting period? closePeriod will one-shot AR/AP/INV/AST/GL module close + P&L closing${periodData?.month == 12 ? ' + annual close' : ''}. Vouchers in this period become immutable once closed."
+          args:
+            url: '/r/ErpFinAccountingPeriod__closePeriod'
+            method: post
+            data:
+              periodId: "${periodData?.id}"
+          then:
+            - action: refreshSource
+              targetId: periodData
+            - action: refreshSource
+              targetId: statusData
         i18nEn:
           label: "Run Monthly Close"
-          confirmText: "Confirm closing this accounting period? closePeriod will one-shot AR/AP/INV/AST/GL module close + P&L closing${periodData?.month == 12 ? ' + annual close' : ''}. Vouchers in this period become immutable once closed."
-        api:
-          url: '@mutation:ErpFinAccountingPeriod__closePeriod'
-          method: post
-          data:
-            periodId: "${periodData?.id}"
-        onEvent:
-          after-success:
-            action: refreshSource
-            targetId: periodData
-            then:
-              action: refreshSource
-              targetId: statusData
 
   # per-module 关账结果
   - type: wrapper
     className: "m-t-md"
-    visibleOn: "${(statusData?.items?.length || 0) > 0 && (periodData?.status == 'CLOSED' || periodData?.status == 'CLOSED_FINAL')}"
+    visible: "${(statusData?.items?.length || 0) > 0 && (periodData?.status == 'CLOSED' || periodData?.status == 'CLOSED_FINAL')}"
     body:
       - type: text
         tag: h6
@@ -266,7 +267,7 @@ body:
   # Step 3: 年度结转（仅 12 月）
   - type: wrapper
     className: "m-t-md p-3 border rounded"
-    visibleOn: "${periodData?.month == 12 && (periodData?.status == 'CLOSED' || periodData?.status == 'CLOSED_FINAL')}"
+    visible: "${periodData?.month == 12 && (periodData?.status == 'CLOSED' || periodData?.status == 'CLOSED_FINAL')}"
     body:
       - type: text
         tag: h5
@@ -282,52 +283,53 @@ body:
         i18nEn: "View Next-Year Periods"
         level: info
         icon: "fa fa-calendar-plus"
-        actionType: dialog
-        dialog:
-          title: "次年期间（由 closePeriod 年度分支生成）"
-          i18nEn: "Next-Year Periods (generated by the closePeriod annual branch)"
-          size: md
-          actions: []
-          body:
-            - type: data-source
-              name: nextYearData
-              action: ajax
-              args:
-                url: '@query:ErpFinAccountingPeriod__findPage'
-                method: post
-                data:
-                  query:
-                    limit: 200
-                    filter:
-                      $type: eq
-                      name: year
-                      value: "${(periodData?.year || 0) + 1}"
-                selection: id year month status code
-            - type: crud
-              source: ${nextYearData?.items ?? []}
-              syncLocation: false
-              headerToolbar: []
-              footerToolbar: []
-              columns:
-                - name: code
-                  label: "编码"
-                  i18nEn: "Code"
-                - name: year
-                  label: "年"
-                  i18nEn: "Year"
-                - name: month
-                  label: "月"
-                  i18nEn: "Month"
-                - name: status
-                  label: "状态"
-                  i18nEn: "Status"
-                  type: tpl
-                  tpl: '<span class="label label-${status == "OPEN" ? "success" : "default"}">${status}</span>'
+        onClick:
+          action: openDialog
+          args:
+            title: "次年期间（由 closePeriod 年度分支生成）"
+            i18nEn: "Next-Year Periods (generated by the closePeriod annual branch)"
+            size: md
+            actions: []
+            body:
+              - type: data-source
+                name: nextYearData
+                action: ajax
+                args:
+                  url: '@query:ErpFinAccountingPeriod__findPage'
+                  method: post
+                  data:
+                    query:
+                      limit: 200
+                      filter:
+                        $type: eq
+                        name: year
+                        value: "${(periodData?.year || 0) + 1}"
+                  selection: id year month status code
+              - type: crud
+                source: ${nextYearData?.items ?? []}
+                syncLocation: false
+                headerToolbar: []
+                footerToolbar: []
+                columns:
+                  - name: code
+                    label: "编码"
+                    i18nEn: "Code"
+                  - name: year
+                    label: "年"
+                    i18nEn: "Year"
+                  - name: month
+                    label: "月"
+                    i18nEn: "Month"
+                  - name: status
+                    label: "状态"
+                    i18nEn: "Status"
+                    type: tpl
+                    tpl: '<span class="label label-${status == "OPEN" ? "success" : "default"}">${status}</span>'
 
   # Step 4: 终关
   - type: wrapper
     className: "m-t-md p-3 border rounded"
-    visibleOn: "${periodData?.status == 'CLOSED'}"
+    visible: "${periodData?.status == 'CLOSED'}"
     body:
       - type: text
         tag: h5
@@ -342,32 +344,33 @@ body:
         label: "执行终关"
         level: danger
         icon: "fa fa-lock"
-        actionType: ajax
-        confirmText: "确认终关此会计期间？终关后期间进入 CLOSED_FINAL 最终锁定态，只能经反结账回退。"
+        onClick:
+          action: ajax
+          confirmText: "确认终关此会计期间？终关后期间进入 CLOSED_FINAL 最终锁定态，只能经反结账回退。"
+          i18nEn:
+            confirmText: "Confirm finalizing this accounting period? After finalize the period enters the CLOSED_FINAL final locked state and can only be rolled back via un-close."
+          args:
+            url: '/r/ErpFinAccountingPeriod__finalizePeriod'
+            method: post
+            data:
+              periodId: "${periodData?.id}"
+          then:
+            - action: refreshSource
+              targetId: periodData
         i18nEn:
           label: "Finalize Period"
-          confirmText: "Confirm finalizing this accounting period? After finalize the period enters the CLOSED_FINAL final locked state and can only be rolled back via un-close."
-        api:
-          url: '@mutation:ErpFinAccountingPeriod__finalizePeriod'
-          method: post
-          data:
-            periodId: "${periodData?.id}"
-        onEvent:
-          after-success:
-            action: refreshSource
-            targetId: periodData
 
   - type: text
     className: m-3
     tag: div
-    visibleOn: "${periodData?.status == 'CLOSED_FINAL'}"
+    visible: "${periodData?.status == 'CLOSED_FINAL'}"
     text: '<div class="alert alert-success m-t-md"><strong>期间已终关（CLOSED_FINAL）。</strong>如需调整，请使用下方反结账。</div>'
     i18nEn: '<div class="alert alert-success m-t-md"><strong>Period finalized (CLOSED_FINAL).</strong> To adjust, use un-close below.</div>'
 
   # 反结账
   - type: wrapper
     className: "m-t-md p-3 border border-warning rounded"
-    visibleOn: "${periodData?.status == 'CLOSED' || periodData?.status == 'CLOSED_FINAL'}"
+    visible: "${periodData?.status == 'CLOSED' || periodData?.status == 'CLOSED_FINAL'}"
     body:
       - type: text
         tag: h5
@@ -384,47 +387,49 @@ body:
         i18nEn: "Un-close (double confirmation required)"
         level: warning
         icon: "fa fa-unlock"
-        actionType: dialog
-        dialog:
-          title: "反结账确认 - ${periodData?.code}"
-          i18nEn: "Un-close Confirmation - ${periodData?.code}"
-          size: md
-          actions: []
-          body:
-            - type: text
-              tag: div
-              text: '<div class="alert alert-danger"><strong>红冲影响预览：</strong>反结账将红冲本期结账凭证、恢复收入/费用科目余额；若是 12 月期间，次年期间已创建时将阻止反结账（须先删次年期间）。反结账后期间回退至 OPEN。</div>'
-              i18nEn: '<div class="alert alert-danger"><strong>Red-reverse impact preview:</strong> un-close will red-reverse the closing vouchers of this period and restore income/expense account balances; for a December period, un-close is blocked when next-year periods already exist (delete next-year periods first). After un-close the period falls back to OPEN.</div>'
-            - type: text
-              tag: div
-              text: '<div class="m-b">当前状态：<span class="label label-${periodData?.status == "CLOSED_FINAL" ? "default" : "primary"}">${periodData?.status}</span> → 反结账后：<span class="label label-success">OPEN</span></div>'
-              i18nEn: '<div class="m-b">Current status: <span class="label label-${periodData?.status == "CLOSED_FINAL" ? "default" : "primary"}">${periodData?.status}</span> → after un-close: <span class="label label-success">OPEN</span></div>'
-            - type: input-text
-              name: reverseCloseReason
-              label: "反结账原因（必填，审计要求）"
-              required: true
-              placeholder: "请输入反结账原因（如：更正XX凭证错误）"
-              i18nEn:
-                label: "Un-close Reason (required, audit requirement)"
-                placeholder: "Enter un-close reason (e.g. correct voucher error)"
-              clearable: true
-            - type: button
-              label: "我已确认红冲影响，执行反结账"
-              level: danger
-              icon: "fa fa-unlock-alt"
-              actionType: ajax
-              disabledOn: "${!reverseCloseReason}"
-              confirmText: "最后确认：执行反结账？此操作将红冲本期结账凭证并重开期间，不可撤销。"
-              i18nEn:
-                label: "I have confirmed the red-reverse impact, run un-close"
-                confirmText: "Final confirmation: run un-close? This red-reverses the closing vouchers of this period and reopens the period. Irreversible."
-              api:
-                url: '@mutation:ErpFinAccountingPeriod__reverseClose'
-                method: post
-                data:
-                  periodId: "${periodData?.id}"
-                  reason: "${reverseCloseReason}"
-              onEvent:
-                after-success:
-                  action: refreshSource
-                  targetId: periodData
+        onClick:
+          action: openDialog
+          args:
+            title: "反结账确认 - ${periodData?.code}"
+            i18nEn: "Un-close Confirmation - ${periodData?.code}"
+            size: md
+            actions: []
+            body:
+              - type: text
+                tag: div
+                text: '<div class="alert alert-danger"><strong>红冲影响预览：</strong>反结账将红冲本期结账凭证、恢复收入/费用科目余额；若是 12 月期间，次年期间已创建时将阻止反结账（须先删次年期间）。反结账后期间回退至 OPEN。</div>'
+                i18nEn: '<div class="alert alert-danger"><strong>Red-reverse impact preview:</strong> un-close will red-reverse the closing vouchers of this period and restore income/expense account balances; for a December period, un-close is blocked when next-year periods already exist (delete next-year periods first). After un-close the period falls back to OPEN.</div>'
+              - type: text
+                tag: div
+                text: '<div class="m-b">当前状态：<span class="label label-${periodData?.status == "CLOSED_FINAL" ? "default" : "primary"}">${periodData?.status}</span> → 反结账后：<span class="label label-success">OPEN</span></div>'
+                i18nEn: '<div class="m-b">Current status: <span class="label label-${periodData?.status == "CLOSED_FINAL" ? "default" : "primary"}">${periodData?.status}</span> → after un-close: <span class="label label-success">OPEN</span></div>'
+              - type: input-text
+                name: reverseCloseReason
+                label: "反结账原因（必填，审计要求）"
+                required: true
+                placeholder: "请输入反结账原因（如：更正XX凭证错误）"
+                i18nEn:
+                  label: "Un-close Reason (required, audit requirement)"
+                  placeholder: "Enter un-close reason (e.g. correct voucher error)"
+                clearable: true
+              - type: button
+                label: "我已确认红冲影响，执行反结账"
+                level: danger
+                icon: "fa fa-unlock-alt"
+                disabled: "${!reverseCloseReason}"
+                onClick:
+                  action: ajax
+                  confirmText: "最后确认：执行反结账？此操作将红冲本期结账凭证并重开期间，不可撤销。"
+                  i18nEn:
+                    confirmText: "Final confirmation: run un-close? This red-reverses the closing vouchers of this period and reopens the period. Irreversible."
+                  args:
+                    url: '/r/ErpFinAccountingPeriod__reverseClose'
+                    method: post
+                    data:
+                      periodId: "${periodData?.id}"
+                      reason: "${reverseCloseReason}"
+                  then:
+                    - action: refreshSource
+                      targetId: periodData
+                i18nEn:
+                  label: "I have confirmed the red-reverse impact, run un-close"
