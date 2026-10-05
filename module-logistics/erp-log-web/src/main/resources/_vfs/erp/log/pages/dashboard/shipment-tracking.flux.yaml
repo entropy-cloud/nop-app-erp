@@ -27,15 +27,9 @@ body:
       - type: button
         label: 查询时间线
         i18nEn: "Query Timeline"
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpLogShipment__get'
-          method: post
-          data:
-            id: ${shipmentId ?? 0}
-          selection: id code estimatedDeliveryDate actualDeliveryDate status trackingNo carrierId totalParcels
-        target: shipmentData
+        onClick:
+          action: refreshSource
+          targetId: shipmentData
         disabled: ${!shipmentId}
 - type: data-source
   name: shipmentData

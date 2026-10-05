@@ -44,16 +44,9 @@ body:
       - type: button
         label: 刷新时间线
         i18nEn: Refresh Timeline
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpCsTicketAction__findPage'
-          method: post
-          data:
-            filter_ticketId: ${ticketId ?? null}
-            limit: 100
-          selection: items{ id ticketId actionType fromStatus toStatus operatorId content createTime } total
-        target: rawData
+        onClick:
+          action: refreshSource
+          targetId: rawData
 - type: text
   text: ${"共 " + (rawData.total ?? 0) + " 条操作记录"}
   i18nEn: ${"Total " + (rawData.total ?? 0) + " action records"}

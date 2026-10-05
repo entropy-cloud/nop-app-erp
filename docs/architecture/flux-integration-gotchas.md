@@ -88,6 +88,27 @@ flux button renderer 仅声明 `onClick` 一个事件字段（`nop-chaos-flux/pa
 
 注意：迁移后 confirm 依赖宿主 `env.confirm` 能力（`flux-runtime/src/runtime-action-helpers.ts:142-147`——配置 confirmText 而宿主未提供 env.confirm 时动作显式失败）。本仓宿主已接 env.confirm（2026-10-05 stock-take-flow 确认框实测弹出）。
 
+### hybrid 半迁移形态（plan 2026-10-06-0355-1 实证，勿再引入）
+`actionType: ajax` + `action: ajax` + `args:` + `target:` **平铺按钮级**（改了 AMIS 键名、未加 onClick 包裹）——四个键全部 unknown-property、按钮惰性，是「以为已迁移」的高危错觉形态（门禁 warning 与纯 AMIS 形态同族，看板/日历/时间线/甘特的刷新按钮曾整批中招）。刷新类按钮的正确转换是 `onClick: {action: refreshSource, targetId: <同名数据源>}`（数据源 args 才是权威参数面，勿在按钮级复制查询参数）；一次性请求才用 `onClick:{action:'ajax', args}`。
+
+### download 动作转换行（09-amis-migration.md 缺行的仓内补充）
+AMIS `actionType: download` + `api:{url,method,responseType,data}` → flux 内置 `download` 动作 Form 1（`flux-core/src/constants.ts:54`；`packages/flux-runtime/src/runtime-action-helpers.ts:337-388`，Form 1 分发 :373-388，responseType 强制 blob）：
+
+```yaml
+- type: button
+  label: "下载 XLSX"
+  onClick:
+    action: download
+    args:
+      api:                  # 与页面 data-source 的 api 对象同构直迁
+        url: /p/Entity__download
+        method: post
+        responseType: blob
+        data: {...}
+```
+
+本仓 25 个报表页 ×2=50 个下载按钮已按此形态迁移（2026-10-06，运行时证明=`tests/e2e/reports/reports.amis-download.spec.ts` 真实点击 ×10）。
+
 ### 推荐修复（待 nop-chaos-flux）
 验证器 prop 表把 `i18nEn` 等宿主层消费的属性纳入 known 列表，同时对手写路径上出现 `actionType`/`api`/`onEvent` 升级为 **error 级诊断**（当前 warning 淹没在生成页 i18nEn 误报中）。外部仓改动走保护区双批准。
 
@@ -97,6 +118,9 @@ flux button renderer 仅声明 `onClick` 一个事件字段（`nop-chaos-flux/pa
 - `nop-entropy/nop-frontend-support/nop-web/.../flux-web/page_simple.xpl:15-28`（唯一 AMIS 转换点，仅 GenPage 路径）
 - 本仓迁移范围：disposal-wizard / lead-conversion / period-close-wizard / stock-take-flow / visit-wizard / ErpSysNotification-inbox（pda-stock-take 随 plan `2026-10-05-0400-2` 重构迁移）
 - 运行时证据：`_tmp/2026-10-05-0400-1-probe/`（服务端日志零请求实锤 + 迁移后复验）
+
+### /p/ 二进制端点的 blob 透传规则（plan 2026-10-06-0508-1 修复）
+flux download 动作 Form 1 契约 = 宿主 fetcher 返回 `{status:0, data:Blob, headers:{content-disposition}}`（`flux-runtime/src/runtime-action-helpers.ts:373-388`）。壳层 `nopRpcRequest` 的**非 @query:/@mutation:/r/ 透传分支曾丢弃 responseType**（nop-chaos-next http.ts，nop-chaos-next `34fb37d` 修复）：`/p/{Entity}__download`（报表二进制唯一端点——RPC 层会 JSON 序列化 WebContentBean，不可用 @query:/@mutation:/r/ 替代）响应被按 JSON 解析，Blob 管线永不触发 → 下载静默失败。修复后语义：2xx 门禁前置 + JSON-in-blob 错误恢复（错误 envelope 不作成功 Blob 返回）+ 2xx Blob 原样返回。注意：normalizeBlobData 自动下载语义仅属 @query:/@mutation: 分支；download 动作 api.url 必须写 `/p/...` 直连形态。附带效应：barcode-input WASM（经 fetcher 拉 blob）由坏转好。
 
 ### select 动态选项源形态规则（plan 2026-10-05-0400-6 spike 实证）
 
@@ -123,6 +147,25 @@ select 渲染器**只读 `props.options`**（`input.tsx:520` 唯一 allowSource 
 
 ### 修复落地状态
 - 2026-10-05：6 页（pda 随 plan `2026-10-05-0400-2`）被服务内容全量迁移（机械总量 23 ajax 按钮〔14 page.yaml + 2 孪生进入向导 + 3 孪生 start/complete/cancel + 4 孪生镜像〕、26 then 步骤〔19+7〕、6 dialog、19 visibleOn/disabledOn；period-close/visit 双文件一致），`npm run validate:flux` errors=325 零新增。pda 页归 plan `2026-10-05-0400-2`。
+- 2026-10-06（plan `2026-10-06-0355-1`）：孪生页/报表页残留清零——17 个 hybrid 按钮（16 flux.yaml）→ `onClick:{action:'refreshSource',targetId}`、50 个 download 按钮（25 report 页）→ `onClick:{action:'download',args:{api}}`、level→variant 活面 21 处、select 死 labelField/valueField 富标签化 3 处（`type: tree` 上 labelField 为 graph 渲染器合法 prop，org-chart/bom-tree 两处豁免）；触及文件 wiring 族 warning 归零，errors=325 持平。余 28 条 wiring warning 属 view.xml delta/生成链页面对话框按钮（新登记独立 lane，修复前须运行时可达性证据）。
+
+---
+
+## G-003 refreshSource 跨 fragment scope 解析曾失败（exact-bucket 无父链回退）（2026-10-06，✅ 已修复）
+
+### 症状
+按钮（form 内）执行 `onClick/then: {action: refreshSource, targetId: <页面级数据源>}` 报 notify error `Source not found: <name>`，数据源零重发；E2E 探针实证（kanban 刷新按钮点击后 findBoardData 零请求，fluxDebug notify error 在案）。波及所有「子 scope 动作刷新页面级 source」站点——flux-guide 01/05 官方示例（form onSubmitSuccess 刷新页面级 pagedUsers）的规范形态，以及本仓第二轮 then:refreshSource 刷新链中跨 fragment scope 的站点（静默失效）。
+
+### 根因
+`source-registry.ts` 的 `refreshDataSource` 对传入 scope 仅查**该 scope 自身注册桶**（exact-bucket，无父链遍历；全局 nameIndex 仅在无 scope 调用时可达），而 action-adapter 总传按钮的 ctx.scope。对照：refreshNearest 有父链遍历，具名 refreshSource 反而无；guide data-source.md 曾把该限制作为已知约束记载（plan 513 L4.10）。
+
+### 修复（nop-chaos-flux `b18117e97`，plan 2026-10-06-0555-1 双批准）
+refreshDataSource 改为 scope 链最近优先遍历（同名就近遮蔽保持）+ 链上未命中回退全局 nameIndex；**isolate 边界截断遍历并抑制兜底**（与数据读取语义一致，隔离上下文不得刷新不可见链路上的 source）；guide 刷新姿势节改写为新语义。`findFirstInScope` 仍为本桶语义（refreshNearest 自行遍历），注释已显式分叉。
+
+### 关联代码
+- `nop-chaos-flux/packages/flux-runtime/src/async-data/source-registry.ts`（refreshDataSource / findFirstInScope）
+- `nop-chaos-flux/packages/flux-runtime/src/action-adapter.ts:511-527`（refreshSource case，传 ctx.scope）
+- app 仓验收：`tests/e2e/business-actions/amis-residual-refresh.action.spec.ts`（点击重发探针）
 
 ---
 

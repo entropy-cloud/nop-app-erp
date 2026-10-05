@@ -40,7 +40,7 @@ body:
       - type: button
         label: 进入向导
         i18nEn: "Enter Wizard"
-        level: primary
+        variant: primary
         block: true
         disabled: ${!visitId}
         onClick:
@@ -99,7 +99,7 @@ body:
         className: text-muted m-b
       - type: button
         label: 开始执行
-        level: primary
+        variant: primary
         visible: ${visitData?.status == "SCHEDULED"}
         onClick:
           action: ajax
@@ -166,7 +166,7 @@ body:
         - type: button
           label: 保存结果
           i18nEn: "Save Result"
-          level: primary
+          variant: primary
           onClick:
             action: ajax
             args:
@@ -189,7 +189,7 @@ body:
         className: text-muted m-b
       - type: button
         label: 确认完成
-        level: primary
+        variant: primary
         onClick:
           action: ajax
           confirmText: 确认完成？状态将翻转为 COMPLETED，设备恢复运行中。
@@ -207,7 +207,7 @@ body:
           label: "Confirm Completion"
       - type: button
         label: 取消访问
-        level: danger
+        variant: destructive
         onClick:
           action: ajax
           confirmText: 确认取消？状态将翻转为 CANCELLED（终态），不可撤销。

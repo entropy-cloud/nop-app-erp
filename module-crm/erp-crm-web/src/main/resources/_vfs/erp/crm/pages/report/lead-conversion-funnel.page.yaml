@@ -19,27 +19,31 @@ body:
       - type: button
         label: "下载 XLSX"
         i18nEn: "Download XLSX"
-        actionType: download
-        api:
-          url: /p/ErpCrmReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "lead-conversion-funnel"
-            renderType: "xlsx"
-            data: {}
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpCrmReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "lead-conversion-funnel"
+                renderType: "xlsx"
+                data: {}
       - type: button
         label: "下载 PDF"
         i18nEn: "Download PDF"
-        actionType: download
-        api:
-          url: /p/ErpCrmReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "lead-conversion-funnel"
-            renderType: "pdf"
-            data: {}
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpCrmReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "lead-conversion-funnel"
+                renderType: "pdf"
+                data: {}
 
   - type: data-source
     name: reportHtmlData

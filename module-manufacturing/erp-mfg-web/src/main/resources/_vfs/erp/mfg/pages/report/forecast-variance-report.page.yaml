@@ -37,33 +37,37 @@ body:
       - type: button
         label: "下载 XLSX"
         i18nEn: "Download XLSX"
-        actionType: download
-        api:
-          url: /p/ErpMfgReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "forecast-variance-report"
-            renderType: "xlsx"
-            data:
-              materialId: "${filterForm?.materialId}"
-              periodStart: "${filterForm?.periodStart}"
-              periodEnd: "${filterForm?.periodEnd}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpMfgReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "forecast-variance-report"
+                renderType: "xlsx"
+                data:
+                  materialId: "${filterForm?.materialId}"
+                  periodStart: "${filterForm?.periodStart}"
+                  periodEnd: "${filterForm?.periodEnd}"
       - type: button
         label: "下载 PDF"
         i18nEn: "Download PDF"
-        actionType: download
-        api:
-          url: /p/ErpMfgReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "forecast-variance-report"
-            renderType: "pdf"
-            data:
-              materialId: "${filterForm?.materialId}"
-              periodStart: "${filterForm?.periodStart}"
-              periodEnd: "${filterForm?.periodEnd}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpMfgReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "forecast-variance-report"
+                renderType: "pdf"
+                data:
+                  materialId: "${filterForm?.materialId}"
+                  periodStart: "${filterForm?.periodStart}"
+                  periodEnd: "${filterForm?.periodEnd}"
 
   - type: data-source
     name: reportHtmlData

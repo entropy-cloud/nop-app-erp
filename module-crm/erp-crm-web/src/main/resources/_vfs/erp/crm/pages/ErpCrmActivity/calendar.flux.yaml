@@ -42,16 +42,9 @@ body:
       - type: button
         label: 刷新日历
         i18nEn: "Refresh Calendar"
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpCrmActivity__findPage'
-          method: post
-          data:
-            filter_leadId: ${leadId ?? null}
-            limit: 500
-          selection: items{ id activityType activityDate summary leadId lead{ companyName } } total
-        target: rawData
+        onClick:
+          action: refreshSource
+          targetId: rawData
 - type: text
   text: ${(rawData.total ?? 0) + " 项活动"}
   i18nEn: '${(rawData.total ?? 0) + " activities"}'

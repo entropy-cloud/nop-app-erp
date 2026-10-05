@@ -34,15 +34,9 @@ body:
       - type: button
         label: 查询详情
         i18nEn: "Query Detail"
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpB2bEdiDoc__get'
-          method: post
-          data:
-            id: ${ediDocId ?? 0}
-          selection: id code state relatedBillType relatedBillCode formatId error retryCount sentAt acknowledgedAt
-        target: ediDoc
+        onClick:
+          action: refreshSource
+          targetId: ediDoc
         disabled: ${!ediDocId}
 - type: data-source
   name: ediDoc

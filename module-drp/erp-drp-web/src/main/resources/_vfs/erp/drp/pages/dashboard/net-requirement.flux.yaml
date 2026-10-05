@@ -27,14 +27,9 @@ body:
       - type: button
         label: 加载净需求
         i18nEn: "Load Net Requirement"
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpDrpLine__findNetReqGroups'
-          method: post
-          data:
-            planId: ${planId ?? null}
-        target: netReq
+        onClick:
+          action: refreshSource
+          targetId: netReq
         disabled: ${!planId}
 - type: data-source
   name: planData

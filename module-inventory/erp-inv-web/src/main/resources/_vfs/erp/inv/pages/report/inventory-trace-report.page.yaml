@@ -43,33 +43,37 @@ body:
       - type: button
         label: "下载 XLSX"
         i18nEn: "Download XLSX"
-        actionType: download
-        api:
-          url: /p/ErpInvReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "inventory-trace-report"
-            renderType: "xlsx"
-            data:
-              batchNo: "${filterForm?.batchNo}"
-              materialId: "${filterForm?.materialId}"
-              warehouseId: "${filterForm?.warehouseId}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpInvReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "inventory-trace-report"
+                renderType: "xlsx"
+                data:
+                  batchNo: "${filterForm?.batchNo}"
+                  materialId: "${filterForm?.materialId}"
+                  warehouseId: "${filterForm?.warehouseId}"
       - type: button
         label: "下载 PDF"
         i18nEn: "Download PDF"
-        actionType: download
-        api:
-          url: /p/ErpInvReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "inventory-trace-report"
-            renderType: "pdf"
-            data:
-              batchNo: "${filterForm?.batchNo}"
-              materialId: "${filterForm?.materialId}"
-              warehouseId: "${filterForm?.warehouseId}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpInvReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "inventory-trace-report"
+                renderType: "pdf"
+                data:
+                  batchNo: "${filterForm?.batchNo}"
+                  materialId: "${filterForm?.materialId}"
+                  warehouseId: "${filterForm?.warehouseId}"
 
   - type: data-source
     name: reportHtmlData

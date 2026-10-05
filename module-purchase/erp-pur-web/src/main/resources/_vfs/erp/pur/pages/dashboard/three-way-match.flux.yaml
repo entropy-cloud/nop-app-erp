@@ -26,12 +26,9 @@ body:
       - type: button
         label: 刷新联查
         i18nEn: "Refresh Linked Query"
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpPurDashboard__findThreeWayMatchDiffAlert'
-          method: post
-        target: diffAlert
+        onClick:
+          action: refreshSource
+          targetId: diffAlert
 - type: data-source
   name: diffAlert
   dependsOn:

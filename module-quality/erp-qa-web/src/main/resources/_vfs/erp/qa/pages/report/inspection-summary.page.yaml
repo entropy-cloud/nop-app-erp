@@ -37,33 +37,37 @@ body:
       - type: button
         label: "下载 XLSX"
         i18nEn: "Download XLSX"
-        actionType: download
-        api:
-          url: /p/ErpQaReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "inspection-summary"
-            renderType: "xlsx"
-            data:
-              materialId: "${filterForm?.materialId}"
-              startDate: "${filterForm?.startDate}"
-              endDate: "${filterForm?.endDate}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpQaReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "inspection-summary"
+                renderType: "xlsx"
+                data:
+                  materialId: "${filterForm?.materialId}"
+                  startDate: "${filterForm?.startDate}"
+                  endDate: "${filterForm?.endDate}"
       - type: button
         label: "下载 PDF"
         i18nEn: "Download PDF"
-        actionType: download
-        api:
-          url: /p/ErpQaReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "inspection-summary"
-            renderType: "pdf"
-            data:
-              materialId: "${filterForm?.materialId}"
-              startDate: "${filterForm?.startDate}"
-              endDate: "${filterForm?.endDate}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpQaReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "inspection-summary"
+                renderType: "pdf"
+                data:
+                  materialId: "${filterForm?.materialId}"
+                  startDate: "${filterForm?.startDate}"
+                  endDate: "${filterForm?.endDate}"
 
   - type: data-source
     name: reportHtmlData

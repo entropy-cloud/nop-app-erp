@@ -30,29 +30,33 @@ body:
       - type: button
         label: "下载 XLSX"
         i18nEn: "Download XLSX"
-        actionType: download
-        api:
-          url: /p/ErpFinReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "balance-sheet"
-            renderType: "xlsx"
-            data:
-              periodId: "${filterForm?.periodId}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpFinReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "balance-sheet"
+                renderType: "xlsx"
+                data:
+                  periodId: "${filterForm?.periodId}"
       - type: button
         label: "下载 PDF"
         i18nEn: "Download PDF"
-        actionType: download
-        api:
-          url: /p/ErpFinReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "balance-sheet"
-            renderType: "pdf"
-            data:
-              periodId: "${filterForm?.periodId}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpFinReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "balance-sheet"
+                renderType: "pdf"
+                data:
+                  periodId: "${filterForm?.periodId}"
 
   - type: data-source
     name: reportHtmlData

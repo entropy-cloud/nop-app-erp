@@ -37,33 +37,37 @@ body:
       - type: button
         label: "下载 XLSX"
         i18nEn: "Download XLSX"
-        actionType: download
-        api:
-          url: /p/ErpMfgReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "crp-load-report"
-            renderType: "xlsx"
-            data:
-              workcenterId: "${filterForm?.workcenterId}"
-              startDate: "${filterForm?.startDate}"
-              endDate: "${filterForm?.endDate}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpMfgReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "crp-load-report"
+                renderType: "xlsx"
+                data:
+                  workcenterId: "${filterForm?.workcenterId}"
+                  startDate: "${filterForm?.startDate}"
+                  endDate: "${filterForm?.endDate}"
       - type: button
         label: "下载 PDF"
         i18nEn: "Download PDF"
-        actionType: download
-        api:
-          url: /p/ErpMfgReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "crp-load-report"
-            renderType: "pdf"
-            data:
-              workcenterId: "${filterForm?.workcenterId}"
-              startDate: "${filterForm?.startDate}"
-              endDate: "${filterForm?.endDate}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpMfgReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "crp-load-report"
+                renderType: "pdf"
+                data:
+                  workcenterId: "${filterForm?.workcenterId}"
+                  startDate: "${filterForm?.startDate}"
+                  endDate: "${filterForm?.endDate}"
 
   - type: data-source
     name: reportHtmlData

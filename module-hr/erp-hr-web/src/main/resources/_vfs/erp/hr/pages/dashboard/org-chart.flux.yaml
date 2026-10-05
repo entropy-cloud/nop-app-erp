@@ -36,14 +36,9 @@ body:
       - type: button
         label: 重建架构图
         i18nEn: "Rebuild Org Chart"
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpHrDepartment__findDepartmentTree'
-          method: post
-          data:
-            keyword: ${keyword ?? null}
-        target: deptTree
+        onClick:
+          action: refreshSource
+          targetId: deptTree
 - type: card
   className: bg-white p-3 rounded shadow-sm
   body:

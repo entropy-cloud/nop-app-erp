@@ -16,12 +16,9 @@ body:
 - type: button
   label: 刷新看板
   i18nEn: "Refresh Kanban"
-  actionType: ajax
-  action: ajax
-  args:
-    url: '@query:ErpCrmLead__findOpportunityBoardData'
-    method: post
-  target: boardData
+  onClick:
+    action: refreshSource
+    targetId: boardData
   className: m-3
 - type: kanban
   data: ${boardData}

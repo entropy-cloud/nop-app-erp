@@ -76,7 +76,7 @@ body:
         required: true
       - type: button
         label: "开始盘点 (startTake)"
-        level: primary
+        variant: primary
         icon: "fa fa-play"
         onClick:
           action: ajax
@@ -95,7 +95,7 @@ body:
           label: "Start Stock Take (startTake)"
       - type: button
         label: "完成盘点 (completeTake)"
-        level: success
+        variant: secondary
         icon: "fa fa-check"
         onClick:
           action: ajax
@@ -114,7 +114,7 @@ body:
           label: "Complete Stock Take (completeTake)"
       - type: button
         label: "取消盘点 (cancelTake)"
-        level: danger
+        variant: destructive
         icon: "fa fa-times"
         onClick:
           action: ajax

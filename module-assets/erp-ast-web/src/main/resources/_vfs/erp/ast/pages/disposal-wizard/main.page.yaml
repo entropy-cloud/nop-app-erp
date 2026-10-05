@@ -34,13 +34,10 @@ body:
         required: true
         clearable: true
         placeholder: "选择要处置的资产"
-        options: '${(assetsData?.items ?? []).map((a) => ({ label: a.code, value: a.id }))}'
-        valueField: id
-        labelField: "${code} · ${name} (净值:${netBookValue || 0})"
+        options: '${(assetsData?.items ?? []).map((a) => ({ label: (a.code + " · " + a.name + " (净值:" + (a.netBookValue ?? 0) + ")"), value: a.id }))}'
         i18nEn:
           label: "Select Asset"
           placeholder: "Select the asset to dispose"
-          labelField: "${code} · ${name} (Net Value:${netBookValue || 0})"
       - type: select
         name: disposalType
         label: "处置类型"
@@ -74,7 +71,7 @@ body:
       - type: button
         label: "下一步：预览清理损益"
         i18nEn: "Next: Preview Disposal P&L"
-        level: primary
+        variant: primary
         icon: "fa fa-arrow-right"
         onClick:
           action: refreshSource
@@ -122,7 +119,7 @@ body:
       # 迁移表：ajax → onClick:{action:'ajax', confirmText, args}（confirmText 为 args 兄弟键）
       - type: button
         label: "确认提交处置单"
-        level: danger
+        variant: destructive
         icon: "fa fa-check"
         onClick:
           action: ajax

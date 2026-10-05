@@ -61,7 +61,7 @@ body:
           - type: button
             label: "跳转源单据"
             i18nEn: "Go to source bill"
-            level: primary
+            variant: primary
             size: sm
             icon: fa fa-external-link
             actionType: link

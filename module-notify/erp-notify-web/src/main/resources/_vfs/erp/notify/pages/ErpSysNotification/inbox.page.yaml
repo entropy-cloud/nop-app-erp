@@ -24,7 +24,7 @@ body:
   - type: button
     className: m-3
     label: "全部标记已读"
-    level: primary
+    variant: primary
     icon: "check-double"
     onClick:
       action: ajax
@@ -163,7 +163,7 @@ body:
               - type: button
                 label: "查看"
                 i18nEn: "View"
-                level: primary
+                variant: primary
                 onClick:
                   action: openDrawer
                   args:
@@ -176,7 +176,7 @@ body:
               - type: button
                 label: "标记已读"
                 i18nEn: "Mark Read"
-                level: success
+                variant: secondary
                 icon: "check"
                 onClick:
                   action: ajax
@@ -234,7 +234,7 @@ body:
               - type: button
                 label: "查看"
                 i18nEn: "View"
-                level: primary
+                variant: primary
                 onClick:
                   action: openDrawer
                   args:
@@ -299,7 +299,7 @@ body:
               - type: button
                 label: "查看"
                 i18nEn: "View"
-                level: primary
+                variant: primary
                 onClick:
                   action: openDrawer
                   args:

@@ -65,15 +65,9 @@ body:
       - type: button
         label: 刷新甘特图
         i18nEn: "Refresh Gantt"
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpApsOperationOrder__findGanttData'
-          method: post
-          data:
-            machineId: ${machineId ?? null}
-            status: ${status ?? null}
-        target: ganttData
+        onClick:
+          action: refreshSource
+          targetId: ganttData
 - type: text
   text: ${"共 " + (ganttData?.tasks ?? []).length + " 道工序 · 依赖边 " + (ganttData?.links ?? []).length + " 条（同工单按工序顺序派生）"}
   i18nEn: '${"Total " + (ganttData?.tasks ?? []).length + " tasks · dependency edges " + (ganttData?.links ?? []).length + " (derived by operation sequence within the same work order)"}'

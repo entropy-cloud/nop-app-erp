@@ -37,33 +37,37 @@ body:
       - type: button
         label: "下载 XLSX"
         i18nEn: "Download XLSX"
-        actionType: download
-        api:
-          url: /p/ErpMntReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "downtime-summary"
-            renderType: "xlsx"
-            data:
-              equipmentId: "${filterForm?.equipmentId}"
-              startDate: "${filterForm?.startDate}"
-              endDate: "${filterForm?.endDate}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpMntReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "downtime-summary"
+                renderType: "xlsx"
+                data:
+                  equipmentId: "${filterForm?.equipmentId}"
+                  startDate: "${filterForm?.startDate}"
+                  endDate: "${filterForm?.endDate}"
       - type: button
         label: "下载 PDF"
         i18nEn: "Download PDF"
-        actionType: download
-        api:
-          url: /p/ErpMntReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "downtime-summary"
-            renderType: "pdf"
-            data:
-              equipmentId: "${filterForm?.equipmentId}"
-              startDate: "${filterForm?.startDate}"
-              endDate: "${filterForm?.endDate}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpMntReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "downtime-summary"
+                renderType: "pdf"
+                data:
+                  equipmentId: "${filterForm?.equipmentId}"
+                  startDate: "${filterForm?.startDate}"
+                  endDate: "${filterForm?.endDate}"
 
   - type: data-source
     name: reportHtmlData

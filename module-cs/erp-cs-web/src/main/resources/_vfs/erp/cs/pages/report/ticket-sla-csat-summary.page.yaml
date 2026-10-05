@@ -27,29 +27,33 @@ body:
       - type: button
         label: "下载 XLSX"
         i18nEn: "Download XLSX"
-        actionType: download
-        api:
-          url: /p/ErpCsReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "ticket-sla-csat-summary"
-            renderType: "xlsx"
-            data:
-              ticketType: "${filterForm?.ticketType}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpCsReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "ticket-sla-csat-summary"
+                renderType: "xlsx"
+                data:
+                  ticketType: "${filterForm?.ticketType}"
       - type: button
         label: "下载 PDF"
         i18nEn: "Download PDF"
-        actionType: download
-        api:
-          url: /p/ErpCsReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "ticket-sla-csat-summary"
-            renderType: "pdf"
-            data:
-              ticketType: "${filterForm?.ticketType}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpCsReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "ticket-sla-csat-summary"
+                renderType: "pdf"
+                data:
+                  ticketType: "${filterForm?.ticketType}"
 
   - type: data-source
     name: reportHtmlData

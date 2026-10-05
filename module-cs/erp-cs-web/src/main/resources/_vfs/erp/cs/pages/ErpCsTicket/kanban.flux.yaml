@@ -36,14 +36,9 @@ body:
       - type: button
         label: 刷新看板
         i18nEn: Refresh Board
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpCsTicket__findBoardData'
-          method: post
-          data:
-            customerId: ${customerId ?? null}
-        target: boardData
+        onClick:
+          action: refreshSource
+          targetId: boardData
 - type: kanban
   data: ${boardData}
   draggable: true

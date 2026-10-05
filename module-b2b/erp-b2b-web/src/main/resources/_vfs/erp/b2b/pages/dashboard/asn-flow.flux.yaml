@@ -38,16 +38,9 @@ body:
       - type: button
         label: 刷新
         i18nEn: "Refresh"
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpB2bAsn__findPage'
-          method: post
-          data:
-            limit: 200
-            filter_status: ${asnFilter?.statusFilter ?? null}
-          selection: items{ id code status partnerId sourceEdiDocId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode businessDate } total
-        target: asnList
+        onClick:
+          action: refreshSource
+          targetId: asnList
 - type: data-source
   name: asnList
   dependsOn:
@@ -103,7 +96,7 @@ body:
     - type: button
       label: 流程
       i18nEn: "Flow"
-      level: primary
+      variant: primary
       onClick:
         action: openDialog
         args:

@@ -42,16 +42,9 @@ body:
       - type: button
         label: 展开 BOM
         i18nEn: "Explode BOM"
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpMfgBom__findBomTree'
-          method: post
-          data:
-            bomId: ${bomId ?? null}
-            qty: ${qty ?? null}
-            useMultiLevel: ${useMultiLevel ?? true}
-        target: bomTree
+        onClick:
+          action: refreshSource
+          targetId: bomTree
         disabled: ${!bomId}
 - type: data-source
   name: bomTree

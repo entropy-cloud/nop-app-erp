@@ -39,16 +39,13 @@ body:
         label: "选择线索"
         required: true
         clearable: true
-        options: '${(leadsData?.items ?? []).map((l) => ({ label: l.code, value: l.id }))}'
-        valueField: id
-        labelField: "${code} · 预期收入:${expectedRevenue || 0} · 当前阶段:${stage?.stageName || '—'}"
+        options: '${(leadsData?.items ?? []).map((l) => ({ label: (l.code + " · 预期收入:" + (l.expectedRevenue ?? 0) + " · 当前阶段:" + (l.stage?.stageName ?? "—")), value: l.id }))}'
         i18nEn:
           label: "Select Lead"
-          labelField: "${code} · Expected Revenue: ${expectedRevenue || 0} · Current Stage: ${stage?.stageName || '—'}"
       - type: button
         label: "下一步：选择目标阶段"
         i18nEn: "Next: Select Target Stage"
-        level: primary
+        variant: primary
         icon: "fa fa-arrow-right"
         onClick:
           action: refreshSource
@@ -86,8 +83,6 @@ body:
             i18nEn: "Target Funnel Stage"
             required: true
             options: '${(stagesData?.items ?? []).map((s) => ({ label: s.stageName, value: s.id }))}'
-            valueField: id
-            labelField: stageName
           - type: text
             tag: div
             className: text-muted
@@ -95,7 +90,7 @@ body:
             i18nEn: "moveStage validates forward-only progression by ErpCrmStage.sequence — the target stage must be greater than the current stage."
           - type: button
             label: "Step 3 · 确认转化（moveStage）"
-            level: danger
+            variant: destructive
             icon: "fa fa-check"
             onClick:
               action: ajax

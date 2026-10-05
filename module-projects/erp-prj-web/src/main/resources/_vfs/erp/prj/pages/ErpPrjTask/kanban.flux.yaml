@@ -36,14 +36,9 @@ body:
       - type: button
         label: 刷新看板
         i18nEn: Refresh Kanban
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpPrjTask__findBoardData'
-          method: post
-          data:
-            projectId: ${projectId ?? null}
-        target: boardData
+        onClick:
+          action: refreshSource
+          targetId: boardData
 - type: kanban
   data: ${boardData}
   draggable: true

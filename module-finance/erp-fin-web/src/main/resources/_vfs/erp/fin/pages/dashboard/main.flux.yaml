@@ -28,7 +28,7 @@ body:
     label: 刷新
     i18nEn: Refresh
     icon: refresh-cw
-    level: primary
+    variant: primary
     size: sm
     onClick:
       action: refreshSource

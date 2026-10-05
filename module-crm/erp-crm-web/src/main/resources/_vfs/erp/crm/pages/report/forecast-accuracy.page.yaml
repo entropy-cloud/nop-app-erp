@@ -27,29 +27,33 @@ body:
       - type: button
         label: "下载 XLSX"
         i18nEn: "Download XLSX"
-        actionType: download
-        api:
-          url: /p/ErpCrmReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "forecast-accuracy"
-            renderType: "xlsx"
-            data:
-              forecastId: "${filterForm?.forecastId}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpCrmReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "forecast-accuracy"
+                renderType: "xlsx"
+                data:
+                  forecastId: "${filterForm?.forecastId}"
       - type: button
         label: "下载 PDF"
         i18nEn: "Download PDF"
-        actionType: download
-        api:
-          url: /p/ErpCrmReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "forecast-accuracy"
-            renderType: "pdf"
-            data:
-              forecastId: "${filterForm?.forecastId}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpCrmReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "forecast-accuracy"
+                renderType: "pdf"
+                data:
+                  forecastId: "${filterForm?.forecastId}"
 
   - type: data-source
     name: reportHtmlData

@@ -29,29 +29,33 @@ body:
       - type: button
         label: "下载 XLSX"
         i18nEn: "Download XLSX"
-        actionType: download
-        api:
-          url: /p/ErpMdReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "partner-list"
-            renderType: "xlsx"
-            data:
-              partnerType: "${filterForm?.partnerType}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpMdReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "partner-list"
+                renderType: "xlsx"
+                data:
+                  partnerType: "${filterForm?.partnerType}"
       - type: button
         label: "下载 PDF"
         i18nEn: "Download PDF"
-        actionType: download
-        api:
-          url: /p/ErpMdReport__download
-          method: post
-          responseType: blob
-          data:
-            reportName: "partner-list"
-            renderType: "pdf"
-            data:
-              partnerType: "${filterForm?.partnerType}"
+        onClick:
+          action: download
+          args:
+            api:
+              url: /p/ErpMdReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "partner-list"
+                renderType: "pdf"
+                data:
+                  partnerType: "${filterForm?.partnerType}"
 
   - type: data-source
     name: reportHtmlData

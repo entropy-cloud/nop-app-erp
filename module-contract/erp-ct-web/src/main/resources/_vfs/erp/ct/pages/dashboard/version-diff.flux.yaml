@@ -28,16 +28,9 @@ body:
       - type: button
         label: 加载版本列表
         i18nEn: "Load Version List"
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpCtContractVersion__findPage'
-          method: post
-          data:
-            limit: 5000
-            filter_contractId: ${contractId ?? null}
-          selection: items{ id contractId versionNo versionDate status approvedBy approvedAt isCurrent } total
-        target: versionList
+        onClick:
+          action: refreshSource
+          targetId: versionList
         disabled: ${!contractId}
 - type: data-source
   name: versionList
@@ -82,15 +75,9 @@ body:
       - type: button
         label: 对比版本
         i18nEn: "Compare Versions"
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpCtContractVersion__get'
-          method: post
-          data:
-            id: ${versionAId ?? 0}
-          selection: id versionNo versionDate status approvedBy approvedAt isCurrent content remark
-        target: versionAData
+        onClick:
+          action: refreshSource
+          targetId: versionAData
         disabled: ${!versionAId || !versionBId || versionAId == versionBId}
 - type: data-source
   name: versionAData
