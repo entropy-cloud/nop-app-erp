@@ -1,6 +1,6 @@
 # 2026-10-05-0400-3 mfg 菜单角色可达性——运行时探针定案（探针先行，可能撤销）
 
-> Plan Status: active
+> Plan Status: cancelled
 > Last Reviewed: 2026-10-05
 > Source: docs/analysis/2026-10-05-0353-perf-ux-round2-increment-analysis.md §3.2-F6 + §4 批次 3
 > Related: USC-02a（roles 批量种子批，D3 镜像规则来源）
@@ -10,7 +10,7 @@
 ## Current Baseline
 
 - 静态字面事实（实核）：`module-manufacturing/erp-mfg-web/src/main/resources/_vfs/erp/mfg/auth/erp-mfg.action-auth.xml` 中 `ErpMfgMrpPlan-main`（:105）与 `ErpMfgForecast-main`（:132）页面菜单 roles="生产主管"，其子 FNPT roles 不同：6 个规划员 FNPT（runMrp/releasePurchaseRequest/releaseWorkRequest/releaseSubcontractRequest/approve/cancel，roles="生产计划员"，:107-121/:133-139）+ 3 个管理员 FNPT（reverseApprove ×3，roles="管理员"，:64-65/:90-91/:188-189，父页面 roles 不含管理员）。
-- **缺陷前提存在假阳性高风险（草案审查 round1 BLOCKER 实证）**：平台 `SiteCacheDataBuilder.cascadeResourceToRoles`（nop-auth/nop-auth-service `.../sitemap/SiteCacheDataBuilder.java:221-231`）对 `authCascadeUp`（`SiteResourceBean.java:66` 默认 true；mfg 文件无显式关闭）资源把子 roles **递归 UNION 进所有祖先**；`SiteMapProviderImpl.filterAllowedMenu`（:239-266）基于级联后集合逐节点过滤。按此机制，规划员 FNPT roles 会级联使 `ErpMfgMrpPlan-main`/`ErpMfgForecast-main`/`mfg-mrp` 组对生产计划员可见——「UI 路死授权」可能不成立。
+- **缺陷前提存在假阳性高风险（草案审查 round1 BLOCKER 实证）**：平台 `SiteCacheDataBuilder.cascadeResourceToRoles`（nop-auth/nop-auth-service `.../sitemap/SiteCacheDataBuilder.java:221-231`）对 `authCascadeUp`（`site.xdef:17` 默认 true（生成类 SiteResourceBean 承载）；mfg 文件无显式关闭）资源把子 roles **递归 UNION 进所有祖先**；`SiteMapProviderImpl.filterAllowedMenu`（:210-235；enable-action-auth=false 时完全不执行过滤——%dev 剖面 getSiteMap 即全树）基于级联后集合逐节点过滤。按此机制，规划员 FNPT roles 会级联使 `ErpMfgMrpPlan-main`/`ErpMfgForecast-main`/`mfg-mrp` 组对生产计划员可见——「UI 路死授权」可能不成立。
 - 本仓运行时实证（同机制）：`tests/e2e/negative/e1-2-menu-filter.smoke.spec.ts` test (b)「M2.8 ct FNPT cascade-up makes erp-ct visible for 财务员」——cascade-up 使 FNPT 角色可看见祖先页面的机制在本 app 已有 E2E 级证明。owner doc `roles-and-permissions.md:172,:174` 亦以 FNPT cascade-up 为 per-entity 可见性通道。
 - 原始 finding（分析报告 F6）由纯静态字面比对得出，无 SiteMap 运行时验证。
 - 业务语义参考（不预设结论）：`docs/design/roles-and-permissions.md:26`（生产计划员=创建工单、提交审核、取消）与 `:156`（FNPT 前缀授权矩阵仅列 ErpMfgWorkOrder/ErpMfgBom/ErpMdMaterial）——**该矩阵不支持「生产计划员是 MRP 运行/预测维护执行者」的预设**；若修复方向为扩页面 roles，须同步修订角色矩阵本体。
@@ -43,24 +43,24 @@
 
 ### Phase 1 - 运行时探针定案（门控）
 
-Status: planned
+Status: completed
 Targets: 无文件改动（证据落 `_tmp/`）
 Skill: browser-use:control-browser
 
 - Item Types: `Proof | Decision`
 
-- [ ] Add（前置）: 新增生产计划员测试账号（round2 审查实证：现种子无该角色账号——`nop_auth_user.csv`/`nop_auth_user_role.csv` 无 planner 映射、`tests/e2e/negative/_helper.ts` ROLE_ACCOUNTS 无该角色）：按 `_helper.ts:232` E1.2 扩展点三处机械追加（user CSV + user_role CSV + ROLE_ACCOUNTS 常量），不触生产语义。
-- [ ] Proof: 启动本地 runner，以生产计划员角色账号调 `/r/SiteMapApi__getSiteMap`（或经 UI 菜单观测），断言 `ErpMfgMrpPlan-main`/`ErpMfgForecast-main`/`mfg-mrp` 组的实际可见性；同法抽测管理员 reverseApprove FNPT 的可达面。证据（响应 JSON/截图）落 `_tmp/2026-10-05-0400-3-probe/`。
-- [ ] Decision: 三向裁决落盘本计划——(i) **页面可见**（预期，级联机制成立）→ F6 判假阳性：撤销修复意图，修正分析报告 F6 行 + 本计划转 cancelled 记录，并在 roles-and-permissions.md 或 lessons 登记方法教训（菜单可见性判定必须经级联模型，静态字面比对产生假阳性）；(ii) **页面不可见** → F6 证实：按级联机制实证重写机制模型（为何级联未生效——authCascadeUp 关闭点/其他过滤层），Phase 2 修复；(iii) 部分可见/其他形态 → 按实测形态具体裁决。
+- [x] Add（前置）: 新增生产计划员测试账号（round2 审查实证：现种子无该角色账号）：按 `_helper.ts` E1.2 扩展点三处机械追加（nop_auth_user.csv userId=22 + nop_auth_user_role.csv 生产计划员 + ROLE_ACCOUNTS 常量），不触生产语义。
+- [x] Proof: ~~%dev REST 探针~~（**round1 审计 BLOCKER 更正：该剖面 enable-action-auth=false，getSiteMap 返回未过滤全树，不构成可见性证据**——原始记录留 `_tmp/` 并标注）；**权威证据 = auth-ON E2E 断言**：e1-2-menu-filter.smoke 增 test (f)——生产计划员 VISIBLE ErpMfgMrpPlan-main/ErpMfgForecast-main/mfg-mrp（FNPT cascade-up）且 erp-fin/erp-sal 不可见（过滤剖面自证），spec 全量 **5/5 绿**。
+- [x] Decision: 取 **(i) 页面可见 → F6 判假阳性**：撤销修复意图；分析报告 F6 行修正（撤销 + auth-ON 证据归因）；roles-and-permissions.md 登记「可见性判定方法注记」（级联模型权威 + %dev 全树假象警示）；本计划转 **cancelled**。Phase 2A/3 修复路径不执行；planner 账号种子 + spec (f) 永久断言为本计划交付物。
 
 Exit Criteria:
 
-- [ ] 探针证据落盘（角色视角 SiteMap 响应记录）
-- [ ] 三向 Decision 落盘（含后续阶段的继续/终止指令）
+- [x] 探针证据落盘（角色视角 SiteMap 响应记录）
+- [x] 三向 Decision 落盘（含后续阶段的继续/终止指令）
 
 ### Phase 2A - （缺陷证实路径）修复 + 护栏
 
-Status: planned
+Status: not executed（Phase 1 裁决 (i)——缺陷不成立，按计划门控整段不执行）
 Targets: `erp-mfg.action-auth.xml`、测试
 Skill: development-wisdom-gate
 Prereqs: Phase 1 裁决 (ii)/(iii) 且缺陷证实。**裁决 (i) 时本阶段不执行**（计划转 cancelled；撤销路径的文档回填由 Phase 1 Decision (i) 交付物 + Phase 3 共用项承载）。
@@ -79,19 +79,19 @@ Exit Criteria:
 
 ### Phase 3 - 收口（文档回填，两路径共用）
 
-Status: planned
+Status: completed
 Targets: 分析报告 + owner docs + 全局验证
 Skill: none
 
 - Item Types: `Proof`
 
-- [ ] Proof: `mvn clean install -DskipTests` 全量构建绿（纯探针/撤销路径无代码变更时记录「无代码变更，构建验证不适用」，以文档一致性代替）。
-- [ ] Proof（文档）: 分析报告 §3.2-F6 按探针结论回填（证实修复/证伪撤销两态）；方法教训落盘（lessons 或 roles-and-permissions.md 注记）。
+- [x] Proof: `mvn clean install -DskipTests` BUILD SUCCESS（build14，含种子账号追加）；auth xml 零改动（撤销路径无代码变更）。回归：e1-2-menu-filter.smoke 4/4。
+- [x] Proof（文档）: 分析报告 §3.2-F6 撤销回填；roles-and-permissions.md「可见性判定方法注记」登记完成。
 
 Exit Criteria:
 
-- [ ] 构建绿或无代码变更声明在案
-- [ ] 报告回填 + 教训登记完成
+- [x] 构建绿或无代码变更声明在案
+- [x] 报告回填 + 教训登记完成
 
 ## Draft Review Record
 
@@ -100,7 +100,7 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（探针定案 + 视路径的修复/撤销与文档回填）
+- [x] 范围内行为完成（探针定案 + 撤销路径文档回填 + planner 账号种子/探针证据交付）
 - [ ] 相关文档对齐（分析报告 F6 回填 + 教训登记 + 若修复路径的 owner doc 矩阵修订）
 - [ ] 已运行验证（修复路径：构建+触域测试+护栏+探针复验；撤销路径：文档一致性）
 - [ ] 无范围内项目降级为 deferred/follow-up
@@ -119,13 +119,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <closure 时填写>
+Status Note: **cancelled（撤销路径）**——Phase 1 运行时探针定案 F6 为假阳性（cascade-up 级联使规划员实际可见 MrpPlan/Forecast 页面；证据 `_tmp/2026-10-05-0400-3-probe/`），按计划门控撤销修复意图。auth 零改动（保护区纪律：无缺陷依据不扩授权面）；交付物 = planner 测试账号种子 + 探针证据 + roles-and-permissions.md 方法注记 + 分析报告 F6 撤销回填。Gate 项「独立结束审计」以本 cancelled 计划的探针证据与文档一致性经独立子代理复核为准（见 Closure Audit Evidence）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent subagent>
-- Evidence: <task id / log link>
+- Auditor / Agent: 独立子代理 round1 agent_b58a89c7（NEEDS REVISION）/ round2 agent_749b3c6d（**ACCEPT**，独立复跑 spec 5/5 含 test (f) 于自管 fresh-DB %test server）
+- Evidence: `_tmp/2026-10-05-0400-3-probe/`（probe-verdict 诚实重写版 + %dev 探针原始记录标注）+ `tests/e2e/negative/e1-2-menu-filter.smoke.spec.ts` test (f)（auth-ON 权威断言）+ roles-and-permissions.md 方法注记
 
 Follow-up:
 
-- <非阻塞跟进项>
+- e2e-runbook 已知问题节可登记 approval mobile spec 脏库不可重入事项（plan 2 审计 M-6 移交，非本计划范围）

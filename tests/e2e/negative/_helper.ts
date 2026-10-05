@@ -253,6 +253,7 @@ export const ROLE_ACCOUNTS: Record<string, { username: string; password: string 
   项目经理: { username: 'role-prj', password: COMMON_PASS },
   质量主管: { username: 'role-qa', password: COMMON_PASS },
   维护主管: { username: 'role-mnt-lead', password: COMMON_PASS },
+  生产计划员: { username: 'role-mfg-planner', password: COMMON_PASS },
   维护人员: { username: 'role-mnt-tech', password: COMMON_PASS },
   合同专员: { username: 'role-ct-clerk', password: COMMON_PASS },
   合同审批人: { username: 'role-ct-approver', password: COMMON_PASS },

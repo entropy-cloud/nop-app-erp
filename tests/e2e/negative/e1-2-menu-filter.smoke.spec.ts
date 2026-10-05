@@ -5,7 +5,7 @@ import type { Page } from '@playwright/test';
  * E1.2 菜单过滤负向验证（plan 2026-08-10-1404-1 Phase 2，permissions-enforcement mission）。
  *
  * 验证 action-auth ON（%test profile）下 `SiteMapProviderImpl.filterAllowedMenu` deny-by-default
- * 按角色过滤菜单的 4 类断言：
+ * 按角色过滤菜单的 5 类断言：
  *   (a) B 类 5 域（CRM/CS/APS/Logistics/DRP）admin-only → role-restricted 不可见
  *   (b) 角色域按角色过滤 → 采购员仅见 erp-pur + 授权只读域，不见 fin/sal/ct 等
  *   (c) notify inbox roles="user" → 所有登录用户可见
@@ -144,6 +144,27 @@ test.describe('E1.2 menu filter: md-domain positive visibility (roles seed comma
     expect(ids.has('erp-ct'), 'erp-ct should stay hidden for 采购员 (not in ct roles seed)').toBe(false);
     expect(ids.has('erp-b2b'), 'erp-b2b should stay hidden for 采购员 (not in b2b roles seed)').toBe(false);
     expect(ids.has('erp-fin'), 'erp-fin should stay hidden for 采购员').toBe(false);
+  });
+
+  // plan 2026-10-05-0400-3 Phase 1 权威探针（auth-ON 运行时）：生产计划员经子 FNPT roles
+  // cascade-up 级联可见 MRP/预测页面——证伪「页面 roles=生产主管 ⇒ 规划员 UI 路死授权」静态假阳性。
+  // 同时负向断言规划员对无关域不可见（单角色账号恰一种子，排除 enable-action-auth=false 全树泄漏假象——
+  // %dev 剖面 getSiteMap 不过滤，本 spec 的 %test 三开关 ON 剖面才是可见性权威）。
+  test('(f) 生产计划员 sees ErpMfgMrpPlan-main/ErpMfgForecast-main/mfg-mrp via FNPT cascade-up, denied unrelated domains', async ({ page }) => {
+    await loginAsRole(page, '生产计划员');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1500);
+
+    const ids = await getSiteMapIds(page);
+
+    // 正向：子 FNPT（runMrp/approve/cancel 等 roles=生产计划员）级联使页面/组可见
+    expect(ids.has('ErpMfgMrpPlan-main'), 'ErpMfgMrpPlan-main should be VISIBLE for 生产计划员 (FNPT cascade-up)').toBe(true);
+    expect(ids.has('ErpMfgForecast-main'), 'ErpMfgForecast-main should be VISIBLE for 生产计划员 (FNPT cascade-up)').toBe(true);
+    expect(ids.has('mfg-mrp'), 'mfg-mrp group should be VISIBLE for 生产计划员 (cascade-up)').toBe(true);
+
+    // 负向：单角色规划员对无关域菜单不可见（证明本断言运行在 auth-ON 过滤剖面）
+    expect(ids.has('erp-fin'), 'erp-fin should stay hidden for 生产计划员').toBe(false);
+    expect(ids.has('erp-sal'), 'erp-sal should stay hidden for 生产计划员').toBe(false);
   });
 });
 
