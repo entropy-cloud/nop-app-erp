@@ -4,7 +4,7 @@
 -- platform _create.sql.xgen template (ddl.xlib CreateTables) does not emit CREATE INDEX.
 -- Runtime: ddl.xlib AddIndex also applies these at app startup from the ORM model.
 -- Run AFTER _create_erp-master-data.sql during manual production deployment.
--- Source of truth: model <indexes> definitions (32 indexes).
+-- Source of truth: model <indexes> definitions (33 indexes).
 -- Regenerate: node scripts/add-orm-indexes.js
 CREATE INDEX IDX_MD_MATERIAL_CATEGORY_ID ON erp_md_material (category_id);
 CREATE INDEX IDX_MD_MATERIAL_UOM_ID ON erp_md_material (uom_id);
@@ -14,6 +14,7 @@ CREATE INDEX IDX_MD_MATERIAL_CATEGORY_PARENT_ID ON erp_md_material_category (par
 CREATE INDEX IDX_MD_MATERIAL_SKU_MATERIAL_ID ON erp_md_material_sku (material_id);
 CREATE INDEX IDX_MD_MATERIAL_SKU_UOM_ID ON erp_md_material_sku (uom_id);
 CREATE INDEX IDX_MD_MATERIAL_SKU_TAX_RATE_ID ON erp_md_material_sku (tax_rate_id);
+CREATE INDEX IDX_MD_MATERIAL_SKU_BARCODE ON erp_md_material_sku (barcode);
 CREATE INDEX IDX_MD_PARTNER_ADDRESS_PARTNER_ID ON erp_md_partner_address (partner_id);
 CREATE INDEX IDX_MD_PARTNER_CONTACT_PARTNER_ID ON erp_md_partner_contact (partner_id);
 CREATE INDEX IDX_MD_WAREHOUSE_MANAGER_ID ON erp_md_warehouse (manager_id);

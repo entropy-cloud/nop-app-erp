@@ -418,6 +418,11 @@
                 <index name="IDX_MD_MATERIAL_SKU_TAX_RATE_ID" unique="false">
                     <column name="taxRateId"/>
                 </index>
+                <!-- plan 2026-10-05-0400-5（双批准 GRANT）：PDA 扫码热路径第一跳 findFirstByExample(barcode)
+                     点查索引；唯一键归 md 域 Deferred G1（应用层门控 sku-barcode-unique 默认 TRUE 承载唯一性） -->
+                <index name="IDX_MD_MATERIAL_SKU_BARCODE" unique="false">
+                    <column name="barcode"/>
+                </index>
             </indexes>
         </entity>
 

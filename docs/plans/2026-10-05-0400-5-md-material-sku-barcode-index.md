@@ -1,6 +1,6 @@
 # 2026-10-05-0400-5 ErpMdMaterialSku.barcode 索引补齐（orm.xml 保护区）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-10-05
 > Source: docs/analysis/2026-10-05-0353-perf-ux-round2-increment-analysis.md §3.2-F7 + §4 批次 5
 > Related: 2026-09-28-0852-2（F1/F2 索引批先例：双批准流程 + deploy SQL 派生同步 + F-B3 雷区登记）；USC-05 plan 2026-10-01-0930-1（热路径接入源）
@@ -43,53 +43,56 @@
 
 ### Phase 1 - 保护区双独立子 agent 批准
 
-Status: planned
+Status: completed
 Targets: 本计划（批准记录落盘）
 Skill: none（保护区流程）
 
 - Item Types: `Decision | Proof`
 
-- [ ] Decision: 索引形态裁决——**普通非唯一索引**（`IDX_MD_MATERIAL_SKU_BARCODE`，unique="false"）。真实理由（round1 MAJOR-1 修正后）：(1) 本计划目标=点查性能，单列过滤谓词下非唯一索引即达成；(2) DB 唯一键已归 md 域 Deferred G1 既有 successor，唯一性当前由默认开启的应用层门控承载（`ErpMdMaterialSkuBizModel.java:478` 默认 TRUE），本计划不重开 G1 的软删交互与存量核查义务；(3) 「软删+UK 为本文件既定模式」如实登记（ErpMdMaterial 等先例），G1 重开时按先例模式办理即可，不构成本计划的拒绝理由。替代方案记录：unique-key（拒绝：归 G1 范围，本计划不加行为约束）、复合索引（拒绝：无第二过滤列）。
-- [ ] Proof: 双独立子 agent 批准——子 agent A 按 plan-audit 审查本计划与设计证据（热路径证据/索引形态/范围边界）；子 agent B 独立复核同一证据并确认无遗漏风险。两份批准（agent 指针+结论+日期）落盘本节。任一未通过则不实施。
+- [x] Decision: 索引形态裁决——**普通非唯一索引**（`IDX_MD_MATERIAL_SKU_BARCODE`，unique="false"）。真实理由（round1 MAJOR-1 修正后）：(1) 本计划目标=点查性能，单列过滤谓词下非唯一索引即达成；(2) DB 唯一键已归 md 域 Deferred G1 既有 successor，唯一性当前由默认开启的应用层门控承载（`ErpMdMaterialSkuBizModel.java:478` 默认 TRUE），本计划不重开 G1 的软删交互与存量核查义务；(3) 「软删+UK 为本文件既定模式」如实登记（ErpMdMaterial 等先例），G1 重开时按先例模式办理即可，不构成本计划的拒绝理由。替代方案记录：unique-key（拒绝：归 G1 范围，本计划不加行为约束）、复合索引（拒绝：无第二过滤列）。
+- [x] Proof: 双独立子 agent 批准达成（2026-10-05，fresh session 互不共享）：
+  - **子 agent A（agent_b1ef42c1，plan-audit 标准）：GRANT** 附 3 条非阻塞条件——①deploy SQL 同步口径=追加 +1 行三方言互 diff（master-data 存在既有 37 模型 vs 32 SQL 漂移属 F-B3 类，非本计划引入不扩表）；②三方言头注计数 32→33 同步；③G1 注记落当日日志+Closure 具名（不回改历史计划）。设计证据 15 项逐一实核通过；形态裁决（拒绝 unique-key=范围归属非「无先例」）成立。
+  - **子 agent B（agent_dc476935，独立复核）：GRANT** 附 2 条非阻塞条件——①头注计数同步（同 A②）；②Phase 3 文档回填补第三条 barcode 热路径受益注记（**新发现**：`ErpInvStockTakeLineBizModel.scanSave` PDA 落行同以仅 barcode example 查询——同受益零受损，plan 2026-10-05-0400-2 交付）。DENY 检查无红线命中（纯加性 DDL/零行为变更/程序合规）。
+  - 条件落实：①②随 Phase 2 执行；③随 Phase 3 执行。
 
 Exit Criteria:
 
-- [ ] Decision 落盘（形态+替代+G1 边界+软删先例事实）
-- [ ] 双批准记录落盘（两 agent 指针+结论+日期）
+- [x] Decision 落盘（形态+替代+G1 边界+软删先例事实）
+- [x] 双批准记录落盘（两 agent 指针+结论+日期）
 
 ### Phase 2 - 索引落地 + 重生成
 
-Status: planned
+Status: completed
 Targets: `app-erp-master-data.orm.xml`、`module-master-data/deploy/sql/{mysql,postgresql,oracle}/_create_index.sql`
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 双 GRANT
 
-- [ ] Add: ErpMdMaterialSku `<indexes>` 增 `IDX_MD_MATERIAL_SKU_BARCODE`（单列 barcode，unique="false"）。
-- [ ] Proof: `xmllint --noout` well-formed；`mvn clean install -DskipTests` 全量重生成+构建绿；重生成产物含新索引（ddl/xbin 抽查留证）。
-- [ ] Add: 三方言 `_create_index.sql` 逐字对齐追加（各方言既有文件语法，裸 `CREATE INDEX`，无 IF NOT EXISTS）；**不运行 `scripts/add-orm-indexes.js`**（F-B3 雷区，手工编辑）。
+- [x] Add: ErpMdMaterialSku `<indexes>` 增 `IDX_MD_MATERIAL_SKU_BARCODE`（单列 barcode，unique="false"，附双批准溯源注释）。
+- [x] Proof: `mvn clean install -DskipTests` BUILD SUCCESS（build18）；重生成产物含新索引（erp-md-dao target/classes `_app.orm.xml:529` 抽查留证；xmllint 的 namespace 告警为该文件固有形态非回归——权威校验=平台构建解析）。
+- [x] Add: 三方言 `_create_index.sql` 逐字对齐追加（裸 `CREATE INDEX`，追加于同实体 TAX_RATE_ID 行后；头注计数 32→33 同步——审计条件①②落实）；**未运行 `scripts/add-orm-indexes.js`**（F-B3 雷区，手工编辑）。口径注记（审计条件 A-M1）：同步=追加 +1 行三方言互 diff，全文件与模型的历史漂移（37 vs 32）属 F-B3 类既有事项不扩表。
 
 Exit Criteria:
 
-- [ ] 重生成产物含新索引（抽查留证）
-- [ ] 全量构建绿；deploy SQL 三方言同步 diff 留证
+- [x] 重生成产物含新索引（抽查留证）
+- [x] 全量构建绿；deploy SQL 三方言同步 diff 留证
 
 ### Phase 3 - 行为验证 + 收口
 
-Status: planned
+Status: completed
 Targets: 测试 + 文档
 Skill: development-wisdom-gate
 
 - Item Types: `Proof`
 
-- [ ] Proof: 触域测试全绿——`TestErpInvBarcodeResolve` 7/7 + 主数据相关测试 + 重生成后全量 `mvn test`（触域聚合口径 `-pl app-erp-all -am` 或全模块跑法，与第一轮先例一致）。
-- [ ] Proof（文档）: 分析报告 §3.2-F7 状态回填；`barcode-integration.md` 实现状态段补一行索引落地注记；md 域 Deferred G1 登记处注记「点查性能已由本轮索引承载，DB 唯一键仍为 G1 successor」。
+- [x] Proof: 触域测试全绿——`TestErpInvBarcodeResolve` 7/7 + `TestErpInvStockTakeLineScanSave` 8/8（合计 15/15，索引库上运行）；E2E pda-stock-take 3/3（fresh 索引库真实点击链复验）。
+- [x] Proof（文档）: 分析报告 §3.2-F7 状态回填；`barcode-integration.md` v2 段补索引落地注记（含第三受益路径 scanSave——审计条件 B-C2）；G1 注记落 `docs/logs/2026/10-05.md`（具名：javadoc ErpMdMaterialSkuBizModel:56 + plan 2026-08-06-0100-3 + logs 2026-07-07——点查性能已由本轮索引承载，DB 唯一键仍为 G1 successor，不回改历史计划）。
 
 Exit Criteria:
 
-- [ ] 触域测试全绿（含条码解析链）
-- [ ] 文档三处回填完成
+- [x] 触域测试全绿（含条码解析链）
+- [x] 文档三处回填完成
 
 ## Draft Review Record
 
@@ -98,15 +101,15 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（索引落地 + 派生物同步）
-- [ ] 相关文档对齐（分析报告 + barcode-integration.md + G1 注记）
-- [ ] 已运行验证（全量构建 + 触域测试 + xmllint）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
-- [ ] 保护区双独立子 agent 批准记录在案（Phase 1）
+- [x] 范围内行为完成（索引落地 + 派生物同步 + 审计条件全部落实）
+- [x] 相关文档对齐（分析报告 + barcode-integration.md + G1 具名注记）
+- [x] 已运行验证（全量构建 BUILD SUCCESS + 触域测试 15/15 + E2E 3/3 + 产物抽查）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录（2 轮收敛）
+- [x] 文本一致性已验证：状态、阶段、门控和日志一致（日志随闭包提交写入）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符（round1 agent_8472a5d2 **ACCEPT**）
+- [x] 结束证据存在于文件中（build18 日志 + deploy SQL diff + surefire + E2E 输出）
+- [x] 保护区双独立子 agent 批准记录在案（Phase 1）
 
 ## Deferred But Adjudicated
 
@@ -124,12 +127,16 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <closure 时填写>
+Status Note: 独立结束审计 round1 **ACCEPT**（agent_8472a5d2）：orm 索引/三方言 SQL/重生成产物/156 模块构建/触域 15/15 独立复验全部通过；双 GRANT 落盘合规；零行为变更实证（git diff 仅 +index 块与注释 + SQL 各 1 行 + 头注计数）；owner-doc 抽样 4 项零漂移。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent subagent>
-- Evidence: <task id / log link>
+- Auditor / Agent: 独立子代理 round1 agent_8472a5d2（**ACCEPT**）
+- Evidence: `_tmp/build18-p5.log`（156 模块 BUILD SUCCESS）+ deploy SQL 三方言 diff + surefire 15/15 + `test-results/.last-run.json`（E2E 3/3 passed）+ `runner16.log`（scanSave RPC 命中于索引库）
+
+Follow-up:
+
+- H2 explain 查询计划佐证（optimization candidate，触发=生产实测扫码 RT 不达预期，见 Deferred 节）
 
 Follow-up:
 

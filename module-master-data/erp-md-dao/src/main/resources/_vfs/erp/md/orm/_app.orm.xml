@@ -526,6 +526,9 @@
                 <index name="IDX_MD_MATERIAL_SKU_TAX_RATE_ID" unique="false">
                     <column name="taxRateId"/>
                 </index>
+                <index name="IDX_MD_MATERIAL_SKU_BARCODE" unique="false">
+                    <column name="barcode"/>
+                </index>
             </indexes>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
