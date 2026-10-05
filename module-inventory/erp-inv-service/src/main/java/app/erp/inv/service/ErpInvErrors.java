@@ -228,4 +228,30 @@ public interface ErpInvErrors {
     ErrorCode ERR_BARCODE_LOCATION_REQUIRED = ErrorCode.define("erp.err.inv.barcode.location-required",
             "PDA 强制库位扫描已启用（pda-require-location-scan=true），盘点解析必须提供库位",
             ARG_LOCATION_CODE);
+
+    // ---- PDA 盘点扫码落行（plan 2026-10-05-0400-2，UC-INV-05/US-IV-05）----
+    String ARG_SKU_ID = "skuId";
+    String ARG_ACTUAL_QTY = "actualQuantity";
+    String ARG_EXPECTED_WAREHOUSE_ID = "expectedWarehouseId";
+    String ARG_ACTUAL_WAREHOUSE_ID = "actualWarehouseId";
+
+    ErrorCode ERR_INV_TAKE_NOT_IN_COUNTING = ErrorCode.define("erp.err.inv.take.not-in-counting",
+            "盘点单[{takeId}]不在盘点中作业窗口（当前状态[{currentStatus}]，仅 CONFIRMED[盘点中]允许扫码落行）",
+            ARG_TAKE_ID, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_INV_TAKE_QTY_INVALID = ErrorCode.define("erp.err.inv.take.qty-invalid",
+            "实盘数量[{actualQuantity}]非法（须 ≥ 0）",
+            ARG_ACTUAL_QTY);
+
+    ErrorCode ERR_BARCODE_SKU_UNKNOWN = ErrorCode.define("erp.err.inv.barcode.sku-unknown",
+            "SKU 条码[{barcode}]未登记",
+            ARG_BARCODE);
+
+    ErrorCode ERR_BARCODE_LOCATION_UNKNOWN = ErrorCode.define("erp.err.inv.barcode.location-unknown",
+            "库位编码[{locationCode}]未登记",
+            ARG_LOCATION_CODE);
+
+    ErrorCode ERR_BARCODE_LOCATION_WAREHOUSE_MISMATCH = ErrorCode.define("erp.err.inv.barcode.location-warehouse-mismatch",
+            "库位[{locationCode}]不属于盘点单仓库（期望仓库[{expectedWarehouseId}]，实际仓库[{actualWarehouseId}]）",
+            ARG_LOCATION_CODE, ARG_EXPECTED_WAREHOUSE_ID, ARG_ACTUAL_WAREHOUSE_ID);
 }

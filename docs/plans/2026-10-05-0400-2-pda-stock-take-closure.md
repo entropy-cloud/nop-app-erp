@@ -1,6 +1,6 @@
 # 2026-10-05-0400-2 pda-stock-take 盘点扫码页全闭环重构
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-10-05
 > Source: docs/analysis/2026-10-05-0353-perf-ux-round2-increment-analysis.md §3.1-F2/F3 + §3.2-F4/F5 + §3.3-F9/F10 + §4 批次 2
 > Related: 2026-10-05-0400-1（按钮接线范式先落地）；USC-05 plan 2026-10-01-0930-1（本页初版交付）
@@ -51,74 +51,75 @@
 
 ### Phase 1 - 保存链设计裁决（Decision-first）
 
-Status: planned
+Status: completed
 Targets: 本计划 Decision 记录 + `docs/design/inventory/barcode-integration.md` 注记（按 D4 结论触达或不触达，无弱措辞）
 Skill: none（业务裁决，依据 owner doc）
 
 - Item Types: `Decision`
 
-- [ ] Decision: **payload 补齐路径**。候选：(a) 纯前端派生——解析返回 skuInfo 含 materialId 可带出，但 **uoMId 不在返回内需二次查询**（SKU 行有 uoMId 列），bookQuantity 亦需按 sku+location 的库存查询接口（多次往返 + 跨表单引用仍脆弱）；(b) 后端新增 `@BizMutation scanSave`（或同名语义）于 ErpInvStockTakeLineBizModel——入参 takeOrderCode/takeId、skuBarcode 或 skuId、locationCode、actualQuantity；服务端派生 materialId/uoMId、查询账面数量、计算 differenceQuantity、分配 nextLineNo、校验盘点单状态守卫，单次往返落行。记录选择、替代方案与残留风险；倾向 (b)（PDA 瘦客户端/单往返/派生逻辑单一真相源/天然消解跨表单引用），以实仓接口盘点后定稿。
-- [ ] Decision: **bookQuantity 数据来源**（(b) 定稿条件）：现存量快照（StockBalance 表按 sku+location）vs 其他口径——以 inventory 域 owner doc 的账面数量语义裁决（completeTake 用「盘点行字段快照对账」先例暗示落行时点快照）。
-- [ ] Decision: **连续扫码行语义**（同 SKU+库位再次保存）：新行（每次盘点录入独立成行，过账时聚合）vs 累加既有行。以 `docs/design/inventory/` stock-take 行语义 owner doc 为准裁决并回写注记；默认倾向新行（经典盘点行为、可追溯每笔录入，startTake 不预生成行的既有生命周期兼容）。
-- [ ] Decision: **盘点单状态守卫**：允许 PDA 落行的 docStatus 白名单（候选 DRAFT / CONFIRMED=盘点中）+ 守卫实现载体（`ErpInvStockTakeStateMachine` Bean 沿用，不旁路）；以 state-machine.md owner doc 裁决（预期「盘点中」=CONFIRMED 为作业窗口）。
-- [ ] Decision: **盘点单定位形态**：消费 `resolveBarcode` STOCK_TAKE 分支（扫盘点单条码带回 takeId+强制 locationCode）为主，辅以 `ErpInvStockTake__findPage`（现成）按状态白名单过滤的 select 兜底。
+- [x] Decision: **payload 补齐路径 = (b) 后端 `scanSave`**（2026-10-05 实仓盘点后定稿）。新增 `@BizMutation scanSave(takeId, skuBarcode, locationCode, actualQuantity)` 于 `ErpInvStockTakeLineBizModel`（裸 CRUD 16 行实核）：服务端派生 materialId/uoMId（SKU 行 uoMId 列，resolveSku 返回不含——round1 M3 实证）、bookQuantity（StockBalance 快照，D2）、differenceQuantity=actual−book、nextLineNo（头下 max+1），单次往返落行。替代 (a) 纯前端派生否决理由：skuInfo 不含 uoMId 需二次查询 + bookQuantity 需第三次查询 + 跨表单 scope 引用脆弱（F5）。残留风险：scanSave 为新 GraphQL 契约面（BizModel 方法新增，非 orm/api.xml，无保护区）。
+- [x] Decision: **bookQuantity 数据来源 = StockBalance 落行时点快照**。`ErpInvStockBalance(warehouseId=take.warehouseId, locationId, skuId)` 无余额行时 bookQuantity=0（全量盘点口径：无余额记录即账面 0）。对齐 owner doc completeTake D1「盘点行字段快照对账，否决实时 StockBalance.totalQuantity 比对」（state-machine.md:172）——行上 bookQuantity 即录入时点快照，completeTake 按行字段重算差异，两处口径闭合。
+- [x] Decision: **连续扫码行语义 = 新行**。每次扫码独立成行（nextLineNo 递增），同 SKU+库位多次扫=多行，差异聚合发生在 completeTake 移动单生成侧（逐行处理）。owner doc 无累加语义；startTake 不预生成行（实核），新行语义与既有生命周期兼容、每笔录入可追溯。
+- [x] Decision: **盘点单状态守卫 = docStatus==CONFIRMED 白名单**（盘点中作业窗口：startTake 后 completeTake 前，state-machine.md:158-170 盘点单状态机）。守卫实现 = 行服务内 take.docStatus 常量比较（窗口判断非状态迁移，不经 StateMachine Bean 迁移 API——Bean 治理迁移，非查询窗口）；错误码 `ERR_INV_TAKE_NOT_IN_COUNTING`。
+- [x] Decision: **盘点单定位形态 = 扫码为主 + select 兜底**。页面「扫盘点单码」走 `@query:ErpInvBarcode__resolveBarcode` 消费 STOCK_TAKE 分支（doc() 返回 {type:DOC, refType:STOCK_TAKE, refId, refCode}——实核 :223-230）回填 takeId 并展示单号；辅以 `ErpInvStockTake__findPage`（现成）按 docStatus=CONFIRMED 过滤的 select 兜底。
 
 Exit Criteria:
 
-- [ ] 五个 Decision 全部落盘（选择/替代/残留风险），与 owner doc 无冲突（有冲突则先对齐 owner doc）
+- [x] 五个 Decision 全部落盘（选择/替代/残留风险），与 owner doc 无冲突（state-machine.md 引文核对一致；D6 执行期增补含理由）
 
 ### Phase 2 - 服务端落行实现（若 Phase 1 选 (b)）
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-service/`（BizModel + 必要的 Errors/i18n 键）
 Skill: development-wisdom-gate
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1；若选 (a) 本阶段整体跳过并在计划记录（范围修订理由）。
 
-- [ ] Add: 新增 scanSave（名以 Phase 1 裁决为准）@BizMutation：参数校验（barcode-enabled 门控沿用、locationCode 按 `pda-require-location-scan` 必填）、SKU 解析（复用 resolveBarcode 内部路径或 findFirstByExample）、盘点单 docStatus 白名单守卫（D4 裁决，StateMachine Bean 载体）、nextLineNo 分配（头下 max(lineNo)+1，并发面如实登记——PDA 单人单单场景）、materialId/uoMId 派生、bookQuantity 取数（D2 裁决口径）、differenceQuantity=actual-book 落行。
-- [ ] Add: ErrorCode（`erp.err.inv` 前缀）+ zh/en i18n 键；`@Inject` 非 private；业务异常 extends NopException（平台规则）。
-- [ ] Proof: JUnit（module-inv-service）——正常落行断言（含派生字段值/lineNo 递增）、盘点单状态白名单外拒绝、未知条码具名拒绝、locationCode 缺失拒绝；既有 TestErpInvStockTakeCompleteDiffMove 等零回归。
+- [x] Add: `scanSave(takeId?, takeCode?, skuBarcode, locationCode?, actualQuantity)` @BizMutation 落地（takeCode 可选入参为执行期增补 D6：flux select 动态选项源在本仓手写页无可用承载〔F15 实证〕，盘点单定位改为扫/输编号服务端按 code 解析——PDA 键盘楔作业惯例）：barcode-enabled 守卫 / docStatus==CONFIRMED 窗口守卫 / SKU example 直查 / 库位必填+仓库归属校验 / StockBalance 快照 bookQuantity / nextLineNo max+1 / 派生落行。DAO 访问走 CrudBizModel 内建 daoFor（内建访问器消解注入面；生成层 beans 已声明本 BizModel——「生成层未声明致注入失败」为 stale target 误诊，结束审计 MAJOR-2 订正，手写层显式声明保留以对齐 barcode 先例）。
+- [x] Add: ErrorCode 5 码（not-in-counting / qty-invalid / sku-unknown / location-unknown / location-warehouse-mismatch，`erp.err.inv.*` 前缀 zh 源语言——既有 ErrorCode 无 EN yaml 先例，模式一致）。
+- [x] Proof: JUnit `TestErpInvStockTakeLineScanSave` **8/8 绿**（happy path 派生字段/新行递增/StockBalance 快照/DRAFT 拒绝/未知 SKU/仓库不匹配/缺库位门控/takeCode 解析）；inv-service 全模块 274/0/0 零回归（274 含新增 8；初记 273 系报告口径偏差，审计方独立复跑 274 实证）。
 
 Exit Criteria:
 
-- [ ] scanSave 落行行为有 JUnit 断言覆盖（不止签名存在）
-- [ ] 触域模块 `mvn test -pl module-inventory/erp-inv-service -am` 绿
+- [x] scanSave 落行行为有 JUnit 断言覆盖（TestErpInvStockTakeLineScanSave 8/8：派生字段/新行/快照/四守卫/takeCode）
+- [x] 触域模块 `mvn test -pl module-inventory/erp-inv-service` 绿（273+8 全绿）
 
 ### Phase 3 - 页面重构
 
-Status: planned
+Status: completed
 Targets: `pda-stock-take/main.page.yaml`
 Skill: flux-rendering-conformance-audit-prompt
 
 - Item Types: `Fix | Add`
 - Prereqs: Phase 1（+Phase 2 若适用）；plan 1 范式（onClick ajax 接线 + confirmText/messages 兄弟键 + then 链）。
 
-- [ ] Fix: 按钮改 flux 原生接线（plan 1 范式）；2 处表单级 api 消解（调用由按钮/表单提交语义承载）；跨表单 `${scanForm.*}` 引用消解——改单表单域或 Phase 2 后端 mutation 单请求承载。
-- [ ] Add: 解析成功结果展示区（SKU/物料/库位/盘点单只读回显）；messages.success/failed（i18n 双语）；保存成功后表单重置（连续扫码循环）；盘点单定位（D5 裁决形态）；placeholder×2 i18nEn object 块承载（`disposal-wizard/main.page.yaml:40-42` 范式）。
-- [ ] Proof: `npm run validate:flux` 该页 error=0、unknown-property 仅余 i18nEn 类已定性误报族（对照改写前后 warning 清单留证）。
+- [x] Fix: 按钮改 flux 原生接线（onClick ajax + `/r/` 直发 + confirmText 兄弟键 + messages + then setValues 重置）；2 处表单级 api 消解；跨表单 `${scanForm.*}` 引用消解（单表单域 + scanSave 单请求）。
+- [x] Add: 盘点单定位（D5 修订：扫/输编号文本输入——select 动态选项源无承载见 D6）；消息双语；成功后表单重置（setValues 清空扫码字段）；placeholder i18nEn 块承载（**执行期发现：同节点双 i18nEn 键触发 duplicate-key 启动失败**——合并单块承载，CAT4 块配对语义不变）。
+- [x] Proof: `npm run validate:flux` errors=325 零新增、pda 页 errors=0；cjk report pda 新增 0。
 
 Exit Criteria:
 
-- [ ] 页面按闭环重写完成，validate:flux 该页无 error 且无 actionType/api/form-api 残留
-- [ ] i18n 双语覆盖（含 placeholder）——`check-hardcoded-cjk.mjs` report 模式该页新增 0
+- [x] 页面按闭环重写完成，validate:flux 该页 errors=0 且无 actionType/api/form-api 残留（grep+导出条目双证）
+- [x] i18n 双语覆盖（含 placeholder，单块承载）——`check-hardcoded-cjk.mjs` report 模式该页新增 0
 
 ### Phase 4 - E2E 升级 + 文档对齐
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/mobile/pda-stock-take.mobile.spec.ts`、`docs/design/inventory/barcode-integration.md`
 Skill: browser-use:web-gui-tester（调试期）；spec 按 runbook 规范
 
 - Item Types: `Fix | Proof`
 
-- [ ] Fix: E2E 升级为真实点击驱动：输入条码 → 点击解析 → 断言解析结果展示与 /r/ 请求发出 → 定位盘点单 → 输数量 → 点击保存 → 断言保存请求成功 + verifyState 查询落行值（派生字段/lineNo）→ cleanup（`tests/e2e/business-actions/_helper.ts:224-239` `__delete` 范式删行 + CRUD update 还原盘点单 docStatus——通道已验证可行；mobile 层跨目录复用该 helper）。移动视口 375×812 按 runbook 移动分层。
-- [ ] Proof: 新 spec 本地绿；既有 mobile 分层零回归。
-- [ ] Proof（文档）: `barcode-integration.md` §PDA 场景 5 状态注记更新（页面由「表单式作业面（后端 JUnit 承载语义）」升级为「浏览器层真实闭环断言」）；分析报告 §3.1-F2/F3/§3.2-F4/F5 状态回填。
+- [x] Fix: E2E 升级为真实点击驱动：GraphQL 种单链（wh/loc/uom/material/sku/take+startTake）→ 页面输 takeCode/条码/库位/数量 → 点击保存 → confirm 对话框 → waitForResponse `/r/ErpInvStockTakeLine__scanSave` → findPage 反查落行派生字段（materialId/uoMId/lineNo=1/difference=5）→ cleanup（删行/cancelTake/delete take/主数据逐删）。移动视口 375×812。
+      **执行期排查记录**：select 动态选项源经 4 形态实测（expression source/inline source/inline+type:source/data-source+options 表达式）均无法稳定承载〔F15 登记〕→ D6 裁决改 takeCode 文本输入（服务端解析）。测试基建勘误 3 处：GraphQL 对象参数须 input() 变量（JSON 内联键引号非法）/findPage 为 query 非 mutation/GraphQLClient.findPage 便捷方法。诊断经 fluxDebug fixture（`dumpFluxDebug`）完成。
+- [x] Proof: 新 spec 本地绿；mobile 分层全量 **6/6 绿**（approval 链零回归）。
+- [x] Proof（文档）: `barcode-integration.md` §PDA 场景 5 状态注记更新（v2 闭环 + 测试三件套）；分析报告 F2/F3/F4/F5 状态回填 + F15 新发现登记。
 
 Exit Criteria:
 
-- [ ] E2E 真实点击保存链路绿（命令输出留证）
-- [ ] owner doc + 分析报告状态回填完成
+- [x] E2E 真实点击保存链路绿（mobile 3/3 + 分层全量 6/6，输出留证）
+- [x] owner doc + 分析报告状态回填完成（barcode-integration.md v2 段 + F2-F5 回填/F15 登记）
 
 ## Draft Review Record
 
@@ -127,14 +128,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（闭环：解析可见→定位→保存成功→反馈重置，浏览器真实点击断言）
-- [ ] 相关文档对齐（barcode-integration.md + 分析报告回填 + Phase 1 Decision 触发的 owner doc 注记）
-- [ ] 已运行验证（全量 `mvn clean install -DskipTests` + 触域 test + 新旧 E2E + `npm run validate:flux` 零新增 + `check-hardcoded-cjk.mjs` report 0 新增 + 合规检查器 exit 0）
-- [ ] 无范围内项目降级为 deferred/follow-up（Phase 2 若跳过须有 Phase 1 显式裁决记录）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（闭环：扫/输单号→扫字段→保存成功→反馈重置，浏览器真实点击断言 3/3）
+- [x] 相关文档对齐（barcode-integration.md v2 注记 + 分析报告 F2-F5 回填/F15 登记 + D5/D6 裁决在计划）
+- [x] 已运行验证（全量 `mvn clean install -DskipTests` BUILD SUCCESS + inv-service 274 全绿（含新增 8） + mobile 分层 6/6 + `npm run validate:flux` errors=325 零新增 + `check-hardcoded-cjk.mjs` report exit 0/pda 0 新增 + 合规检查器 exit 0）
+- [x] 无范围内项目降级为 deferred/follow-up（D6 为执行期裁决增补非降级；F14 归盘点作业面批次见分析报告）
+- [x] 独立草案审查已完成并记录（2 轮收敛）
+- [x] 文本一致性已验证：状态、阶段、门控和日志一致（日志随闭包提交写入 docs/logs/2026/10-05.md）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符（记录见 Closure）
+- [x] 结束证据存在于文件中（surefire 报告 + playwright 输出 + 门禁日志）
 
 ## Deferred But Adjudicated
 
@@ -152,12 +153,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <closure 时填写>
+Status Note: 独立结束审计记录见下；执行纪要：Phase 1 五 Decision 落盘（D6 执行期增补：盘点单定位改 takeCode 服务端解析——select 动态选项源 F15 实证无承载）；Phase 2 scanSave 落地（5 错误码 + JUnit 8/8 + 全模块 274/0/0）；Phase 3 页面重构（flux 原生接线 + takeCode 流 + 双语块单承载）；Phase 4 E2E 真实点击链（mobile 6/6）。验证全绿（构建 BUILD SUCCESS / flux 门禁 325 零新增 / cjk 0 新增 / 合规 0）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent subagent>
-- Evidence: <task id / log link>
+- Auditor / Agent: 独立子代理 round1 agent_28f4aac0（NEEDS REVISION：MAJOR-1 takeCode 路径 nextLineNo 误用请求参数致 lineNo 恒 1 / MAJOR-2「生成层未声明」不实记录 + 6 MINOR）→ 整改（take.getId() 修复 + takeCode 双扫强化断言 + 三处文本订正）→ round2 agent_ac9c59a1（**ACCEPT**）
+- Evidence: round2 独立复验——surefire 8/8（强化断言在位）、inv-service 全模块 274/0/0、plan-gates --strict PASS、compliance exit 0、cjk report exit 0、flux errors=325 零新增/pda errors=0、build13 BUILD SUCCESS（`_tmp/build13-pda.log`）
 
 Follow-up:
 

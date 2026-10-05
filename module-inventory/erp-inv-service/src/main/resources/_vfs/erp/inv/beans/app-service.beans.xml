@@ -120,6 +120,11 @@
          经 @BizQuery 暴露 resolveBarcode（SKU/单据/库位解析路由）。 -->
     <bean id="app.erp.inv.service.barcode.ErpInvBarcodeBizModel" ioc:type="@bean:id"/>
 
+    <!-- 盘点行扫码落行入口（plan 2026-10-05-0400-2，UC-INV-05/US-IV-05）：实体 BizModel 增设
+         @BizMutation scanSave（PDA 单往返落行，服务端派生派生字段）。生成层 _service.beans.xml
+         已有同 id 声明（ioc:default），此处显式重复声明以对齐 barcode 入口先例（同类双声明无害）。 -->
+    <bean id="app.erp.inv.service.entity.ErpInvStockTakeLineBizModel" ioc:type="@bean:id"/>
+
     <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
     <bean id="app.erp.inv.service.processor.ErpInvCostAdjustSubmitForApprovalProcessor"
           class="app.erp.inv.service.processor.ErpInvCostAdjustSubmitForApprovalProcessor"/>

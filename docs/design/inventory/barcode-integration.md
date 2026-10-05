@@ -172,8 +172,8 @@ PDA 质检流程：
 
 **已实现（v1，商贸/制造档 Must）**：
 - 条码解析路由入口 `ErpInvBarcodeBizModel.resolveBarcode(code, locationCode?)`（module-inventory/erp-inv-service，BizObj `ErpInvBarcode`）：SKU-first 解析（SKU 码委托 barcode 列 example 查询 → 单据号三类直查（pur receive/mfg material issue/inv stock take）+ 发货单 Class.forName 反射直查（inv→sal DAG 违规禁 pom 依赖）→ 库位 code 查询）。4 配置键接线进 `ErpInvConstants`（barcode-enabled 门控 / sku-format EAN13 校验 / auto-print-on-receive 显式 WARN no-op / pda-require-location-scan STOCK_TAKE 分支 locationCode 必填）。
-- PDA 作业面代表页：`pda-stock-take/main.page.yaml`（盘点场景——表单式，规避窄屏网格行定位 residual；场景 5「扫 SKU+库位→输实盘数量」）。
-- 测试：`TestErpInvBarcodeResolve`（JUnit 7 场景：pur/mfg/take 单号解析+SKU 委托+LOCATION 主解析+双门控+unresolved 拒绝）；E2E `pda-stock-take.mobile.spec.ts`（双视口表单冒烟）。
+- PDA 作业面代表页：`pda-stock-take/main.page.yaml`（盘点场景——表单式，规避窄屏网格行定位 residual；场景 5「扫 SKU+库位→输实盘数量」）。**v2（plan 2026-10-05-0400-2）**：页面重构为真实作业闭环——扫/输盘点单编号（takeCode，服务端按 code 解析）→ 扫/输 SKU 条码与库位 → 实盘数量 → `ErpInvStockTakeLine__scanSave` 单往返落行（服务端派生 materialId/uoMId[SKU 行]、bookQuantity[StockBalance 落行时点快照，无余额行=0 全量盘点口径]、differenceQuantity=actual−book、lineNo[max+1 新行语义]）；守卫：barcode-enabled 总开关 / 盘点单 docStatus==CONFIRMED 作业窗口 / 库位按 pda-require-location-scan 必填 + 仓库归属校验。前端接线按 flux 原生 Action Algebra + `/r/` 直发（`docs/architecture/flux-integration-gotchas.md` G-002 URL 形态规则；初版 AMIS 风格接线在 flux 运行期惰性——同 G-002）。
+- 测试：`TestErpInvBarcodeResolve`（JUnit 7 场景：pur/mfg/take 单号解析+SKU 委托+LOCATION 主解析+双门控+unresolved 拒绝）；`TestErpInvStockTakeLineScanSave`（JUnit 8 场景：happy path 派生字段/新行递增/StockBalance 快照/DRAFT 拒绝/未知 SKU/仓库不匹配/缺库位门控/takeCode 解析路径）；E2E `pda-stock-take.mobile.spec.ts`（双视口表单冒烟 + **真实点击保存链**：选/输单号→扫字段→保存→confirm→`/r/` 请求→落行派生字段断言→cleanup）。
 - 档位：商贸档/制造档 Must（随 inventory 模块组装）；纯财务轻部署不组装 inventory 模块则本面不装配。
 
 **残量（设计在册本期不实现，统一触发条件=仓储客户 PDA 部署点名对应场景/码型）**：批次/序列号/托盘码解析（ORM 加列前置）；标签打印子系统（auto-print 键已接线 WARN no-op）；上架库位推荐（ABC/周转率）；FIFO/FEFO 扫码校验；PDA 离线队列（反模式缓做）；拣货场景落点（PickingOrderBiz 需补 mutation）；质检采样扫码（qa 域联动）；库位复合码（v1 以 code 约定解析，设计反模式条款支持）；条码生成（ErpSysDocNumberRule 纯设计）。场景/码型 × 交付面逐项对账表见 plan Deferred 节。

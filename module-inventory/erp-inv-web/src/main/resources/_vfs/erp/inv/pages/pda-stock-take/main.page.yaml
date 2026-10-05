@@ -1,8 +1,10 @@
-# PDA 盘点扫码作业面（USC-05，plan 2026-10-01-0930-1）。
-# 表单式作业页（规避 USC-04 D5(b) 窄屏网格行定位 residual）：barcode/库位/数量输入 →
-# ErpInvBarcode__resolveBarcode 解析 → ErpInvStockTakeLine__save 直存盘点行（既有 mutation）。
-# 设计契约：barcode-integration.md §PDA 场景 5（盘点：扫 SKU+库位→输实盘数量）。
-# 档位：商贸档/制造档 Must（随 inventory 模块组装）。
+# PDA 盘点扫码作业面 v2（USC-05 页面 + plan 2026-10-05-0400-2 全闭环重构）。
+# 表单式作业页（规避 USC-04 D5(b) 窄屏网格行定位 residual）：选盘点单（CONFIRMED 作业窗口）→
+# 扫/输 SKU 条码 + 库位码 → 录实盘数量 → /r/ErpInvStockTakeLine__scanSave 单往返落行
+# （服务端派生 materialId/uoMId/bookQuantity/differenceQuantity/lineNo，plan 2026-10-05-0400-2 D1）。
+# 接线契约：flux 原生 onClick Action Algebra + 标量 mutation /r/ 直发（gotchas G-002 URL 形态规则；
+# AMIS 风格 actionType/api 在 flux 运行期惰性）。提示区纯文本（text 节点不解释 HTML——F11）。
+# 设计契约：barcode-integration.md §PDA 场景 5；档位：商贸档/制造档 Must（随 inventory 模块组装）。
 type: page
 title: "PDA 盘点扫码"
 i18nEn: "PDA Stock Take Scan"
@@ -10,79 +12,71 @@ body:
   - type: text
     className: m-3
     tag: div
-    text: '<div class="alert alert-info"><strong>PDA 盘点扫码</strong>：输入/扫描 SKU 条码 → 解析 → 选盘点单与库位 → 录入实盘数量 → 保存盘点行。库位必填（pda-require-location-scan）。</div>'
-    i18nEn: '<div class="alert alert-info"><strong>PDA Stock Take Scan</strong>: enter/scan SKU barcode → resolve → pick stock-take order and location → enter counted qty → save stock-take line. Location required (pda-require-location-scan).</div>'
+    text: "PDA 盘点扫码：扫描/输入盘点中（CONFIRMED）盘点单的编号 → 扫描/输入 SKU 条码与库位编码 → 录入实盘数量 → 保存盘点行。保存后自动派生物料/单位/账面数量并生成差异数量，连续扫码逐行累计。"
+    i18nEn: "PDA Stock Take Scan: scan/enter the code of a CONFIRMED stock-take order → scan/enter SKU barcode and location code → enter counted quantity → save the stock-take line. Material/UoM/book quantity are derived server-side with difference computed; consecutive scans accumulate line by line."
 
   - type: form
-    name: scanForm
-    className: m-3
-    title: "扫码解析"
-    i18nEn: "Scan & Resolve"
-    api:
-      url: '@query:ErpInvBarcode__resolveBarcode'
-      method: post
-      data:
-        code: '${barcodeInput}'
-        locationCode: '${locationInput}'
-    body:
-      - type: input-text
-        name: barcodeInput
-        label: "SKU 条码"
-        i18nEn: "SKU Barcode"
-        required: true
-        placeholder: "扫描或输入 SKU 条码"
-      - type: input-text
-        name: locationInput
-        label: "库位编码"
-        i18nEn: "Location Code"
-        required: true
-        placeholder: "扫描或输入库位编码"
-      - type: button
-        label: "解析条码"
-        i18nEn: "Resolve Barcode"
-        actionType: ajax
-        api:
-          url: '@query:ErpInvBarcode__resolveBarcode'
-          method: post
-          data:
-            code: '${barcodeInput}'
-            locationCode: '${locationInput}'
-
-  - type: form
-    name: takeLineForm
+    name: pdaForm
     className: m-3
     title: "盘点行录入"
     i18nEn: "Stock Take Line Entry"
-    api:
-      url: '@mutation:ErpInvStockTakeLine__save'
-      method: post
-      data:
-        takeId: '${takeIdInput}'
-        lineNo: 1
-        skuId: '${scanForm.refId}'
-        locationId: '${scanForm.location.locationId}'
-        actualQuantity: '${actualQtyInput}'
     body:
       - type: input-text
-        name: takeIdInput
-        label: "盘点单 ID"
-        i18nEn: "Stock Take ID"
+        name: takeCode
+        label: "盘点单编号"
         required: true
+        placeholder: "扫描或输入盘点单编号"
+        i18nEn:
+          label: "Stock Take Code"
+          placeholder: "Scan or enter stock-take code"
+      - type: input-text
+        name: skuBarcode
+        label: "SKU 条码"
+        required: true
+        placeholder: "扫描或输入 SKU 条码"
+        i18nEn:
+          label: "SKU Barcode"
+          placeholder: "Scan or enter SKU barcode"
+      - type: input-text
+        name: locationCode
+        label: "库位编码"
+        required: true
+        placeholder: "扫描或输入库位编码"
+        i18nEn:
+          label: "Location Code"
+          placeholder: "Scan or enter location code"
       - type: input-number
-        name: actualQtyInput
+        name: actualQuantity
         label: "实盘数量"
         i18nEn: "Counted Quantity"
         required: true
       - type: button
         label: "保存盘点行"
         i18nEn: "Save Stock Take Line"
-        actionType: ajax
-        api:
-          url: '@mutation:ErpInvStockTakeLine__save'
-          method: post
-          data:
-            takeId: '${takeIdInput}'
-            lineNo: 1
-            skuId: '${scanForm.refId}'
-            locationId: '${scanForm.location.locationId}'
-            actualQuantity: '${actualQtyInput}'
+        level: primary
+        onClick:
+          action: ajax
+          confirmText: "确认保存该盘点行？保存后按新行累计（同 SKU+库位多次扫码为多行）。"
+          i18nEn:
+            confirmText: "Save this stock-take line? Each scan creates a new line (multiple scans of the same SKU+location accumulate as separate lines)."
+          messages:
+            success: "盘点行已保存（服务端已派生物料/单位/账面并计算差异）"
+            failed: "保存失败：请检查盘点单状态（须盘点中）、SKU 条码与库位编码"
+            i18nEn:
+              success: "Stock-take line saved (material/UoM/book quantity derived, difference computed)"
+              failed: "Save failed: check the order is Counting, SKU barcode and location code"
+          args:
+            url: '/r/ErpInvStockTakeLine__scanSave'
+            method: post
+            data:
+              takeCode: '${takeCode}'
+              skuBarcode: '${skuBarcode}'
+              locationCode: '${locationCode}'
+              actualQuantity: '${actualQuantity}'
+          then:
+            - action: setValues
+              args:
+                values:
+                  skuBarcode: ""
+                  locationCode: ""
+                  actualQuantity: null
