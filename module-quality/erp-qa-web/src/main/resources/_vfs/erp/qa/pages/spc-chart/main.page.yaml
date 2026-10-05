@@ -36,9 +36,7 @@ body:
         i18nEn:
           label: "Control Chart"
           placeholder: "Blank = most recent control chart"
-        source: ${chartsData?.items ?? []}
-        valueField: id
-        labelField: "${code || ''} · ${name || ''} (${chartType || ''})"
+        options: '${(chartsData?.items ?? []).map((c) => ({ label: (c.code || "") + " · " + (c.name || "") + " (" + (c.chartType || "") + ")", value: c.id }))}'
       - type: button
         label: "刷新"
         i18nEn: "Refresh"

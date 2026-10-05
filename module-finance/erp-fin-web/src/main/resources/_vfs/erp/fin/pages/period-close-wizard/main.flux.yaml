@@ -25,14 +25,13 @@ body:
         i18nEn:
           label: Accounting Period
           placeholder: Select the accounting period to close
-        source:
+        options:
+          type: source
           action: ajax
           args:
-            url: '@query:ErpFinAccountingPeriod__findPage'
+            url: '@query:ErpFinAccountingPeriod__findList'
             method: post
-            data:
-              limit: 200
-            selection: items{ id year month status code } total
+            selection: value:id label:code
     - colSpan: 2
       body:
       - type: button

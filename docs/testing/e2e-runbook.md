@@ -123,6 +123,8 @@ flux 内置**运行时 monitor**（复用 env.notify/action 钩子，不修改 f
 
 ### 已知差距（迁移方向）
 
+- approval.mobile.spec 对 dev 库残留数据不可重入（休假区间重叠业务规则拒绝）——2026-10-05 plan 0400-4 审计 M-6 登记；重跑前清理 hr 休假种子或用例内自包含。
+
 本项目 `tests/e2e/pages/` 早期自建 adapter 与 e2e-shared 源版存在选择器漂移（如 `[data-slot="crud-table"]` + `[data-testid="btn-add"]` vs 源版 `.nop-crud` + 工具栏文本定位）。后续任务按上节规则对齐 e2e-shared 源版并删除本地漂移实现。
 
 ## 启动方式

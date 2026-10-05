@@ -62,20 +62,20 @@ body:
       - type: select
         name: versionAId
         label: 版本 A
-        source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", 当前)" : ")"), value: v.id }))}'
+        options: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", 当前)" : ")"), value: v.id }))}'
         i18nEn:
           label: "Version A"
-          source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", current)" : ")"), value: v.id }))}'
+          options: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", current)" : ")"), value: v.id }))}'
         clearable: true
     - colSpan: 3
       body:
       - type: select
         name: versionBId
         label: 版本 B
-        source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", 当前)" : ")"), value: v.id }))}'
+        options: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", 当前)" : ")"), value: v.id }))}'
         i18nEn:
           label: "Version B"
-          source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", current)" : ")"), value: v.id }))}'
+          options: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", current)" : ")"), value: v.id }))}'
         clearable: true
     - colSpan: 2
       body:

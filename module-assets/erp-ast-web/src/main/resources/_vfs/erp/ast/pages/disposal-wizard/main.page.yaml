@@ -34,7 +34,7 @@ body:
         required: true
         clearable: true
         placeholder: "选择要处置的资产"
-        source: ${assetsData?.items ?? []}
+        options: '${(assetsData?.items ?? []).map((a) => ({ label: a.code, value: a.id }))}'
         valueField: id
         labelField: "${code} · ${name} (净值:${netBookValue || 0})"
         i18nEn:

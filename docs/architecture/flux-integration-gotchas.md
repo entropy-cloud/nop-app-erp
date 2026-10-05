@@ -98,6 +98,26 @@ flux button renderer 仅声明 `onClick` 一个事件字段（`nop-chaos-flux/pa
 - 本仓迁移范围：disposal-wizard / lead-conversion / period-close-wizard / stock-take-flow / visit-wizard / ErpSysNotification-inbox（pda-stock-take 随 plan `2026-10-05-0400-2` 重构迁移）
 - 运行时证据：`_tmp/2026-10-05-0400-1-probe/`（服务端日志零请求实锤 + 迁移后复验）
 
+### select 动态选项源形态规则（plan 2026-10-05-0400-6 spike 实证）
+
+select 渲染器**只读 `props.options`**（`input.tsx:520` 唯一 allowSource 键；`input-choice-renderers.tsx:109-113`），动态选项的正确形态：
+
+```yaml
+- type: select
+  name: periodId
+  options:
+    type: source                 # 必须（isSourceSchema 判定，缺 type 不发请求）
+    action: ajax
+    args:
+      url: '@query:Entity__findList'   # 数组根（findPage 的 PageBean 非数组被 sanitize 丢弃）
+      method: post
+      selection: value:id label:code   # GraphQL 别名产出 sanitize 必需的 {label,value} 键形
+```
+
+- 表达式形态亦可：`options: '${(x?.items ?? []).map((i) => ({ label: i.name, value: i.id }))}'`（配合独立 data-source；**YAML 裸标量含 `: ` 必须单引号包裹**——裸写触发 mapping-values 解析失败）。
+- `source:` 键为死 prop（嵌套扫描会发请求但值写回 props.source 无消费）；valueField/labelField 在 select 上不存在（属 input-tree 族），是 unknown-prop 惰性。
+- **YAML 裸标量含 `: ` 解析破坏**（plan 0400-6 执行期发现）：`options: ${...{ label: a.code...}}` 未引号触发 `mapping values are not allowed here` 启动期页面加载失败——表达式含 `: ` 一律单引号包裹。
+
 ### 孪生遮蔽陷阱（本计划直接踩坑点）
 `render-mode=flux` 下 `PageModelLoaderFactory` 对同名 `*.page.yaml`/`*.flux.yaml` **优先加载 flux.yaml**（`flux-page-export-and-validation.md:15`，本仓 31 个 flux.yaml）。改写 page.yaml 前必须先确认目标页是否存在 flux.yaml 孪生——存在则孪生才是被服务内容，page.yaml 改写对运行期无效，且 flux 门禁验证的也是孪生导出物（陈旧孪生会让「warning 计数持平」被误读为改动无效或既有族）。判别：`ls <page-dir>/`；门禁机械证明 = 修复后该页 unknown-property warning 中 `actionType/action/args` 族消失。
 

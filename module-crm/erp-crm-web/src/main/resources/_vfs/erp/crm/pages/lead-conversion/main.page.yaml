@@ -39,7 +39,7 @@ body:
         label: "选择线索"
         required: true
         clearable: true
-        source: ${leadsData?.items ?? []}
+        options: '${(leadsData?.items ?? []).map((l) => ({ label: l.code, value: l.id }))}'
         valueField: id
         labelField: "${code} · 预期收入:${expectedRevenue || 0} · 当前阶段:${stage?.stageName || '—'}"
         i18nEn:
@@ -85,7 +85,7 @@ body:
             label: "目标漏斗阶段"
             i18nEn: "Target Funnel Stage"
             required: true
-            source: ${stagesData?.items ?? []}
+            options: '${(stagesData?.items ?? []).map((s) => ({ label: s.stageName, value: s.id }))}'
             valueField: id
             labelField: stageName
           - type: text

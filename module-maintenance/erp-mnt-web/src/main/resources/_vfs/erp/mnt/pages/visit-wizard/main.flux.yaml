@@ -25,14 +25,16 @@ body:
         i18nEn:
           label: "Maintenance Visit"
           placeholder: "Select the maintenance visit to execute"
-        source:
+        options:
+          type: source
           action: ajax
           args:
-            url: '@query:ErpMntVisit__findPage'
+            url: '@query:ErpMntVisit__findList'
             method: post
             data:
-              limit: 200
-            selection: items{ id code status visitType visitDate equipmentId } total
+              query:
+                limit: 200
+            selection: value:id label:code
     - colSpan: 4
       body:
       - type: button

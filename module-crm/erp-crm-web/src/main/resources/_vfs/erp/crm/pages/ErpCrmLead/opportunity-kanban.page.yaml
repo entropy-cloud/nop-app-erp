@@ -130,9 +130,7 @@ body:
                     name: toStageId
                     label: "目标阶段"
                     required: true
-                    source: ${stagesData?.items ?? []}
-                    valueField: id
-                    labelField: stageName
+                    options: '${(stagesData?.items ?? []).map((s) => ({ label: s.stageName, value: s.id }))}'
                     placeholder: "选择目标阶段（赢单阶段经后端守卫拒绝非法迁移）"
                     i18nEn:
                       label: "Target Stage"
