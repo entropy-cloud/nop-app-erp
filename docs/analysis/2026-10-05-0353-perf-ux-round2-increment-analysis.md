@@ -1,6 +1,8 @@
 # 性能与 UI/UX 深度优化第二轮（增量轮）分析报告
 
 > 日期：2026-10-05
+>
+> **mission 收官（2026-10-05）**：修复批次 1-5 + 复扫批（0400-6）全部完成并各自独立提交（341cf4a97 → f66120012 共 7 个提交）。批次 3 经探针定案 **cancelled**（F6 假阳性撤销）。复扫批新发现 F14/F15 已随 0400-6 修复；最终门禁全绿（flux errors=325 零新增 / cjk strict exit 0 / compliance exit 0 / 无界台账 PASS / plan-gates strict PASS）。除 §6 Deferred/各计划 Deferred（触发条件驱动）外无新的可优化项。附注：jqwik banner 注入式文本（构建输出）待 triage（非本仓范围）。
 > 性质：实施导向的深度分析第二轮。第一轮（`docs/analysis/2026-09-27-perf-ux-deep-optimization-analysis.md`，2026-09-28 收官）修复批次 1-5+A9 补遗全部完成并提交。本轮在该基线上做**增量+全量复核**：三路独立只读扫描通道（后端性能 / UI-UX 现状核验 / 前端渲染与 flux 合规）+ 执行者对关键 finding 的实仓源码级复核。**本报告只分析不动代码；修复按 §4 批次 plan 逐批执行。**
 > 增量范围：`18bc67af2..HEAD`（34 提交，fixture-bundle 测试基建 7 plan + 用户故事覆盖 USC-03~08），生产代码增量 19 文件。
 > 量化基线：手写复杂页 7 页命中惰性按钮接线（16 ajax 按钮 + 6 dialog 按钮 + 12 onEvent 刷新链 + 2 表单级 api 均在 pda 页）；上轮全部存量修复抽样 8 项在位零回归；机械门禁三绿（无界查询台账 71 站点 PASS / 合规检查器 exit 0 / flux 门禁 freshness --check-only PASS）。
