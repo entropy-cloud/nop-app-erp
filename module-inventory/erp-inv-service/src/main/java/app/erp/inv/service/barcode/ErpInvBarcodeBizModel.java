@@ -170,9 +170,9 @@ public class ErpInvBarcodeBizModel {
                 return doc("SAL_DELIVERY", idOf(delivery), codeOf(delivery));
             }
         } catch (ClassNotFoundException e) {
-            LOG.debug("[USC-05] sal-dao 不在当前 classpath（单域测试），Delivery 解析跳过");
+            LOG.debug("[USC-05] sal-dao not on current classpath (single-module test), Delivery resolution skipped");
         } catch (ReflectiveOperationException e) {
-            LOG.warn("[USC-05] Delivery 反射查询失败：{}", e.getMessage());
+            LOG.warn("[USC-05] Delivery reflection lookup failed: {}", e.getMessage());
         }
         return null;
     }
@@ -216,7 +216,7 @@ public class ErpInvBarcodeBizModel {
     private void logAutoPrintIfConfigured() {
         if (AppConfig.var(CONFIG_BARCODE_AUTO_PRINT_ON_RECEIVE, DEFAULT_BARCODE_AUTO_PRINT_ON_RECEIVE)) {
             // v1 显式 no-op：打印子系统 residual 在册（plan 2026-10-01-0930-1 Deferred 对账表）。
-            LOG.warn("[USC-05] barcode-auto-print-on-receive=true 但标签打印子系统未实现（residual 在册），跳过标签打印");
+            LOG.warn("[USC-05] barcode-auto-print-on-receive=true but label printing subsystem not implemented (residual registered), skipping label print");
         }
     }
 

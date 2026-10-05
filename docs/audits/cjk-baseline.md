@@ -15,204 +15,37 @@
 > `--strict` 解析本块做 per-file per-CAT 计数比对：任何文件任一 CAT 计数高于快照 = 新增违规 = 非零退出。
 
 ```yaml
-generated: 2026-09-07T13:23:28.378Z
-scanned: { javaFiles: 3430, yamlFiles: 886 }
-totals: { CAT1: 0, CAT2: 0, CAT3: 209, CAT4: 1318 }
+generated: 2026-10-05T03:39:06.051Z
+scanned: { javaFiles: 3432, yamlFiles: 887 }
+totals: { CAT1: 0, CAT2: 0, CAT3: 2, CAT4: 0 }
 domains:
   app-erp-all: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
-  aps: { CAT1: 0, CAT2: 0, CAT3: 20, CAT4: 35 }
-  assets: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 87 }
-  b2b: { CAT1: 0, CAT2: 0, CAT3: 15, CAT4: 91 }
-  common-service: { CAT1: 0, CAT2: 0, CAT3: 8, CAT4: 0 }
+  aps: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  assets: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  b2b: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  common-service: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
   common-test: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
-  contract: { CAT1: 0, CAT2: 0, CAT3: 6, CAT4: 50 }
-  crm: { CAT1: 0, CAT2: 0, CAT3: 2, CAT4: 79 }
-  cs: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 120 }
-  drp: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 41 }
+  contract: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  crm: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  cs: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  drp: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
   finance: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
-  hr: { CAT1: 0, CAT2: 0, CAT3: 28, CAT4: 118 }
-  inventory: { CAT1: 0, CAT2: 0, CAT3: 28, CAT4: 93 }
-  logistics: { CAT1: 0, CAT2: 0, CAT3: 3, CAT4: 18 }
-  maintenance: { CAT1: 0, CAT2: 0, CAT3: 13, CAT4: 122 }
-  manufacturing: { CAT1: 0, CAT2: 0, CAT3: 28, CAT4: 96 }
-  master-data: { CAT1: 0, CAT2: 0, CAT3: 2, CAT4: 74 }
-  notify: { CAT1: 0, CAT2: 0, CAT3: 1, CAT4: 42 }
-  projects: { CAT1: 0, CAT2: 0, CAT3: 15, CAT4: 0 }
-  purchase: { CAT1: 0, CAT2: 0, CAT3: 14, CAT4: 99 }
-  quality: { CAT1: 0, CAT2: 0, CAT3: 13, CAT4: 114 }
-  sales: { CAT1: 0, CAT2: 0, CAT3: 13, CAT4: 39 }
+  hr: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  inventory: { CAT1: 0, CAT2: 0, CAT3: 2, CAT4: 0 }
+  logistics: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  maintenance: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  manufacturing: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  master-data: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  notify: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  projects: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  purchase: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  quality: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
+  sales: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 }
 files:
-  module-aps/erp-aps-dao/src/main/java/app/erp/aps/biz/IErpApsOperationOrderBiz.java: { CAT3: 1 }
-  module-aps/erp-aps-service/src/main/java/app/erp/aps/service/atpctp/ErpApsAtpCtpServiceImpl.java: { CAT3: 3 }
-  module-aps/erp-aps-service/src/main/java/app/erp/aps/service/entity/ErpApsOperationOrderBizModel.java: { CAT3: 1 }
-  module-aps/erp-aps-service/src/main/java/app/erp/aps/service/processor/ErpApsWorkOrderToOperationProcessor.java: { CAT3: 1 }
-  module-aps/erp-aps-service/src/main/java/app/erp/aps/service/scheduling/ErpApsSchedulingEngine.java: { CAT3: 14 }
-  module-aps/erp-aps-web/src/main/resources/_vfs/erp/aps/pages/dashboard/schedule-gantt.flux.yaml: { CAT4: 13 }
-  module-aps/erp-aps-web/src/main/resources/_vfs/erp/aps/pages/dashboard/schedule-gantt.page.yaml: { CAT4: 22 }
-  module-assets/erp-ast-web/src/main/resources/_vfs/erp/ast/pages/asset-repair/main.page.yaml: { CAT4: 2 }
-  module-assets/erp-ast-web/src/main/resources/_vfs/erp/ast/pages/asset-stocktake/main.page.yaml: { CAT4: 14 }
-  module-assets/erp-ast-web/src/main/resources/_vfs/erp/ast/pages/dashboard/main.flux.yaml: { CAT4: 18 }
-  module-assets/erp-ast-web/src/main/resources/_vfs/erp/ast/pages/dashboard/main.page.yaml: { CAT4: 19 }
-  module-assets/erp-ast-web/src/main/resources/_vfs/erp/ast/pages/disposal-wizard/main.page.yaml: { CAT4: 20 }
-  module-assets/erp-ast-web/src/main/resources/_vfs/erp/ast/pages/report/asset-depreciation-detail.page.yaml: { CAT4: 8 }
-  module-assets/erp-ast-web/src/main/resources/_vfs/erp/ast/pages/report/asset-disposal-detail.page.yaml: { CAT4: 6 }
-  module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/entity/ErpB2bEdiDocBizModel.java: { CAT3: 5 }
-  module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/entity/ErpB2bPartnerProfileBizModel.java: { CAT3: 2 }
-  module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bAsnCreateReceiveFromAsnProcessor.java: { CAT3: 2 }
-  module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bAsnHandleInboundWebhookProcessor.java: { CAT3: 1 }
-  module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bAsnMatchPurchaseOrderProcessor.java: { CAT3: 2 }
-  module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bEdiDocCreateInboundProcessor.java: { CAT3: 1 }
-  module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bEdiDocCreateOutboundProcessor.java: { CAT3: 1 }
-  module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/spi/transport/TransportManager.java: { CAT3: 1 }
-  module-b2b/erp-b2b-web/src/main/resources/_vfs/erp/b2b/pages/dashboard/asn-flow.flux.yaml: { CAT4: 27 }
-  module-b2b/erp-b2b-web/src/main/resources/_vfs/erp/b2b/pages/dashboard/asn-flow.page.yaml: { CAT4: 32 }
-  module-b2b/erp-b2b-web/src/main/resources/_vfs/erp/b2b/pages/dashboard/edi-detail.flux.yaml: { CAT4: 11 }
-  module-b2b/erp-b2b-web/src/main/resources/_vfs/erp/b2b/pages/dashboard/edi-detail.page.yaml: { CAT4: 21 }
-  module-common-service/src/main/java/app/erp/common/org/ErpOrgIsolationQueryTransformer.java: { CAT3: 1 }
-  module-common-service/src/main/java/app/erp/common/service/MaskHelper.java: { CAT3: 7 }
-  module-contract/erp-ct-service/src/main/java/app/erp/ct/service/ErpCtConfigs.java: { CAT3: 1 }
-  module-contract/erp-ct-service/src/main/java/app/erp/ct/service/entity/ErpCtContractBizModel.java: { CAT3: 1 }
-  module-contract/erp-ct-service/src/main/java/app/erp/ct/service/entity/ErpCtDocumentBizModel.java: { CAT3: 2 }
-  module-contract/erp-ct-service/src/main/java/app/erp/ct/service/spi/manual/ManualOcrEngine.java: { CAT3: 1 }
-  module-contract/erp-ct-service/src/main/java/app/erp/ct/service/spi/mock/MockSignatureProvider.java: { CAT3: 1 }
-  module-contract/erp-ct-web/src/main/resources/_vfs/erp/ct/pages/dashboard/version-diff.flux.yaml: { CAT4: 18 }
-  module-contract/erp-ct-web/src/main/resources/_vfs/erp/ct/pages/dashboard/version-diff.page.yaml: { CAT4: 32 }
-  module-crm/erp-crm-service/src/main/java/app/erp/crm/service/processor/ErpCrmConversionProcessor.java: { CAT3: 1 }
-  module-crm/erp-crm-service/src/main/java/app/erp/crm/service/support/FunnelAggregationEngine.java: { CAT3: 1 }
-  module-crm/erp-crm-web/src/main/resources/_vfs/erp/crm/pages/ErpCrmActivity/calendar.flux.yaml: { CAT4: 6 }
-  module-crm/erp-crm-web/src/main/resources/_vfs/erp/crm/pages/ErpCrmActivity/calendar.page.yaml: { CAT4: 12 }
-  module-crm/erp-crm-web/src/main/resources/_vfs/erp/crm/pages/ErpCrmActivity/timeline.flux.yaml: { CAT4: 6 }
-  module-crm/erp-crm-web/src/main/resources/_vfs/erp/crm/pages/ErpCrmActivity/timeline.page.yaml: { CAT4: 7 }
-  module-crm/erp-crm-web/src/main/resources/_vfs/erp/crm/pages/ErpCrmLead/opportunity-kanban.flux.yaml: { CAT4: 5 }
-  module-crm/erp-crm-web/src/main/resources/_vfs/erp/crm/pages/ErpCrmLead/opportunity-kanban.page.yaml: { CAT4: 18 }
-  module-crm/erp-crm-web/src/main/resources/_vfs/erp/crm/pages/lead-conversion/main.page.yaml: { CAT4: 11 }
-  module-crm/erp-crm-web/src/main/resources/_vfs/erp/crm/pages/report/campaign-attribution.page.yaml: { CAT4: 4 }
-  module-crm/erp-crm-web/src/main/resources/_vfs/erp/crm/pages/report/forecast-accuracy.page.yaml: { CAT4: 6 }
-  module-crm/erp-crm-web/src/main/resources/_vfs/erp/crm/pages/report/lead-conversion-funnel.page.yaml: { CAT4: 4 }
-  module-cs/erp-cs-web/src/main/resources/_vfs/erp/cs/pages/ErpCsQualityDashboard/main.flux.yaml: { CAT4: 21 }
-  module-cs/erp-cs-web/src/main/resources/_vfs/erp/cs/pages/ErpCsQualityDashboard/main.page.yaml: { CAT4: 20 }
-  module-cs/erp-cs-web/src/main/resources/_vfs/erp/cs/pages/ErpCsTicket/kanban.flux.yaml: { CAT4: 10 }
-  module-cs/erp-cs-web/src/main/resources/_vfs/erp/cs/pages/ErpCsTicket/kanban.page.yaml: { CAT4: 48 }
-  module-cs/erp-cs-web/src/main/resources/_vfs/erp/cs/pages/ErpCsTicketAction/timeline.flux.yaml: { CAT4: 6 }
-  module-cs/erp-cs-web/src/main/resources/_vfs/erp/cs/pages/ErpCsTicketAction/timeline.page.yaml: { CAT4: 9 }
-  module-cs/erp-cs-web/src/main/resources/_vfs/erp/cs/pages/report/ticket-sla-csat-summary.page.yaml: { CAT4: 6 }
-  module-drp/erp-drp-web/src/main/resources/_vfs/erp/drp/pages/dashboard/net-requirement.flux.yaml: { CAT4: 20 }
-  module-drp/erp-drp-web/src/main/resources/_vfs/erp/drp/pages/dashboard/net-requirement.page.yaml: { CAT4: 21 }
-  module-hr/erp-hr-service/src/main/java/app/erp/hr/service/ErpHrConstants.java: { CAT3: 1 }
-  module-hr/erp-hr-service/src/main/java/app/erp/hr/service/entity/ErpHrDevelopmentPlanBizModel.java: { CAT3: 1 }
-  module-hr/erp-hr-service/src/main/java/app/erp/hr/service/entity/ErpHrRecruitmentBizModel.java: { CAT3: 2 }
-  module-hr/erp-hr-service/src/main/java/app/erp/hr/service/entity/ErpHrSalarySimulationBizModel.java: { CAT3: 3 }
-  module-hr/erp-hr-service/src/main/java/app/erp/hr/service/posting/SalaryPostingDispatcher.java: { CAT3: 4 }
-  module-hr/erp-hr-service/src/main/java/app/erp/hr/service/posting/SalaryPostingProvider.java: { CAT3: 8 }
-  module-hr/erp-hr-service/src/main/java/app/erp/hr/service/processor/AbstractErpHrDevelopmentPlanProcessor.java: { CAT3: 1 }
-  module-hr/erp-hr-service/src/main/java/app/erp/hr/service/processor/ErpHrDevelopmentPlanGenerateDevelopmentPlanProcessor.java: { CAT3: 1 }
-  module-hr/erp-hr-service/src/main/java/app/erp/hr/service/processor/ErpHrRecruitmentHireProcessor.java: { CAT3: 2 }
-  module-hr/erp-hr-service/src/main/java/app/erp/hr/service/processor/ErpHrSalaryGenerateBankFileProcessor.java: { CAT3: 1 }
-  module-hr/erp-hr-service/src/main/java/app/erp/hr/service/processor/ErpHrSalarySimulationConvertToFormalProcessor.java: { CAT3: 2 }
-  module-hr/erp-hr-service/src/main/java/app/erp/hr/service/report/ErpHrReportBizModel.java: { CAT3: 2 }
-  module-hr/erp-hr-web/src/main/resources/_vfs/erp/hr/pages/ErpHrLeaveRequest/team-vacation-calendar.flux.yaml: { CAT4: 4 }
-  module-hr/erp-hr-web/src/main/resources/_vfs/erp/hr/pages/ErpHrLeaveRequest/team-vacation-calendar.page.yaml: { CAT4: 9 }
-  module-hr/erp-hr-web/src/main/resources/_vfs/erp/hr/pages/dashboard/org-chart.flux.yaml: { CAT4: 7 }
-  module-hr/erp-hr-web/src/main/resources/_vfs/erp/hr/pages/dashboard/org-chart.page.yaml: { CAT4: 6 }
-  module-hr/erp-hr-web/src/main/resources/_vfs/erp/hr/pages/dashboard/payroll-approval.flux.yaml: { CAT4: 44 }
-  module-hr/erp-hr-web/src/main/resources/_vfs/erp/hr/pages/dashboard/payroll-approval.page.yaml: { CAT4: 38 }
-  module-hr/erp-hr-web/src/main/resources/_vfs/erp/hr/pages/report/employee-net-balance.page.yaml: { CAT4: 4 }
-  module-hr/erp-hr-web/src/main/resources/_vfs/erp/hr/pages/report/payroll-simulation-comparison.page.yaml: { CAT4: 6 }
-  module-inventory/erp-inv-dao/src/main/java/app/erp/inv/biz/IErpInvStockLedgerBiz.java: { CAT3: 2 }
-  module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/costing/CostAdjustmentService.java: { CAT3: 1 }
-  module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/dashboard/ErpInvDashboardBizModel.java: { CAT3: 1 }
-  module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/entity/ErpInvStockLedgerBizModel.java: { CAT3: 2 }
-  module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/posting/CostAdjustmentAcctDocProvider.java: { CAT3: 4 }
-  module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/posting/InvAcctDocProvider.java: { CAT3: 6 }
-  module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/posting/InvOwnershipTransferProvider.java: { CAT3: 2 }
-  module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/posting/LandedCostAcctDocProvider.java: { CAT3: 2 }
-  module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/posting/PurchasePriceVarianceAcctDocProvider.java: { CAT3: 4 }
-  module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/processor/ErpInvLandedCostProcessor.java: { CAT3: 2 }
-  module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/processor/ErpInvStockMoveReverseProcessor.java: { CAT3: 1 }
-  module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/processor/ErpInvStockTakeCompleteTakeProcessor.java: { CAT3: 1 }
-  module-inventory/erp-inv-web/src/main/resources/_vfs/erp/inv/pages/dashboard/main.flux.yaml: { CAT4: 31 }
-  module-inventory/erp-inv-web/src/main/resources/_vfs/erp/inv/pages/dashboard/main.page.yaml: { CAT4: 31 }
-  module-inventory/erp-inv-web/src/main/resources/_vfs/erp/inv/pages/report/inventory-trace-report.page.yaml: { CAT4: 10 }
-  module-inventory/erp-inv-web/src/main/resources/_vfs/erp/inv/pages/stock-take-flow/main.page.yaml: { CAT4: 21 }
-  module-logistics/erp-log-service/src/main/java/app/erp/log/service/gateway/GatewayDispatcher.java: { CAT3: 1 }
-  module-logistics/erp-log-service/src/main/java/app/erp/log/service/posting/LogisticsFreightProvider.java: { CAT3: 2 }
-  module-logistics/erp-log-web/src/main/resources/_vfs/erp/log/pages/dashboard/shipment-tracking.flux.yaml: { CAT4: 7 }
-  module-logistics/erp-log-web/src/main/resources/_vfs/erp/log/pages/dashboard/shipment-tracking.page.yaml: { CAT4: 11 }
-  module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/dashboard/ErpMntDashboardBizModel.java: { CAT3: 1 }
-  module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/posting/MaintenanceIssueAcctDocProvider.java: { CAT3: 4 }
-  module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/posting/MaintenanceLaborAcctDocProvider.java: { CAT3: 6 }
-  module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/processor/ErpMntVisitReportAdditionalFaultProcessor.java: { CAT3: 1 }
-  module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/report/ErpMntReportBizModel.java: { CAT3: 1 }
-  module-maintenance/erp-mnt-web/src/main/resources/_vfs/erp/mnt/pages/dashboard/main.flux.yaml: { CAT4: 23 }
-  module-maintenance/erp-mnt-web/src/main/resources/_vfs/erp/mnt/pages/dashboard/main.page.yaml: { CAT4: 24 }
-  module-maintenance/erp-mnt-web/src/main/resources/_vfs/erp/mnt/pages/report/downtime-summary.page.yaml: { CAT4: 8 }
-  module-maintenance/erp-mnt-web/src/main/resources/_vfs/erp/mnt/pages/report/maintenance-history.page.yaml: { CAT4: 8 }
-  module-maintenance/erp-mnt-web/src/main/resources/_vfs/erp/mnt/pages/visit-wizard/main.flux.yaml: { CAT4: 25 }
-  module-maintenance/erp-mnt-web/src/main/resources/_vfs/erp/mnt/pages/visit-wizard/main.page.yaml: { CAT4: 34 }
-  module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/dashboard/ErpMfgDashboardBizModel.java: { CAT3: 1 }
-  module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/entity/ErpMfgBomBizModel.java: { CAT3: 1 }
-  module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/posting/ManufacturingIssueAcctDocProvider.java: { CAT3: 4 }
-  module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/posting/ProductionVarianceAcctDocProvider.java: { CAT3: 5 }
-  module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/posting/SubcontractFeeAcctDocProvider.java: { CAT3: 3 }
-  module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/posting/SubcontractIssueAcctDocProvider.java: { CAT3: 4 }
-  module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/posting/SubcontractPostingDispatcher.java: { CAT3: 3 }
-  module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/posting/SubcontractReceiptAcctDocProvider.java: { CAT3: 4 }
-  module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgScheduleToJobCardProcessor.java: { CAT3: 1 }
-  module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/simulation/SimulationMrpEngine.java: { CAT3: 2 }
-  module-manufacturing/erp-mfg-web/src/main/resources/_vfs/erp/mfg/pages/dashboard/bom-tree.flux.yaml: { CAT4: 9 }
-  module-manufacturing/erp-mfg-web/src/main/resources/_vfs/erp/mfg/pages/dashboard/bom-tree.page.yaml: { CAT4: 13 }
-  module-manufacturing/erp-mfg-web/src/main/resources/_vfs/erp/mfg/pages/dashboard/main.flux.yaml: { CAT4: 24 }
-  module-manufacturing/erp-mfg-web/src/main/resources/_vfs/erp/mfg/pages/dashboard/main.page.yaml: { CAT4: 26 }
-  module-manufacturing/erp-mfg-web/src/main/resources/_vfs/erp/mfg/pages/report/crp-load-report.page.yaml: { CAT4: 8 }
-  module-manufacturing/erp-mfg-web/src/main/resources/_vfs/erp/mfg/pages/report/forecast-variance-report.page.yaml: { CAT4: 8 }
-  module-manufacturing/erp-mfg-web/src/main/resources/_vfs/erp/mfg/pages/report/production-variance-report.page.yaml: { CAT4: 8 }
-  module-master-data/erp-md-dao/src/main/java/app/erp/md/dao/dto/ErpPartyType.java: { CAT3: 1 }
-  module-master-data/erp-md-service/src/main/java/app/erp/md/service/dashboard/ErpMdDashboardBizModel.java: { CAT3: 1 }
-  module-master-data/erp-md-web/src/main/resources/_vfs/erp/md/pages/cost-center/main.page.yaml: { CAT4: 14 }
-  module-master-data/erp-md-web/src/main/resources/_vfs/erp/md/pages/dashboard/main.flux.yaml: { CAT4: 14 }
-  module-master-data/erp-md-web/src/main/resources/_vfs/erp/md/pages/dashboard/main.page.yaml: { CAT4: 14 }
-  module-master-data/erp-md-web/src/main/resources/_vfs/erp/md/pages/party-search/main.picker.page.yaml: { CAT4: 20 }
-  module-master-data/erp-md-web/src/main/resources/_vfs/erp/md/pages/report/material-price-list.page.yaml: { CAT4: 6 }
-  module-master-data/erp-md-web/src/main/resources/_vfs/erp/md/pages/report/partner-list.page.yaml: { CAT4: 6 }
-  module-notify/erp-notify-service/src/main/java/app/erp/notify/service/dispatch/NotificationDispatcher.java: { CAT3: 1 }
-  module-notify/erp-notify-web/src/main/resources/_vfs/erp/notify/pages/ErpSysNotification/inbox.page.yaml: { CAT4: 42 }
-  module-projects/erp-prj-service/src/main/java/app/erp/prj/service/dashboard/ErpPrjDashboardBizModel.java: { CAT3: 1 }
-  module-projects/erp-prj-service/src/main/java/app/erp/prj/service/entity/ErpPrjTaskBizModel.java: { CAT3: 1 }
-  module-projects/erp-prj-service/src/main/java/app/erp/prj/service/posting/ProjectCostCollectionProvider.java: { CAT3: 3 }
-  module-projects/erp-prj-service/src/main/java/app/erp/prj/service/posting/ProjectSettlementAcctDocProvider.java: { CAT3: 9 }
-  module-projects/erp-prj-service/src/main/java/app/erp/prj/service/processor/ErpPrjProjectSettlementProcessor.java: { CAT3: 1 }
-  module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java: { CAT3: 1 }
-  module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/entity/PaymentSettler.java: { CAT3: 1 }
-  module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/posting/PurAcctDocProvider.java: { CAT3: 11 }
-  module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/support/ErpPurCtDiscountApplier.java: { CAT3: 1 }
-  module-purchase/erp-pur-web/src/main/resources/_vfs/erp/pur/pages/dashboard/main.flux.yaml: { CAT4: 24 }
-  module-purchase/erp-pur-web/src/main/resources/_vfs/erp/pur/pages/dashboard/main.page.yaml: { CAT4: 24 }
-  module-purchase/erp-pur-web/src/main/resources/_vfs/erp/pur/pages/dashboard/three-way-match.flux.yaml: { CAT4: 22 }
-  module-purchase/erp-pur-web/src/main/resources/_vfs/erp/pur/pages/dashboard/three-way-match.page.yaml: { CAT4: 29 }
-  module-quality/erp-qa-service/src/main/java/app/erp/qa/service/dashboard/ErpQaDashboardBizModel.java: { CAT3: 1 }
-  module-quality/erp-qa-service/src/main/java/app/erp/qa/service/entity/NcrLifecycleService.java: { CAT3: 3 }
-  module-quality/erp-qa-service/src/main/java/app/erp/qa/service/posting/NcrReturnOrchestrator.java: { CAT3: 2 }
-  module-quality/erp-qa-service/src/main/java/app/erp/qa/service/posting/NcrScrapAcctDocProvider.java: { CAT3: 2 }
-  module-quality/erp-qa-service/src/main/java/app/erp/qa/service/processor/ErpQaNonConformanceUpgradeToRecallProcessor.java: { CAT3: 1 }
-  module-quality/erp-qa-service/src/main/java/app/erp/qa/service/report/ErpQaReportBizModel.java: { CAT3: 1 }
-  module-quality/erp-qa-service/src/main/java/app/erp/qa/service/spc/SpcCapabilityCalculator.java: { CAT3: 1 }
-  module-quality/erp-qa-service/src/main/java/app/erp/qa/service/spc/SpcOutOfControlHandler.java: { CAT3: 2 }
-  module-quality/erp-qa-web/src/main/resources/_vfs/erp/qa/pages/dashboard/main.flux.yaml: { CAT4: 25 }
-  module-quality/erp-qa-web/src/main/resources/_vfs/erp/qa/pages/dashboard/main.page.yaml: { CAT4: 28 }
-  module-quality/erp-qa-web/src/main/resources/_vfs/erp/qa/pages/ncr-disposal/main.page.yaml: { CAT4: 2 }
-  module-quality/erp-qa-web/src/main/resources/_vfs/erp/qa/pages/report/inspection-summary.page.yaml: { CAT4: 8 }
-  module-quality/erp-qa-web/src/main/resources/_vfs/erp/qa/pages/report/ncr-capa-summary.page.yaml: { CAT4: 6 }
-  module-quality/erp-qa-web/src/main/resources/_vfs/erp/qa/pages/spc-capability/main.page.yaml: { CAT4: 12 }
-  module-quality/erp-qa-web/src/main/resources/_vfs/erp/qa/pages/spc-chart/main.page.yaml: { CAT4: 17 }
-  module-quality/erp-qa-web/src/main/resources/_vfs/erp/qa/pages/spc-sample/main.page.yaml: { CAT4: 16 }
-  module-sales/erp-sal-service/src/main/java/app/erp/sal/service/dashboard/ErpSalDashboardBizModel.java: { CAT3: 1 }
-  module-sales/erp-sal-service/src/main/java/app/erp/sal/service/entity/ReceiptSettler.java: { CAT3: 1 }
-  module-sales/erp-sal-service/src/main/java/app/erp/sal/service/posting/SalAcctDocProvider.java: { CAT3: 7 }
-  module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalReturnGenerateExchangeDeliveryProcessor.java: { CAT3: 3 }
-  module-sales/erp-sal-service/src/main/java/app/erp/sal/service/support/ErpSalPricingRuleEngine.java: { CAT3: 1 }
-  module-sales/erp-sal-web/src/main/resources/_vfs/erp/sal/pages/dashboard/main.flux.yaml: { CAT4: 19 }
-  module-sales/erp-sal-web/src/main/resources/_vfs/erp/sal/pages/dashboard/main.page.yaml: { CAT4: 20 }
+  module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/barcode/ErpInvBarcodeBizModel.java: { CAT3: 2 }
 ```
+
+
 
 
 
@@ -231,6 +64,8 @@ files:
 
 
 ## WHITELIST (machine-readable)
+
+| module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/barcode/ErpInvBarcodeBizModel.java | `@Description("中文")` 供平台 meta 消息（resolveBarcode 入参与 PDA 面描述），按 E3 计划豁免 | `docs/architecture/i18n-compliance.md` 判定准绳表 #5 | plan `2026-10-05-0400-4` Phase 3 cjk 裁决（CAT1×3 LOG 已英文化 Fix；CAT3×2 @Description 豁免登记） |
 
 > 文件级白名单是运行时字符串中文（CAT-3，及经独立裁决允许的其他 CAT）的**唯一豁免通道**（`docs/architecture/i18n-compliance.md §白名单登记格式`）。脚本解析本块做文件级豁免：`- file: <repo 相对路径>` + `cats: [3]`（数字或 CAT 前缀均可；省略 `cats` 行 = 豁免该文件全部 CAT-1..4）。四要素（文件路径/理由/owner doc 指针/裁决来源）以同行注释或条目下方注释行登记，缺一不可。白名单只增不删；调高（新增豁免）须附裁决来源，无裁决来源的登记无效。
 

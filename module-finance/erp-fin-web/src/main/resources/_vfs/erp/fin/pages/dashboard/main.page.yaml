@@ -154,6 +154,7 @@ body:
       selection: month revenue expense netProfit
   - type: chart
     empty: "暂无数据"
+    i18nEn: "No data"
     chartType: line
     title: "收支与利润趋势（近12月）"
     source: ${trendData ?? []}
@@ -168,6 +169,7 @@ body:
       - dataRegionKey: revenue
         name: "收入"
         i18nEn:
+          name: "Revenue"
           title: "Revenue"
           empty: "No data"
       - dataRegionKey: expense
@@ -186,6 +188,7 @@ body:
       selection: alertType bankBalance threshold shortfall
   - type: crud
     empty: "暂无数据"
+    i18nEn: "No data"
     className: m-3 erp-alert-card
     title: "现金流预警"
     i18nEn:

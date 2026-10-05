@@ -148,12 +148,14 @@ body:
     i18nEn:
       title: "Monthly Inventory Value Change (Last 12 Months)"
       yAxis: "Amount"
+      empty: "No data"
     legend: true
     height: 300
     series:
       - dataRegionKey: netValueChange
         name: "净变动成本"
         i18nEn:
+          name: "Net Cost Change"
           title: "Net Cost Change"
           empty: "No data"
 

@@ -7,6 +7,8 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.json.JSON;
 import io.nop.auth.core.login.UserContextImpl;
 import io.nop.core.lang.json.JsonTool;
+import io.nop.api.core.context.ContextProvider;
+import io.nop.api.core.context.IContext;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *   <li>授权角色读 masking 字段 → 审计记录写入（断言 AuditRequest 字段）+ masking 返明文；</li>
  *   <li>非授权角色读 → 不披露明文（null）→ 无审计记录；</li>
  *   <li>config-gate OFF → 无记录 + masking 行为不变；</li>
- *   <li>粒度策略生效（Decision (c) 按实体去重窗口：同一 user×entity×objId×field 单条记录）。</li>
+ *   <li>粒度策略生效（Decision (c) 请求作用域去重：user×entity×objId×field×traceId 单条记录；跨请求各自留审计）。</li>
  * </ol>
  *
  * <p>纯逻辑测试：无 DB / 无 IoC，{@link MaskAuditRecorder} 经手写 fake {@link IAuditService}
@@ -70,7 +72,14 @@ public class TestMaskAuditRecorder {
             AppConfig.getConfigProvider().assignConfigValue(CONFIG, prevProviderState);
         }
         IUserContext.set(prevCtx);
+        io.nop.api.core.context.BaseContextProvider.contextHolder().remove();
         MaskAuditRecorder.setInstance(null);
+    }
+
+    /** 生产同形路径设置请求 traceId（ContextHttpServerFilter 同款 setTraceId 语义） */
+    private void setRequestTraceId(String traceId) {
+        IContext ctx = ContextProvider.getOrCreateContext();
+        ctx.setTraceId(traceId);
     }
 
     private void enableAuditFlag(boolean enabled) {
@@ -148,12 +157,14 @@ public class TestMaskAuditRecorder {
         assertTrue(MaskAuditRecorder.isEnabled(), "config ON = isEnabled() 返 true");
     }
 
-    // ---- (4) 粒度策略：按 (user, entity, objId, field) 去重 ----
+    // ---- (4) 粒度策略：按 (user, entity, objId, field, traceId) 去重（0400-4 修订：请求作用域）----
+    // 去重需请求上下文（traceId 进键）；无 traceId 的保守多记语义见 nullTraceIdRecordsConservatively
 
     @Test
     public void dedupSameKeySingleAudit() {
         loginAs(MaskHelper.ROLE_SALARY_APPROVER);
         Object entity = new PlainEntity();
+        setRequestTraceId("req-dedup");
 
         for (int i = 0; i < 10; i++) {
             MaskHelper.maskDecimal(AMOUNT, Set.of(MaskHelper.ROLE_SALARY_APPROVER), entity, "basicSalary");
@@ -166,6 +177,7 @@ public class TestMaskAuditRecorder {
     public void dedupDifferentFieldSeparateAudits() {
         loginAs(MaskHelper.ROLE_SALARY_APPROVER);
         Object entity = new PlainEntity();
+        setRequestTraceId("req-dedup");
 
         MaskHelper.maskDecimal(AMOUNT, Set.of(MaskHelper.ROLE_SALARY_APPROVER), entity, "basicSalary");
         MaskHelper.maskDecimal(AMOUNT, Set.of(MaskHelper.ROLE_SALARY_APPROVER), entity, "netSalary");
@@ -184,6 +196,49 @@ public class TestMaskAuditRecorder {
         MaskHelper.maskDecimal(AMOUNT, Set.of(MaskHelper.ROLE_SALARY_APPROVER), entity, "basicSalary");
 
         assertEquals(2, auditService.captured.size(), "不同用户 = 2 条审计");
+    }
+
+    // ---- (5) plan 2026-10-05-0400-4：去重作用域=单请求（E4.2 :112 语义；traceId 进键）----
+
+    @Test
+    public void crossRequestSameFieldRecordedTwice() {
+        loginAs(MaskHelper.ROLE_SALARY_APPROVER);
+        Object entity = new PlainEntity();
+
+        // 请求 1（traceId=req-A）：同字段首读 → 1 条审计
+        setRequestTraceId("req-A");
+        MaskHelper.maskDecimal(AMOUNT, Set.of(MaskHelper.ROLE_SALARY_APPROVER), entity, "basicSalary");
+        assertEquals(1, auditService.captured.size(), "请求 1 首读 = 1 条");
+        // 请求 2（traceId=req-B）：跨请求同字段重读 → 必须再记（跨请求漏报回归断言；
+        // 旧 4 分量键实现下此断言红——thread 级键跨请求命中被去重）
+        setRequestTraceId("req-B");
+        MaskHelper.maskDecimal(AMOUNT, Set.of(MaskHelper.ROLE_SALARY_APPROVER), entity, "basicSalary");
+        assertEquals(2, auditService.captured.size(),
+                "跨请求同字段重读必须各自留审计（E4.2 请求作用域语义）");
+    }
+
+    @Test
+    public void sameRequestDedupMaintained() {
+        loginAs(MaskHelper.ROLE_SALARY_APPROVER);
+        Object entity = new PlainEntity();
+
+        setRequestTraceId("req-A");
+        MaskHelper.maskDecimal(AMOUNT, Set.of(MaskHelper.ROLE_SALARY_APPROVER), entity, "basicSalary");
+        MaskHelper.maskDecimal(AMOUNT, Set.of(MaskHelper.ROLE_SALARY_APPROVER), entity, "basicSalary");
+
+        assertEquals(1, auditService.captured.size(), "同请求内去重语义维持（E4.2）");
+    }
+
+    @Test
+    public void nullTraceIdRecordsConservatively() {
+        loginAs(MaskHelper.ROLE_SALARY_APPROVER);
+        Object entity = new PlainEntity();
+
+        // 无请求上下文（traceId 不可得）：跳过去重保守多记——审计漏报最小化方向
+        MaskHelper.maskDecimal(AMOUNT, Set.of(MaskHelper.ROLE_SALARY_APPROVER), entity, "basicSalary");
+        MaskHelper.maskDecimal(AMOUNT, Set.of(MaskHelper.ROLE_SALARY_APPROVER), entity, "basicSalary");
+
+        assertEquals(2, auditService.captured.size(), "null-traceId 保守多记（每次均留审计）");
     }
 
     @Test

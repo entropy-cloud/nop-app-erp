@@ -4,6 +4,8 @@ import io.nop.api.core.audit.AuditRequest;
 import io.nop.api.core.audit.IAuditService;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.context.ContextProvider;
+import io.nop.api.core.context.IContext;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.json.JSON;
 import io.nop.api.core.time.CoreMetrics;
@@ -28,12 +30,15 @@ import java.util.Set;
  * → 写 {@code NopAuthOpLog}（平台批处理异步写入，零阻塞主请求）。**无 ORM 新实体，无平台代码改动**
  * （保护区域 ask-first 未触发）。
  *
- * <p><b>粒度策略</b>（Phase 1 Decision (c)）：按实体去重窗口——同一 {@code userId × entityName × objId
- * × fieldName} 在同一请求线程内仅记一次（ThreadLocal {@link LinkedHashSet}）。上限 {@link #MAX_DEDUP_ENTRIES}
- * 防泄漏；典型 list 请求（100 行 × 13 字段）去重后 = 13 条审计。
+ * <p><b>粒度策略</b>（Phase 1 Decision (c)，plan 2026-10-05-0400-4 修订为请求作用域）：同一
+ * {@code userId × entityName × objId × fieldName × traceId} 仅记一次——DedupKey 携带
+ * {@code IContext#getTraceId()}（ContextHttpServerFilter 每 HTTP 请求设置/UUID 兜底），
+ * 池化工作线程跨请求的残留键不再命中（修复 E4.2「同一请求线程内仅记一次」语义下的跨请求漏报）。
+ * traceId 不可得（null 上下文）时跳过去重直接记录（保守多记，漏报最小化方向）。上限
+ * {@link #MAX_DEDUP_ENTRIES} 防泄漏。
  *
  * <p><b>config-gate</b>（Phase 1 Decision (d)）：{@link #CONFIG_FIELD_READ_AUDIT_ENABLED} 默认 false；
- * %test=ON / %dev=%prod=OFF。fail-safe：OFF 时 {@link #recordDisclosure} 首行 return，零开销。
+ * %test=ON / %prod=ON（USC-03 E4.2 翻转）/ %dev=OFF。fail-safe：OFF 时 {@link #recordDisclosure} 首行 return，零开销。
  *
  * <p><b>fail-closed 语义保持</b>：无 {@link IUserContext}（masking fail-closed = 不披露）→
  * {@link #recordDisclosure} 直接 return（无披露事件 → 无审计）。
@@ -123,13 +128,23 @@ public class MaskAuditRecorder {
         String entityName = resolveEntityName(entity);
         String objId = resolveObjId(entity);
 
-        DedupKey key = new DedupKey(ctx.getUserId(), entityName, objId, fieldName);
-        LinkedHashSet<DedupKey> seen = tlDedup.get();
-        if (seen.size() >= MAX_DEDUP_ENTRIES) {
-            seen.clear();
+        // 请求作用域去重（E4.2：同一请求线程内仅记一次）：traceId 进键使池化线程跨请求不命中；
+        // traceId 不可得时跳过去重（保守多记，对齐审计漏报最小化方向）
+        String traceId = null;
+        IContext ictx = ContextProvider.currentContext();
+        if (ictx != null) {
+            traceId = ictx.getTraceId();
         }
-        if (!seen.add(key)) {
-            return;
+
+        if (traceId != null) {
+            DedupKey key = new DedupKey(ctx.getUserId(), entityName, objId, fieldName, traceId);
+            LinkedHashSet<DedupKey> seen = tlDedup.get();
+            if (seen.size() >= MAX_DEDUP_ENTRIES) {
+                seen.clear();
+            }
+            if (!seen.add(key)) {
+                return;
+            }
         }
 
         AuditRequest req = new AuditRequest();
@@ -201,12 +216,14 @@ public class MaskAuditRecorder {
         final String entityName;
         final String objId;
         final String fieldName;
+        final String traceId;
 
-        DedupKey(String userId, String entityName, String objId, String fieldName) {
+        DedupKey(String userId, String entityName, String objId, String fieldName, String traceId) {
             this.userId = userId;
             this.entityName = entityName;
             this.objId = objId;
             this.fieldName = fieldName;
+            this.traceId = traceId;
         }
 
         @Override
@@ -217,12 +234,13 @@ public class MaskAuditRecorder {
             return java.util.Objects.equals(userId, k.userId)
                     && java.util.Objects.equals(entityName, k.entityName)
                     && java.util.Objects.equals(objId, k.objId)
-                    && java.util.Objects.equals(fieldName, k.fieldName);
+                    && java.util.Objects.equals(fieldName, k.fieldName)
+                    && java.util.Objects.equals(traceId, k.traceId);
         }
 
         @Override
         public int hashCode() {
-            return java.util.Objects.hash(userId, entityName, objId, fieldName);
+            return java.util.Objects.hash(userId, entityName, objId, fieldName, traceId);
         }
     }
 }

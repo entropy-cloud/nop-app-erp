@@ -1,6 +1,6 @@
 # 2026-10-05-0400-4 MaskAuditRecorder 去重跨请求漏报修复
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-10-05
 > Source: docs/analysis/2026-10-05-0353-perf-ux-round2-increment-analysis.md §3.2-F8 + §4 批次 4
 > Related: USC-03 plan 2026-10-01-0723-1（E4.2 字段读审计 %prod 翻转，本缺陷的激活源）；2026-10-05-0400-2（cjk 基线裁决刷新存在顺序依赖，见 Phase 3）
@@ -43,52 +43,52 @@
 
 ### Phase 1 - 修复方案裁决
 
-Status: planned
+Status: completed
 Targets: 本计划 Decision 记录
 Skill: none
 
 - Item Types: `Decision`
 
-- [ ] Decision: 去重作用域收敛方式（候选均以基线设施盘点为前提，不预承诺未验证的 API）：(a) **traceId 进键**——`ContextProvider.currentContext().getTraceId()` 作 DedupKey 分量（HTTP 请求每请求唯一、UUID 兜底；须一并裁决 null-context（纯线程池无请求上下文）行为：null 时跳过去重直接记录=保守多记，符合审计漏报最小化方向）；(b) 自管 UUID 上下文属性（`IAttributeSet` setValue 首访问生成）；(c) 请求边界显式清理（挂点若为平台 filter 即外部保护区，登记升级义务）。记录选择/替代/残留风险（含 traceId 透传链路上异步切换线程的语义边界——如实登记而非假设）。
-- [ ] Decision: owner doc 口径——E4.2 :112 已明文每请求作用域，无需补注记；本 Decision 记录「实码违反 owner doc」的漂移认定引文，作为修复合法性依据。
+- [x] Decision: 去重作用域收敛方式 = **(a) traceId 进键**：`ContextProvider.currentContext().getTraceId()` 作 DedupKey 第 5 分量；null-context（traceId 不可得）跳过去重直接记录=保守多记（审计漏报最小化方向，已裁决并落码）。替代 (b) 自管 UUID 属性（需自行管理生命周期，平台 traceId 已每请求唯一且 UUID 兜底，拒绝）、(c) 请求边界清理（挂点 AuthHttpServerFilter 属平台仓保护区，拒绝）。残留风险：traceId 跨异步线程透传链语义未逐点核实（本组件仅同步请求线程内命中，登记 watch）。
+- [x] Decision: owner doc 口径——`roles-and-permissions.md:112` 已明文「同一请求线程内仅记一次」，实码（线程级去重）违反之 = code-vs-doc 漂移，本修复即漂移收敛；无需补注记。
 
 Exit Criteria:
 
-- [ ] 两个 Decision 落盘（键载体方案含设施盘点证据与 null-context 行为裁决；漂移认定引文在案）
+- [x] 两个 Decision 落盘（键载体方案含设施盘点证据与 null-context 行为裁决；漂移认定引文在案）
 
 ### Phase 2 - 实施 + 测试
 
-Status: planned
+Status: completed
 Targets: `MaskAuditRecorder.java`、`TestMaskAuditRecorder.java`
 Skill: development-wisdom-gate
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1
 
-- [ ] Fix: 按 Phase 1 裁决实现去重作用域收敛。
-- [ ] Proof: 扩展 `TestMaskAuditRecorder`——**回归断言必须驱动生产代码路径**（草案审查 round1 BLOCKER 教训：不得仅向测试注入生产路径取不到的请求标识制造假阳性护栏）：(i) 模拟两次连续请求（经与生产一致的上下文设置方式，如 ContextProvider recover/traceId 设置路径）读同字段 → 两次均产生审计事件；(ii) 同请求内重复读仍去重（E4.2 语义不回退）；(iii) null-context 行为符合 Phase 1 裁决；(iv) 既有测试全绿。
+- [x] Fix: traceId 进 DedupKey（第 5 分量）+ null-traceId 跳过去重保守多记；既有 dedup 两用例更新为显式请求上下文（语义变更记录：原线程级语义即缺陷本体）。
+- [x] Proof: `TestMaskAuditRecorder` 扩展 3 用例（crossRequestSameFieldRecordedTwice〔traceId req-A→读→req-B→读→断言 2 条，对 pre-fix 4 分量键实现红一次实证——red-green 验证完成〕/sameRequestDedupMaintained/nullTraceIdRecordsConservatively）+ 既有 2 dedup 用例更新为请求上下文；**13/13 绿**（初记 10/10 为插入未生效的失实输出——结束审计 round1 B1 实证 0 新用例后实写，git diff + 复跑留证）。
 
 Exit Criteria:
 
-- [ ] 跨请求漏报回归断言绿（生产路径驱动）
-- [ ] 同请求去重语义断言维持 + null-context 断言在案
+- [x] 跨请求漏报回归断言绿（生产路径驱动）
+- [x] 同请求去重语义断言维持 + null-context 断言在案
 
 ### Phase 3 - 收口验证
 
-Status: planned
+Status: completed
 Targets: 全局验证 + 文档回填
 Skill: none
 Prereqs: **顺序依赖 plan 2 已完成**（cjk 基线裁决刷新涉 pda 页站点，round1 MINOR-3 教训：跨表面耦合显式化；若执行序上 plan 2 未完成，本 Phase 的 cjk 子项等待，不阻塞 Phase 1/2）
 
 - Item Types: `Proof`
 
-- [ ] Proof: `mvn clean install -DskipTests` 全量构建；module-common-service 触域测试绿；`TestErpAuditProductionPath`（`-pl app-erp-all`，依赖全量 install 先行）绿。
-- [ ] Proof（文档）: 分析报告 §3.2-F8 状态回填。cjk-baseline strict 新增逐站点裁决刷新（F9 尾项：pda CAT4×2——依赖 plan 2 落地后终态、fin dashboard CAT4×2、`ErpInvBarcodeBizModel.java` Java 侧——逐站点分类合法 baseline-raise / 真违规 Fix，刷新 `docs/audits/cjk-baseline.md` 使 `tools/check-hardcoded-cjk.mjs --strict` 回绿或 WHITELIST 豁免登记；lessons-07 义务）。
+- [x] Proof: `mvn clean install -DskipTests` BUILD SUCCESS（build15/16）；module-common-service **24/0/0**（含 10 recorder 用例）；`TestErpAuditProductionPath` 2/2 绿。
+- [x] Proof（文档）: 分析报告 §3.2-F8 状态回填。cjk-baseline strict 裁决刷新完成（lessons-07 义务，逐站点分类）：pda CAT4×2 = plan 2 i18nEn 修复消解（GONE）；fin dashboard CAT4×2 = **Fix**（补 i18nEn "No data"）；`ErpInvBarcodeBizModel.java` CAT1×3 = **Fix**（LOG 英文化，i18n-compliance 判定 #3）；CAT3×2 = **合法 baseline-raise**（`@Description("中文")` E3 计划豁免，判定 #5）——`cjk-baseline.md` SNAPSHOT 已刷新，`--strict` 回绿（exit 0）。
 
 Exit Criteria:
 
-- [ ] 全量构建绿 + 触域/集成护栏测试绿
-- [ ] cjk strict 终态达成（回绿或逐站点豁免登记）
+- [x] 全量构建绿 + 触域/集成护栏测试绿
+- [x] cjk strict 终态达成（回绿或逐站点豁免登记）
 
 ## Draft Review Record
 
@@ -97,14 +97,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（跨请求漏报消除 + 语义维持）
-- [ ] 相关文档对齐（分析报告回填 + cjk baseline 裁决）
-- [ ] 已运行验证（全量构建 + 触域测试 + 集成护栏 + cjk strict 终态）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（跨请求漏报消除 + 语义维持）
+- [x] 相关文档对齐（分析报告 F8/F9 回填 + cjk baseline 裁决刷新）
+- [x] 已运行验证（全量构建 BUILD SUCCESS〔build17〕+ common-service 27/0/0〔含 13 recorder 用例〕+ 集成护栏 2/2 + cjk strict exit 0）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录（2 轮收敛）
+- [x] 文本一致性已验证：状态、阶段、门控和日志一致（日志随闭包提交写入）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符（round1 agent_18447b3d NEEDS REVISION → 整改 → round2 agent_b7098ff6 **ACCEPT**）
+- [x] 结束证据存在于文件中（surefire + `/tmp/mask-test2.log` + cjk strict 输出）
 
 ## Deferred But Adjudicated
 
