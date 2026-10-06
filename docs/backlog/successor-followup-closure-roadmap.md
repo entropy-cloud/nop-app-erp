@@ -22,9 +22,9 @@
 
 | 状态 | 数量 |
 | --- | --- |
-| todo | 2 |
+| todo | 1 |
 | ready | 0 |
-| done | 6 |
+| done | 7 |
 
 ## 3. 当前基线
 
@@ -54,7 +54,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | 复用 |
 | --- | --- | --- | --- | --- | --- |
-| WI-05 | f311 计划（ast P2 批）执行收尾（Plan Status: active、审查/审计全 pending） | todo | 该计划文件 + `docs/audits/check/ai-check-index.md` | — | 既有 f31x 批次纪律 |
+| WI-05 | f311 计划（ast P2 批）执行收尾（Plan Status: active、审查/审计全 pending） | done（2026-10-06，plan `2026-09-21-1200-1`：确认 13/13 仍存在（WI-05 确认代理 HEAD 复核， lesson 13 风险未兑现）→ 草案审查 2 轮（iteration 1 needs revision 10 项修订含红灯映射表 13 行/ast-012 三分支重写/ast2-009 三分支裁决面）→ 保护区双批准（A×3+B×4 条件全履行）→ 实施全部落地（13 修复 + 13 红灯载体 + 快照重录 2）→ 模块 367/0/0（审计复跑口径；执行者口径 369）+ app-erp-all 80/0/0/1 + 全 reactor（8 项 fin 预存快照失败干净 HEAD 归因实证，按基线行先例披露）→ 结束审计 ACCEPT（6 项 Minor 簿记随 Closure 落盘）。**实施期两项如实披露**：①ast-016 config「转生效开关」偏离→退役 no-op 登记；②ast2-008/012 初轮执行被跳过（计划误勾）→ 复审捕获后补实现+全量复跑+双处披露。索引 13 行回填 fixed；owner doc 四处登记〔C1/C2/C3/§十〕；R2c +2 per-site 注记） | 该计划文件 + `docs/audits/check/ai-check-index.md` | — | 既有 f31x 批次纪律 |
 | WI-06 | ai-check open P2 残量（125 条）全量分诊 + 首批收尾（陈旧 finding 注销/仍存在入批/降级归档） | todo | `docs/audits/check/ai-check-index.md` + lessons/13 | WI-05（方法论同源） | 三路交叉盘点技能 |
 | WI-07 | ai-check r1/r2 roadmap 归宿裁决（r1 剩 1 todo+2 ready；r2 剩 35 todo——防僵尸 mission） | done（2026-10-06，WI-05 实施收官后裁决：**r1** F3.y P3 波次 cancelled（并入 ai-check-index open P3 台账——单一台账原则）、V.1 done（全量回归义务被各 mission 收官验证纪律吸收，2026-10-06 全 reactor 在案）、V.2 cancelled（并入 WI-06 终态校验）、G.1 done（lessons/12-14 + skills 沉淀在案）、G.2 done（本裁决即履行）；**r2** M1.x 切片×15 superseded（r3 同方法学全域收官 CONVERGED + ai-check-index 单一台账）、M2.0 done（红绿纪律延续）、M2.1 superseded（MR0/MR1 机制承载）、M2.2-M2.9 superseded（F2.x/F3.x 域批完成，索引 fixed 行为证）、M2.11/MV.2 cancelled（并入 WI-06）、MV.1 done（全 reactor 在案）、MV.3/MG.1 done（triangulation skill 沉淀）、MG.2 done（本裁决即履行）——**两 roadmap 状态块 todo/ready 归零，无僵尸 mission，逐行理由在各行注记**） | `docs/backlog/ai-check-roadmap.md`、`ai-check-r2-roadmap.md` | WI-05/WI-06 完成后裁决 | — |
 
