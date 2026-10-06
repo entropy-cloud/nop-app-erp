@@ -15,6 +15,30 @@ body:
       data:
         userId: null
 
+  # 三 tab 数据源上移页面顶层（owner doc「客户端拼接」裁决 + flux scope 父链读取；
+  # 全部 tab 由 formula 派生：unread+read 半集拼接 read 标志 + 客户端筛选排序，零后端改动）
+  - type: data-source
+    name: unreadData
+    action: ajax
+    args:
+      url: '@query:ErpSysNotification__findUnread'
+      method: post
+      data:
+        userId: null
+      selection: id notificationType channel subject body payloadJson sentAt status
+  - type: data-source
+    name: readData
+    action: ajax
+    args:
+      url: '@query:ErpSysNotification__findRead'
+      method: post
+      data:
+        userId: null
+      selection: id notificationType channel subject body payloadJson sentAt status
+  - type: data-source
+    name: allData
+    formula: '${(unreadData ?? []).map((n) => Object.assign({ read: false }, n)).concat((readData ?? []).map((n) => Object.assign({ read: true }, n))).filter((n) => (!filterForm?.notificationType || n.notificationType === filterForm.notificationType) && (!filterForm?.channel || n.channel === filterForm.channel) && (!filterForm?.status || n.status === filterForm.status) && (!filterForm?.sentAtFrom || (n.sentAt ?? "") >= filterForm.sentAtFrom) && (!filterForm?.sentAtTo || (n.sentAt ?? "").slice(0, 10) <= filterForm.sentAtTo)).sort((a, b) => (b.sentAt ?? "").localeCompare(a.sentAt ?? ""))}'
+
   - type: text
     className: "m-3 d-flex justify-content-between align-items-center"
     tag: div
@@ -94,6 +118,9 @@ body:
         i18nEn: "Lifecycle"
         clearable: true
         options:
+          - value: "PENDING"
+            label: "待发送"
+            i18nEn: "Pending"
           - value: "SENT"
             label: "已发送"
             i18nEn: "Sent"
@@ -128,15 +155,6 @@ body:
         title: "未读"
         i18nEn: "Unread"
         body:
-          - type: data-source
-            name: unreadData
-            action: ajax
-            args:
-              url: '@query:ErpSysNotification__findUnread'
-              method: post
-              data:
-                userId: null
-              selection: id notificationType channel subject body payloadJson sentAt status
           - type: crud
             name: unreadCrud
             syncLocation: false
@@ -199,15 +217,6 @@ body:
         title: "已读"
         i18nEn: "Read"
         body:
-          - type: data-source
-            name: readData
-            action: ajax
-            args:
-              url: '@query:ErpSysNotification__findRead'
-              method: post
-              data:
-                userId: null
-              selection: id notificationType channel subject body payloadJson sentAt status
           - type: crud
             name: readCrud
             syncLocation: false
@@ -249,15 +258,6 @@ body:
         title: "全部"
         i18nEn: "All"
         body:
-          - type: data-source
-            name: allData
-            action: ajax
-            args:
-              url: '@query:ErpSysNotification__findUnread'
-              method: post
-              data:
-                userId: null
-              selection: id notificationType channel subject body payloadJson sentAt status read
           - type: crud
             name: allCrud
             syncLocation: false

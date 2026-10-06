@@ -1,5 +1,6 @@
 USER_ID,ROLE_ID
 1,admin
+1,user
 2,财务员
 3,管理员
 4,B2B 管理员

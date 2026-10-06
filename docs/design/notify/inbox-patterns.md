@@ -45,7 +45,7 @@ private String resolveUserId(String userId, IServiceContext ctx) {
 | 已读 | `@query:ErpSysNotification__findRead` | 后端按 `ErpSysNotificationRead.userId == userId` 反查 `ErpSysNotification` | 与 `findUnread` 对称的简洁端点 |
 | 全部 | 客户端拼接 `findUnread` + `findRead` | 客户端合并去重 | 不带 filter 的简单合并，避免新加 findInbox 方法 |
 
-**禁用** `<filter><eq name="status" value="READ"/></filter>`：`ErpSysNotification.status` 字段是通知 lifecycle 状态（`SENT` / `MERGED` / `FAILED`，见 `ErpNotifyConstants` 与 BizModel line 167 `unreadOf` 的 filter），不是已读状态。已读状态派生自 `ErpSysNotificationRead` 关联，**不能**复用 lifecycle status。
+**禁用** `<filter><eq name="status" value="READ"/></filter>`：`ErpSysNotification.status` 字段是通知 lifecycle 状态（`PENDING` / `SENT` / `MERGED` / `FAILED`——`PENDING` 为实体 defaultValue（待发送），2026-10-06 plan 2026-10-06-0355-3 收件箱筛选值域对齐时补入文档，见 `ErpNotifyConstants` 与 BizModel `unreadOf` 的 filter），不是已读状态。已读状态派生自 `ErpSysNotificationRead` 关联，**不能**复用 lifecycle status。
 
 **降级裁决**：Phase 1 Explore (c) 候选 (A) GraphQL sub-query `id notIn (...)` 因 Nop GraphQL 过滤 sub-query 语法非简单 TreeBean 不直接可用；候选 (B) 双查询客户端拼接性能与一致性差，仅在「全部」tab 用作合并机制（已读/未读两 list 客户端去重，规模可控）；候选 (C) 后端新增 `findRead` 端点——Phase 1 Explore (a) 裁决前端无法直接获取 userId，故必须有「后端 ctx.getUserId() fallback」端点；`findRead` 与既有 `findUnread` 对称、复用 `unreadOf` 同一模式，是最小扩展。**最终**：已读 tab 走 `findRead`，全部 tab 客户端拼接 `findUnread` + `findRead`。
 
@@ -83,7 +83,7 @@ private String resolveUserId(String userId, IServiceContext ctx) {
 - `notificationType`（input-text）：业务事件键
 - `channel`（select）：IN_APP / EMAIL（数据字典可后置）
 - `sentAt` 起 / 止（input-date）：发送日期段
-- `status`（select）：仅 lifecycle 三态 SENT / MERGED / FAILED（**非已读状态**）
+- `status`（select）：lifecycle 四态 PENDING / SENT / MERGED / FAILED（`PENDING` 为实体 defaultValue 待发送，2026-10-06 plan 2026-10-06-0355-3 值域对齐补入；**非已读状态**）
 
 筛选表单的「刷新」按钮 `actionType: reload` `target` 指向三个 crud + 未读计数 service。
 
