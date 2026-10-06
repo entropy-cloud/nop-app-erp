@@ -248,6 +248,11 @@
                 <resource id="mfg-report" displayName="制造报表" i18n-en:displayName="Manufacturing Reports"
                           icon="bar-chart-3" resourceType="SUBM" orderNo="700" roles="生产主管">
                     <children>
+                        <!-- P2-CK-WI-01（F-R19）：报表读动作资源注册（roles 镜像本组菜单种子）。 -->
+                        <resource id="FNPT:ErpMfgReport:query" displayName="制造报表查询" i18n-en:displayName="Query Manufacturing Reports"
+                                  resourceType="FNPT" orderNo="7000" roles="生产主管">
+                            <permissions>ErpMfgReport:query</permissions>
+                        </resource>
                         <resource id="crp-load-report" app:useCases="UC-MFG-03,UC-MFG-11" displayName="CRP 负荷报表"
                                   i18n-en:displayName="CRP Load Report" icon="gauge"
                                   component="FLUX" resourceType="SUBM" orderNo="7010"

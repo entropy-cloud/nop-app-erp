@@ -52,6 +52,8 @@ site:
       displayName: Query Currency
     FNPT:ErpMdCurrency:refreshRatesFromApi:
       displayName: Refresh Rates From Api
+    FNPT:ErpMdReport:query:
+      displayName: Query Master Data Reports
     FNPT:ErpMdSupplierApproval:apply:
       displayName: Apply Approval
     FNPT:ErpMdSupplierApproval:approve:

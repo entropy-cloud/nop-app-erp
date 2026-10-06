@@ -128,6 +128,12 @@
                 <resource id="cs-report" displayName="客服报表" i18n-en:displayName="Customer Service Reports"
                           icon="bar-chart-3" resourceType="SUBM" orderNo="1000">
                     <children>
+                        <!-- P2-CK-WI-01（F-R19）：报表读动作资源注册。cs 域无业务角色菜单种子（owner doc
+                             R1-E1-2 既有缺口），roles=管理员 镜像本域 reverseApprove 先例最小授权。 -->
+                        <resource id="FNPT:ErpCsReport:query" displayName="客服报表查询" i18n-en:displayName="Query Customer Service Reports"
+                                  resourceType="FNPT" orderNo="10000" roles="管理员">
+                            <permissions>ErpCsReport:query</permissions>
+                        </resource>
                         <resource id="ticket-sla-csat-summary" app:useCases="UC-CS-04,UC-CS-08" displayName="工单 SLA/CSAT 综合统计表"
                                   i18n-en:displayName="Ticket SLA/CSAT Summary" icon="bar-chart-3"
                                   component="FLUX" resourceType="SUBM" orderNo="10010"

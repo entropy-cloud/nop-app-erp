@@ -60,6 +60,8 @@ site:
       displayName: Promote To Formal Plan
     FNPT:ErpMfgMrpScenario:runSimulation:
       displayName: Run Simulation
+    FNPT:ErpMfgReport:query:
+      displayName: Query Manufacturing Reports
     FNPT:ErpMfgSubcontractOrder:approve:
       displayName: Approve Subcontract Order
     FNPT:ErpMfgSubcontractOrder:cancel:

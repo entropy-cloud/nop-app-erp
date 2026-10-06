@@ -96,6 +96,8 @@ site:
       displayName: Check Dual Side Consistency
     FNPT:ErpFinIntercompanyMatch:runMatching:
       displayName: Run Matching
+    FNPT:ErpFinReport:query:
+      displayName: Query Financial Reports
     FNPT:ErpFinVoucher:post:
       displayName: Post Voucher
     FNPT:ErpFinVoucher:reverse:

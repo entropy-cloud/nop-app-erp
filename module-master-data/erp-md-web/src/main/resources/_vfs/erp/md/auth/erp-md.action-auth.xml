@@ -181,6 +181,11 @@
                 <resource id="md-report" displayName="主数据报表" i18n-en:displayName="Master Data Reports"
                           icon="bar-chart-3" resourceType="SUBM" orderNo="800" roles="采购员,销售员,库管员,财务员,资产管理员,项目经理,生产计划员,生产主管,作业员,质检员,质量主管,维护主管,维护人员">
                     <children>
+                        <!-- P2-CK-WI-01（F-R19）：报表读动作资源注册（roles 镜像本组菜单种子）。 -->
+                        <resource id="FNPT:ErpMdReport:query" displayName="主数据报表查询" i18n-en:displayName="Query Master Data Reports"
+                                  resourceType="FNPT" orderNo="8000" roles="采购员,销售员,库管员,财务员,资产管理员,项目经理,生产计划员,生产主管,作业员,质检员,质量主管,维护主管,维护人员">
+                            <permissions>ErpMdReport:query</permissions>
+                        </resource>
                         <resource id="material-price-list" app:useCases="UC-MD-06,UC-MD-07" displayName="物料价格清单"
                                   i18n-en:displayName="Material Price List" icon="dollar-sign"
                                   component="FLUX" resourceType="SUBM" orderNo="8010"

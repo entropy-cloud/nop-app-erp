@@ -34,6 +34,8 @@ site:
       displayName: Ticket Type
     ErpCsTimeEntry-main:
       displayName: Time Entry
+    FNPT:ErpCsReport:query:
+      displayName: Query Customer Service Reports
     cs-action-log:
       displayName: Ticket Action Timeline
     cs-canned-response:

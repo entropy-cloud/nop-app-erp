@@ -235,6 +235,13 @@
                 <resource id="fin-report" displayName="财务报表" i18n-en:displayName="Financial Statements"
                           icon="bar-chart-3" resourceType="SUBM" orderNo="700" roles="财务员">
                     <children>
+                        <!-- P2-CK-WI-01（F-R19）：报表读动作资源注册——修复前报表 BizModel（非实体纯 BizModel，
+                             codegen 不产资源点）的 :query 权限无角色绑定，非 admin 账号下载/渲染统一 403
+                             （permissionToRoles fail-closed）。roles 镜像本组菜单种子。 -->
+                        <resource id="FNPT:ErpFinReport:query" displayName="财务报表查询" i18n-en:displayName="Query Financial Reports"
+                                  resourceType="FNPT" orderNo="7000" roles="财务员">
+                            <permissions>ErpFinReport:query</permissions>
+                        </resource>
                         <resource id="balance-sheet" app:useCases="UC-FIN-16" displayName="资产负债表"
                                   i18n-en:displayName="Balance Sheet" icon="scale"
                                   component="FLUX" resourceType="SUBM" orderNo="7010"

@@ -145,6 +145,8 @@
 
 > **FNPT 权限点模式说明**：生成文件 `_erp-*.action-auth.xml` 中每实体仅有两个 FNPT 权限点——`{EntityName}:query`（查询）与 `{EntityName}:mutation`（修改，覆盖所有写操作）。下表"FNPT 前缀 + 业务动作"列中，`{前缀}*` 为 FNPT 权限点前缀（实际点为 `{前缀}:{query,mutation}`），冒号后列出的动作（如 `save/update/submitForApproval`）是 BizModel 业务方法名，均归入 `mutation` 权限点，**不是**独立的 FNPT 权限点 ID。
 
+> **报表 BizModel 的 FNPT 注册（P2-CK-WI-01/F-R19 修复，plan `2026-10-06-1900-1`，2026-10-06）**：报表对象（`ErpFinReport`/`ErpMdReport`/`ErpMfgReport`/`ErpCsReport`）为**非实体纯 BizModel**——codegen 不为其产出 FNPT 资源点，其全部读动作（renderHtml/download 等 @BizQuery）默认权限 `{obj}:query|{obj}:{action}` 在 permissionToRoles 中无角色绑定 → 非 admin 账号 fail-closed 403（**菜单可见 ≠ 动作可用**：fin 角色映射表「报表 sys-report 可见」行仅覆盖菜单面）。修复 = 四域手写 overlay 报表组各注册 `FNPT:ErpXxxReport:query`（`:query` 桶窄种子语义，一次注册覆盖同对象全部读动作 OR 组；roles 镜像各域报表菜单种子；cs 域最小=管理员）。**%prod 加重项**：`%prod` skip-check-for-admin=false → 修复前报表下载在 %prod 对含 admin 在内一切账号 fail-closed——%prod 报表角色补种归部署阶段 successor（USC-02a/02b 豁免面同族）。
+
 | 角色 | 可访问 SUBM 域/菜单组 | FNPT 前缀（→ `{前缀}:{query,mutation}`）+ 覆盖的业务动作 |
 |------|-----------------------|---------------|
 | 采购员 | `erp-pur`（采购管理）全部 + `erp-md`（主数据）只读（物料/往来单位/地址）+ `erp-inv`（库存）只读（库存余额查看） | `ErpPur*:{query,save,update,delete,submitForApproval}`、`ErpInv*:query` |
