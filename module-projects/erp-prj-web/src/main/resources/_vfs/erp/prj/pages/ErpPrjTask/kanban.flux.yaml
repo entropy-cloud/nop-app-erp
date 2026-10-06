@@ -46,12 +46,11 @@ body:
   onCardMove:
     action: ajax
     args:
-      url: '${event.toColumnId === "col-IN_PROGRESS" ? "@mutation:ErpPrjTask__startTask" : event.toColumnId === "col-DONE" ? "@mutation:ErpPrjTask__completeTask" : event.toColumnId === "col-BLOCKED" ? "@mutation:ErpPrjTask__blockTask" : "@mutation:ErpPrjTask__unblockTask"}'
+      url: '${event.toColumnId === "col-IN_PROGRESS" ? '/r/ErpPrjTask__startTask' : event.toColumnId === "col-DONE" ? '/r/ErpPrjTask__completeTask' : event.toColumnId === "col-BLOCKED" ? '/r/ErpPrjTask__blockTask' : '/r/ErpPrjTask__unblockTask'}'
       method: post
       data:
         taskId: ${event.cardId.substring(5)}
         blockReason: 看板拖拽标记阻塞
-        i18nEn: Blocked via kanban drag
   onCardClick:
     action: showToast
     args:

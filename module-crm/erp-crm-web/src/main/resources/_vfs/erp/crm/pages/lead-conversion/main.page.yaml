@@ -42,6 +42,7 @@ body:
         options: '${(leadsData?.items ?? []).map((l) => ({ label: (l.code + " · 预期收入:" + (l.expectedRevenue ?? 0) + " · 当前阶段:" + (l.stage?.stageName ?? "—")), value: l.id }))}'
         i18nEn:
           label: "Select Lead"
+          options: '${(leadsData?.items ?? []).map((l) => ({ label: (l.code + " · Expected Revenue:" + (l.expectedRevenue ?? 0) + " · Current Stage:" + (l.stage?.stageName ?? "—")), value: l.id }))}'
       - type: button
         label: "下一步：选择目标阶段"
         i18nEn: "Next: Select Target Stage"

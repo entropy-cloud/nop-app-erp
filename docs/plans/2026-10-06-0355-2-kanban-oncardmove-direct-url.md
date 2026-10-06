@@ -1,6 +1,6 @@
 # 2026-10-06-0355-2 三看板 onCardMove /r/ 直发修复
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-10-06
 > Source: docs/analysis/2026-10-06-0352-perf-ux-round3-increment-analysis.md §3.1 F-R2
 > Related: 2026-10-05-0400-1-flux-handwritten-action-rewiring.md（G-002/F13 先例）；docs/architecture/flux-integration-gotchas.md G-002
@@ -39,34 +39,34 @@
 
 ### Phase 1 - 改写与登记
 
-Status: planned
+Status: completed
 Targets: 3 个 kanban/opportunity-kanban *.flux.yaml；docs/architecture/flux-integration-gotchas.md
 Skill: none
 
 - Item Types: `Fix | Add`
 
-- [ ] Fix: 三处 url 表达式内 `@mutation:` → `/r/`（条件路由表达式逐分支保留）；prj data 移除 i18nEn 杂键——blockReason 中文文案的英文对照按 CJK CAT 口径挂 onClick 兄弟级 `i18nEn:` 块（参照 disposal-wizard/main.page.yaml:130-131 先例），不可挂 data 内；无对应 UI 文本则记录 CAT4 豁免裁决
-- [ ] Add: G-002 登记 onCardMove 族（`@mutation:` 陷阱不限于按钮 onClick，事件处理器 ajax args 同律）
+- [x] Fix: 三处 url 表达式内 `@mutation:` → `/r/`（prj 4 分支 + cs 6 分支 + crm moveStage，条件路由逐分支保留）；prj data 内 i18nEn 杂键移除——blockReason 为 DB payload 非 UI 文案、载体无法随 payload 传递，按 **cjk-baseline.md WHITELIST 文件级登记**（cats [4]，四要素齐备；迭代 1 审查预案的「onClick 兄弟级」对事件处理器不适用——onCardMove 非 button，实际走豁免通道）
+- [x] Add: G-002 URL 形态规则增补 onCardMove 族条目（`@mutation:` 陷阱不限于按钮 onClick + data 载荷 i18nEn 纪律）
 
 Exit Criteria:
 
-- [ ] 三文件 grep `@mutation:` 零命中（活面 flux.yaml）
-- [ ] `npm run validate:flux` errors=325 零新增
+- [x] 三文件 grep `@mutation:` 零命中（实测 0）
+- [x] `npm run validate:flux` errors=325 零新增（实测持平，warnings 21079 持平）
 
 ### Phase 2 - 运行时探针定案
 
-Status: planned
+Status: completed
 Targets: E2E（flux 渲染模式强制）
 Skill: none
 
 - Item Types: `Proof`
 
-- [ ] 探针（同构 fetch 级或真实拖拽，遵循 e2e-runbook）：落点=扩展现成 `tests/e2e/business-actions/f13-kanban-drag.action.spec.ts`（其注释已声明只测 row-action 路径，正是本次 URL 形态盲区对照面）或新建同目录 spec。负对照=修复前形态请求报 unknown-operation-arg（引述批次 1 探针证据）；正对照=修复后 prj 拖拽（或 onCardMove 处理器直调）断言 `/r/ErpPrjTask__startTask` 请求 200 且实体状态迁移；cs 六分支至少覆盖 assign/start/resolve/cancel 四分支断言。运行命令=e2e 布局标准命令（`npm run e2e`，E2E_ENGINE=flux）
-- [ ] 既有 E2E 回归零失败
+- [x] 探针：新建 `tests/e2e/business-actions/kanban-oncardmove-r.action.spec.ts` 3/3 绿——①结构断言（三文件零 `@mutation:`、/r/ 在位、prj 载荷无 i18nEn 杂键）；②prj startTask 分支（自建 TODO 任务[种子缺位回退]，`/r/` fetch 200 + rpc 0 + 状态翻转 IN_PROGRESS）；③cs assign/start/resolve/cancel 四分支（建单 → 逐分支 `/r/` fetch → ASSIGNED/IN_PROGRESS/RESOLVED/CANCELLED 状态翻转断言 + 报表防污染清理[actions→survey→ticket]）。crm moveStage 归结构断言面（种子商机/阶段构造重，fetch 语义与 prj/cs 同构）。运行命令=`npm run e2e`
+- [x] 既有 E2E 回归零失败（rewired-buttons 1/1 绿、f13 3 skipped[种子依赖，与基线一致]）
 
 Exit Criteria:
 
-- [ ] 正对照探针证据在案（≥1 域真实状态迁移断言）；回归零失败
+- [x] 正对照探针证据在案（prj + cs 四分支真实状态迁移）；回归零失败
 
 ## Draft Review Record
 
@@ -75,14 +75,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐（G-002 onCardMove 族登记）
-- [ ] 已运行验证（validate:flux 零新增 + 探针 + E2E 回归）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐（G-002 onCardMove 族登记）
+- [x] 已运行验证（validate:flux 零新增 + 探针 + E2E 回归）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -95,11 +95,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: (pending)
+Status Note: 三看板 onCardMove 全部 /r/ 直发（结构零 @mutation: 残留），prj/cs 分支 fetch 探针真实状态迁移断言通过，cjk WHITELIST 豁免登记合规（--strict PASS），G-002 onCardMove 族登记在案，回归零失败。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: (pending)
+- Auditor / Agent: agent_977187d9（独立结束审计 2026-10-06：**ACCEPT** 附回填条件[已实施]——a-g 七项实证通过；审计者独立复跑 kanban-oncardmove-r 3 passed / rewired-buttons 1 passed / f13 3 skipped 与基线一致 / cjk --strict exit 0 / validate:flux errors=325 warnings=21079）
 
 Follow-up:
 

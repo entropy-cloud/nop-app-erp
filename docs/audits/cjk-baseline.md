@@ -210,4 +210,10 @@ files:
   # 理由: @Description("中文") 专属文件（1 行），同 E3 豁免（批 2/2 Phase 4）
   # owner doc: docs/architecture/i18n-compliance.md 判定准绳表 #5
   # 裁决来源: plan 2026-09-07-1715-1 Phase 4（2026-09-07）
+# ===== 批次 onCardMove payload（plan 2026-10-06-0355-2；协议 = i18n-compliance.md 白名单登记格式）=====
+- file: module-projects/erp-prj-web/src/main/resources/_vfs/erp/prj/pages/ErpPrjTask/kanban.flux.yaml
+  cats: [4]
+  # 理由: onCardMove.data.blockReason 为 DB payload 值（拖拽标记阻塞原因，落库数据非 UI 文案），i18nEn 载体无法随 payload 传递（历史载体为 data 内杂键 i18nEn，会被当作 mutation 参数发出——本 plan 移除）
+  # owner doc: docs/architecture/i18n-compliance.md §白名单登记格式（文件级唯一豁免通道）
+  # 裁决来源: plan 2026-10-06-0355-2 Phase 1（三看板 @mutation:→/r/ 直发批次，payload 洁化裁决）
 ```

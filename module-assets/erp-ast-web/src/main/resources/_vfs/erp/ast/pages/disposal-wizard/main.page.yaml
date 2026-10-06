@@ -38,6 +38,7 @@ body:
         i18nEn:
           label: "Select Asset"
           placeholder: "Select the asset to dispose"
+          options: '${(assetsData?.items ?? []).map((a) => ({ label: (a.code + " · " + a.name + " (Net Value:" + (a.netBookValue ?? 0) + ")"), value: a.id }))}'
       - type: select
         name: disposalType
         label: "处置类型"

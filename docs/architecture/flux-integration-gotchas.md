@@ -85,6 +85,7 @@ flux button renderer 仅声明 `onClick` 一个事件字段（`nop-chaos-flux/pa
 - `@mutation:Xxx__save|update|...`（operationRegistry 注册后缀）：壳层经 argDataMap 发 `{data: <args.data>}`——args.data 写实体字段平铺即可。
 - 标量参数自定义 mutation（如 `startTake(takeId)`）：**必须写 `/r/Xxx__method` 直发**——`@mutation:` 未注册回退会包一层 `{data: ...}`，服务端报 `unknown-operation-arg: 没有定义参数[data]`（`nop-chaos-next/apps/main/src/services/nopRpcResolver.ts:274-277`）。
 - `@query:` 未注册操作不包裹，args.data 原样直达。
+- **事件处理器路径同律**（plan 2026-10-06-0355-2）：kanban `onCardMove` 等事件处理器的 ajax args 携带 `@mutation:` 标量参数 URL 同样必败（G-002 陷阱不限于按钮 onClick）——三看板拖拽改状态链曾整族失效，已按 `/r/` 直发修复。附带纪律：mutation `data` 载荷内不得混入 `i18nEn` 杂键（会作为参数发出；中文 payload 值非 UI 文案，走 cjk-baseline.md WHITELIST 文件级豁免通道）。
 
 注意：迁移后 confirm 依赖宿主 `env.confirm` 能力（`flux-runtime/src/runtime-action-helpers.ts:142-147`——配置 confirmText 而宿主未提供 env.confirm 时动作显式失败）。本仓宿主已接 env.confirm（2026-10-05 stock-take-flow 确认框实测弹出）。
 
