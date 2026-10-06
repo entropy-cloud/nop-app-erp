@@ -53,8 +53,8 @@ body:
         required: true
       - type: button
         label: "保存盘点行"
-        disabled: "${!takeCode || !skuBarcode || actualQuantity == null}"
         i18nEn: "Save Stock Take Line"
+        disabled: "${!takeCode || !skuBarcode || actualQuantity == null}"
         variant: primary
         onClick:
           action: ajax

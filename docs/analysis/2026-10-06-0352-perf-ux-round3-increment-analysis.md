@@ -2,6 +2,8 @@
 
 > 日期：2026-10-06
 >
+> **mission 收官（2026-10-06）**：批次 1-6 + 跨仓双修复批全部完成并各自独立提交（nop-app-erp `d0c011654`→`fd0d37992` 共 8 个计划；nop-chaos-next `34fb37d`、nop-chaos-flux `b18117e97`）。F-R1..F-R18 全部修复（P1×4 同族漏网面全清零），F-R19/F-R20 依诊断证据登记独立 successor 批次（auth 保护区 plan-first / shell+种子联动，diagnosis 已闭环待实施）。最终门禁全绿（flux errors=325 零新增 + FLUX_PAGE_ERROR_COUNT: 0 / check:flux-baseline PASS（新增门禁，含 887 yaml parse）/ cjk strict exit 0 / unbounded 71 站点 PASS / compliance exit 0 / 全量构建 exit 0）。独立复扫收敛核验 agent_dcbdb16b 裁决 **CONVERGED**——除已登记 successor 与既有 Deferred 表外无新可优化项。本轮执行期额外收获：三个运行期缺陷（壳层 blob 断链/flux scope 解析/批次 2 引号事故）均由「真实点击探针」纪律暴露——静态+导出级验证对此类跨层缝不可达。
+>
 > 性质：触发条件驱动的 Deferred 重开轮 + 全新扫描角度增量轮。第二轮收官（0ac76cd13）后生产代码**零增量**（仅 1 个 docs 提交），故本轮不是「新代码回归扫描」，而是：①第二轮 §5 两项 Deferred 的重开触发条件（「批次 1/2 完成后的复扫轮」）已实质满足，本轮定案；②三路全新只读扫描通道（后端性能 / 前端 UI-UX / flux 渲染合规）以与上轮不同的切面（批次触达范围之外的同族面、平台范式缺口、门禁宇宙盲区）覆盖；③执行者对全部关键 finding 实仓源码级复核（含 3 处扫描通道结论修正，见 §4）。
 > 扫描通道：3 个独立只读子代理（后端性能 / UI-UX / flux 渲染合规）+ 执行者复核。增量基线：`0ac76cd13`（上轮收官 HEAD，树净）。
 > 关联：`2026-09-27-perf-ux-deep-optimization-analysis.md`（第一轮基线与 §6 Deferred）、`2026-10-05-0353-perf-ux-round2-increment-analysis.md`（第二轮 F1-F15 与 §5 Deferred）、`docs/architecture/flux-integration-gotchas.md` G-002、`docs/architecture/flux-page-export-and-validation.md`（门禁基线）。
