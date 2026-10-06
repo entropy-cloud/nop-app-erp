@@ -95,11 +95,11 @@
 
 | Finding ID | 级别 | 维度 | 报告 | 摘要 | arm-index 复用裁决 | 状态 | 终态证据 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| P2-CK-md-001 | P2 | D3/D8 | ck-master-data | findEffectiveByPartner 无日期窗过滤+无排序，过期资格致 purchase 误拒/漏拒 | 新增（arm-index 零命中） | open |  |
-| P2-CK-md-002 | P2 | D6 | ck-master-data | resolvePriceWithSource 缺供应商价格层，与 resolvePrice 语义不一致 | 新增 | open |  |
-| P2-CK-md-003 | P2 | D6 | ck-master-data | 未定价 SKU 兜底价 0（nullSafe/nz 族） | 新增 | open |  |
+| P2-CK-md-001 | P2 | D3/D8 | ck-master-data | findEffectiveByPartner 无日期窗过滤+无排序，过期资格致 purchase 误拒/漏拒 | 新增（arm-index 零命中） | fixed | WI-06 分诊（2026-10-06，报告 docs/audits/check/2026-10-06-2300-successor-wi06/）：已消失（85d38b26c f3.5 修复在案） |
+| P2-CK-md-002 | P2 | D6 | ck-master-data | resolvePriceWithSource 缺供应商价格层，与 resolvePrice 语义不一致 | 新增 | fixed | WI-06 分诊：已消失（85d38b26c f3.5） |
+| P2-CK-md-003 | P2 | D6 | ck-master-data | 未定价 SKU 兜底价 0（nullSafe/nz 族） | 新增 | fixed | WI-06 分诊：已消失（85d38b26c f3.5） |
 | P2-CK-md-004 | P2 | D6/D2 | ck-master-data | 汇率刷新 [today,today+1] 闭区间覆盖 2 天 + dao 直写绕过 MUTEX 钩子 | 新增 | open |  |
-| P2-CK-md-005 | P2 | D6 | ck-master-data | convertQty 不尝试反向换算（倒数系数） | 新增 | open |  |
+| P2-CK-md-005 | P2 | D6 | ck-master-data | convertQty 不尝试反向换算（倒数系数） | 新增 | fixed | WI-06 分诊：已消失（85d38b26c f3.5） |
 | P3-CK-md-006 | P3 | D8 | ck-master-data | ExchangeRate javadoc 声称 config-gate 实现无 gate | 新增 | open |  |
 | P3-CK-md-007 | P3 | D2/D10 | ck-master-data | DateRange idOf 反射失败静默 null | 新增 | open |  |
 | P3-CK-md-008 | P3 | D2 | ck-master-data | currentUserId 宽 catch 返回 null 无日志 | 新增 | open |  |
@@ -371,7 +371,7 @@
 | P2-CK-ast2-007 | P2 | D6 | ck-assets-depreciation.md | elapsed 口径 = 全部 EXECUTED 行数而非「早于目标期的行数」——补提/重执行非最新期间时双倍余额递减的剩余期数与直线切换点错位 | 新增 | fixed | F3.11 Phase 3：countExecutedBefore 目标期前口径（Execute/CatchUp 接线；Recalculate as-of-now 保留〔C4〕；countByQuery）（plan 2026-09-21-1200-1，2026-10-06 红绿测试在案） |
 | P2-CK-ast2-008 | P2 | D2/D7，同型 P3-CK-pur-013/P3-CK-mfg-017 族·站点升级 | ck-assets-depreciation.md | executeBatchDepreciation 单事务逐资产吞异常——失败资产 session 脏写残留可致后续资产连锁失败/整批回滚，而每资产凭证已 REQUIRES_NEW 独立提交 | 新增 | fixed | F3.11 Phase 4：批量失败逐资产告警派发（复用 ast.depreciation-posting-failure 事件键，镜像 DepreciationPostingDispatcher G4 范式）+ 失败 clearSession/成功 flush 隔离（aps 先例）+ countByQuery（plan 2026-09-21-1200-1）（plan 2026-09-21-1200-1，2026-10-06 红绿测试在案） |
 | P2-CK-ast2-009 | P2 | D2/D3 | ck-assets-depreciation.md | 维修过账失败后重试入口被封死且无告警——post() 无论凭证成败都翻 status=POSTED；CAPITALIZE 路径失败时资产原值已增/计划已重算而 GL 缺凭证 | 新增 | fixed | F3.11 Phase 3（分支 i）：成功才翻 POSTED + CAPITALIZE 失败 rollbackCapitalization 配对 + dispatchFailureAlert（ast.maintenance-posting-failure）（plan 2026-09-21-1200-1，2026-10-06 红绿测试在案） |
-| P2-CK-ast2-010 | P2 | D4 | ck-assets-depreciation.md | 减值/重估「折旧基数调整」为死代码——newDepreciableBase 计算后丢弃，config `erp-ast.revaluation-adjust-depreciation-base` 声明默认 true 但零效果 | 新增 | open |  |
+| P2-CK-ast2-010 | P2 | D4 | ck-assets-depreciation.md | 减值/重估「折旧基数调整」为死代码——newDepreciableBase 计算后丢弃，config `erp-ast.revaluation-adjust-depreciation-base` 声明默认 true 但零效果 | 新增 | fixed | WI-06 分诊：已消失（ast-016≡ast2-010 合并修复，77dcc08ca f311 净值轨迹口径） |
 | P2-CK-ast2-011 | P2 | D5/D3，同型 P1-CK-pur-003 族 | ck-assets-depreciation.md | assets 全实体裸 CrudBizModel 无状态守卫——折旧计划行/资产卡片汇总列可直接手改；executeDepreciation 不调 assertCanExecute，REVERSED/CANCELLED 行可被覆盖复活 | 同型 P1-CK-pur-003 族 |fixed | F1.3：统一基类接入自动生效（同型 P1-CK-pur-003 族，全域守卫惰性/激活由列存在性决定） |
 | P2-CK-ast2-012 | P2 | D9 | ck-assets-depreciation.md | 批量折旧 N+1——每资产 4+ 次查询（期间重复查/计划行/EXECUTED 全实体加载/类别懒加载），countExecuted 用 findAllByQuery().size() | 新增 | fixed | F3.11 Phase 4：countExecuted* 改 countByQuery + 类别会话预取 + 批量入口期间单查（行为等价断言在案）（plan 2026-09-21-1200-1，2026-10-06 红绿测试在案） |
 | P2-CK-ast2-013 | P2 | D8 | ck-assets-depreciation.md | 维修独立维修贷方科目分支死代码——Provider 声明「贷存货（备件）/银行（外协）」但 linkedVisit=false 一律贷 1002 银行，inventorySubject 读了不用；科目全部硬编码不读类别配置 | 新增 | fixed | F3.11 Phase 4（分支 a）：SPARE_PART 贷 1403 分腿（billData SPARE_PART_AMOUNT；快照重录人工核验与 maintenance.md L88/L154 一致）（plan 2026-09-21-1200-1，2026-10-06 红绿测试在案） |
@@ -631,7 +631,7 @@
 | P2-CK-aps-003 | P2 | D8 | ck-aps.md | 产能预留生命周期不完整——cancel()/complete()/updateSchedule()/doDispatch() 均不释放预留，ghost 预留行只增不减并持续收缩可排产能 | 新增 | open |  |
 | P2-CK-aps-004 | P2 | D5/D6 | ck-aps.md | updateSchedule（甘特拖拽 mutation）零产能校验、零状态守卫、零预留同步——设计规则 8「拖拽需后端产能校验」无实现但 mutation 已暴露 | 新增 | open |  |
 | P2-CK-aps-005 | P2 | D6 | ck-aps.md | 前向排产排序键 (priority, latestEndDateT, sequence) 下同工单优先级乱序时前置工序约束失效——后序工序可先于前序工序排定（finish-before-start 倒挂） | 新增 | open |  |
-| P2-CK-aps-006 | P2 | D4/D2 | ck-aps.md | 三个告警事件模板种子缺失——aps.workorder-no-routing / aps.operation-workcenter-missing / aps.dispatch-material-shortage 经 notify 静默跳过 | 新增 | open |  |
+| P2-CK-aps-006 | P2 | D4/D2 | ck-aps.md | 三个告警事件模板种子缺失——aps.workorder-no-routing / aps.operation-workcenter-missing / aps.dispatch-material-shortage 经 notify 静默跳过 | 新增 | fixed | WI-06 分诊：已消失（c7ae2ed3f f2.15 种子补齐） |
 | P2-CK-aps-007 | P2 | D4 | ck-aps.md | WorkOrderScanJob biz 直调无 runInSession 包裹——与同模块 AutoDispatchJob 自述范式相悖，job 路径实体写入缺会话载体 | 新增 | open |  |
 | P2-CK-aps-008 | P2 | D5，同型 P1-CK-pur-003 族 | ck-aps.md | CRUD update 无已审守卫——OperationOrder status/plannedStartDateT/machineId 可经 update_ 直改，绕过 13 边状态机与预留同步 | 新增 | open |  |
 | P3-CK-aps-009 | P3 | D4 | ck-aps.md | README 配置点 4 键零消费——default-scheduling-mode / priority-rule / time-bucket-minutes / auto-reschedule-on-insert 声明后 main 代码零读取 | 新增 | open |  |
@@ -645,7 +645,7 @@
 | P2-CK-notify-006 | P2 | D5，同型 P1-CK-pur-003 族 | ck-notify.md | CRUD update 无已审守卫——Template status（DRAFT↔ACTIVE）可直改、Notification 实例可裸改 | 新增 | open | 同型注记：Template 用 status 列非 approveStatus，守卫不激活（列名探测设计使然，归 F2.15 裁决） |
 | P3-CK-notify-007 | P3 | D9 | ck-notify.md | unreadOf/countUnread/markAllRead 全量加载——countUnread 加载全部实体仅取 size；notIn 大集合无上限 | 新增 | open |  |
 | P3-CK-notify-008 | P3 | D6 | ck-notify.md | renderTemplate 缺失 key 静默空串 + toCamelKey 宽松匹配——模板与 context 键漂移渲染为空洞通知且不可见 | 新增 | open |  |
-| P2-CK-common-001 | P2 | D2，跨 D10 | ck-common-app.md | MaskAuditRecorder ThreadLocal 去重集无请求级清理——线程池复用线程上跨请求审计抑制，保密字段披露事件静默漏记 | 新增 | open |  |
+| P2-CK-common-001 | P2 | D2，跨 D10 | ck-common-app.md | MaskAuditRecorder ThreadLocal 去重集无请求级清理——线程池复用线程上跨请求审计抑制，保密字段披露事件静默漏记 | 新增 | fixed | WI-06 分诊：已消失（f9748697d） |
 | P3-CK-common-002 | P3 | D5 | ck-common-app.md | 聚合菜单含「中国本地化」死菜单——3 个 FLUX 页面 URL 指向不存在的模块页面，admin 角色可见可点 | 新增 | open |  |
 | P3-CK-common-003 | P3 | D5 | ck-common-app.md | action-auth 聚合头注释声称合并 job 菜单但未聚合——nop-job 管理 UI 在 app 中整体缺席，注释与 x:extends 清单失同步 | 新增 | open |  |
 | P3-CK-common-004 | P3 | D10 | ck-common-app.md | defaultNotFoundException 只绑 bizObjId 不绑 bizObjName——67 站点错误消息渲染字面量 `{bizObjName}` 占位符 | 新增 | open |  |
