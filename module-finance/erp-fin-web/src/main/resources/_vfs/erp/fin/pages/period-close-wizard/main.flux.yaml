@@ -31,6 +31,8 @@ body:
           args:
             url: '@query:ErpFinAccountingPeriod__findList'
             method: post
+            query:
+              limit: 200
             selection: value:id label:code
     - colSpan: 2
       body:
@@ -119,6 +121,12 @@ body:
         confirmText: 确认结账此会计期间？结账后该期间凭证不可修改。
         i18nEn:
           confirmText: Confirm closing this accounting period? Vouchers in this period become immutable once closed.
+        messages:
+          success: 月度结账完成
+          failed: 结账失败：请检查期间状态（须 OPEN/CLOSING）与前置校验
+          i18nEn:
+            success: "Monthly close completed"
+            failed: "Close failed: check period status (OPEN/CLOSING) and pre-checks"
         args:
           url: '/r/ErpFinAccountingPeriod__closePeriod'
           method: post
@@ -169,6 +177,12 @@ body:
         confirmText: 确认终关？终关后期间进入 CLOSED_FINAL 最终锁定态。
         i18nEn:
           confirmText: Confirm finalize? After finalize the period enters the CLOSED_FINAL final locked state.
+        messages:
+          success: 终关完成，期间已最终锁定
+          failed: 终关失败：期间须处于 CLOSED 状态
+          i18nEn:
+            success: "Finalize completed, period locked"
+            failed: "Finalize failed: period must be CLOSED"
         args:
           url: '/r/ErpFinAccountingPeriod__finalizePeriod'
           method: post
@@ -198,11 +212,18 @@ body:
     - type: button
       label: 执行反结账
       visible: ${periodData?.status == "CLOSED" || periodData?.status == "CLOSED_FINAL"}
+      disabled: ${!reverseCloseReason}
       onClick:
         action: ajax
         confirmText: 最后确认：执行反结账？此操作将红冲本期结转凭证并重开期间，不可撤销。
         i18nEn:
           confirmText: "Final confirmation: run un-close? This red-reverses this period's carry-forward vouchers and reopens the period. Irreversible."
+        messages:
+          success: 反结账完成，期间已重开
+          failed: 反结账失败：请填写反结账原因并检查期间状态
+          i18nEn:
+            success: "Un-close completed, period reopened"
+            failed: "Un-close failed: fill the reason and check period status"
         args:
           url: '/r/ErpFinAccountingPeriod__reverseClose'
           method: post

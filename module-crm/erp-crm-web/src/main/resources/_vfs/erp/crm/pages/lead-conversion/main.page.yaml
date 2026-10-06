@@ -92,17 +92,29 @@ body:
           - type: button
             label: "Step 3 · 确认转化（moveStage）"
             variant: destructive
+            disabled: "${!step2Form?.toStageId}"
             icon: "fa fa-check"
             onClick:
               action: ajax
               confirmText: "确认将线索转化到目标阶段？"
               i18nEn:
                 confirmText: "Confirm converting the lead to the target stage?"
+              messages:
+                success: "线索已转化到目标阶段"
+                failed: "转化失败：目标阶段必须大于当前阶段（按 sequence 单向递增）"
+                i18nEn:
+                  success: "Lead converted to the target stage"
+                  failed: "Convert failed: target stage must be greater than current (forward-only by sequence)"
               args:
                 url: '/r/ErpCrmLead__moveStage'
                 method: post
                 data:
                   leadId: "${step1Form?.leadId}"
                   toStageId: "${step2Form?.toStageId}"
+              then:
+                - action: refreshSource
+                  targetId: leadsData
+                - action: refreshSource
+                  targetId: stagesData
             i18nEn:
               label: "Step 3 · Confirm Conversion (moveStage)"

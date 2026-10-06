@@ -18,6 +18,7 @@ body:
       data:
         query:
           limit: 200
+        filter_status__in: ["IN_SERVICE", "IDLE"]
       selection: id code name netBookValue status
 
   - type: form
@@ -39,6 +40,10 @@ body:
           label: "Select Asset"
           placeholder: "Select the asset to dispose"
           options: '${(assetsData?.items ?? []).map((a) => ({ label: (a.code + " · " + a.name + " (Net Value:" + (a.netBookValue ?? 0) + ")"), value: a.id }))}'
+      - type: text
+        className: text-muted text-xs
+        text: ${"候选仅 在用/闲置 资产，查询上限 " + (assetsData?.total ?? (assetsData?.items ?? []).length) + " 条（cap 200）"}
+        i18nEn: '${"Candidates: IN_SERVICE/IDLE only, " + (assetsData?.total ?? (assetsData?.items ?? []).length) + " loaded (cap 200)"}'
       - type: select
         name: disposalType
         label: "处置类型"
@@ -61,6 +66,7 @@ body:
         name: disposalAmount
         label: "处置金额"
         placeholder: "处置回收金额"
+        min: 0
         i18nEn:
           label: "Disposal Amount"
           placeholder: "Disposal recovery amount"
@@ -127,6 +133,12 @@ body:
           confirmText: "确认创建资产处置单并提交审批？"
           i18nEn:
             confirmText: "Confirm creating the asset disposal doc and submitting for approval?"
+          messages:
+            success: "处置单已创建并提交审批"
+            failed: "创建失败：请检查资产状态（须在用/闲置）与处置金额"
+            i18nEn:
+              success: "Disposal doc created and submitted for approval"
+              failed: "Create failed: check asset status (IN_SERVICE/IDLE) and disposal amount"
           args:
             url: '@mutation:ErpAstDisposal__save'
             method: post
@@ -135,5 +147,15 @@ body:
               disposalType: "${step1Form?.disposalType}"
               disposalAmount: "${step1Form?.disposalAmount}"
               businessDate: "${step1Form?.businessDate}"
+          then:
+            - action: refreshSource
+              targetId: assetsData
+            - action: setValues
+              args:
+                values:
+                  assetId: null
+                  disposalType: null
+                  disposalAmount: null
+                  businessDate: null
         i18nEn:
           label: "Confirm and Submit Disposal Doc"

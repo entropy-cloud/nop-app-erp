@@ -47,11 +47,13 @@ body:
           placeholder: "Scan or enter location code"
       - type: input-number
         name: actualQuantity
+        min: 0
         label: "实盘数量"
         i18nEn: "Counted Quantity"
         required: true
       - type: button
         label: "保存盘点行"
+        disabled: "${!takeCode || !skuBarcode || actualQuantity == null}"
         i18nEn: "Save Stock Take Line"
         variant: primary
         onClick:

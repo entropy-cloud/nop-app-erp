@@ -1,6 +1,6 @@
 # 2026-10-06-0355-4 向导/作业页交互反馈完整性（messages/then 推广 + 空值门 + 数值钳制）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-10-06
 > Source: docs/analysis/2026-10-06-0352-perf-ux-round3-increment-analysis.md §3.2 F-R5/F-R6/F-R9/F-R10（前端半）/F-R15 + §2 D3 定案
 > Related: 2026-10-05-0400-2-pda-stock-take-closure.md（pda 范式先例）
@@ -42,52 +42,53 @@
 
 ### Phase 1 - Decision 定案
 
-Status: planned
+Status: completed
 Targets: 本计划文件
 Skill: none
 
 - Item Types: `Decision`
 
-- [ ] Decision: stock-take-flow 盘点单定位形态（① select 绑定 findPage vs ② 后端 takeCode @Optional）——记录选择、替代、残留风险（预期①：零后端改动、与 period-close 期间 select 同范式）
-- [ ] Decision: closePeriod 在途状态位示范形态（scope 变量 + disabled 表达式）或豁免登记（若 flux 无可靠 scope 写入面则改 confirmText 强化并登记 Deferred）
-- [ ] Decision: period-close 三按钮既有 `then: refreshSource periodData` 是否需扩充（如状态行/其他源）——或缺省维持现状（仅补 messages）
+- [x] Decision: stock-take-flow 盘点单定位=**①select 绑定页面既有 stockTakeData**（options 表达式 label=单号·状态/value=id；零后端改动、与 period-close 期间 select 同范式；替代②后端 takeCode @Optional 弃——①复用已加载数据且消除盲输数字主键）。残留风险：新建单需数据源重挂载后入选项（E2E 以跨路由往返解决，实测通过）；flux select 为自定义 combobox（E2E 交互=点击+option 点选）。
+- [x] Decision: closePeriod 在途状态位=**豁免登记 Deferred**（flux 无可靠跨组件 scope 写入动作面[setValues 仅表单域]；既有 confirmText 双重确认已拦截误触； F-R9 在途面随 flux auto-busy 能力一并在 Deferred 登记）
+- [x] Decision: period-close 三按钮既有 then 链=**维持现状**（refreshSource periodData 已覆盖状态翻转反馈；无其他源需要刷新）
 
 Exit Criteria:
 
-- [ ] 三项 Decision 落计划（选择+理由+替代+风险）
+- [x] 三项 Decision 落计划（如上）
 
-### Phase 2 - 机械改写（4+1 页）
+### Phase 2 - 机械改写（5 页）
 
-Status: planned
-Targets: disposal-wizard / lead-conversion / visit-wizard / period-close-wizard / stock-take-flow
+Status: completed
+Targets: disposal-wizard / lead-conversion / visit-wizard / period-close-wizard / stock-take-flow / pda-stock-take
 Skill: none
 
 - Item Types: `Fix`
 
-- [ ] messages 补齐 ×6（disposal/lead-conversion/visit 三按钮另补 then：step1Form 重置 + assetsData status 白名单 / stages/leads 刷新 / visitData 刷新；period-close 三按钮按 Phase 1 裁决维持或扩充 then）；全部新增文案带 i18nEn
-- [ ] 空值门 ×3 + min:0 ×2 + select limit + footerToolbar 分页/截断指示 ×2 + ROUND ×1
-- [ ] stock-take-flow 按 Phase 1 Decision 改写盘点单定位
-- [ ] 执行注意：本计划与 plan-1（批次 1）同改 disposal-wizard/lead-conversion 文件，行号引用以现场重读为准（guide 规则 1）
+- [x] messages 补齐 ×6（disposal 确认提交[+then: assetsData 刷新+step1Form 重置]/lead-conversion moveStage[+then: leadsData/stagesData 刷新]/visit 保存结果[+then: visitData 刷新]/period-close ×3[then 维持]）；全部新增文案带 i18nEn（英文值按 Y-1 规则加引号）；disposal assetsData 查询补 `filter_status__in: ["IN_SERVICE","IDLE"]` 白名单（处置候选语义，ErpAstConstants 状态集）
+- [x] 空值门 ×4（pda 保存 disabled=!takeCode||!skuBarcode||actualQuantity==null + lead-conversion 确认 disabled=!step2Form?.toStageId + period-close 反结账 disabled=!reverseCloseReason + stock-take-flow 三按钮 disabled=!actionForm?.takeId）+ min:0 ×2（pda actualQuantity/disposal disposalAmount）+ period-close select query limit 200 + footerToolbar 分页/计数截断指示（stock-take-flow）
+- [x] stock-take-flow 按 Decision① 改写：takeId input-number → select（绑定 stockTakeData）
+- [x] 复核修正：F-U13（visit 备件 totalAmount 裸 DECIMAL）经实读复核为**假阳性**——totalAmount 仅存在于 selection 未被任何文本/列渲染，无 ROUND 改写点（round-3 报告已回填）
+- [x] rewired E2E 交互同步（spinbutton fill → flux combobox 点击+option 点选；跨路由往返替代 reload[SPA 白屏怪癖]）
 
 Exit Criteria:
 
-- [ ] 全部改写项 grep 复核在位；新增文案 i18nEn 零缺失
-- [ ] 若 Decision②：inv-service 触域单测绿
+- [x] 全部改写项 grep 复核在位；新增文案 i18nEn 零缺失（wizard-feedback.spec 结构断言 3/3 绿）
+- [x] Decision② 不适用（选①零后端）
 
 ### Phase 3 - 运行时证明
 
-Status: planned
-Targets: E2E（flux 渲染模式）
+Status: completed
+Targets: E2E（flux 渲染模式，`npm run e2e`）
 Skill: none
 
 - Item Types: `Proof`
 
-- [ ] E2E（`npm run e2e`，E2E_ENGINE=flux；spec 落 tests/e2e 既有布局）：≥1 页成功路径断言 success toast + 数据刷新（建议 lead-conversion moveStage：拖拽/选择后阶段文案更新）；≥1 页空值门断言（reason 为空时按钮 disabled）
-- [ ] 既有 E2E 回归零失败；触运行时字符串 → `cjk checker --strict` 回绿（如触发 baseline 需逐站点裁决）
+- [x] 新 spec `wizard-feedback.spec.ts` 3/3 绿：pda 保存空值门（初始 disabled 实测）+ lead-conversion 确认门结构断言 + 全触页 messages/min/gate/limit/footer 结构断言
+- [x] 成功路径证明=rewired spec 全链（startTake 点击[带 messages.success]→CONFIRMED 翻转→then 链）绿；回归套件 17/17（rewired/f13 skip 基线/pda/menu-filter/kanban-r/residual/wizard-feedback）；cjk 义务满足（新增文案均带 i18nEn；导出 FLUX_PAGE_ERROR_COUNT: 0）
 
 Exit Criteria:
 
-- [ ] 新断言通过 + 回归零失败
+- [x] 新断言通过 + 回归零失败
 
 ## Draft Review Record
 
@@ -96,14 +97,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐（如 Decision② 改后端则同步盘点 owner doc）
-- [ ] 已运行验证（Closure 统一：`npm run validate:flux` errors=325 零新增 + E2E 新断言+回归 + 触域单测[仅 Decision②时] + cjk strict）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐（如 Decision② 改后端则同步盘点 owner doc）
+- [x] 已运行验证（Closure 统一：`npm run validate:flux` errors=325 零新增 + E2E 新断言+回归 + 触域单测[仅 Decision②时] + cjk strict）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -116,11 +117,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: (pending)
+Status Note: 六按钮 messages/then 范式补齐 + 四处空值门 + 两处 min 钳制 + select limit + 分页指示 + stock-take-flow 定位 select 化全部落地；E2E 3/3 新探针 + 17/17 回归全绿；F-U13 复核为假阳性已回填报告；三项 Decision 成文。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: (pending)
+- Auditor / Agent: agent_1bcceea5（独立结束审计 2026-10-06：**ACCEPT** 附 4 项回填条件[已全部实施]——a-g 七项实证 + 独立复跑 4 passed + FLUX_PAGE_ERROR_COUNT: 0；条件①F-R15 假阳性注记②disposal 指示文本补齐[采用提示文本方案而非 Deferred]③日志条目④本指针）
 
 Follow-up:
 

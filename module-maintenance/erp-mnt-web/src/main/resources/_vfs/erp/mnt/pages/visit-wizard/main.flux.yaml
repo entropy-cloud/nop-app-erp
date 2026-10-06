@@ -169,6 +169,12 @@ body:
           variant: primary
           onClick:
             action: ajax
+            messages:
+              success: 维护结果已保存
+              failed: 保存失败：请检查工单状态（须执行中）
+              i18nEn:
+                success: "Visit result saved"
+                failed: "Save failed: check visit status (must be IN_PROGRESS)"
             args:
               url: '@mutation:ErpMntVisit__save'
               method: post
@@ -176,6 +182,9 @@ body:
                 id: ${visitId}
                 result: ${wizardData.result.resultValue ?? visitData?.result}
                 remark: ${wizardData.result.remarkValue ?? visitData?.remark}
+            then:
+              - action: refreshSource
+                targetId: visitData
   - key: complete
     title: 4. 确认完成
     i18nEn: "4. Confirm Completion"

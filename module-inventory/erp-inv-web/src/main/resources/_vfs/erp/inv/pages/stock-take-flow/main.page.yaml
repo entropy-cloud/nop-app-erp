@@ -56,6 +56,12 @@ body:
         i18nEn:
           label: "Actions"
           tpl: '${docStatus == "DRAFT" ? "<span class=\"text-muted\">startTake →</span>" : (docStatus == "CONFIRMED" ? "<span class=\"text-muted\">completeTake →</span>" : (docStatus == "DONE" ? "<span class=\"text-success\">✓ Flow Complete</span>" : ""))}'
+    footerToolbar:
+      - type: pagination
+      - type: text
+        text: ${"共 " + (stockTakeData?.total ?? (stockTakeData?.items ?? []).length) + " 单（查询上限 200，超限请缩小范围）"}
+        i18nEn: '${"Total " + (stockTakeData?.total ?? (stockTakeData?.items ?? []).length) + " orders (query cap 200)"}'
+        className: text-muted
 
   - type: form
     name: actionForm
@@ -66,16 +72,19 @@ body:
     mode: inline
     wrapWithPanel: false
     body:
-      - type: input-number
+      - type: select
         name: takeId
-        label: "盘点单ID"
-        placeholder: "输入盘点单ID"
-        i18nEn:
-          label: "Stock Take Order ID"
-          placeholder: "Enter stock take order ID"
+        label: "盘点单"
+        placeholder: "选择盘点单（按单号）"
+        clearable: true
         required: true
+        options: '${(stockTakeData?.items ?? []).map((t) => ({ label: (t.code + " · " + (t.docStatus ?? "")), value: t.id }))}'
+        i18nEn:
+          label: "Stock Take Order"
+          placeholder: "Select stock take order (by doc no)"
       - type: button
         label: "开始盘点 (startTake)"
+        disabled: "${!actionForm?.takeId}"
         variant: primary
         icon: "fa fa-play"
         onClick:
@@ -95,6 +104,7 @@ body:
           label: "Start Stock Take (startTake)"
       - type: button
         label: "完成盘点 (completeTake)"
+        disabled: "${!actionForm?.takeId}"
         variant: secondary
         icon: "fa fa-check"
         onClick:
@@ -114,6 +124,7 @@ body:
           label: "Complete Stock Take (completeTake)"
       - type: button
         label: "取消盘点 (cancelTake)"
+        disabled: "${!actionForm?.takeId}"
         variant: destructive
         icon: "fa fa-times"
         onClick:

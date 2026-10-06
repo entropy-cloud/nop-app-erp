@@ -25,10 +25,18 @@ test.describe('flux rewired buttons smoke', () => {
     );
     expect(take.id, 'DRAFT stock take should be created').toBeTruthy();
 
-    // 填盘点单 ID（actionForm.takeId input-number）
-    const takeIdInput = page.getByRole('spinbutton', { name: /盘点单ID|Stock Take Order ID/ });
-    await expect(takeIdInput).toBeVisible({ timeout: 15_000 });
-    await takeIdInput.fill(String(take.id));
+    // 选盘点单（actionForm.takeId select，绑定 stockTakeData 派生选项；batch-4 起为 select）
+    // 数据源在建单前已加载——跨路由往返强制重挂载，使 select 选项包含新建单
+    // （同路由 reload/goto 会触发 SPA 白屏怪癖，见 batch-3 执行记录）
+    await page.goto('/#/erp-crm', { waitUntil: 'domcontentloaded' });
+    await page.goto('/#/stock-take-flow', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(4_000);
+    const takeSelect = page.getByRole('combobox', { name: /盘点单|Stock Take Order/ });
+    await expect(takeSelect).toBeVisible({ timeout: 15_000 });
+    // flux 自定义 combobox：点击展开 dialog 列表，按单号点选 option（value=id 由组件内部承载）
+    await takeSelect.click();
+    await page.getByRole('option', { name: new RegExp(code) }).first().click();
+    await expect(takeSelect).toContainText(code, { timeout: 5_000 });
 
     // 点击重接线按钮 → 确认对话框 → /r/ 请求
     const respPromise = page.waitForResponse(
