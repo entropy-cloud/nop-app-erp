@@ -1,6 +1,6 @@
 # 2026-10-06-1900-1 报表下载 auth 资源收口（WI-01 / F-R19）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-10-06
 > Source: `docs/backlog/successor-followup-closure-roadmap.md` WI-01（F-R19 预存失败家族）+ 根因报告（2026-10-06 独立调查子代理，四步确认链）
 > Related: `docs/design/roles-and-permissions.md`（auth/permissions owner doc——保护区 plan-first）、`docs/backlog/successor-followup-closure-roadmap.md` WI-02（正交的收件箱家族；**执行期协调**：WI-02 探针备选并入 menu-filter 套件与本计划 negative 回归门同文件面——后提交者合并对齐）
@@ -97,8 +97,8 @@ Skill: none
 Exit Criteria:
 
 - [x] owner doc 条款在案
-- [ ] md partner-list 诊断分流落盘（successor 或注销）
-- [ ] roadmap/日志回写完成
+- [x] md partner-list 诊断分流落盘（注销留痕——HEAD 双跑 48 绿，Decision 项在案）
+- [x] roadmap/日志回写完成（B2 整改：WI-01 条目落 10-06.md）
 
 ## Draft Review Record
 
@@ -107,14 +107,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（四域 FNPT + auth spec + owner doc + md partner-list 分流）
-- [ ] 相关文档对齐（roles-and-permissions 条款 + roadmap + 日志）
-- [ ] 已运行验证（auth spec 红→绿 + e1-2 + 48 用例零回归 + 四门禁矩阵）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成——四域 FNPT 实码 + auth spec + owner doc 条款 + md partner-list 注销分流，逐项实码核验通过（审计清单 1-2）
+- [x] 相关文档对齐——roles-and-permissions.md 条款 + roadmap WI-01 done/计数块 + 当日日志条目（B2 整改后）均在案
+- [x] 已运行验证——auth spec 红→绿（采信转录）+ negative 74 + 48 用例零回归（/tmp/dl48.log + WI-02 旁证）+ 四门禁实测（3 PASS + strict 整改后 PASS 留证于收官提交）
+- [x] 无范围内项目降级——两项 Deferred 均为 Non-Goals 预声明/既有登记，非范围收缩
+- [x] 独立草案审查已完成——2 轮记录在案（needs revision→accept）
+- [x] 文本一致性——B1/B2/B3 整改后状态、阶段、门控、日志四方一致（strict PASS 为机械证明）
+- [x] 结束审计独立执行——本审计由 fresh-session 子代理完成（REJECT→3 项簿记整改→预授权 Closure 回填），执行者未自我审计、未预勾本门控
+- [x] 结束证据存在于文件——overlay/spec/owner doc/roadmap/日志/本节 + strict PASS 输出，全部落盘非聊天
 
 ## Deferred But Adjudicated
 
@@ -132,12 +132,16 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <closure 时填写>
+Status Note: 2026-10-06 completed（独立结束审计 REJECT→3 项收官簿记整改后通过：B1 计划 :100-101 补勾、B2 当日日志 WI-01 条目、B3 本节回填；整改后 `check-plan-gates --strict` PASS 留证于收官提交）。WI-01 报表下载 auth 资源收口按计划关闭：四域手写 overlay 注册 FNPT:ErpXxxReport:query（roles 镜像菜单种子；TOPM/SUBM 无 permissions 不变量审计扫描 0 违例）+ 红灯 spec 4/4 红→绿 + roles-and-permissions.md 报表 FNPT 条款 + roadmap 回写；md partner-list UI 层失败注销留痕（HEAD 双跑 48 绿）。残留：%prod admin 补种 / cs 角色缺口两项 watch-only Deferred 带触发条件。审计 Minor 留痕：cs overlay :132 注释「本域 reverseApprove 先例」措辞应为 finance ErpFinBadDebt:reverseApprove 先例（cosmetic，不改行为）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <closure 时填写>
-- Evidence: <closure 时填写>
+- Auditor / Agent: 独立结束审计子代理（fresh session，2026-10-06）
+- Evidence: ①四域 overlay FNPT 实码 + roles 镜像逐域核对 + TOPM/SUBM 不变量 0 违例；②spec 断言面与计划具名账号逐字一致（ROLE_ACCOUNTS 映射核实）；③独立复跑 flux-baseline/cjk strict/unbounded PASS + strict FAIL→整改后 PASS（输出见收官提交）；④红灯证据采信计划转录（test-results 已被后续运行清空；/tmp/redlight*.log 为无关 assets 编译日志未引用）；⑤/tmp/dl48.log 48 passed 含 partner-list xlsx/pdf 双绿；⑥owner-doc→代码抽样 2 断言零漂移（含 fin overlay :56/:139 管理员种子先例）；⑦8011 未运行，auth spec 4/4 采信执行者留证（旁证：WI-02 后置独立复跑 negative 74 绿）。
+
+Follow-up:
+
+- （仅非阻塞跟进）cs overlay :132 注释措辞精确化（cosmetic）；/tmp/dl48.log 为易失路径，如需长期留证可摘录进 docs/testing/。
 
 Follow-up:
 

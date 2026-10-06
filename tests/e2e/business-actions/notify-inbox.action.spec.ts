@@ -138,11 +138,11 @@ test.describe('Notify inbox actions (findUnread/findRead/countUnread/markRead/ma
       const ids = await dispatch(page, eventType, { tpl_marker: 'X' });
       expect(ids.length, 'notify should dispatch 1 notification to nop').toBeGreaterThanOrEqual(1);
 
-      // findUnread(userId:null) → 后端 resolveUserId 回退 ctx.getUserId()='nop'，应含本通知
+      // findUnread(userId 缺省回退 ctx) → 后端 resolveUserId 回退 ctx.getUserId()='nop'，应含本通知
       const unreadIds = await fetchUnreadIds(page, eventType);
       expect(unreadIds, 'findUnread should include dispatched notification').toContain(ids[0]);
 
-      // countUnread(userId:null) ≥ 1
+      // countUnread(userId 缺省回退 ctx) ≥ 1
       const count = await fetchCountUnread(page);
       expect(count, 'countUnread >= 1 after dispatch').toBeGreaterThanOrEqual(1);
     } finally {
@@ -177,11 +177,11 @@ test.describe('Notify inbox actions (findUnread/findRead/countUnread/markRead/ma
       const afterN = await fetchCountUnread(page);
       expect(afterN, 'countUnread should decrease by 1').toBe(beforeN - 1);
 
-      // findRead(userId:null) 应含本通知
+      // findRead(userId 缺省回退 ctx) 应含本通知
       const readIds = await fetchReadIds(page, eventType);
       expect(readIds, 'findRead should contain the marked-read notification').toContain(notifId);
 
-      // findUnread(userId:null) 不应再含本通知
+      // findUnread(userId 缺省回退 ctx) 不应再含本通知
       const unreadIds = await fetchUnreadIds(page, eventType);
       expect(unreadIds, 'findUnread should NOT contain the marked-read notification').not.toContain(notifId);
     } finally {
@@ -195,7 +195,7 @@ test.describe('Notify inbox actions (findUnread/findRead/countUnread/markRead/ma
     }
   });
 
-  test('markAllRead(userId:null) clears all unread for current user', async ({ page }) => {
+  test('markAllRead(userId 缺省回退 ctx) clears all unread for current user', async ({ page }) => {
     await loginAndNavigate(page, '/ErpSysNotification-inbox');
 
     const ts = Date.now();

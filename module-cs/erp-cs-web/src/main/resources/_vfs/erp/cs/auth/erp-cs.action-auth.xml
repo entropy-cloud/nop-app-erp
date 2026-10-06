@@ -129,7 +129,7 @@
                           icon="bar-chart-3" resourceType="SUBM" orderNo="1000">
                     <children>
                         <!-- P2-CK-WI-01（F-R19）：报表读动作资源注册。cs 域无业务角色菜单种子（owner doc
-                             R1-E1-2 既有缺口），roles=管理员 镜像本域 reverseApprove 先例最小授权。 -->
+                             R1-E1-2 既有缺口），roles=管理员 镜像 finance 域 reverseApprove（ErpFinBadDebt:reverseApprove）管理员种子先例最小授权。 -->
                         <resource id="FNPT:ErpCsReport:query" displayName="客服报表查询" i18n-en:displayName="Query Customer Service Reports"
                                   resourceType="FNPT" orderNo="10000" roles="管理员">
                             <permissions>ErpCsReport:query</permissions>
