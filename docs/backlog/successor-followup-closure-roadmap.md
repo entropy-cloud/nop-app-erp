@@ -22,9 +22,9 @@
 
 | 状态 | 数量 |
 | --- | --- |
-| todo | 7 |
+| todo | 5 |
 | ready | 0 |
-| done | 1 |
+| done | 3 |
 
 ## 3. 当前基线
 
@@ -47,7 +47,7 @@
 | --- | --- | --- | --- | --- | --- |
 | WI-01 | 报表 `/p/` 下载 auth 失败家族收口（F-R19；**auth/permissions 保护区 plan-first + owner doc 对齐**） | todo | `docs/design/roles-and-permissions.md` | — | reports 层 E2E 既有 spec |
 | WI-02 | 收件箱 auth-ON E2E 可达性收口（F-R20；含 nop-chaos-next 客户端守卫语义裁决时须**双独立子代理批准**） | todo | `docs/design/notify/inbox-patterns.md` + `docs/design/roles-and-permissions.md` | WI-01 无依赖可并行 | skip 守卫用例已在树 |
-| WI-03 | 构建输出注入式文本（jqwik banner）triage + 输出卫生门禁 | todo | `docs/testing/known-good-baselines.md` | — | check-flux-baseline self-test 范式 |
+| WI-03 | 构建输出注入式文本（jqwik banner）triage + 输出卫生门禁 | done（2026-10-06，plan `2026-10-06-1650-1` completed：确认四步链闭环——复现〔inv-service 274/0/0 捕获输出 46 次〕→ jar 解包字节码实证〔`JqwikExecutor.printMessageForCodingAgents` 无条件打印、`hideAntiAiClause` 仅 ANSI 遮蔽〕→ 依赖归属〔3 模块直接 test 依赖，2026-08-02 MQ Q3 引入，1.9.x 不兼容 JUnit 6 降级关闭〕→ 上游裁决〔jqwik 1.10.0 起 Anti-AI protestware，维护者意图，升级无开关〕；上游不可控按预定预案走门禁白名单收口：`tools/check-build-output-hygiene.mjs`（注入模式族复用 PromptInjectionGuardrail 分类学 + `--self-test` 5/5 + `--stdin`/文件双输入）+ `docs/audits/build-output-hygiene.md` 白名单机器块（jqwik banner 原文精确串 1 条，默认禁涨两段式规则）；红灯：空白名单对真实污染摘录 exit 1 → 白名单落位同输入 exit 0（红灯证据留计划）。验收注记：「卫生门禁绿」四态全过；「`mvn test` 全量零回归」以零变更面论证替代——新增脚本+基线文档+npm scripts 无 Java/构建面，触域套件 274/0/0 同 HEAD 实证 + 四门禁矩阵零回退，非静默豁免） | `docs/testing/known-good-baselines.md` | — | check-flux-baseline self-test 范式 |
 | WI-04 | 计划簿记漂移出清（m13/f31/f39 Status-vs-事实失真；GATE-02 增量误报防线） | done（2026-10-06，无计划路径：确认阶段实证——GATE-02 对三文件零报告（「active 永挂」为门禁盲区，红灯表述与 HEAD 实况偏差已注销留痕），失真以三文件 `Plan Status: active` + Closure 悬空 vs roadmap/日志 done 事实直接在案；m13 按 roadmap §54/§262 在案审计 ACCEPT（agent_a5ceea51）直接翻转；f39 补真实终审（WI-04 派发 fresh-session 子代理）REJECT→两项文件级整改（compliance-baseline.md 补 F3.9 +10 per-site 注记 + 机器块 1553 滞后 residual 登记；ai-check-roadmap L138 553→548）→按审计者预授权回填 pass 翻转；f31 补真实终审 REJECT（3 阻塞：mnt-008 读半失实 fixed/零证明测试/门控预勾）→整改（索引行 P2-CK-mnt-008 fixed→open、范围修订记录节、Phase 1-3 状态订正、mnt 读+写半合并 Deferred 转 WI-06 首批）→复审 ACCEPT 翻转。验收：GATE-02 对三文件零报告 + `check:plan-gates --strict` PASS 零回退） | `docs/plans/00-plan-authoring-and-execution-guide.md` 规则 12 | — | GATE-02 |
 
 ### M2 ai-check 残量收口批
@@ -62,7 +62,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | 复用 |
 | --- | --- | --- | --- | --- | --- |
-| WI-08 | 双员工表（`erp_hr_employee` vs `erp_md_employee`）边界与跨域写一致性裁决（MA1 S 级 deferred successor） | todo | `docs/architecture/data-dependency-matrix.md` + MA1 S 级登记 | — | cross-module 既有审计证据 |
+| WI-08 | 双员工表（`erp_hr_employee` vs `erp_md_employee`）边界与跨域写一致性裁决（MA1 S 级 deferred successor） | done（2026-10-06，plan `2026-10-06-1710-1` 草案审查 2 轮收敛：裁决**分支 b 并存有据**——HEAD 六点确认矩阵实证〔schema 39/15 列实测 + 交集 code/email/orgId；引用矩阵 md←10 域 24 处 vs hr←仅域内 25 处；跨域写零双向实证〔1015 §5.3 假设证伪〕；种子+运行库人群不相交；:169 登记窄化修正；登录绑定零映射〕；裁决记录 `docs/analysis/2026-10-06-dual-employee-table-adjudication.md` 入册 + data-dependency-matrix 边界注记行/:169 修正/§565 澄清 + module-boundaries「跨工程实体关系规则」节双表边界契约（跨域写禁令/零映射事实/禁跨表 join）+ 三条重开触发条件成文；红灯义务不适用（分支 b 以边界契约文档为验收载体）） | `docs/architecture/data-dependency-matrix.md` + MA1 S 级登记 | — | cross-module 既有审计证据 |
 
 ## 6. Work Item Details
 
@@ -155,7 +155,7 @@ graph TD
 
 **机制缺口（C 类精编，外部仓/owner doc 先行）**：325 variant 基线族消解（外部 codegen）；flux 验证器 prop 表误报收敛；GenPage 生成页 warning 族+新码两族（=D-09 车道）；%test enable-audit 连接悬挂（平台）；data-auth creator-filter 审计戳语义（平台裁决）；USC-04 待办聚合 0→1（产品+平台双前置）；flux select 原生 {label,value} 支持；死孪生/legacy 归宿政策（ui-patterns 裁决）；非 `_` 生成产物 content-diff 扩展（需标记机制先行）；b2b→pur createFromAsn（**复核优先**：现仓 grep 零命中疑已收口）。
 
-**簿记/政策（D/E 类精编）**：DOC-02 三处授权面外措辞失准（①为 D-17 升格绑定义务）；GATE-02 存量违规分档清单（随 mission 复访收紧）；mnt/fin legacy URL 旧形态（复活时先迁移）；DAG 禁止清单增列裁决（业务）；双员工表（已入 WI-08）；cjk WHITELIST 常设载体（无行动）；DRP 命名不一致（触发=DRP 深化）；`configId@ErpB2bMftLog` 更名（触发=B2B 迭代）；S2 helper `daoFor(ErpMd*)` 46 处（**复核优先**：与 compliance-baseline R2a/R2d 裁决差集未核验，防重复立法）。
+**簿记/政策（D/E 类精编）**：DOC-02 三处授权面外措辞失准（①为 D-17 升格绑定义务）；GATE-02 存量违规分档清单（随 mission 复访收紧）；mnt/fin legacy URL 旧形态（复活时先迁移）；DAG 禁止清单增列裁决（业务）；双员工表（已入 WI-08——2026-10-06 裁决完结，分支 b 并存有据，见 docs/analysis/2026-10-06-dual-employee-table-adjudication.md）；cjk WHITELIST 常设载体（无行动）；DRP 命名不一致（触发=DRP 深化）；`configId@ErpB2bMftLog` 更名（触发=B2B 迭代）；S2 helper `daoFor(ErpMd*)` 46 处（**复核优先**：与 compliance-baseline R2a/R2d 裁决差集未核验，防重复立法）。
 
 ## 10. 规则
 

@@ -166,7 +166,8 @@ L3 顶域（业财一体核心，被多业务域 S 写，不反向写业务）�
 | `erp_md_tax_rate` | `taxRateId` / `inputTaxRateId` / `outputTaxRateId` | purchase / sales / inventory | 税率 |
 | `erp_md_subject` | `subjectId` / `subjectCode` | finance / assets / projects | 会计科目 |
 | `erp_md_acct_schema` | `acctSchemaId` | finance / inventory（成本层） | 账套（多套账并行） |
-| `erp_md_employee` | `employeeId` / `managerId` / `staffId` | assets / projects / maintenance | 职员 |
+| `erp_md_employee` | `employeeId` / `managerId` / `staffId` | assets / finance / inventory / logistics / maintenance / manufacturing / projects / purchase / quality（业务单据经办人/责任人 to-one 共 24 处；2026-10-06 双员工表裁决实测修正——原登记 assets/projects/maintenance 窄于 orm 实况） | 业务经办人轻量参照（与 hr 域 `erp_hr_employee` 完整人事档案为**两表并存**，见下行边界注记） |
+| `erp_md_employee` 边界注记 | — | **双员工表边界（2026-10-06 裁决，分支 b 并存有据）**：`erp_md_employee`（15 列经办人参照，10 域 24 处 to-one）与 `erp_hr_employee`（39 列人事档案，仅 hr 域内部 25 处 to-one）两表 ID 空间独立、零跨域写、零外键互指、零数据并存；code 命名空间（EMP-* vs HR-EMP-*）为种子约定非约束，**禁跨表 join**；md 经办人与登录账号零映射（审计归因走 createdBy/updatedBy）。裁决记录 `docs/analysis/2026-10-06-dual-employee-table-adjudication.md`，重开触发条件三条在案 | 职员 vs 人事档案 |
 | `erp_md_material_category` | `categoryId` | assets / maintenance | 分类（资产/设备借用） |
 | `erp_md_settlement_method` | `settlementMethodId` | purchase / sales | 结算方式 |
 | `erp_md_bank_account` | `bankAccountId` / `partnerBankAccountId` | purchase / sales | 银行账户 |
@@ -562,7 +563,7 @@ GROUP BY vl.subject.name
 | **maintenance** | organization / location / materialCategory / employee / material / uom / warehouse | **assets.ErpAstAsset**（设备 `asset`，equipment→asset 关联，`app-erp-maintenance.orm.xml:153`；maintenance 依赖 assets 已在 `module-boundaries.md:49` 登记，R 只读，批准保留） | 13 / 8 |
 | **crm** | organization / partner / employee / material 等 | — | 38 / 5 |
 | **cs** | organization / partner 等 | — | 15 / 2 |
-| **hr** | organization / employee / partner 等 | **projects**（员工项目分配/工时归集，按 `projectId`/`taskId` 建 to-one，机制 B，projects 不反向） | 34 / 6 |
+| **hr** | organization / employee（hr 域内 `employeeId` 指 `ErpHrEmployee` 本域人事档案，**非**主数据经办人 `ErpMdEmployee`——双员工表边界见上注记）/ partner 等 | **projects**（员工项目分配/工时归集，按 `projectId`/`taskId` 建 to-one，机制 B，projects 不反向） | 34 / 6 |
 | **aps** | organization / material / warehouse 等 | — | 6 / 1 |
 | **contract** | organization / partner / currency 等 | — | 13 / 4 |
 | **drp** | organization / material / warehouse 等 | **inventory.ErpInvStockMove**（`ErpInvDrpCrossDock` 跨码头 `inboundMove`/`outboundMove`，`app-erp-drp.orm.xml:297,298`；drp→inv 单向合法 DAG，批准保留） | 26 / 6 |

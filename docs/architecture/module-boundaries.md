@@ -62,6 +62,13 @@ app-erp-hr（依赖 master-data + projects ORM 只读引用：员工项目分配
 - **平台依据**：`nop/schema/orm/entity.xdef` 的 `@notGenCode` 注释 + `nop/orm/xlib/orm-gen.xlib:228` 平台代码生成器自身范式。
 - **完整清单**：哪些业务域引用哪些 master-data 表、to-one 命名、DAG 验证，见 `data-dependency-matrix.md §5.6`。
 
+**双员工表边界契约（2026-10-06 裁决，分支 b 并存有据；裁决记录 `docs/analysis/2026-10-06-dual-employee-table-adjudication.md`）**：
+
+- `erp_md_employee`（master-data，15 列业务经办人轻量参照，10 域 24 处 to-one）与 `erp_hr_employee`（hr 域，39 列完整人事档案，仅 hr 域内部 25 处 to-one）为**不同有界上下文的合法并存**：两表 ID 空间独立、零跨域写、零外键互指、零数据并存（裁决 HEAD 六点实证）。
+- **跨域写禁令**：任何域不得经弱指针直写对方员工表（hr 生产代码不写 `ErpMdEmployee`、master-data 不写 `ErpHrEmployee`——hr 侧先声 `IErpHrEmployeeBiz#countReferences` javadoc「不经 master-data 的 Party SPI（避免实体 ID 错配）」）。
+- **md 经办人与登录账号零映射**：`ErpMdEmployee` 无登录绑定列，`userAccountId` 仅存在于 hr 表且零消费逻辑；审计归因走平台审计戳 createdBy/updatedBy（hr 域内 `approverId→ErpHrEmployee` 参照亦不做登录解析）。按经办人做权限判定/审计归因类需求 = 重开触发条件（独立 ID 映射集成计划）。
+- **禁跨表 join**：两表 code 命名空间（EMP-* vs HR-EMP-*）为种子约定非系统约束，跨表 join 会得静默零行。
+
 **跨模块关联查询的两条路线**（完整机制见 `../nop-entropy/docs-for-ai/02-core-guides/cross-module-entity-reference.md`）：
 
 - **路线 1（机制 B，`notGenCode="true"` 外部实体引用）**：已在本工程 17 个业务域 orm.xml 落地（约 369 个跨模块 to-one，见 `data-dependency-matrix.md §5.6.2` 矩阵）。适用于高频多维关联查询（如 finance 凭证行按 subject/partner/project/warehouse/material 筛选）。
