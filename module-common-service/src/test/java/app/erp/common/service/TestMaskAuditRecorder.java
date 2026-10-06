@@ -229,6 +229,28 @@ public class TestMaskAuditRecorder {
         assertEquals(1, auditService.captured.size(), "同请求内去重语义维持（E4.2）");
     }
 
+    // ---- (6) plan 2026-10-06-0355-5：分桶换代——>500 distinct cell 单请求各记一次 ----
+
+    @Test
+    public void over500DistinctCellsInSingleRequestEachRecordedOnce() {
+        loginAs(MaskHelper.ROLE_SALARY_APPROVER);
+
+        setRequestTraceId("req-bulk");
+        int cells = 520;
+        for (int i = 0; i < cells; i++) {
+            Object entity = new PlainEntity();
+            // 每次读不同 cell（不同 entity 实例无 objId 区分——用不同 field 名构造 distinct cell）
+            MaskHelper.maskDecimal(AMOUNT, Set.of(MaskHelper.ROLE_SALARY_APPROVER), entity, "field-" + i);
+        }
+        assertEquals(cells, auditService.captured.size(),
+                ">500 distinct cell 单请求内各恰记一次（旧 500-cap clear-all 实现下自第 501 cell 起"
+                + "已记录 cell 重记 → 红的本用例；分桶换代后绿）");
+
+        // 同请求内重复读已记录 cell 仍去重（换代不放大审计量）
+        MaskHelper.maskDecimal(AMOUNT, Set.of(MaskHelper.ROLE_SALARY_APPROVER), new PlainEntity(), "field-0");
+        assertEquals(cells, auditService.captured.size(), "已记录 cell 重读仍去重（E4.2 精确语义）");
+    }
+
     @Test
     public void nullTraceIdRecordsConservatively() {
         loginAs(MaskHelper.ROLE_SALARY_APPROVER);

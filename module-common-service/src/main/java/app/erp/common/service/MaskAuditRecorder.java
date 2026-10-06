@@ -30,12 +30,12 @@ import java.util.Set;
  * → 写 {@code NopAuthOpLog}（平台批处理异步写入，零阻塞主请求）。**无 ORM 新实体，无平台代码改动**
  * （保护区域 ask-first 未触发）。
  *
- * <p><b>粒度策略</b>（Phase 1 Decision (c)，plan 2026-10-05-0400-4 修订为请求作用域）：同一
- * {@code userId × entityName × objId × fieldName × traceId} 仅记一次——DedupKey 携带
- * {@code IContext#getTraceId()}（ContextHttpServerFilter 每 HTTP 请求设置/UUID 兜底），
- * 池化工作线程跨请求的残留键不再命中（修复 E4.2「同一请求线程内仅记一次」语义下的跨请求漏报）。
- * traceId 不可得（null 上下文）时跳过去重直接记录（保守多记，漏报最小化方向）。上限
- * {@link #MAX_DEDUP_ENTRIES} 防泄漏。
+ * <p><b>粒度策略</b>（Phase 1 Decision (c)，plan 2026-10-05-0400-4 请求作用域，plan 2026-10-06-0355-5
+ * 分桶换代）：同一 {@code userId × entityName × objId × fieldName}（单请求内）仅记一次——
+ * ThreadLocal 载荷为 (当前 traceId, 4 分量去重集) 桶；traceId 变更即整桶换代（键生命周期=单请求），
+ * 池化工作线程跨请求零残留。任意大小的请求内「同一 cell 仅记一次」精确成立（不再有 500 上限
+ * 请求中段清空导致的重记）。traceId 不可得（null 上下文）时跳过去重直接记录（保守多记，
+ * 漏报最小化方向）。桶驻留上界=单请求 distinct cell 数，随下次请求换代释放。
  *
  * <p><b>config-gate</b>（Phase 1 Decision (d)）：{@link #CONFIG_FIELD_READ_AUDIT_ENABLED} 默认 false；
  * %test=ON / %prod=ON（USC-03 E4.2 翻转）/ %dev=OFF。fail-safe：OFF 时 {@link #recordDisclosure} 首行 return，零开销。
@@ -52,11 +52,13 @@ public class MaskAuditRecorder {
 
     public static final String OPERATION_FIELD_READ_DISCLOSURE = "FIELD_READ_DISCLOSURE";
 
-    static final int MAX_DEDUP_ENTRIES = 500;
-
     private static volatile MaskAuditRecorder instance;
 
-    private final ThreadLocal<LinkedHashSet<DedupKey>> tlDedup = ThreadLocal.withInitial(LinkedHashSet::new);
+    /**
+     * 请求作用域去重桶（plan 2026-10-06-0355-5 分桶换代）：traceId 为桶身份，
+     * 4 分量 DedupKey 为桶内键——traceId 变更换代整桶，桶生命周期=单请求。
+     */
+    private final ThreadLocal<DedupBucket> tlBucket = ThreadLocal.withInitial(() -> new DedupBucket(null));
 
     private IAuditService auditService;
 
@@ -137,12 +139,13 @@ public class MaskAuditRecorder {
         }
 
         if (traceId != null) {
-            DedupKey key = new DedupKey(ctx.getUserId(), entityName, objId, fieldName, traceId);
-            LinkedHashSet<DedupKey> seen = tlDedup.get();
-            if (seen.size() >= MAX_DEDUP_ENTRIES) {
-                seen.clear();
+            DedupBucket bucket = tlBucket.get();
+            if (bucket.traceId == null || !bucket.traceId.equals(traceId)) {
+                bucket = new DedupBucket(traceId);
+                tlBucket.set(bucket);
             }
-            if (!seen.add(key)) {
+            DedupKey key = new DedupKey(ctx.getUserId(), entityName, objId, fieldName);
+            if (!bucket.seen.add(key)) {
                 return;
             }
         }
@@ -200,15 +203,15 @@ public class MaskAuditRecorder {
     }
 
     static void clearThreadDedup() {
-        LinkedHashSet<DedupKey> seen = instance == null ? null : instance.tlDedup.get();
-        if (seen != null) {
-            seen.clear();
+        DedupBucket bucket = instance == null ? null : instance.tlBucket.get();
+        if (bucket != null) {
+            bucket.seen.clear();
         }
     }
 
     static int threadDedupSize() {
-        LinkedHashSet<DedupKey> seen = instance == null ? null : instance.tlDedup.get();
-        return seen == null ? 0 : seen.size();
+        DedupBucket bucket = instance == null ? null : instance.tlBucket.get();
+        return bucket == null ? 0 : bucket.seen.size();
     }
 
     static final class DedupKey {
@@ -216,14 +219,12 @@ public class MaskAuditRecorder {
         final String entityName;
         final String objId;
         final String fieldName;
-        final String traceId;
 
-        DedupKey(String userId, String entityName, String objId, String fieldName, String traceId) {
+        DedupKey(String userId, String entityName, String objId, String fieldName) {
             this.userId = userId;
             this.entityName = entityName;
             this.objId = objId;
             this.fieldName = fieldName;
-            this.traceId = traceId;
         }
 
         @Override
@@ -234,13 +235,22 @@ public class MaskAuditRecorder {
             return java.util.Objects.equals(userId, k.userId)
                     && java.util.Objects.equals(entityName, k.entityName)
                     && java.util.Objects.equals(objId, k.objId)
-                    && java.util.Objects.equals(fieldName, k.fieldName)
-                    && java.util.Objects.equals(traceId, k.traceId);
+                    && java.util.Objects.equals(fieldName, k.fieldName);
         }
 
         @Override
         public int hashCode() {
-            return java.util.Objects.hash(userId, entityName, objId, fieldName, traceId);
+            return java.util.Objects.hash(userId, entityName, objId, fieldName);
+        }
+    }
+
+    /** 请求作用域去重桶：traceId 身份 + 4 分量去重集（换代即弃置，无容量上限）。 */
+    static final class DedupBucket {
+        final String traceId;
+        final LinkedHashSet<DedupKey> seen = new LinkedHashSet<>();
+
+        DedupBucket(String traceId) {
+            this.traceId = traceId;
         }
     }
 }

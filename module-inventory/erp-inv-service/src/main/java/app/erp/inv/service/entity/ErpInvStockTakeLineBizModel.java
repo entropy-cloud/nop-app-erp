@@ -8,6 +8,9 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
+import io.nop.api.core.beans.query.QueryBean;
+import io.nop.dao.api.IEntityDao;
+import static io.nop.api.core.beans.FilterBeans.eq;
 import app.erp.common.service.AbstractErpCrudBizModel;
 import app.erp.inv.biz.IErpInvStockTakeLineBiz;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
@@ -150,13 +153,17 @@ public class ErpInvStockTakeLineBizModel extends AbstractErpCrudBizModel<ErpInvS
     }
 
     private int nextLineNo(String takeId) {
-        ErpInvStockTakeLine example = new ErpInvStockTakeLine();
-        example.setTakeId(takeId);
-        List<ErpInvStockTakeLine> lines = daoFor(ErpInvStockTakeLine.class).findAllByExample(example);
+        // 单查询点查（plan 2026-10-06-0355-5）：orderBy lineNo desc + limit 1，
+        // 替代全量物化求 max（扫码热路径 O(N)/次 → O(1)）；IDX_INV_STOCK_TAKE_LINE_TAKE_ID 承载
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("takeId", takeId));
+        q.addOrderField("lineNo", false);
+        q.setLimit(1);
+        IEntityDao<ErpInvStockTakeLine> dao = daoProvider().daoFor(ErpInvStockTakeLine.class);
+        List<ErpInvStockTakeLine> lines = dao.findAllByQuery(q);
         int max = 0;
-        for (ErpInvStockTakeLine l : lines) {
-            if (l.getLineNo() != null && l.getLineNo() > max)
-                max = l.getLineNo();
+        if (!lines.isEmpty() && lines.get(0).getLineNo() != null) {
+            max = lines.get(0).getLineNo();
         }
         return max + 1;
     }
