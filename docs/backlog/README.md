@@ -10,6 +10,7 @@
 
 | 优先级 | 工作项 | 路线图 | 状态 | AI 自主权 |
 |--------|--------|--------|------|-----------|
+| P0 | 历史 successor/follow-up 收口（确诊缺陷收口 + ai-check 残量 + 一致性裁决，M1-M3 共 8 工作项；watch 存量注册面 §9） | `successor-followup-closure-roadmap.md` | todo（WI-01~08） | `plan-first`（WI-01 auth 保护区 / WI-02 涉 shell 双批准） |
 | P0 | CRUD 全 18 域（Milestone 1-3） | `crud-roadmap.md` | ✅ done | `implement` |
 | P1 | 核心业务循环（进销存+财务） | `core-business-roadmap.md` M1 | ✅ done | `plan-first` |
 | P2 | 扩展 5 域业务逻辑 | `extended-roadmap.md` M2 | ✅ done | `plan-first` |
