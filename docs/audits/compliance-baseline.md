@@ -1,3 +1,15 @@
+**2026-09-17 per-site 裁决（plan `2026-09-17-0600-1` F3.9 批，1559→1569，+10 合法 baseline-raise；注记为 2026-10-06 successor-followup-closure-roadmap WI-04 f39 结束审计阻塞整改补落——原批门控声称的本注记当时未落盘）**：
+本批 21 个 main 文件（+464/−61）新增 daoFor 站点 11 处、原位替换 1 处（`ErpFinBudgetScenarioCarryForwardProcessor` 的 `daoFor(ErpFinVoucherLine.class)` 行内重构），净 +10，全部为 fin2/fin3/fin4 审计 finding 修复必需的域内查询/删除/锁点，非绕管道：
+1. `BankLedgerQuery` ×2 `daoFor(ErpFinVoucherLine.class)`——fin4-011 窗口凭证预载/fin4-009 勾对行 id 集合查询；
+2. `BankStatementImporter` ×2（`ErpFinBankStatement`/`ErpFinBankStatementLine`）——fin4-009 账户级去重的 statement id 列表与行分批查询；
+3. `ErpFinBudgetControlBiz` `daoFor(ErpFinBudgetControlLog.class)`——fin3-009 WARN 无 match 变体 ControlLog 写入（SKIPPED 场景）；
+4. `IntercompanyVoucherGenerator` `daoFor(ErpFinAccountingPeriod.class)`——fin4-007 期间状态守卫的期间解析；
+5. `ErpFinBudgetScenarioCarryForwardProcessor` `daoFor(ErpFinVoucherLine.class)`——fin3-007 凭证行查询（替换原行，同实体）；
+6. `ErpFinConsolidationEliminationGenerateEliminationCandidatesProcessor` `daoFor(ErpFinConsolidationElimination.class)`——fin4-006 抵销候选幂等去重查询；
+7. `ErpFinConsolidationEliminationPostEliminationProcessor` `daoFor(ErpFinAccountingPeriod.class)`——fin4-006 过账期间守卫；
+8. `ErpFinReconciliationRunAutoReconciliationProcessor` ×2（`ErpFinReconciliationLine`/`ErpFinReconciliation`）——fin2-008 自动核销 per-partner 容错的行查询与补偿性删除。
+批末 checker 实测 R2c=1569（对齐同日 known-good-baselines 与日志）。**residual 登记**：`## BASELINE (machine-readable)` 块 `R2c: 1553` 自 2026-09-12（f2.15）起跨批滞后（F3.6-F3.10 各批注记均未同步机器块），当前实测 1571 > 1553 处于失真门控配置——前置系统性状态，非本批引入；上调机器块须独立基线追平裁决计划（覆盖 1553→实测的多批 catch-up），按「回归门控规则」路由 successor。
+
 **2026-09-17 per-site 裁决（plan `2026-09-17-0330-1` F3.8 批，1558→1559，+1 合法 baseline-raise）**：
 1. `ErpFinPostingExceptionRecorder#mergeIntoExistingPending` 新增 `daoFor(ErpFinPostingException.class)`——fin-014 PENDING 合并查询（新增独立方法；原 record 方法内 daoFor 站点保留）。保护区双批准后落地。
 

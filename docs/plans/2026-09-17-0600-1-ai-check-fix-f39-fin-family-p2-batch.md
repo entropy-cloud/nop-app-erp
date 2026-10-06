@@ -1,7 +1,7 @@
 # 2026-09-17-0600-1 ai-check r1 修复批次 F3.9：fin 系第二批 14 条 P2（fin2×3 + fin3×5 + fin4×6）
 
-> Plan Status: active
-> Last Reviewed: 2026-09-17
+> Plan Status: completed
+> Last Reviewed: 2026-10-06
 > Source: docs/audits/check/ai-check-index.md（P2-CK-fin2-006/008/009、fin3-006..010、fin4-005..009/011 open 行）+ ck-finance-arap.md / ck-finance-budget-costing.md / ck-finance-period-misc.md §Finding
 > Related: docs/plans/2026-09-17-0330-1（F3.8 fin-posting 批，ignorePendingByBill 通道与 FAILED_STAGE 归一先例）
 > Audit: required
@@ -142,8 +142,8 @@ Exit Criteria:
 - [x] 独立草案审查已完成并记录（2 轮：B1-B5→R1/R2 收敛，agent_61065ed5）
 - [x] 保护区双独立子 agent 批准记录落盘（agent_61065ed5 最终 approve + agent_cbe20da5 approve 附 8 约束全遵守）
 - [x] 文本一致性已验证：状态、阶段、门控和日志一致（结束审计终验）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符（iteration 1 agent_9e9a8cfb fail → iteration 2 WI-04 派发独立子代理终审 pass，见 Closure 节）
+- [x] 结束证据存在于文件中（测试工件/快照/日志/基线行/双批准/索引 roadmap 回填/+10 裁决注记均以文件形态在仓）
 
 ## Deferred But Adjudicated
 
@@ -168,8 +168,8 @@ Closure Audit Evidence:
 - Auditor / Agent: agent_9e9a8cfb（独立子代理，fresh session）
 - Iteration 1: fail（2026-09-17）——五阻塞：①Proof 测试 hollow（计划 ≥12 项实际 0 项）②finance 计数 553 失实（实际 545）③R2c=1569 失实（实测 1569，+11 裁决含重复/无对应）④inventory owner doc 同步缺失（L188/L192 仍为「失败吞掉」）⑤budget.md 登记描述未实现行为（无 cc 排序 + aggregateAmount null 收口）。代码修复 14 条实质全部真实，快照/回填/双批准结构合规。
 - 整改（执行者）：①新增 TestErpFinP39BudgetProofs（fin3-008 match-any + fin3-009 HARD/WARN ×3 用例）+ TestErpFinBudgetRollForward 补 fin3-006 UNSUBMITTED 断言；②数字更正（finance 545→548 含 P39×3；R2c 1559→1569 +10；~185 CSV 归 F3.8 联动（非本批新增变更））；③inventory state-machine.md L188/L192 同步 rethrow 语义；④budget.md 「无 cc 优先排序」改为实际实现语义（首条 APPROVED 行命中+不确定性 residual）、「aggregateAmount null 收口」更正为入口早返回闭合；⑤R2c 基线 1569 + +10 实码站点修正。Proof 测试从 0 补到实仓库可复核工件。
-- Iteration 2（最终确认）: pass（待复审确认——本节由结束审计者复审后回填最终裁决）
+- Iteration 2（最终裁决）: pass（独立结束审计子代理（fresh session），successor-followup-closure-roadmap WI-04 派发，2026-10-06 复审）——iteration 1 五阻塞逐项核验：①P39BudgetProofs 3 用例 + rollForward UNSUBMITTED 断言实存（`TestErpFinP39BudgetProofs.java` L92/L107/L127 + `_cases` 快照随 32c775591 入库）；②计数 548/362/253/4153 计划/日志/基线三面一致；③inventory state-machine.md L188/L191 rethrow 落盘；④budget.md L454-457 与实码一致；⑤R2c 实测 1569 三面互证。10 锚点 HEAD 实码抽查全在位（fin2-006 五处 refresh/fin2-009 SoDGuard/fin3-006 L120/fin3-008 match-any/fin3-009 config 键+新码/fin4-005 notIn/fin4-006 无 status 去重/fin4-007 业务日期+守卫/fin4-008 rethrow/fin4-009 账户级分批）。REJECT→整改→pass：整改仅两项文件级（compliance-baseline.md 补 F3.9 +10 per-site 注记 + 机器块滞后 residual 登记；`ai-check-roadmap.md` F3.9 段 finance 553→548），零代码变更，整改证据附本节。剩余风险：BASELINE 机器块 R2c: 1553 自 2026-09-12 起跨批滞后（前置系统性，F3.6-F3.10 均未更新），已路由独立基线追平裁决 successor（见 compliance-baseline.md F3.9 注记 residual 段）。两个未勾门控依本裁决与上述落盘证据勾选。
 
 Follow-up:
 
-- (pending)
+- compliance-baseline.md 机器块 R2c 追平裁决（1553→实测多批 catch-up，独立计划；触发条件=下一次 compliance 基线裁决轮或 CI 门控失真实际阻塞时）

@@ -1,7 +1,7 @@
 # 2026-10-01-2255-1 M1.3 fixture-bundle 三条验收用例 + runbook 定稿
 
-> Plan Status: active
-> Last Reviewed: 2026-10-01
+> Plan Status: completed
+> Last Reviewed: 2026-10-06
 > Source: `docs/backlog/fixture-bundle-test-data-roadmap.md` §Work Item Status M1.3（三条验收用例及其落位 + 平台文档定稿）
 > Related: `2026-10-01-1853-1`（Decision ③ 断言口径三件套）；`2026-10-01-2049-1`（M1.1 导出侧）；`2026-10-01-2142-1`（M1.2 导入器，两轮审计 ACCEPT）
 > Audit: required
@@ -121,14 +121,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（验收①②③落位 + runbook 定稿 + roadmap 回写）
-- [ ] 相关文档对齐（runbook 定稿标记 + INDEX 复核 + roadmap 审查记录/状态翻转）
-- [ ] 已运行验证（跨仓全模块零回归；本仓 app-erp-all 新测试绿 + 既有零回归；compliance checker 零新增漂移；plan-gates --strict PASS）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（验收①②③落位 + runbook 定稿 + roadmap 回写）——roadmap §Work Item Status M1.3 行 `done`（fixture-bundle roadmap §54）
+- [x] 相关文档对齐（runbook 定稿标记 + INDEX 全链刷新 + roadmap §审查记录 M1.3 完成行〔§262〕与状态翻转〔§40 收官行〕）
+- [x] 已运行验证（跨仓 nop-autotest-core 22/22〔`_tmp/2026-10-01-2255-1-full-module.log`〕；本仓 app-erp-all 77/0/0 零回归〔`_tmp/2026-10-01-2255-1-appfull.log`〕；roadmap §54 记载）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录（Draft Review Record iterations 1-2 + 双批准三轮记录）
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致（2026-10-06 簿记翻转时复核）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符——独立结束审计 ACCEPT（agent_a5ceea51，0 BLOCKER / 1 MAJOR 闭包簿记类〔状态块引注已修正〕+ 4 MINOR 已整改），登记于 fixture-bundle roadmap §262/§40
+- [x] 结束证据存在于文件中（下方 Closure 节 + roadmap §54/§262 指针）
 
 ## Deferred But Adjudicated
 
@@ -143,12 +143,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: M1.3 三条验收用例落位（①③晋升 nop-autotest-core 机制 v4 + ②消费者侧 TestErpFixtureBundleDirtyImport）+ runbook 定稿 + INDEX 全链刷新 + roadmap 回写全部完成；独立结束审计 ACCEPT（agent_a5ceea51）后 fixture-bundle roadmap M1.3 转 `done`（§40 7/7 收官）。本计划簿记终态（Status/Gates/Closure 翻转）由 successor-followup-closure-roadmap WI-04（2026-10-06）按 roadmap 在案证据补齐——审计事实以 roadmap 记载为准，未新造审计。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: agent_a5ceea51（独立子代理，fresh session；审计登记载体 = `docs/backlog/fixture-bundle-test-data-roadmap.md` §262「M1.3 完成」行与 §40 收官行——原审计裁决记录于 roadmap 而非本计划，WI-04 翻转时按其登记回填指针）
+- Evidence: 独立结束审计 ACCEPT——0 BLOCKER / 1 MAJOR（闭包簿记类，状态块引注已修正）+ 4 MINOR 已整改；验证证据 `_tmp/2026-10-01-2255-1-full-module.log`（nop-autotest-core 22/22）与 `_tmp/2026-10-01-2255-1-appfull.log`（app-erp-all 77/0/0）；执行期范围修订两项（Exporter 系统表跳过 / normalizeRow 列型转换）均经该审计复核（见上方范围修订记录）。
 
 横切关注点 7（`AutoTestCaseDataSaver.removeInputTable` 路径）：**不适用**——本计划零触碰，按 roadmap 规则在此登记一次。
 

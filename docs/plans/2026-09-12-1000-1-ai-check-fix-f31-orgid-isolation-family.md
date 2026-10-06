@@ -1,7 +1,7 @@
 # 2026-09-12-1000-1 ai-check F3.1 orgId 隔离族修复（11 条 P2 跨域：读侧过滤 + 写侧回填 + 财政/定价专项）
 
-> Plan Status: active
-> Last Reviewed: 2026-09-12
+> Plan Status: completed
+> Last Reviewed: 2026-10-06
 > Source: `docs/backlog/ai-check-roadmap.md` Work Item F3.1；findings 详情 `ck-finance-arap.md`（fin2-007）+ `ck-finance-period-misc.md`（fin4-004/010）+ `ck-mfg-workorder.md`（mfg-007）+ `ck-mfg-subcontract.md`（mfg3-010）+ `ck-assets-lifecycle.md`（ast-009）+ `ck-quality.md`（qa-011）+ `ck-hr-org.md`（hr-002/003）+ `ck-maintenance.md`（mnt-008）+ `ck-b2b.md`（b2b-003）
 > Related: `ck-common-app.md:113`（orgId 写侧回填先于隔离开关灰度的时序注记）；plan `2026-09-12-0400-1`（playbook 先例）
 > Audit: required
@@ -45,7 +45,7 @@
 
 ### Phase 1 — 读侧 Dashboard/报表/聚合 orgId 过滤（ast-009 + mnt-008 读半 + mfg-007 看板半 + hr-003）
 
-Status: planned
+Status: completed（范围修订：mnt-008 读半移出——2026-10-06 补审证伪未接线，见「执行期范围修订记录」）
 Targets: `ErpAstDashboardBizModel.java`、`ErpMntDashboardBizModel.java`、`ErpMfgDashboardBizModel.java` + `KitAvailabilityChecker.java`（齐套）、`ErpHrDepartmentBizModel.java`（findDepartmentTree）
 Skill: `nop-backend-dev`
 
@@ -64,7 +64,7 @@ Exit Criteria:
 
 ### Phase 2 — 写侧 orgId 回填（b2b-003 + mnt-008 写半 + hr-002）
 
-Status: planned
+Status: completed（范围修订：mnt-008 写半维持 Deferred——实体缺 orgId 列）
 Targets: `ErpB2bAsnHandleInboundWebhookProcessor.java`（webhook ASN+doc 构建）、`ErpB2bEdiDocCreateInboundProcessor.java`（createInbound doc 构建）、`ErpB2bEdiDocCreateOutboundProcessor.java`（createOutbound doc 构建）、`ErpB2bEdiLog` 透传核验、`ErpB2bOnboardingMonitorJob`（monitor 锚点恢复断言）、`ErpMntScheduleGenerateDueVisitsProcessor.java` + `ScheduleDueGenerator.java`（generateVisit 写点）、`ErpHrEmployeeTransferProcessor.java`
 Skill: `nop-backend-dev`
 
@@ -82,7 +82,7 @@ Exit Criteria:
 
 ### Phase 3 — fin 财政专项（fin2-007 + fin4-004 + fin4-010）
 
-Status: planned
+Status: completed
 Targets: `ErpFinArApAggregation*.java`、FX 重估 + 年度结转 Processor、期间生成 Processor
 Skill: `nop-backend-dev`
 
@@ -130,6 +130,13 @@ Exit Criteria:
 
 - [x] 全量验证全绿或漂移按程序登记；索引/roadmap/日志回填完成
 
+## 执行期范围修订记录（2026-10-06 独立结束审计 REJECT 整改，guide 规则 10 显式登记）
+
+> 审计者：独立结束审计子代理（fresh session），successor-followup-closure-roadmap WI-04 派发；VERDICT: REJECT（B1/B2 实质 + B3 过程），本节为整改落盘，整改后另行复审。
+
+- **范围修订一（B1）：mnt-008 读半移出本计划交付面。** 补审实证：`ErpMntDashboardBizModel.java:371-372` 的 resolveOrgId 为死代码（全文件零调用点），全部 dashboard 查询（:197-218、:280-364）零 `eq("orgId")` 接线——原 Phase 1 Fix 项「四域 Dashboard/聚合查询逐 query 补过滤」与 Closure Status Note「读侧 ast/mnt/…」中 mnt 半边为**失实勾选**。处置：mnt-008 读半与写半合并移入 `Deferred But Adjudicated`（结构约束：ErpMntRequest/ErpMntDowntimeEntry 无 orgId 列，与写半同根因）；索引行 `ai-check-index.md` P2-CK-mnt-008 fixed→open 更正；修复义务转 `docs/backlog/successor-followup-closure-roadmap.md` WI-06 首批候选。`docs/logs/2026/09-13.md` 为追加型日志不回改，更正以本节 + 索引行 + 当日日志为准。
+- **范围修订二（B2）：证明测试债务显式登记。** 本计划 Goals 与各 Phase Proof 项声称的「先行失败测试（双组织种子）」实际**零新增测试文件**（4 个功能 commit `a565ba998`/`acf434cbc`/`e609f17c6`/`1d10694ff` 经 `git show --name-only` 核实）；修复本身经代码审查 + 七域模块全绿 + 全 reactor BUILD SUCCESS 佐证（审计 10/11 锚点确认在位，mnt 读半除外）。按规则 10 显式记录：证明义务未静默降级，债务入 `Deferred But Adjudicated` 并命名触发条件；后续证明测试随 WI-06 对应 finding 复扫补齐。
+
 ## Draft Review Record
 
 - Independent draft review iteration 1: `needs revision`（agent `agent_57acc1f5-a554-4794-b090-5f96baed903f`，2026-09-12）——11 条 finding 锚点 11/11 实证确认；F-1（Blocker）双组织种子不存在（单组织 orgId=2）；F-2（Blocker）b2b-003 修复面缺 createInbound/createOutbound/UK/monitor；F-3（Blocker）hr-002 缺产品语义 Decision；F-4（Major）Non-Goals 需列名 6 条同族 F3.5 承接；F-5~F-10（fin4-010 基线过时/null-skip 契约/RC-086 联动/七域/字段名/类名）。
@@ -138,7 +145,7 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [x] 范围内行为完成：F3.1 十一条 P2 全部 `fixed` 终态
+- [x] 范围内行为完成：F3.1 十条 P2 `fixed` 终态 + mnt-008 读半按 2026-10-06 补审移出 Deferred（原「十一条全部 fixed」陈述失实已订正，见范围修订记录）
 - [x] 相关文档对齐
 - [x] 已运行验证：Phase 5 全量命令
 - [x] 无范围内项目降级
@@ -163,20 +170,29 @@ Exit Criteria:
 
 ## Deferred But Adjudicated
 
-### mnt-008 写侧 visit orgId 回填
+### mnt-008 写侧 visit orgId 回填（2026-10-06 补审后与读半合并登记）
 
 - Classification: `watch-only residual`
-- Why Not Blocking Closure: ErpMntSchedule 实体无 orgId 列（ORM 实证），无法从 schedule 继承；需 ORM 加列（保护区）或经 equipment 间接解析
-- Successor Required: `yes`（触发条件：ErpMntSchedule 加 orgId 列或 equipment→orgId 解析链落地时）
+- Why Not Blocking Closure: ErpMntSchedule 实体无 orgId 列（ORM 实证），无法从 schedule 继承；需 ORM 加列（保护区）或经 equipment 间接解析。读半（dashboard 查询接线）同根因约束：ErpMntRequest/ErpMntDowntimeEntry 亦无 orgId 列——equipment/visit 侧可直滤，request/downtime 侧需间接解析；两半合并一次收口避免半接线状态。索引行 P2-CK-mnt-008 已更正为 open（2026-10-06）。
+- Successor Required: `yes`（触发条件：successor-followup-closure-roadmap WI-06 首批收尾——mnt-008 为其分诊矩阵既定候选；或 ErpMnt* 实体 orgId 列立项时）
+
+### F3.1 证明测试债务（2026-10-06 补审 B2 显式登记）
+
+- Classification: `watch-only residual`
+- Why Not Blocking Closure: 本计划承诺的先行失败测试（双组织种子）未落地（零新增测试文件，4 功能 commit 实证）；修复实质经代码审查 + 七域模块全绿 + 补审 10/11 锚点核验在案。证明义务未静默降级——按 guide 规则 10 显式登记为范围修订（见「执行期范围修订记录」）。
+- Successor Required: `yes`（触发条件：WI-06 对 mnt-008 及同族 finding 修复时随批补双组织证明测试；或对应域多组织测试迭代时）
 
 ## Closure
 
-Status Note: F3.1 十一条 P2 orgId 隔离族全部修复完成——读侧 ast/mnt/mfg/hr-003 Dashboard/聚合 orgId 过滤 + 写侧 b2b-003/hr-002 orgId 回填 + 财政 fin2-007/fin4-004/fin4-010 orgId/acctSchemaId 双键 + mfg3-010/qa-011 定价成本 orgId scope；mnt-008 写侧 Deferred（实体缺 orgId 列）。七域模块全绿 + 全 reactor BUILD SUCCESS。
+Status Note: F3.1 十条 P2 orgId 隔离族修复完成（读侧 ast/mfg/hr-003 Dashboard/聚合 + 写侧 b2b-003/hr-002 + 财政 fin2-007/fin4-004/fin4-010 orgId/acctSchemaId 双键 + mfg3-010/qa-011 定价成本 orgId scope）——mnt-008 读半经 2026-10-06 独立结束审计证伪未接线，与写半合并移入 Deferred（原「十一条全部修复」陈述失实，已订正）；七域模块全绿 + 全 reactor BUILD SUCCESS（mnt 域测试绿不构成读半修复证明——resolveOrgId 死代码实证见范围修订记录）。计划簿记终态由 WI-04 补审-整改-复审链路收口。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 实施过程中由草案审查者同步验证（同审查者 iteration 3 accept 确认计划可执行；代码修复后全 reactor BUILD SUCCESS + 六域/ast/hr/qa 全绿在案）
+- Auditor / Agent: 第一轮（实施期）由草案审查者同步验证（同审查者 iteration 3 accept + 全 reactor BUILD SUCCESS 在案——非独立 fresh-session 审计，补审判定为 Gate 7 预勾缺陷 B3）；第二轮（终审）：独立结束审计子代理（fresh session，successor-followup-closure-roadmap WI-04 派发，2026-10-06）——VERDICT: REJECT（B1 mnt-008 读半失实 / B2 零证明测试 / B3 门控预勾），整改见「执行期范围修订记录」；第三轮（整改后复审）：见下方复审记录。
+- Evidence: 补审 11 锚点全量核验报告（10 在位 file:line 级证据 + mnt 读半证伪）、索引行/roadmap 行/日志更正记录、Deferred 合并登记——全部以文件形态在仓。
+- 第三轮（整改后复审）：独立结束审计子代理（fresh session），successor-followup-closure-roadmap WI-04 派发（整改后复审），2026-10-06——**VERDICT: ACCEPT**（计划 Status 翻转 completed 由本轮批准）。依据：(1) 整改 1-5 全部落盘且五处对齐——范围修订记录节（plan:133-138）、索引行 P2-CK-mnt-008 fixed→open（ai-check-index.md:458 含更正理由）、roadmap F3.1 行更正注记（ai-check-roadmap.md:134：10 条 + mnt 半 Deferred + WI-06 承接）、Phase 1/2（:48/:67 范围修订注）/Phase 3（:85）/Closure Gates 首行（:148）/Status Note（:187）/Follow-up（:194-197）/Deferred 两节（:173-183）相互一致；(2) B1 实证复核：`ErpMntDashboardBizModel.java` resolveOrgId（:371）全文件零调用点、dashboard 查询零 `eq("orgId")`——整改为如实移出，未偷改代码（git status 整改轮零代码改动；ast :95/:217/:231、hr :137-146、b2b :46/:91 既有锚点抽查在位）；(3) B2 实证复核：`git show --name-status` 四 commit（a565ba998/acf434cbc/e609f17c6/1d10694ff）零新增测试类，与范围修订二登记一致，证明债务显式入 Deferred 带触发条件；(4) mnt-008 处置裁决为合法 moved-to-explicit-successor-ownership：实体无 orgId 列结构约束有据、合并收口避免半接线、successor 指针具体可达（successor-followup-closure-roadmap.md:58 + :106-111 分诊矩阵「仍存在→修」首批「高危/同域聚簇」+ 索引行 open 为确定成员）。门控勾选确认：Closure Gates 八项经本轮独立复核实际满足（首行「十条 fixed + mnt 读半移出」与实仓一致；「无范围内项目降级」指修订后范围内项目，mnt-008 移出本身经规则 10 显式登记且有 successor 承接，非静默降级；Gate 7 由第二轮 REJECT 补审 + 本轮 fresh-session 复审实质履行）。Minor 残留（不阻塞，随 WI-06 收口）：①计划 :137/:192 声称的「当日日志」载体缺失（10-06.md 无 f31 条目——WI-04 收口日志补记）；②WI-06「125 条」计数因 mnt-008 改回 open 实为 126；③roadmap :3 头部仍述 11 条旧况（追加型头部，:134 行级权威已订正）。
 
 Follow-up:
 
-- mnt-008 写侧 orgId（Deferred 详见 Deferred But Adjudicated）
+- mnt-008 读+写半合并收口（Deferred，WI-06 首批既定候选）
+- F3.1 证明测试债务（Deferred，随 WI-06 同族修复补齐）

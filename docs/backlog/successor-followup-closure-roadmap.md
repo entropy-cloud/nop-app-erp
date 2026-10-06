@@ -22,9 +22,9 @@
 
 | 状态 | 数量 |
 | --- | --- |
-| todo | 8 |
+| todo | 7 |
 | ready | 0 |
-| done | 0 |
+| done | 1 |
 
 ## 3. 当前基线
 
@@ -48,7 +48,7 @@
 | WI-01 | 报表 `/p/` 下载 auth 失败家族收口（F-R19；**auth/permissions 保护区 plan-first + owner doc 对齐**） | todo | `docs/design/roles-and-permissions.md` | — | reports 层 E2E 既有 spec |
 | WI-02 | 收件箱 auth-ON E2E 可达性收口（F-R20；含 nop-chaos-next 客户端守卫语义裁决时须**双独立子代理批准**） | todo | `docs/design/notify/inbox-patterns.md` + `docs/design/roles-and-permissions.md` | WI-01 无依赖可并行 | skip 守卫用例已在树 |
 | WI-03 | 构建输出注入式文本（jqwik banner）triage + 输出卫生门禁 | todo | `docs/testing/known-good-baselines.md` | — | check-flux-baseline self-test 范式 |
-| WI-04 | 计划簿记漂移出清（m13/f31/f39 Status-vs-事实失真；GATE-02 增量误报防线） | todo | `docs/plans/00-plan-authoring-and-execution-guide.md` 规则 12 | — | GATE-02 |
+| WI-04 | 计划簿记漂移出清（m13/f31/f39 Status-vs-事实失真；GATE-02 增量误报防线） | done（2026-10-06，无计划路径：确认阶段实证——GATE-02 对三文件零报告（「active 永挂」为门禁盲区，红灯表述与 HEAD 实况偏差已注销留痕），失真以三文件 `Plan Status: active` + Closure 悬空 vs roadmap/日志 done 事实直接在案；m13 按 roadmap §54/§262 在案审计 ACCEPT（agent_a5ceea51）直接翻转；f39 补真实终审（WI-04 派发 fresh-session 子代理）REJECT→两项文件级整改（compliance-baseline.md 补 F3.9 +10 per-site 注记 + 机器块 1553 滞后 residual 登记；ai-check-roadmap L138 553→548）→按审计者预授权回填 pass 翻转；f31 补真实终审 REJECT（3 阻塞：mnt-008 读半失实 fixed/零证明测试/门控预勾）→整改（索引行 P2-CK-mnt-008 fixed→open、范围修订记录节、Phase 1-3 状态订正、mnt 读+写半合并 Deferred 转 WI-06 首批）→复审 ACCEPT 翻转。验收：GATE-02 对三文件零报告 + `check:plan-gates --strict` PASS 零回退） | `docs/plans/00-plan-authoring-and-execution-guide.md` 规则 12 | — | GATE-02 |
 
 ### M2 ai-check 残量收口批
 
