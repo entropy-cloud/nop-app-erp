@@ -191,8 +191,8 @@ body:
       - type: text
         tag: div
         className: text-muted
-        text: '<div>一次性同步编排 AR→AP→INV→AST→GL 模块关账 + 损益结转 + 汇兑重估。${periodData?.month == 12 ? "<strong class=\'text-warning\'>本期间为 12 月，closePeriod 将一并执行年度结转分支。</strong>" : ""}</div>'
-        i18nEn: '<div>One-shot synchronous orchestration of AR→AP→INV→AST→GL module close + P&L carry-forward + FX revaluation.${periodData?.month == 12 ? "<strong class=\'text-warning\'>This is a December period: closePeriod will also run the annual carry-forward branch.</strong>" : ""}</div>'
+        text: '<div>一次性同步编排 AR→AP→INV→AST→GL 模块关账 + 损益结转 + 汇兑重估。${periodData?.month == 12 ? "<strong class=''text-warning''>本期间为 12 月，closePeriod 将一并执行年度结转分支。</strong>" : ""}</div>'
+        i18nEn: '<div>One-shot synchronous orchestration of AR→AP→INV→AST→GL module close + P&L carry-forward + FX revaluation.${periodData?.month == 12 ? "<strong class=''text-warning''>This is a December period: closePeriod will also run the annual carry-forward branch.</strong>" : ""}</div>'
       - type: button
         label: "执行月度结账"
         level: primary

@@ -1,6 +1,6 @@
 # 2026-10-06-0355-6 flux 基线门禁化收官（warning 冻结基线 + parse 门禁 + 基线文档刷新）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-10-06
 > Source: docs/analysis/2026-10-06-0352-perf-ux-round3-increment-analysis.md §2 D2 定案 + §3.2 F-R8/F-R12
 > Related: 2026-10-05-0353 第二轮 §5 D2（触发项）、docs/architecture/flux-page-export-and-validation.md（既有基线）、docs/architecture/flux-integration-gotchas.md G-002
@@ -47,48 +47,56 @@
 
 ### Phase 1 - 死文件修复与基线测取
 
-Status: planned
+Status: completed
 Targets: period-close-wizard/main.page.yaml；_tmp 报告
 Skill: none
 
 - Item Types: `Fix | Proof`
 
-- [ ] Fix: `\'` → `''`（PyYAML+js-yaml 双解析通过）
-- [ ] Proof: 批次 1-4 完成后重跑 `npm run validate:flux`，测取冻结基线数据（7 页多重集 + 全手写页清单 + totals）落 `_tmp/` 或 docs 下 JSON（per-file 结构）
+- [x] Fix: `\'` → `''`（6 处；PyYAML 解析通过）——**执行期发现（已修复）**：死文件修复后导出面激活，同时暴露批次 2 的 YAML 引号终止事故（prj/cs kanban.flux.yaml 内层 /r/ URL 单引号嵌在单引号表达式标量内致 parse fail，FLUX_PAGE_ERROR_COUNT 2/页数 854；批次 2 门禁仅 grep totals 行而掩蔽导出失败）——内层改双引号修复，模块重装后导出恢复 FLUX_PAGE_ERROR_COUNT: 0/856 页；本门禁的 parse 检查即为此类事故的机制性防线
+  - Skill: none
+- [x] Proof: 批次 1-4 后重跑 validate:flux 测取冻结基线落 `tools/flux-baseline.json`（errors=325 钉住；7 页多重集现值 8 条[原 103——手写页 i18nEn 族随 flux dist 重建从报告消失，基线文档已注记]；新码计数器 1154/7）
+  - Skill: none
 
 Exit Criteria:
 
-- [ ] 死文件双解析器通过；基线 JSON 在案且 errors=325
+- [x] 死文件双解析器通过；基线 JSON 在案且 errors=325
 
 ### Phase 2 - 门禁脚本与接线
 
-Status: planned
-Targets: `tools/check-flux-baseline.mjs`（命名对齐既有 check:* 族）+ package.json
+Status: completed
+Targets: `tools/check-flux-baseline.mjs` + package.json
 Skill: none
 
 - Item Types: `Add`
 
-- [ ] Add: 五项检查实现（多重集冻结/接线族零容忍/errors 钉住/新码计数器/全量 parse），输出可读 fail 报告（页+path+差集）
-- [ ] Add: package.json `check:flux-baseline` 接线 + `check:flux-baseline:self-test` 伴侣脚本（对齐既有 check:*:self-test 惯例，fixture 化验证五项检查各自可 fail）
+- [x] Add: 五项检查实现（errors 钉住/7 页多重集冻结[禁止新增+允许收缩]/手写页宇宙接线族零容忍[(prop,renderer) 精确匹配]/新码计数器/全量 yaml parse[js-yaml devDependency]），输出可读 fail 报告
+  - Skill: none
+- [x] Add: package.json `check:flux-baseline` + `check:flux-baseline:self-test`（6 断言：errors 漂移/接线族/冻结新增/计数器增长/clean+收缩允许/parse 检出）
+  - Skill: none
+- [x] 真实树负路径验证：死孪生注入坏 yaml → gate exit 1（yaml-parse 检出）→ 还原 → exit 0
+  - Skill: none
 
 Exit Criteria:
 
-- [ ] 脚本对当前树 exit 0；人为注入一条假 warning（临时改动回滚）可 fail（自我证明有效性后还原）
+- [x] 脚本对当前树 exit 0；self-test 6/6 + 真实树注入/还原双向验证在案
 
 ### Phase 3 - 基线文档刷新与收官
 
-Status: planned
+Status: completed
 Targets: docs/architecture/flux-page-export-and-validation.md；docs/analysis/2026-10-06-0352 报告收官注记
 Skill: none
 
 - Item Types: `Add`
 
-- [ ] 基线刷新：warning 池新值、两新码生成层裁决登记、856 对账注记
-- [ ] round-3 报告收官注记（六批次完成态 + 复扫结论）
+- [x] 基线刷新：flux-page-export-and-validation.md 新增 §7b（warning 池漂移裁决[含手写页 i18nEn 族消失现象注记]/新码生成层裁决/856 对账/check:flux-baseline 用法/导出计数与 validation error 两层口径辨析）
+  - Skill: none
+- [x] round-3 报告 D2 收官注记（本 plan 完成态）
+  - Skill: none
 
 Exit Criteria:
 
-- [ ] 文档与报告一致；`docs/logs/2026/10-06.md` 收官条目在案
+- [x] 文档与报告一致；`docs/logs/2026/10-06.md` 收官条目在案
 
 ## Draft Review Record
 
@@ -97,14 +105,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐（基线文档 + gotchas 无需改——G-002 增补归批次 1/2）
-- [ ] 已运行验证（validate:flux + 新门禁 exit 0 + 注入自我证明）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（五项检查 + 接线 + 死文件修复 + 基线文档刷新）
+- [x] 相关文档对齐（flux-page-export-and-validation.md §7b；G-002 增补归批次 1/2 已在案）
+- [x] 已运行验证（validate:flux FLUX_PAGE_ERROR_COUNT: 0/errors=325 + check:flux-baseline exit 0 + self-test 6/6 + 真实树注入/还原双向验证）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录（迭代 1 agent_3826a1be + 迭代 2 agent_e418a158）
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行（agent_e1a4cc52 2026-10-06：**ACCEPT** 附 2 项回填条件[日志条目+本节回填]，已实施；a-h 八项实证 + 独立复跑 self-test 6/6/门禁 exit 0/负路径注入还原双向）
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -124,11 +132,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: (pending)
+Status Note: 五项基线门禁落地并双向验证（self-test 6/6 + 真实树注入/还原）；死文件修复 + 批次 2 引号事故暴露与修复；基线文档 §7b 刷新；冻结基线以修复后干净态测取。D2 Deferred 项收官。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: (pending)
+- Auditor / Agent: agent_e1a4cc52（见上）
 
 Follow-up:
 

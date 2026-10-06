@@ -75,7 +75,7 @@ body:
       # cs-026-r3：路由条件式覆盖全部 6 列——col-CANCELLED 补 cancel 分支（状态机 cancel:
       # NEW/ASSIGNED/IN_PROGRESS/RESOLVED→CANCELLED）；col-NEW 无合法迁移边（状态机无回 NEW 边）
       # 落空 url 拒绝拖拽（禁拖语义），替换旧 fallback start 必错路由。
-      url: '${event.toColumnId === "col-ASSIGNED" ? '/r/ErpCsTicket__assign' : event.toColumnId === "col-IN_PROGRESS" ? (event.fromColumnId === "col-RESOLVED" ? '/r/ErpCsTicket__reopen' : '/r/ErpCsTicket__start') : event.toColumnId === "col-RESOLVED" ? '/r/ErpCsTicket__resolve' : event.toColumnId === "col-CLOSED" ? '/r/ErpCsTicket__close' : event.toColumnId === "col-CANCELLED" ? '/r/ErpCsTicket__cancel' : ""}'
+      url: '${event.toColumnId === "col-ASSIGNED" ? "/r/ErpCsTicket__assign" : event.toColumnId === "col-IN_PROGRESS" ? (event.fromColumnId === "col-RESOLVED" ? "/r/ErpCsTicket__reopen" : "/r/ErpCsTicket__start") : event.toColumnId === "col-RESOLVED" ? "/r/ErpCsTicket__resolve" : event.toColumnId === "col-CLOSED" ? "/r/ErpCsTicket__close" : event.toColumnId === "col-CANCELLED" ? "/r/ErpCsTicket__cancel" : ""}'
       method: post
       data:
         ticketId: ${event.cardId.substring(5)}

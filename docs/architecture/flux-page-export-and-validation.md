@@ -246,6 +246,17 @@ npm run validate:flux
 #   门禁口径 = 零新增 error（对照 325 基线），全链 exit 0 待漂移族清零后恢复（P3-CK-app-002-r3 修订登记）
 ```
 
+## 7b. warning/error 基线与 app 侧门禁（plan 2026-10-06-0355-6，2026-10-06）
+
+**基线现值（2026-10-06 冻结，`tools/flux-baseline.json`）**：totals{files:856, validated:856, errors:325, warnings:21083}；errors=325 全部为既有 `variant="primary"`×dropdown-button codegen stub 外部漂移族（门禁口径=零新增，见 §7）。warning 池相对第二轮收官（18494）的漂移裁决：
+- `unknown-property` 6349→9049：主体为生成层增量 + 新增页面；**手写页 i18nEn 族在本轮 dist 重建后从验证报告中消失**（7 手写页 unknown-property 103→8，与 flux dist 重打包时点一致——上游 whitelist 化或 dist 版本推进，机制注记待考，非本仓改动）；
+- 新码 `unvalidated-component-target`×1154（生成层 querySubmit/queryReset 组件定向「family 正确但无 target-binding 元数据」信息族）与 `duplicate-schema-id`×7（生成层重复 id）：逐样本定案生成层非真缺陷，归外部 Deferred 车道，计数器冻结禁止增长；
+- `conflicting-field-definition`×11044 持平。
+
+**app 侧基线门禁**：`npm run check:flux-baseline`（消费本报告 JSON + 全量 yaml parse，勿动保护区验证器）五项检查——①errors 钉 325；②7 手写复杂页 unknown-property (prop,renderer) 多重集冻结[禁止新增+允许收缩]；③手写页宇宙（被服务 flux.yaml + report/*.page.yaml + 手写复杂页）接线族零容忍（prop∈{actionType,api,onEvent} 或 button 的 {action,args}）；④新码计数器禁止增长；⑤全量 page/flux yaml parse（含死孪生——flux 模式不解析它们，腐化无门禁曾隐性带病：批次 2 曾因此掩蔽导出失败，plan 0355-6 执行期发现并修复）。伴侣自检：`npm run check:flux-baseline:self-test`（6 断言）。
+
+**导出计数口径注记**：FLUX_PAGE_ERROR_COUNT 为导出期错误（页面 parse/编译失败，页数回落即信号——2026-10-06 曾因批次 2 的 YAML 引号终止事故短暂 854/2 errors，修复后恢复 1004/856/0）；与本文件 §7 的 325 条 validation error 族是两层，勿混读。
+
 ## 8. 与 nop-chaos-next sdks 的关系与演进路径
 
 现状：`dist/sdks/` 的 `nop-chaos-flux-0.1.0.tgz` 只导出渲染 facade（`createFluxSchemaRenderer` 等），**不含 compiler API**；本切片的 JS 验证因此落在 flux 仓（D3）。演进（登记为 Deferred，触发条件：出现第二个需要本地验证 flux 页面的下游工程，或 ERP 需在无 flux 仓 checkout 的环境跑验证）：

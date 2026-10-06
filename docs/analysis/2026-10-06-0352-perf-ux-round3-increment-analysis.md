@@ -23,7 +23,9 @@
 
 ## 2. 触发 Deferred 定案（第二轮 §5 两项）
 
-### D2：7 页改写后 unknown-property warning 归零门禁化 —— **触发，数据齐备，归批次 6 执行**
+### D2：7 页改写后 unknown-property warning 归零门禁化 —— **✅ 已落地（plan 2026-10-06-0355-6，2026-10-06）**
+
+> **收官注记**：`check:flux-baseline` 门禁落地（五项检查+伴侣 self-test），冻结基线 `tools/flux-baseline.json`。执行期收获：①手写页 unknown-property 103→8（i18nEn 族随 flux dist 重建从报告消失，机制注记待考）；②parse 门禁立即兑现价值——暴露批次 2 的 YAML 引号终止事故（prj/cs kanban 导出失败被 totals-only 门禁掩蔽，已修复）；③7 页多重集冻结以修复后干净态测取。详见 flux-page-export-and-validation.md §7b。
 
 - 触发条件「批次 1/2 完成后的复扫轮」已满足。实测（`_tmp/flux-page-validation-report.json`，2026-10-05 13:43 新鲜度，晚于复扫批）：
   - 7 个手写页全部 **0 error**，warning 共 **103 条且 100% 为 unknown-property**，接线族（actionType/api/onEvent/action/args）**零残留**——上轮修复的「warning 归零」目标已达成，冻结基线即为当前干净态。

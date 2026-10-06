@@ -15,9 +15,12 @@
     "check:plan-gates:self-test": "node tools/check-plan-gates.mjs --self-test",
     "check:unbounded-queries": "node tools/enum-unbounded-queries.mjs",
     "check:unbounded-queries:self-test": "node tools/enum-unbounded-queries.mjs --self-test",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "check:flux-baseline": "node tools/check-flux-baseline.mjs",
+    "check:flux-baseline:self-test": "node tools/check-flux-baseline.mjs --self-test"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.0"
+    "@playwright/test": "^1.40.0",
+    "js-yaml": "^5.4.3"
   }
 }

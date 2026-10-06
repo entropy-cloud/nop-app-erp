@@ -46,7 +46,7 @@ body:
   onCardMove:
     action: ajax
     args:
-      url: '${event.toColumnId === "col-IN_PROGRESS" ? '/r/ErpPrjTask__startTask' : event.toColumnId === "col-DONE" ? '/r/ErpPrjTask__completeTask' : event.toColumnId === "col-BLOCKED" ? '/r/ErpPrjTask__blockTask' : '/r/ErpPrjTask__unblockTask'}'
+      url: '${event.toColumnId === "col-IN_PROGRESS" ? "/r/ErpPrjTask__startTask" : event.toColumnId === "col-DONE" ? "/r/ErpPrjTask__completeTask" : event.toColumnId === "col-BLOCKED" ? "/r/ErpPrjTask__blockTask" : "/r/ErpPrjTask__unblockTask"}'
       method: post
       data:
         taskId: ${event.cardId.substring(5)}

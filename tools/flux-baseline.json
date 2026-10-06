@@ -1,0 +1,32 @@
+{
+ "generatedAt": "2026-10-06",
+ "note": "frozen after batches 1-4 fixes (plan 0355-6 Phase 1); semantics: forbid NEW (prop,renderer) pairs per frozen page (allow shrink); wiring-family zero-tolerance on universe; errors pin; counter codes forbid growth",
+ "errorsPin": 325,
+ "counterCodes": {
+  "unvalidated-component-target": 1154,
+  "duplicate-schema-id": 7
+ },
+ "frozenPages": {
+  "erp/ast/pages/disposal-wizard/main.page.json": [
+   "placeholder|select"
+  ],
+  "erp/crm/pages/lead-conversion/main.page.json": [
+   "tpl|text"
+  ],
+  "erp/fin/pages/period-close-wizard/main.page.json": [
+   "placeholder|select"
+  ],
+  "erp/inv/pages/pda-stock-take/main.page.json": [],
+  "erp/inv/pages/stock-take-flow/main.page.json": [
+   "placeholder|select",
+   "wrapWithPanel|form"
+  ],
+  "erp/mnt/pages/visit-wizard/main.page.json": [
+   "placeholder|select"
+  ],
+  "erp/notify/pages/ErpSysNotification/inbox.page.json": [
+   "tabs|tabs",
+   "wrapWithPanel|form"
+  ]
+ }
+}
