@@ -22,9 +22,9 @@
 
 | 状态 | 数量 |
 | --- | --- |
-| todo | 3 |
+| todo | 2 |
 | ready | 0 |
-| done | 5 |
+| done | 6 |
 
 ## 3. 当前基线
 
@@ -56,7 +56,7 @@
 | --- | --- | --- | --- | --- | --- |
 | WI-05 | f311 计划（ast P2 批）执行收尾（Plan Status: active、审查/审计全 pending） | todo | 该计划文件 + `docs/audits/check/ai-check-index.md` | — | 既有 f31x 批次纪律 |
 | WI-06 | ai-check open P2 残量（125 条）全量分诊 + 首批收尾（陈旧 finding 注销/仍存在入批/降级归档） | todo | `docs/audits/check/ai-check-index.md` + lessons/13 | WI-05（方法论同源） | 三路交叉盘点技能 |
-| WI-07 | ai-check r1/r2 roadmap 归宿裁决（r1 剩 1 todo+2 ready；r2 剩 35 todo——防僵尸 mission） | todo | `docs/backlog/ai-check-roadmap.md`、`ai-check-r2-roadmap.md` | WI-05/WI-06 完成后裁决 | — |
+| WI-07 | ai-check r1/r2 roadmap 归宿裁决（r1 剩 1 todo+2 ready；r2 剩 35 todo——防僵尸 mission） | done（2026-10-06，WI-05 实施收官后裁决：**r1** F3.y P3 波次 cancelled（并入 ai-check-index open P3 台账——单一台账原则）、V.1 done（全量回归义务被各 mission 收官验证纪律吸收，2026-10-06 全 reactor 在案）、V.2 cancelled（并入 WI-06 终态校验）、G.1 done（lessons/12-14 + skills 沉淀在案）、G.2 done（本裁决即履行）；**r2** M1.x 切片×15 superseded（r3 同方法学全域收官 CONVERGED + ai-check-index 单一台账）、M2.0 done（红绿纪律延续）、M2.1 superseded（MR0/MR1 机制承载）、M2.2-M2.9 superseded（F2.x/F3.x 域批完成，索引 fixed 行为证）、M2.11/MV.2 cancelled（并入 WI-06）、MV.1 done（全 reactor 在案）、MV.3/MG.1 done（triangulation skill 沉淀）、MG.2 done（本裁决即履行）——**两 roadmap 状态块 todo/ready 归零，无僵尸 mission，逐行理由在各行注记**） | `docs/backlog/ai-check-roadmap.md`、`ai-check-r2-roadmap.md` | WI-05/WI-06 完成后裁决 | — |
 
 ### M3 一致性裁决批
 

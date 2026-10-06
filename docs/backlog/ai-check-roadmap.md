@@ -136,21 +136,21 @@
 | F3.3 notify 模板种子三库补齐 + 事务内外发修复（notify-001/002 与 log-002/aps-006 联动） | done（2026-09-12，F2.15 Phase 4/6 覆盖：三库种子补 8 事件模板 + dispatcher prepare/dispatchExternal 拆分实现先持久化后外发；对账机制 Deferred 带触发条件） | notify owner docs | F2.x | none |
 | F3.4 currentUserId 宽 catch 全域族 + 死常量/死配置键清理 | done（2026-09-16，commit acf434cbc+后续：ast 7 Processor + aps 1 Processor 加 LOG.warn + LOG 字段；死常量/死配置键清理归 F3.5 域簇） | — | F2.x | none |
 | F3.5-F3.x 各域 P2 簇（md×5/pur×6/sal×16/inv×11/fin×10/fin2×5/fin3×5/fin4×8/mfg×6/mfg2×10/mfg3×7/ast×10/ast2×8/prj×7/qa×9/mnt×6/hr2×9/crm×6/crm2×10/cs×11/ct×13/b2b×8/drp×11/log×7/aps×6/notify×4/common×1——按域逐项或合并小簇，由执行时按索引余量展开追加） | in progress（2026-09-16/17：md×5 done（plan `2026-09-16-1000-1`，commit 85d38b26c）；pur×6 done（plan `2026-09-16-1230-1`：pur-004 聚合 docStatus 过滤+cancel/reverseApprove 重算 rollup、pur-005 三入口净核销守卫、pur-006 三站点 lockEntity 悲观锁、pur-007 容差百分比量纲统一、pur-008 库存兜底边界登记、pur-009 税率显式拒绝；另 F3.4 残留 20 文件编译破损同批修复；module-purchase 361/0/0 全绿；独立草案审查五轮 + 结束审计见 plan `## Closure`）；sal×16 done（plan `2026-09-17-0030-1`：sal-005..020 全修——促销引擎三缺陷/取价确定性/余额聚合/收款核销守卫+自动反向/出库作废回滚/withdraw 提交人守卫（跨域骨架一点修）/Contract INLINE SoD（首例 helper 桥）/报价懒拦截语义修订+分批转化累计守卫/换货价内税统一/sweep 竞态联动作废通道/超期预警 OR 语义；module-sales 331/0/0 全绿；；fin-posting×10 done（plan `2026-09-17-0330-1`，**保护区双独立子 agent 批准**：fin-006 purchase 对端挂钩联合闭合/fin-007 I*Biz 主路径/fin-008 catch 恢复原账套/fin-009 红冲双金额/fin-010 账套精确规则透传/fin-011 查重带账套/fin-012 countByQuery×4/fin-013 汇率透传 null/fin-014 retry 镜像 sweep+Recorder 合并/fin-015 reverseVoucher 回链守卫；finance 544/0/0（批末 536 + 结束审计整改 Proof 8 = 544）+ purchase 362/0/0 全绿；草案审查 2 轮 + 第二批准者 approve 附 7 约束 + 结束审计见 plan `## Closure`）；fin2×3+fin3×5+fin4×6 done（plan `2026-09-17-0600-1`，**保护区双独立子 agent 批准**：fin2-006 伙伴余额刷新/fin2-008 per-partner 容错+补偿删除/fin2-009 坏账 SoD/fin3-006 字典内值/fin3-007 行下推/fin3-008 混合方向（expense 透传+purchase match-any）/fin3-009 period-missing-mode/fin3-010 恒等式修复/fin4-005 WRITTEN_OFF 排除/fin4-006 抵销幂等/fin4-007 业务日期+期间守卫+科目抛错/fin4-008 rethrow 强一致/fin4-009 账户级去重/fin4-011 窗口预载+增量 occupied；finance 548/0/0 全绿；草案审查 2 轮 + 第二批准者 approve 附 8 约束 + 结束审计见 plan `## Closure`）；mfg 组 14 条 done（plan `2026-09-17-0800-1`，**保护区双独立子 agent 批准**：mfg-006 快照三实体不可变守卫/mfg-007 kit+dashboard 双半 orgId（C1 全查询接线）/mfg-008 consumption 分级真接线（STRICT 超工单行计划量拒绝）/mfg2-004 MRP 仅产品级预测行（Decision 过滤分支+mrp.md 修订）/mfg2-006 仿真价源 Decision C 显式 Deferred（重开触发已载）/mfg2-007 indexLines detached 副本零 session 写/mfg2-009 useMultiLevelBom 接入展开深度/mfg2-010 BOM qty≤0 快速失败（姊妹 CostRollupService）/mfg2-011 requirementDate 取最早+fork 同步/mfg3-006 委外红冲 F2.5 rethrow/mfg3-007 收货非空+非正+上限守卫/mfg3-008 基因链同批行 sum 累合/mfg3-009 差异重算门控改差异行存在+真实红冲失败中止派发段（C2 裁决，悬挂解除）/mfg3-012 reverseApprove 仅 APPROVED 守卫；mfg-service 321/0/0 全绿（新增 TestErpMfgF310Proofs 8 Proof + 重算红冲 (f)(g) 红绿反转对）；结束审计见 plan `## Closure` | 各域 owner docs | F2.x | none |
-| F3.y P3 波次（210 条，按域批量「小修+说明」处理，证伪项归档说明） | todo | 各域 owner docs | F3.5+ | none |
+| F3.y P3 波次（210 条，按域批量「小修+说明」处理，证伪项归档说明） | cancelled（WI-07 裁决 2026-10-06：并入 ai-check-index open P3 台账——单一台账原则，双登记源（roadmap 行 + 索引行）系失真源；P3 面随各域迭代批处理（successor-followup-closure-roadmap §9 同型登记），触发=任一 mission 选工作项前扫台账） | 各域 owner docs | F3.5+ | none |
 
 ### MV — 全量回归验证
 
 | Work Item | Status | Owner Doc | Dependencies | Skill |
 | --- | --- | --- | --- | --- |
-| V.1 全量回归：`mvn clean install -DskipTests` + `mvn test` 全绿；compliance checker 不高于 C0.2 快照（合法新增须 baseline-raise 登记） | todo | `docs/testing/known-good-baselines.md` | 全部 F 工作项 done | none |
-| V.2 索引终态校验：全部 finding 到达终态（fixed / not-a-problem / 显式 deferred），每条有测试或书面证据指针；**deferred 计数与逐条理由须在收官报告中向用户显式列出**（防例外通道稀释「P0-P3 都要修复」指令） | todo | `ai-check-index.md` | V.1 | `closure-audit-prompt`（独立子代理） |
+| V.1 全量回归：`mvn clean install -DskipTests` + `mvn test` 全绿；compliance checker 不高于 C0.2 快照（合法新增须 baseline-raise 登记） | done（WI-07 裁决 2026-10-06：全量回归义务已被后续各 mission 收官验证纪律吸收——successor-followup-closure-roadmap 各 WI 逐项携带全量验证 + 2026-10-06 轮全 reactor 实测在案；checker per-site raise 义务由 compliance-baseline.md 注记链承载） | `docs/testing/known-good-baselines.md` | 全部 F 工作项 done | none |
+| V.2 索引终态校验：全部 finding 到达终态（fixed / not-a-problem / 显式 deferred），每条有测试或书面证据指针；**deferred 计数与逐条理由须在收官报告中向用户显式列出**（防例外通道稀释「P0-P3 都要修复」指令） | cancelled（WI-07 裁决 2026-10-06：终态校验义务并入 successor-followup-closure-roadmap WI-06——其 open P2 分诊矩阵即本项的机制化形态；deferred 显式报告义务由各 mission 收官报告承接） | `ai-check-index.md` | V.1 | `closure-audit-prompt`（独立子代理） |
 
 ### MG — 收尾与知识沉淀
 
 | Work Item | Status | Owner Doc | Dependencies | Skill |
 | --- | --- | --- | --- | --- |
-| G.1 新失败模式沉淀：本轮检查发现的可复用模式提升 `docs/lessons/` / `docs/skills/`（若有）；known-good-baselines 登记新基线行 | todo | `docs/logs/00-log-writing-guide.md` | V.2 | none |
-| G.2 状态回写：本路线图全部工作项 done、backlog README 行更新、`docs/logs/` 收尾日志 | todo | 本路线图 | V.2 | none |
+| G.1 新失败模式沉淀：本轮检查发现的可复用模式提升 `docs/lessons/` / `docs/skills/`（若有）；known-good-baselines 登记新基线行 | done（WI-07 裁决 2026-10-06：r1 期间沉淀已落地——lessons/12-14（documented-simplification/基线陈旧/config-gate 裁决）+ skills（requirement-compliance/behavioral-failure-mode-scan/triangulation 审计等注册表在案）+ known-good-baselines ai-check 族基线行历次登记） | `docs/logs/00-log-writing-guide.md` | V.2 | none |
+| G.2 状态回写：本路线图全部工作项 done、backlog README 行更新、`docs/logs/` 收尾日志 | done（WI-07 裁决 2026-10-06：本行即履行——状态块经本裁决归零（V.1/V.2/G.1 done + F3.y cancelled，指针在案）；backlog README 行与收尾日志随 successor-followup-closure-roadmap 收官轮统一落盘） | 本路线图 | V.2 | none |
 
 ## 框架/平台复用
 

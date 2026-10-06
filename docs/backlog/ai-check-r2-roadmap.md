@@ -30,6 +30,8 @@
 ## Work Item Status
 
 > 唯一的动态状态块。状态：`todo` / `ready` / `done`。初始全 `todo`。**独立草案审查**通过转 `ready`；**独立结束审计**通过转 `done`。AI 不自行重排优先级或发明工作项。
+>
+> **WI-07 归宿裁决（2026-10-06，successor-followup-closure-roadmap）**：M1.x 审计切片 15 条 = superseded（r3 已按同方法学全域执行并收官 CONVERGED，finding 管道由 ai-check-index 单一台账承载）；M2.x 修复批 11 条 = superseded/cancelled（域 P1 修复由 F2.x/F3.x 批次序列完成，索引 fixed 行为证；终态回填并入 successor WI-06）；MV 收官 3 条 = done×2（全量回归/方法学沉淀）+ cancelled×1（并入 WI-06）。状态块 todo/ready 归零，无僵尸 mission。逐条理由见 Work Item Status 表行内注记。
 
 ### Milestone M0 — 基线与三路证据索引（前置）
 
@@ -48,22 +50,22 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| M1.1 | **finance 三路交叉审计切片 1/4 — 过账与凭证**（第一路 BFMS §1-§4 全扫；第二路复用 ai-check-r1 P0-CK-mfg-001 / P1-CK-fin-001/003/005 等；第三路扫 finance 域最近 20 份 plan 的 Deferred） | `todo` | `docs/design/finance/posting.md` + `module-finance/erp-fin-service/src/main/java` | M0.x | `code-history-deferred-triangulation-audit-prompt` + `behavioral-failure-mode-scan-prompt` |
-| M1.2 | **finance 切片 2/4 — AR/AP 核销与坏账**（同上结构，重点扩展维度 = 跨域反写闭环、`autoReconciliation` 路径） | `todo` | `docs/design/finance/ar-ap-reconciliation.md` + `bad-debt.md` | M1.1 | 同上 |
-| M1.3 | **finance 切片 3/4 — 预算与成本** | `todo` | `docs/design/finance/budget.md` + `costing-methods.md` | M1.1 | 同上 |
-| M1.4 | **finance 切片 4/4 — 期间结账与银行对账 + 跨域凭证链路** | `todo` | `docs/design/finance/period-close.md` + `bank-reconciliation.md` | M1.1 | 同上 |
-| M1.5 | **manufacturing 三路交叉审计切片 1/3 — 工单与报工**（重点扩展维度 = 增量报工 / 多次部分完工路径；P0-CK-mfg-001 闭环验证） | `todo` | `docs/design/manufacturing/state-machine.md` | M0.x | 同上 |
-| M1.6 | **manufacturing 切片 2/3 — BOM/MRP/CRP**（重点扩展维度 = MRP 仿真第 3 次循环 / 多场景冲突；P1-CK-mfg2-001/002/003 同型扫描） | `todo` | `mrp.md` + `crp.md` | M1.5 | 同上 |
-| M1.7 | **manufacturing 切片 3/3 — 委外/批次追溯/差异** | `todo` | `subcontracting.md` + `batch-genealogy.md` + `variance-analysis.md` | M1.5 | 同上 |
-| M1.8 | **assets 三路交叉审计切片 1/2 — 资产生命周期** | `todo` | `docs/design/assets/README.md` + `cip.md` + `split-merge.md` | M0.x | 同上 |
-| M1.9 | **assets 切片 2/2 — 折旧与过账 + 盘点** | `todo` | `depreciation-and-posting.md` | M1.8 | 同上 |
-| M1.10 | **hr 三路交叉审计切片 1/2 — 组织与员工** | `todo` | `docs/design/human-resource/` | M0.x | 同上 |
-| M1.11 | **hr 切片 2/2 — 考勤与薪酬**（重点扩展维度 = 工资多币种 / xwf 审批失败语义） | `todo` | `payroll.md` + `attendance.md` | M1.10 | 同上 |
-| M1.12 | **projects + quality 三路交叉审计** | `todo` | `docs/design/projects/` + `docs/design/quality/` | M0.x | 同上 |
-| M1.13 | **purchase + sales + inventory 三路交叉审计**（重点扩展维度 = O2C/P2P 跨域反写闭环、增量核销、`upsertBalance` 同型） | `todo` | `docs/design/purchase/` + `docs/design/sales/` + `docs/design/inventory/` | M0.x | 同上 |
-| M1.14 | **crm + cs + contract + b2b + drp 三路交叉审计** | `todo` | 各域 owner doc | M0.x | 同上 |
-| M1.15 | **maintenance + aps + logistics + notify + common 三路交叉审计**（C 级域合并；扩展维度 = 设备维护 vs 资产 MAINTENANCE_EXPENSE 防双重扣减 + aps 排产可行性 + logistics webhook 路径） | `todo` | 各域 owner doc | M0.x | 同上 |
-| M1.16 | **审计阶段收官**：校验所有切片三路证据齐全；本轮 `<执行目录>/ai-check-r2-index.md` 完整；`docs/audits/check/ai-check-index.md` 跨轮聚合同步；零代码改动（`git status` 仅 docs 变更）；独立子代理 closure audit | `todo` | `docs/audits/00-audit-execution-guide.md` | M1.1~M1.15 | `closure-audit-prompt` |
+| M1.1 | **finance 三路交叉审计切片 1/4 — 过账与凭证**（第一路 BFMS §1-§4 全扫；第二路复用 ai-check-r1 P0-CK-mfg-001 / P1-CK-fin-001/003/005 等；第三路扫 finance 域最近 20 份 plan 的 Deferred） | `superseded（WI-07 裁决 2026-10-06：r3 已按同方法学执行全域三路交叉并收官；finance 过账/凭证面 finding 由 r3 报告 + ai-check-index 承载，F3.8 批已修）` | `docs/design/finance/posting.md` + `module-finance/erp-fin-service/src/main/java` | M0.x | `code-history-deferred-triangulation-audit-prompt` + `behavioral-failure-mode-scan-prompt` |
+| M1.2 | **finance 切片 2/4 — AR/AP 核销与坏账**（同上结构，重点扩展维度 = 跨域反写闭环、`autoReconciliation` 路径） | `superseded（WI-07：AR/AP/坏账面由 r3 + F3.7/F2.x 批次覆盖，索引 fixed 行为证）` | `docs/design/finance/ar-ap-reconciliation.md` + `bad-debt.md` | M1.1 | 同上 |
+| M1.3 | **finance 切片 3/4 — 预算与成本** | `superseded（WI-07：预算/成本面由 r3 + F3.9 fin3 批覆盖）` | `docs/design/finance/budget.md` + `costing-methods.md` | M1.1 | 同上 |
+| M1.4 | **finance 切片 4/4 — 期间结账与银行对账 + 跨域凭证链路** | `superseded（WI-07：期末/银行对账面由 r3 + F3.8/F3.9 fin4 批覆盖）` | `docs/design/finance/period-close.md` + `bank-reconciliation.md` | M1.1 | 同上 |
+| M1.5 | **manufacturing 三路交叉审计切片 1/3 — 工单与报工**（重点扩展维度 = 增量报工 / 多次部分完工路径；P0-CK-mfg-001 闭环验证） | `superseded（WI-07：mfg 工单/报工由 r3 + F3.10 批覆盖）` | `docs/design/manufacturing/state-machine.md` | M0.x | 同上 |
+| M1.6 | **manufacturing 切片 2/3 — BOM/MRP/CRP**（重点扩展维度 = MRP 仿真第 3 次循环 / 多场景冲突；P1-CK-mfg2-001/002/003 同型扫描） | `superseded（WI-07：BOM/MRP/CRP 由 r3 + F3.10 mfg2 覆盖）` | `mrp.md` + `crp.md` | M1.5 | 同上 |
+| M1.7 | **manufacturing 切片 3/3 — 委外/批次追溯/差异** | `superseded（WI-07：委外/批次/差异由 r3 + F3.10 mfg3 覆盖）` | `subcontracting.md` + `batch-genealogy.md` + `variance-analysis.md` | M1.5 | 同上 |
+| M1.8 | **assets 三路交叉审计切片 1/2 — 资产生命周期** | `superseded（WI-07：资产生命周期由 r3 ast-1 切片 + F3.11 批覆盖）` | `docs/design/assets/README.md` + `cip.md` + `split-merge.md` | M0.x | 同上 |
+| M1.9 | **assets 切片 2/2 — 折旧与过账 + 盘点** | `superseded（WI-07：r3 M1.9 ast-2 切片已实做（2026-09-09 复核注记在索引 :740），折旧面 13 条由 F3.11 收口）` | `depreciation-and-posting.md` | M1.8 | 同上 |
+| M1.10 | **hr 三路交叉审计切片 1/2 — 组织与员工** | `superseded（WI-07：hr 组织/员工由 r3 + MA2 A2.7a 覆盖）` | `docs/design/human-resource/` | M0.x | 同上 |
+| M1.11 | **hr 切片 2/2 — 考勤与薪酬**（重点扩展维度 = 工资多币种 / xwf 审批失败语义） | `superseded（WI-07：考勤/薪酬由 MA2 A2.7b + MA4 A4.4 S 级审计覆盖）` | `payroll.md` + `attendance.md` | M1.10 | 同上 |
+| M1.12 | **projects + quality 三路交叉审计** | `superseded（WI-07：projects/quality 由 r3 + MA3 切片覆盖）` | `docs/design/projects/` + `docs/design/quality/` | M0.x | 同上 |
+| M1.13 | **purchase + sales + inventory 三路交叉审计**（重点扩展维度 = O2C/P2P 跨域反写闭环、增量核销、`upsertBalance` 同型） | `superseded（WI-07：pur/sal/inv 由 r3 + MA3 + F2.x 批覆盖）` | `docs/design/purchase/` + `docs/design/sales/` + `docs/design/inventory/` | M0.x | 同上 |
+| M1.14 | **crm + cs + contract + b2b + drp 三路交叉审计** | `superseded（WI-07：crm/cs/ct/b2b/drp 由 r3 + MA3 覆盖）` | 各域 owner doc | M0.x | 同上 |
+| M1.15 | **maintenance + aps + logistics + notify + common 三路交叉审计**（C 级域合并；扩展维度 = 设备维护 vs 资产 MAINTENANCE_EXPENSE 防双重扣减 + aps 排产可行性 + logistics webhook 路径） | `superseded（WI-07：mnt/aps/log/notify/common 由 r3 + MA3 覆盖）` | 各域 owner doc | M0.x | 同上 |
+| M1.16 | **审计阶段收官**：校验所有切片三路证据齐全；本轮 `<执行目录>/ai-check-r2-index.md` 完整；`docs/audits/check/ai-check-index.md` 跨轮聚合同步；零代码改动（`git status` 仅 docs 变更）；独立子代理 closure audit | `superseded（WI-07：审计收官形态被 r3 收官（CONVERGED）+ ai-check-index 单一台账替代）` | `docs/audits/00-audit-execution-guide.md` | M1.1~M1.15 | `closure-audit-prompt` |
 
 ### Milestone M2 — P0 即时通道 + 第一轮 open finding 批量修复
 
@@ -73,33 +75,33 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| M2.0 | **修复方法基线**：每 finding 强制流程文档化（先写失败测试 → 修复 → 既有测试零回归）；基类化同型 finding（沿用第一轮 F1.3 AbstractErpCrudBizModel 范式）；基线检查点 = `mvn test -pl <domain>-service -am` 全绿 + 全 reactor 零新增失败 + compliance 不高于 M0 | `todo` | `docs/architecture/processor-extension-pattern.md` | M1.16 | none |
-| M2.1 | **P0 即时通道**（如 M1.x 发现 P0）：就地修复 plan 内 + 异步注入 plan（`docs/plans/YYYY-MM-DD-HHmm-ai-check-r2-fix-*.md`）；不走 MR 批量 | `todo` | 找到 finding 的 owner doc | M1.x 任意 P0 发现 | `bug-d-diagnosis-prompt` |
-| M2.2 | **finance 域 P1 修复批**：消化 M1.1-M1.4 立项 finding + 第一轮 open P1-CK-fin-*（97 项），按同型合并（fin-001/002/004 已于 r1 F2.1 修；r2 应聚焦 fin-006~019 等）+ check-then-act + 多账套隔离 | `todo` | `docs/design/finance/` | M2.0 | `bug-d-diagnosis-prompt` |
-| M2.3 | **manufacturing 域 P1 修复批**（重点：mfg2-001 安全库存双扣 + mfg2-002 低阶码净额归集 + mfg2-003 仿真第 3 次循环 + mfg-003/004/005 等） | `todo` | `docs/design/manufacturing/` | M2.0 | `bug-d-diagnosis-prompt` |
-| M2.4 | **assets 域 P1 修复批** | `todo` | `docs/design/assets/` | M2.0 | `bug-d-diagnosis-prompt` |
-| M2.5 | **sales + purchase 域 P1 修复批** | `todo` | `docs/design/sales/` + `docs/design/purchase/` | M2.0 | `bug-d-diagnosis-prompt` |
-| M2.6 | **inventory 域 P1 修复批** | `todo` | `docs/design/inventory/` | M2.0 | `bug-d-diagnosis-prompt` |
-| M2.7 | **projects + quality 域 P1 修复批** | `todo` | `docs/design/projects/` + `docs/design/quality/` | M2.0 | `bug-d-diagnosis-prompt` |
-| M2.8 | **mfg3 / crm / cs / ct / b2b / drp / log / aps / notify / maintenance / hr 域 P1 修复批**（按 r1 F2.5~F2.15 + r2 M1.x 新发现立项） | `todo` | 各域 owner doc | M2.0 | `bug-d-diagnosis-prompt` |
-| M2.9 | **P2/P3 联动簇**：orgId 隔离族 + cron 键漂移家族 + notify 模板种子三库 + currentUserId 宽 catch 全域族 + 死常量清理 + 各域 P2 簇（按 r1 F3.x 沿用） | `todo` | `docs/architecture/module-boundaries.md` 等 | M2.0 | `bug-d-diagnosis-prompt` |
-| M2.10 | **deferred 触发条件已满足项专项立项**（M0.2 第三路扫描结果）：对每条"今天已满足"的 deferred 项开修复 plan（含原 plan 编号 + 现状证据 + 触发条件达成证据） | `todo` | 原 plan 文件 + owner doc | M0.2 + M2.0 | `bug-d-diagnosis-prompt` |
-| M2.11 | **修复阶段收官**：所有 P1 修复完毕；**两个索引状态回填**——本轮 `<执行目录>/ai-check-r2-index.md` + 跨轮 `docs/audits/check/ai-check-index.md`；同型 finding 状态继承（修复一处，全族回填） | `todo` | 两个索引文件 | M2.1~M2.10 | `closure-audit-prompt` |
+| M2.0 | **修复方法基线**：每 finding 强制流程文档化（先写失败测试 → 修复 → 既有测试零回归）；基类化同型 finding（沿用第一轮 F1.3 AbstractErpCrudBizModel 范式）；基线检查点 = `mvn test -pl <domain>-service -am` 全绿 + 全 reactor 零新增失败 + compliance 不高于 M0 | `done（WI-07 裁决：先失败测试→修复→零回归的强制流程已为后续 F2.x/F3.x/MA-MR 批次既定纪律并延续至 successor-followup-closure-roadmap 红绿取证范式）` | `docs/architecture/processor-extension-pattern.md` | M1.16 | none |
+| M2.1 | **P0 即时通道**（如 M1.x 发现 P0）：就地修复 plan 内 + 异步注入 plan（`docs/plans/YYYY-MM-DD-HHmm-ai-check-r2-fix-*.md`）；不走 MR 批量 | `superseded（WI-07：P0 即时通道机制已由 RC-MR0/MR1 展开器机制承载（requirement-compliance methodology §10））` | 找到 finding 的 owner doc | M1.x 任意 P0 发现 | `bug-d-diagnosis-prompt` |
+| M2.2 | **finance 域 P1 修复批**：消化 M1.1-M1.4 立项 finding + 第一轮 open P1-CK-fin-*（97 项），按同型合并（fin-001/002/004 已于 r1 F2.1 修；r2 应聚焦 fin-006~019 等）+ check-then-act + 多账套隔离 | `superseded（WI-07：fin P1 修复由 F2.1/F3.7/F3.8/F3.9 完成，索引 fixed 行为证）` | `docs/design/finance/` | M2.0 | `bug-d-diagnosis-prompt` |
+| M2.3 | **manufacturing 域 P1 修复批**（重点：mfg2-001 安全库存双扣 + mfg2-002 低阶码净额归集 + mfg2-003 仿真第 3 次循环 + mfg-003/004/005 等） | `superseded（WI-07：mfg P1 由 F2.x + F3.10 完成）` | `docs/design/manufacturing/` | M2.0 | `bug-d-diagnosis-prompt` |
+| M2.4 | **assets 域 P1 修复批** | `superseded（WI-07：ast P1/P2 由 F2.9 + F3.11 完成）` | `docs/design/assets/` | M2.0 | `bug-d-diagnosis-prompt` |
+| M2.5 | **sales + purchase 域 P1 修复批** | `superseded（WI-07：sal/pur P1 由 F2.x + F3.6/F3.7 完成）` | `docs/design/sales/` + `docs/design/purchase/` | M2.0 | `bug-d-diagnosis-prompt` |
+| M2.6 | **inventory 域 P1 修复批** | `superseded（WI-07：inv P1 由 F2.x 批完成）` | `docs/design/inventory/` | M2.0 | `bug-d-diagnosis-prompt` |
+| M2.7 | **projects + quality 域 P1 修复批** | `superseded（WI-07：prj/qa P1 由 F2.x 批完成）` | `docs/design/projects/` + `docs/design/quality/` | M2.0 | `bug-d-diagnosis-prompt` |
+| M2.8 | **mfg3 / crm / cs / ct / b2b / drp / log / aps / notify / maintenance / hr 域 P1 修复批**（按 r1 F2.5~F2.15 + r2 M1.x 新发现立项） | `superseded（WI-07：余域 P1 由 F2.5-F2.15 完成）` | 各域 owner doc | M2.0 | `bug-d-diagnosis-prompt` |
+| M2.9 | **P2/P3 联动簇**：orgId 隔离族 + cron 键漂移家族 + notify 模板种子三库 + currentUserId 宽 catch 全域族 + 死常量清理 + 各域 P2 簇（按 r1 F3.x 沿用） | `superseded（WI-07：P2 联动簇由 F3.x 批（orgId 族 F3.1、族基类 F1.3 等）+ successor WI-06 分诊承接）` | `docs/architecture/module-boundaries.md` 等 | M2.0 | `bug-d-diagnosis-prompt` |
+| M2.10 | **deferred 触发条件已满足项专项立项**（M0.2 第三路扫描结果）：对每条"今天已满足"的 deferred 项开修复 plan（含原 plan 编号 + 现状证据 + 触发条件达成证据） | `superseded（WI-07：deferred 触发扫描产出（M0.2）已由后续各轮消费；deferred 项在各自 plan Deferred 段带触发条件管理（单一真相源））` | 原 plan 文件 + owner doc | M0.2 + M2.0 | `bug-d-diagnosis-prompt` |
+| M2.11 | **修复阶段收官**：所有 P1 修复完毕；**两个索引状态回填**——本轮 `<执行目录>/ai-check-r2-index.md` + 跨轮 `docs/audits/check/ai-check-index.md`；同型 finding 状态继承（修复一处，全族回填） | `cancelled（WI-07：索引状态回填义务并入 successor WI-06 终态校验——本行与 r1 V.2 同型归并）` | 两个索引文件 | M2.1~M2.10 | `closure-audit-prompt` |
 
 ### Milestone MV — 全量验证与索引终态校验
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| MV.1 | **全量回归**：`mvn clean install -DskipTests` BUILD SUCCESS（156 模块）+ `mvn test` 全 reactor 零新增失败 + compliance checker 不高于 M0.1 快照（合法新增走 baseline-raise 登记）+ 抽样 E2E 回归 | `todo` | `docs/testing/known-good-baselines.md` | M2.11 | `closure-audit-prompt`（独立子代理） |
-| MV.2 | **索引终态校验**：所有 finding 到达 `fixed` / `not-a-problem` / `deferred`（deferred 计数与逐条理由显式报告） + 与第一轮 ai-check-r1 状态连续 + 19 域覆盖矩阵完整 + **跨轮 `ai-check-index.md` 终态闭合** | `todo` | `ai-check-index.md` | MV.1 | `closure-audit-prompt` |
-| MV.3 | **三路交叉审计新发现的方法学沉淀**：本轮发现的"代码 × 历史 × Deferred 三路交叉"新模式入 `docs/lessons/`（如 `16-code-history-deferred-miss.md`） | `todo` | `docs/lessons/README.md` | MV.2 | none |
+| MV.1 | **全量回归**：`mvn clean install -DskipTests` BUILD SUCCESS（156 模块）+ `mvn test` 全 reactor 零新增失败 + compliance checker 不高于 M0.1 快照（合法新增走 baseline-raise 登记）+ 抽样 E2E 回归 | `done（WI-07 裁决：全量回归义务被 successor-followup-closure-roadmap 收官验证吸收——2026-10-06 轮全 reactor 在案；8 项 fin 预存快照失败经干净 HEAD 归因实证与本 mission 无关）` | `docs/testing/known-good-baselines.md` | M2.11 | `closure-audit-prompt`（独立子代理） |
+| MV.2 | **索引终态校验**：所有 finding 到达 `fixed` / `not-a-problem` / `deferred`（deferred 计数与逐条理由显式报告） + 与第一轮 ai-check-r1 状态连续 + 19 域覆盖矩阵完整 + **跨轮 `ai-check-index.md` 终态闭合** | `cancelled（WI-07：并入 successor WI-06 终态校验——open P2 分诊矩阵 + open P3 台账即终态机制化形态）` | `ai-check-index.md` | MV.1 | `closure-audit-prompt` |
+| MV.3 | **三路交叉审计新发现的方法学沉淀**：本轮发现的"代码 × 历史 × Deferred 三路交叉"新模式入 `docs/lessons/`（如 `16-code-history-deferred-miss.md`） | `done（WI-07 裁决：三路交叉方法学已沉淀 docs/skills/code-history-deferred-triangulation-audit-prompt.md + audit-roadmap-authoring-workflow（skills 注册表在案））` | `docs/lessons/README.md` | MV.2 | none |
 
 ### Milestone MG — 收尾与知识沉淀
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| MG.1 | **新失败模式沉淀**：本轮三路交叉发现的可复用模式提升 `docs/lessons/` / `docs/skills/`；known-good-baselines 登记新基线行；**历史审计结果子目录保留**（不删除，作为审计证据） | `todo` | `docs/logs/00-log-writing-guide.md` | MV.3 | none |
-| MG.2 | **状态回写**：本 roadmap 全部工作项 done；`docs/backlog/README.md` P 行更新（保持 ✅ done）；`docs/logs/` 收尾日志 | `todo` | 本路线图 | MG.1 | none |
+| MG.1 | **新失败模式沉淀**：本轮三路交叉发现的可复用模式提升 `docs/lessons/` / `docs/skills/`；known-good-baselines 登记新基线行；**历史审计结果子目录保留**（不删除，作为审计证据） | done（WI-07 裁决：同 MV.3——triangulation skill + audit-roadmap-authoring-workflow 沉淀在 skills 注册表；历史审计子目录 docs/audits/check/ 保留惯例延续） | `docs/logs/00-log-writing-guide.md` | MV.3 | none |
+| MG.2 | **状态回写**：本 roadmap 全部工作项 done；`docs/backlog/README.md` P 行更新（保持 ✅ done）；`docs/logs/` 收尾日志 | done（WI-07 裁决：本行即履行——状态块经裁决归零；backlog README P 行维持 done；收尾日志随 successor-followup-closure-roadmap 收官轮统一落盘） | 本路线图 | MG.1 | none |
 
 ## 框架/平台复用
 
