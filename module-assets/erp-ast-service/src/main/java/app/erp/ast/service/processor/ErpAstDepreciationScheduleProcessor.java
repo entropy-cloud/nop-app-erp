@@ -28,6 +28,7 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.lt;
 
 // 族 A/U20 豁免登记：本类为非 BizModel 服务组件（processor-extension-pattern 惯例）；daoFor 目标（ErpAstAsset、ErpAstDepreciationSchedule、ErpFinAccountingPeriod）=跨域批量聚合（fin），只读批量聚合，逐条 I*Biz 管道不适用批量场景。
 /**
@@ -128,7 +129,21 @@ public class ErpAstDepreciationScheduleProcessor {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("assetId", assetId), eq("status", ErpAstConstants.SCHEDULE_STATUS_EXECUTED)));
-        return dao.findAllByQuery(q).size();
+        // P2-CK-ast2-012：count 查询替代 findAllByQuery().size() 全量物化
+        return (int) dao.countByQuery(q);
+    }
+
+    /**
+     * P2-CK-ast2-007：已执行期数（目标期前口径）——仅统计 period &lt; periodExclusive 的 EXECUTED 行。
+     * 修复前无目标期过滤，晚于目标期的 EXECUTED 行污染 elapsed，DECLINING 期数错位。
+     * period 为零填充 "YYYY-MM"，字典序比较等价于时间序。
+     */
+    protected int countExecutedBefore(String assetId, String periodExclusive) {
+        IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(and(eq("assetId", assetId), eq("status", ErpAstConstants.SCHEDULE_STATUS_EXECUTED),
+                lt("period", periodExclusive)));
+        return (int) dao.countByQuery(q);
     }
 
     // ---------- misc helpers ----------

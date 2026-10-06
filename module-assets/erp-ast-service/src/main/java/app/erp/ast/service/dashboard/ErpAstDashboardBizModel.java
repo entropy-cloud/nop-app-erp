@@ -260,12 +260,32 @@ public class ErpAstDashboardBizModel {
     }
 
     private BigDecimal sumCipBalance() {
-        // 投影聚合（perf-ux plan 0325-2：GROUP BY isCompleted 单组 SUM）
+        // P2-CK-ast-010（WI-05 f311 / plan 2026-09-21-1200-1 双批准 C2）：按 CostItem
+        // postedTransferFlag=false 汇总——修复前汇总 CIP 头表 accumulatedCost，部分转固
+        // （CostItem 整行置 postedTransferFlag=true，头表只增不减）后已转固部分被双计。
+        // 未转固成本 = Σ CostItem.amountFunctional（头表 accumulatedCost 的同源口径，
+        // AddCostItemProcessor 逐行累加）where 父 CIP isCompleted=false。
+        java.util.Set<String> openCipIds = new java.util.HashSet<>();
+        QueryBean cipQ = new QueryBean();
+        cipQ.setSourceName(ErpAstCip.class.getName());
+        cipQ.addFilter(eq("isCompleted", Boolean.FALSE));
+        cipQ.setFields(java.util.Arrays.asList(QueryFieldBean.mainField("id")));
+        for (Map<String, Object> row : ormTemplate.findListByQuery(cipQ)) {
+            Object id = row.get("id");
+            if (id != null) {
+                openCipIds.add(String.valueOf(id));
+            }
+        }
+        if (openCipIds.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
         QueryBean q = new QueryBean();
-        q.setSourceName(ErpAstCip.class.getName());
-        q.addFilter(eq("isCompleted", Boolean.FALSE));
-        QueryFieldBean dim = QueryFieldBean.mainField("isCompleted");
-        QueryFieldBean sumCost = QueryFieldBean.mainField("accumulatedCost").sum().alias("cipBalance");
+        q.setSourceName(app.erp.ast.dao.entity.ErpAstCipCostItem.class.getName());
+        q.addFilter(eq("postedTransferFlag", Boolean.FALSE));
+        q.addFilter(in("cipId", openCipIds));
+        // 投影聚合需带维度字段（纯聚合无 group-by 维度会触发 MdxQuerySplitter NPE）——按 cipId 分组求和
+        QueryFieldBean dim = QueryFieldBean.mainField("cipId");
+        QueryFieldBean sumCost = QueryFieldBean.mainField("amountFunctional").sum().alias("cipBalance");
         q.setFields(Arrays.asList(dim, sumCost));
         BigDecimal sum = BigDecimal.ZERO;
         for (Map<String, Object> row : ormTemplate.findListByQuery(q)) {

@@ -8,7 +8,10 @@ import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdSubject;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -38,6 +41,11 @@ public class MaintenanceCapitalizationPostingDispatcher {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    static final String NOTIFY_EVENT_MAINTENANCE_FAILURE = "ast.maintenance-posting-failure";
+
     public String tryPost(ErpAstMaintenance maintenance, ErpAstAsset asset, ErpAstAssetCategory category) {
         PostingEvent event = buildEvent(maintenance, asset, category);
         try {
@@ -48,6 +56,7 @@ public class MaintenanceCapitalizationPostingDispatcher {
             } else {
                 LOG.error("maintenance capitalization posting error, maintenance bill {} keeps posted=false", maintenance.getCode(), e);
             }
+            dispatchFailureAlert(maintenance, asset, e);
             return null;
         }
     }
@@ -63,6 +72,39 @@ public class MaintenanceCapitalizationPostingDispatcher {
             }
             throw e;
         }
+    }
+
+    /**
+     * P2-CK-ast2-009：维修过账失败告警派发（镜像 DepreciationPostingDispatcher 同名范式，
+     * G4 错误传播分级；通知失败降级 warn 不阻断主流程；维修链无 DeferredPostingSweepJob 覆盖，
+     * 自愈路径为修复后重试 post）。
+     */
+    protected void dispatchFailureAlert(ErpAstMaintenance maintenance, ErpAstAsset asset, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("maintenanceCode", maintenance.getCode());
+        ctx.put("maintenanceId", maintenance.getId());
+        ctx.put("assetCode", asset.getCode());
+        ctx.put("assetId", asset.getId());
+        ctx.put("treatment", maintenance.getTreatment());
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("billHeadCode", maintenance.getCode());
+        IServiceContext serviceCtx = serviceContext();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_MAINTENANCE_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("maintenance posting failure alert dispatch failed (degraded): maintenanceCode={}, reason={}",
+                    maintenance.getCode(), notifyErr.getMessage());
+        }
+    }
+
+    /** 当前服务上下文；无绑定时兜底新建（镜像 DepreciationPostingDispatcher 同名范式）。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 
     private PostingEvent buildEvent(ErpAstMaintenance maintenance, ErpAstAsset asset, ErpAstAssetCategory category) {

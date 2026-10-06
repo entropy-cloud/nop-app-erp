@@ -341,6 +341,62 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
                 "资本化单已 reverseApprove");
     }
 
+    // ---------- 场景 8：reverseTransfer 归属校验（P2-CK-ast-011） ----------
+
+    /**
+     * P2-CK-ast-011 回归：reverseTransfer(cipX, capY)——资本化单成本项不属当前 CIP 时拒绝。
+     * 修复前仅比数量（两 CIP 各 1 条成本项 size 相等即放行），跨 CIP 的资本化单可触发他单
+     * reverseApprove 并清本 CIP 标志；修复后归属不匹配抛 ERR_CIP_REVERSE_OWNERSHIP_MISMATCH，
+     * 双 CIP 状态/资本化单 posted 均不被触碰。
+     */
+    @Test
+    public void testAst011ReverseTransferForeignCapitalizationRejected() {
+        String[] holders = new String[4];
+        ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            String categoryId = seedCategoryWithCipSubject("CAT-CIP-OWN", "归属校验类");
+            String cipX = seedCip("CIP-OWN-X", categoryId, LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 30));
+            String cipY = seedCip("CIP-OWN-Y", categoryId, LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 30));
+            holders[0] = cipX;
+            holders[1] = cipY;
+            return null;
+        });
+        String cipX = holders[0];
+        String cipY = holders[1];
+
+        // 双 CIP 各自完整转固（各 1 条成本项——数量相等，修复前 size 比对可被绕过）
+        ormTemplate.runInSession(() -> cipBiz.startConstruction(cipX, CTX));
+        ormTemplate.runInSession(() -> cipBiz.addCostItem(cipX, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
+                new BigDecimal("5000"), null, null, null, CTX));
+        ormTemplate.runInSession(() -> cipBiz.transferToAsset(cipX, null, LocalDate.of(2026, 7, 1), CTX));
+
+        ormTemplate.runInSession(() -> cipBiz.startConstruction(cipY, CTX));
+        ormTemplate.runInSession(() -> cipBiz.addCostItem(cipY, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
+                new BigDecimal("8000"), null, null, null, CTX));
+        ormTemplate.runInSession(() -> cipBiz.transferToAsset(cipY, null, LocalDate.of(2026, 7, 1), CTX));
+
+        String capYId = findCapitalizationByCip(
+                daoProvider.daoFor(ErpAstCip.class).getEntityById(cipY).getCode());
+        assertNotNull(capYId, "CIP-Y 资本化单已创建");
+
+        // 用 CIP-Y 的资本化单红冲 CIP-X → 归属不匹配拒绝
+        NopException ex = assertThrows(NopException.class,
+                () -> ormTemplate.runInSession(session -> cipBiz.reverseTransfer(cipX, capYId, CTX)));
+        assertEquals(ErpAstErrors.ERR_CIP_REVERSE_OWNERSHIP_MISMATCH.getErrorCode(), ex.getErrorCode(),
+                "外来资本化单 reverseTransfer 抛 ERR_CIP_REVERSE_OWNERSHIP_MISMATCH");
+
+        // 双 CIP 均未被触碰：X 保持 TRANSFERRED，Y 的资本化单仍 posted、成本项标志未清
+        ErpAstCip xAfter = daoProvider.daoFor(ErpAstCip.class).getEntityById(cipX);
+        assertEquals(ErpAstConstants.CIP_STATUS_TRANSFERRED, xAfter.getStatus(), "CIP-X 保持 TRANSFERRED");
+        ErpAstAssetCapitalization capY = daoProvider.daoFor(ErpAstAssetCapitalization.class).getEntityById(capYId);
+        assertTrue(Boolean.TRUE.equals(capY.getPosted()), "CIP-Y 资本化单仍 posted=true（未被误红冲）");
+        List<ErpAstCipCostItem> yItems = ormTemplate.runInSession(session -> cipBiz.findCostItems(cipY, false, CTX));
+        for (ErpAstCipCostItem item : yItems) {
+            assertTrue(Boolean.TRUE.equals(item.getPostedTransferFlag()),
+                    "CIP-Y 成本项 postedTransferFlag 未被清除");
+        }
+    }
+
     // ---------- seed helpers ----------
 
     private void seedCoreBasics() {

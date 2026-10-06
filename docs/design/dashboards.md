@@ -303,7 +303,7 @@
 | accumulatedDepreciation | 累计折旧 | Σ accumulatedDepreciation | 同上 | 本位币 | — |
 | netBookValue | 资产净值 | originalValue − accumulatedDepreciation | 派生（总量差） | 本位币 | 逐行净值求和等价 |
 | periodDepreciation | 本期折旧 | Σ actualAmount | `ErpAstDepreciationSchedule`，`status='EXECUTED'` + `period=目标期间`（缺省当前 yyyy-MM） | 本位币 | — |
-| cipBalance | 在建工程余额 | Σ accumulatedCost | `ErpAstCip`，`isCompleted=false` | 本位币 | 未转固 |
+| cipBalance | 在建工程余额 | Σ amountFunctional（CostItem `postedTransferFlag=false`） | `ErpAstCipCostItem` ⟕ `ErpAstCip`(isCompleted=false) | 本位币 | 未转固（P2-CK-ast-010 修复：部分转固后已转固成本不再计入 KPI；原 Σ accumulatedCost 口径退役） |
 | 类别分布 | 占比图 | 按 categoryId Σ 逐行净值降序 | `ErpAstAsset`(IN_SERVICE) ⟕ Category | 本位币 | — |
 | 折旧趋势 | 趋势图 | 按 period 分组 Σ actualAmount | `ErpAstDepreciationSchedule`(EXECUTED)，近 N 月桶 | 本位币 | helper 无日期过滤，全量加载后分桶 |
 | 折旧未计提预警 | 预警列表 | IN_SERVICE 且当前 period 无 EXECUTED 条目 | `ErpAstAsset` × Schedule | — | — |

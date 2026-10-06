@@ -94,7 +94,9 @@ public class ErpAstDepreciationScheduleExecuteDepreciationProcessor {
             asset.setNetBookValue(ErpAstDepreciationScheduleProcessor.nz(asset.getNetBookValue()).add(oldAmount));
         }
 
-        int elapsed = facade.countExecuted(assetId) - (wasExecuted ? 1 : 0);
+        // P2-CK-ast2-007：目标期前口径——本期自身行（period==target）被 lt 天然排除，无需 wasExecuted 补偿；
+        // 修复前全量 count 被晚于目标期的 EXECUTED 行污染，DECLINING 期数错位。
+        int elapsed = facade.countExecutedBefore(assetId, period);
         if (elapsed < 0) {
             elapsed = 0;
         }

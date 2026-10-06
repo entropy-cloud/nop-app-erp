@@ -104,7 +104,7 @@
 
 | 状态 | 是否产生 TODO | TODO 类型 |
 |------|---------------|-----------|
-| DRAFT | 是 | assigned（资产管理员）—— 草稿待完善入账 |
+| DRAFT | 是 | assigned（资产管理员）—— 草稿待完善入账（P2-CK-ast2-014 C1 裁决注记：草稿态允许折旧三要素缺省的部分保存；**无效值**〔年限非正/残值≥原值/方法出计算器支持集〕建卡即拒，**完备性**在迁移至 IN_SERVICE 时点强制校验——「折旧方法与年限已配置」前置的 CRUD 侧承接见 `ErpAstAssetBizModel.validateDepreciationFactors`） |
 | IN_SERVICE | 否（正常折旧自动） | — |
 | IDLE ✅ **已实现**（RC-R1.54） | 否（提醒 cron Deferred → successor） | monitor（监控）—— 闲置资产待决策（恢复/处置）。⚠ **闲置超期 TODO cron Deferred**，见下方补注 |
 | SCRAPPED/SOLD | 否 | — |

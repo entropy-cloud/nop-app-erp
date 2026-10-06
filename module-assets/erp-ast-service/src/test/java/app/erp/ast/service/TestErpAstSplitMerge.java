@@ -389,6 +389,58 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         assertNotEquals(0, bad.getStatus(), "跨币种合并应被拒绝");
     }
 
+    /**
+     * P2-CK-ast-013 集成面：合并悬空源引用（幽灵资产 id）在 submitForApproval 即拒绝且无 NPE 逃逸。
+     * 注：悬空 id 经 ORM to-one 关系解析为未加载桩实体（status=null）→ 由既有 status 守卫
+     * ERR_AST_MERGE_SOURCE_NOT_IN_SERVICE 拦截（assetCode=null）；修复新增的字面 null 分支
+     * （ERR_AST_MERGE_SOURCE_NOT_FOUND 带 mergeCode+lineIndex）经白盒载体
+     * {@code processor/TestErpAstMergeSourceValidation} 直调 validateSources 锁定。
+     * 两路径均为响亮业务错误码——ast-013 的红灯本质「悬空源 → 业务错误码非 NPE」在集成栈成立。
+     */
+    @Test
+    public void testAst013MergeDanglingSourceRejectedWithDomainCode() {
+        String mergeId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            String categoryId = seedCategory("CAT-MG-013", "悬空源类别");
+            String a1 = seedAssetWithDep("AST-MG-013A", categoryId, new BigDecimal("50000"), new BigDecimal("10000"));
+            String mid = seedMerge("MRG-013", "1", "1");
+            seedMergeLine(mid, "1", a1, 1);
+            seedMergeLine(mid, "1", "999999999", 2);
+            return mid;
+        });
+
+        ApiResponse<?> bad = mergeSubmit(mergeId);
+        assertNotEquals(0, bad.getStatus(), "悬空源合并应被拒绝");
+        assertTrue(ErpAstErrors.ERR_AST_MERGE_SOURCE_NOT_FOUND.getErrorCode().equals(bad.getCode())
+                        || ErpAstErrors.ERR_AST_MERGE_SOURCE_NOT_IN_SERVICE.getErrorCode().equals(bad.getCode()),
+                "悬空源以业务错误码响亮拒绝（非 NPE 逃逸），实际=" + bad.getCode());
+        assertEquals(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED,
+                daoProvider.daoFor(ErpAstMerge.class).getEntityById(mergeId).getApproveStatus(),
+                "悬空源合并未进入 SUBMITTED（拒绝发生在状态迁移前）");
+    }
+
+    /**
+     * P2-CK-ast-014 回归：合并源资产重复（同一资产两行）在 submitForApproval 即拒绝——修复前放行，
+     * 执行后目标卡价值双计；修复后抛 ERR_AST_MERGE_SOURCE_DUPLICATE，价值单计由拒绝前置保证。
+     */
+    @Test
+    public void testAst014MergeDuplicateSourceRejectedWithDomainCode() {
+        String mergeId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            String categoryId = seedCategory("CAT-MG-014", "重复源类别");
+            String a1 = seedAssetWithDep("AST-MG-014A", categoryId, new BigDecimal("50000"), new BigDecimal("10000"));
+            String mid = seedMerge("MRG-014", "1", "1");
+            seedMergeLine(mid, "1", a1, 1);
+            seedMergeLine(mid, "1", a1, 2);
+            return mid;
+        });
+
+        ApiResponse<?> bad = mergeSubmit(mergeId);
+        assertNotEquals(0, bad.getStatus(), "重复源合并应被拒绝");
+        assertEquals(ErpAstErrors.ERR_AST_MERGE_SOURCE_DUPLICATE.getErrorCode(), bad.getCode(),
+                "重复源抛 ERR_AST_MERGE_SOURCE_DUPLICATE（执行前拦截，杜绝价值双计）");
+    }
+
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> submitForApproval(String id) {

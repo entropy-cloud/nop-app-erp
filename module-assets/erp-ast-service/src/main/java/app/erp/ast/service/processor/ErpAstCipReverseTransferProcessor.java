@@ -32,6 +32,15 @@ public class ErpAstCipReverseTransferProcessor {
         }
 
         List<ErpAstCipCostItem> capCostItems = facade.findCostItemsByCapitalization(capitalizationId);
+        // P2-CK-ast-011：归属校验——修复前仅比数量（size 相等即放行），跨 CIP 的资本化单可触发
+        // 他单 reverseApprove 并清本 CIP 标志。
+        for (ErpAstCipCostItem item : capCostItems) {
+            if (!Objects.equals(item.getCipId(), cipId)) {
+                throw new NopException(ErpAstErrors.ERR_CIP_REVERSE_OWNERSHIP_MISMATCH)
+                        .param(ErpAstErrors.ARG_CIP_CODE, cip.getCode())
+                        .param("capitalizationId", capitalizationId);
+            }
+        }
         List<ErpAstCipCostItem> allCipCostItems = facade.findCostItems(cipId, false, context);
         if (capCostItems.size() < allCipCostItems.size()) {
             throw new NopException(ErpAstErrors.ERR_CIP_PARTIAL_REVERSE_NOT_SUPPORTED)

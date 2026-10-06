@@ -43,6 +43,8 @@ public class MaintenanceExpenseAcctDocProvider implements IErpFinAcctDocProvider
     static final String ACCOUNT_KEY_MAINTENANCE_EXPENSE = "MAINTENANCE_EXPENSE";
     static final String ACCOUNT_KEY_MAINTENANCE_CLEARING = "MAINTENANCE_CLEARING";
     static final String ACCOUNT_KEY_BANK_DEPOSIT = "BANK_DEPOSIT";
+    /** P2-CK-ast2-013 分支 a：备件消耗贷腿（存货 1403）独立映射键——无规则表匹配时保留 Provider 既有 1403。 */
+    static final String ACCOUNT_KEY_INVENTORY_SPARE_PART = "INVENTORY_SPARE_PART";
 
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
@@ -62,12 +64,29 @@ public class MaintenanceExpenseAcctDocProvider implements IErpFinAcctDocProvider
         String inventorySubject = readCode(event, ErpAstConstants.BILL_DATA_MAINTENANCE_INVENTORY_SUBJECT_CODE,
                 SUBJECT_INVENTORY);
 
-        List<VoucherFact> facts = new ArrayList<>(2);
+        // P2-CK-ast2-013（分支 a）：备件消耗分腿——SPARE_PART 行额贷存货（1403），其余贷银行（1002），
+        // 落地 maintenance.md L88/L154 既有贷方声明（原 inventorySubject 读了不用死分支）；无备件行时
+        // 单腿贷银行行为同旧。
+        BigDecimal sparePartAmount = readDecimal(event, ErpAstConstants.BILL_DATA_MAINTENANCE_SPARE_PART_AMOUNT);
+        if (sparePartAmount == null || sparePartAmount.signum() < 0) {
+            sparePartAmount = BigDecimal.ZERO;
+        }
+        if (sparePartAmount.compareTo(amount) > 0) {
+            sparePartAmount = amount;
+        }
+        BigDecimal bankAmount = amount.subtract(sparePartAmount);
+
+        List<VoucherFact> facts = new ArrayList<>(3);
         facts.add(fact(expenseSubject, null, DC_DEBIT, amount, event, ACCOUNT_KEY_MAINTENANCE_EXPENSE));
         if (linkedVisit) {
             facts.add(fact(clearingSubject, null, DC_CREDIT, amount, event, ACCOUNT_KEY_MAINTENANCE_CLEARING));
         } else {
-            facts.add(fact(bankSubject, null, DC_CREDIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT));
+            if (sparePartAmount.signum() > 0) {
+                facts.add(fact(inventorySubject, null, DC_CREDIT, sparePartAmount, event, ACCOUNT_KEY_INVENTORY_SPARE_PART));
+            }
+            if (bankAmount.signum() > 0) {
+                facts.add(fact(bankSubject, null, DC_CREDIT, bankAmount, event, ACCOUNT_KEY_BANK_DEPOSIT));
+            }
         }
         return facts;
     }

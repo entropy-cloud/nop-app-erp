@@ -131,6 +131,10 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
     protected void defaultPrepareSave(EntityData<ErpAstAsset> entityData, IServiceContext context) {
         super.defaultPrepareSave(entityData, context);
         validateExtFieldValues(entityData.getEntity(), true);
+        // P2-CK-ast2-014（C1 作用域裁决）：建卡即拒绝**无效值**（年限非正/残值≥原值/方法出字典）；
+        // 缺省值（null）允许——保留 state-machine.md §8 DRAFT「草稿待完善入账」部分保存语义，
+        // 完备性由 IN_SERVICE 迁移前置（§2 已声明）+ 下方 update 迁移时点校验承接。
+        validateDepreciationFactors(entityData.getEntity(), false);
     }
 
     /** CREATE 审计在保存后记录（seq 主键在 save 后才可读；对齐 hr afterEntityChange 范式）。 */
@@ -159,6 +163,12 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
                 str(oldValues.get("locationId")), str(oldValues.get("employeeId")));
 
         if (changed(oldValues, "status")) {
+            // P2-CK-ast2-014：迁移至 IN_SERVICE 时点三要素完备性校验（§2 迁移前置的 CRUD 侧承接——
+            // 修复前 0/null 年限静默 1 个月折完、残值≥原值静默零提）。
+            if (app.erp.ast.service.ErpAstConstants.ASSET_STATUS_IN_SERVICE.equals(asset.getStatus())
+                    && !app.erp.ast.service.ErpAstConstants.ASSET_STATUS_IN_SERVICE.equals(str(oldValues.get("status")))) {
+                validateDepreciationFactors(asset, true);
+            }
             auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_STATUS_CHANGE, before,
                     null, null, "Asset status change (CRUD update): " + oldValues.get("status") + " -> " + asset.getStatus());
         }
@@ -182,6 +192,41 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
             auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_UPDATE, before,
                     null, null, "Asset info updated (changed fields: " + String.join(", ", updatedFields) + ")");
         }
+    }
+
+    /**
+     * P2-CK-ast2-014：折旧三要素校验（消费既有 ERR_DEPRECIATION_USEFUL_LIFE_INVALID，修复前零消费）。
+     * {@code requireComplete=false}：仅拒绝无效值（已设年限须>0 / 已设残值须<原值 / 已设方法须在
+     * 计算器支持字典内），缺省（null）放行以保留 DRAFT 草稿语义；{@code requireComplete=true}
+     * （IN_SERVICE 迁移时点）：三要素缺一不可。
+     */
+    protected void validateDepreciationFactors(ErpAstAsset asset, boolean requireComplete) {
+        Integer life = asset.getUsefulLifeMonths();
+        BigDecimal residual = asset.getResidualValue();
+        BigDecimal original = asset.getOriginalValue();
+        String method = asset.getDepreciationMethod();
+        if (requireComplete && (life == null || original == null)) {
+            throw new io.nop.api.core.exceptions.NopException(ErpAstErrors.ERR_DEPRECIATION_USEFUL_LIFE_INVALID)
+                    .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
+        }
+        if (life != null && life <= 0) {
+            throw new io.nop.api.core.exceptions.NopException(ErpAstErrors.ERR_DEPRECIATION_USEFUL_LIFE_INVALID)
+                    .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
+        }
+        if (residual != null && original != null && residual.compareTo(original) >= 0) {
+            throw new io.nop.api.core.exceptions.NopException(ErpAstErrors.ERR_DEPRECIATION_USEFUL_LIFE_INVALID)
+                    .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
+        }
+        if (method != null && !isSupportedDepreciationMethod(method)) {
+            throw new io.nop.api.core.exceptions.NopException(ErpAstErrors.ERR_DEPRECIATION_USEFUL_LIFE_INVALID)
+                    .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
+        }
+    }
+
+    protected boolean isSupportedDepreciationMethod(String method) {
+        return app.erp.ast.service.ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE.equals(method)
+                || app.erp.ast.service.ErpAstConstants.DEPRECIATION_METHOD_DECLINING.equals(method)
+                || app.erp.ast.service.ErpAstConstants.DEPRECIATION_METHOD_UNITS.equals(method);
     }
 
     // ---------- E3.3 ext 字段集校验 ----------

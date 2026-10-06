@@ -274,6 +274,109 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
     }
 
     /**
+     * P2-CK-ast2-008 回归（可落地面）：批量折旧单资产失败不传染——失败资产排首位，其后健康资产全部
+     * 完成并过账。失败注入用 UNITS 方法确定性拒绝（executeDepreciation 守卫级异常，零写库）。
+     *
+     * <p>范围注记：ast2-008 的「单资产失败 → dispatchFailureAlert 告警派发」与「逐资产 flush/clear 脏写
+     * 隔离」两面在当前 src/main 工作区（HEAD 3c07920f8 + f311 批次变更集）尚未落地
+     * （{@code ErpAstDepreciationScheduleExecuteBatchDepreciationProcessor} 未被批次触及，循环仍为
+     * try/catch+LOG.warn）——本载体锁定已落地的循环级隔离行为（告警修复落地后必须保持），告警/清会话
+     * 断言面待修复落地后由执行者回填红灯表 #9。
+     */
+    @Test
+    public void testAst2_008BatchIsolationFailureFirstThenHealthyAssetsComplete() {
+        ormTemplate.runInSession(session -> {
+            seedBasics();
+            String failingCategory = AstTestSupport.seedCategory(daoProvider, "CAT-BAT8-FAIL", "批量失败类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_UNITS, 12, null, null, null);
+            // 失败资产排首位：UNITS 方法在 executeDepreciation 守卫处确定性抛错（零写库）
+            AstTestSupport.seedAsset(daoProvider, "AST-BAT8-FAIL", "批量首位失败资产", failingCategory, "1",
+                    new BigDecimal("12000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_UNITS, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            String okCategory = AstTestSupport.seedCategory(daoProvider, "CAT-BAT8-OK", "批量健康类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
+            AstTestSupport.seedAsset(daoProvider, "AST-BAT8-OK1", "批量健康资产1", okCategory, "1",
+                    new BigDecimal("12000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            AstTestSupport.seedAsset(daoProvider, "AST-BAT8-OK2", "批量健康资产2", okCategory, "1",
+                    new BigDecimal("6000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            return null;
+        });
+
+        int processed = ormTemplate.runInSession(session -> scheduleBiz.executeBatchDepreciation(START_PERIOD, CTX));
+        assertEquals(2, processed, "失败资产被隔离，两名健康资产完成");
+
+        // 失败后其余资产完成且过账（失败不传染后续资产）
+        ErpAstDepreciationSchedule ok1 = findSchedule("AST-BAT8-OK1", START_PERIOD);
+        ErpAstDepreciationSchedule ok2 = findSchedule("AST-BAT8-OK2", START_PERIOD);
+        assertNotNull(ok1, "失败资产之后的健康资产 1 计划已生成");
+        assertNotNull(ok2, "失败资产之后的健康资产 2 计划已生成");
+        assertEquals(ErpAstConstants.SCHEDULE_STATUS_EXECUTED, ok1.getStatus());
+        assertEquals(ErpAstConstants.SCHEDULE_STATUS_EXECUTED, ok2.getStatus());
+        assertTrue(Boolean.TRUE.equals(ok1.getPosted()) && Boolean.TRUE.equals(ok2.getPosted()),
+                "失败后健康资产照常过账");
+
+        // 失败资产零写库（无计划行残留）
+        assertNull(findSchedule("AST-BAT8-FAIL", START_PERIOD), "失败资产无计划行（守卫级异常零写库）");
+    }
+
+    /**
+     * P2-CK-ast2-012 行为等价面：批量折旧后全部资产 schedule 正确（含已有一期执行的资产的 elapsed 口径）。
+     *
+     * <p>范围注记：机械查询计数面（批量入口 period 单查 / countExecutedBefore count 查询 / 类别批量预取）
+     * 经公开 Biz API 无法机械计数，由代码审查覆盖（且当前 src/main 批量入口尚未落 period 上提/预取——
+     * 本载体按映射表 #11 的行为等价断言形态落地，锁定批量结果正确性）。
+     */
+    @Test
+    public void testAst2_012BatchDepreciationAllSchedulesBehaviorallyCorrect() {
+        ormTemplate.runInSession(session -> {
+            seedBasics();
+            // 类别 A：12 期直线 → 月额 1000；类别 B：24 期直线 → 月额 250
+            String catA = AstTestSupport.seedCategory(daoProvider, "CAT-BAT12-A", "批量等价类别A",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
+            String catB = AstTestSupport.seedCategory(daoProvider, "CAT-BAT12-B", "批量等价类别B",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 24, null, null, null);
+            AstTestSupport.seedAsset(daoProvider, "AST-BAT12-A1", "等价资产A1", catA, "1",
+                    new BigDecimal("12000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            String a2Id = AstTestSupport.seedAsset(daoProvider, "AST-BAT12-A2", "等价资产A2", catA, "1",
+                    new BigDecimal("12000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            AstTestSupport.seedAsset(daoProvider, "AST-BAT12-B1", "等价资产B1", catB, "1",
+                    new BigDecimal("6000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 24,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            // A2 已有一期执行（elapsed 口径：目标期前 1 期）
+            AstTestSupport.seedExecutedPostedSchedule(daoProvider, a2Id, "1", "2026-06",
+                    new BigDecimal("1000"), new BigDecimal("1000"), new BigDecimal("11000"));
+            ErpAstAsset a2 = daoProvider.daoFor(ErpAstAsset.class).getEntityById(a2Id);
+            a2.setAccumulatedDepreciation(new BigDecimal("1000"));
+            a2.setNetBookValue(new BigDecimal("11000"));
+            daoProvider.daoFor(ErpAstAsset.class).saveEntity(a2);
+            return null;
+        });
+
+        int processed = ormTemplate.runInSession(session -> scheduleBiz.executeBatchDepreciation(START_PERIOD, CTX));
+        assertEquals(3, processed, "批量处理 3 个使用中资产");
+
+        ErpAstDepreciationSchedule s1 = findSchedule("AST-BAT12-A1", START_PERIOD);
+        ErpAstDepreciationSchedule s2 = findSchedule("AST-BAT12-A2", START_PERIOD);
+        ErpAstDepreciationSchedule b1 = findSchedule("AST-BAT12-B1", START_PERIOD);
+        assertEquals(0, s1.getActualAmount().compareTo(new BigDecimal("1000")), "类别 A 首期月额 1000");
+        assertEquals(0, s2.getActualAmount().compareTo(new BigDecimal("1000")),
+                "已有 1 期执行的 A2 本期仍 1000（直线法 elapsed 无关，口径不错位）");
+        assertEquals(0, s2.getAccumulatedDepreciation().compareTo(new BigDecimal("2000")),
+                "A2 计划行累计折旧=2000（含前期 1000）");
+        assertEquals(0, b1.getActualAmount().compareTo(new BigDecimal("250")), "类别 B 月额 250");
+    }
+
+    /**
      * G3 折旧 tryPost 悬挂状态 + 重跑自愈（plan 2026-07-31-0744-2-r2-12 P1-MA4-014(d) 残差 / P1-MA4-013）。
      *
      * <p>确定性诱导 {@code DepreciationPostingDispatcher.tryPost} 失败（复用 inventory 无 mock 范式：

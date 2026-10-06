@@ -96,7 +96,10 @@ public class ErpAstDepreciationScheduleCatchUpDepreciationProcessor {
                 : (category != null && category.getUsefulLifeMonths() != null ? category.getUsefulLifeMonths() : 0);
 
         IEntityDao<ErpAstDepreciationSchedule> scheduleDao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
-        int elapsed = facade.countExecuted(assetId);
+        // P2-CK-ast2-007：目标期前口径（以 currentPeriod 为界）——missedPeriods 中已执行被跳过的期间
+        // 由初始计数天然包含，循环内 elapsed++ 仅覆盖本轮新建行；修复前全量 count 被晚于目标期的
+        // EXECUTED 行污染（DECLINING 期数错位）。
+        int elapsed = facade.countExecutedBefore(assetId, currentPeriod);
         BigDecimal total = BigDecimal.ZERO;
         List<ErpAstDepreciationSchedule> created = new ArrayList<>();
         Timestamp now = CoreMetrics.currentTimestamp();

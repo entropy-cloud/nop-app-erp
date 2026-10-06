@@ -272,6 +272,115 @@ public class TestErpAstInventory extends JunitAutoTestCase {
         assertTrue(bad.getStatus() != 0, "空范围 createInventory 应被拒绝");
     }
 
+    /**
+     * P2-CK-ast-012（裁决分支 c）回归：POSTED 盘点单含资产侧效果（盘盈新卡 newAssetId）时 reverse 拒绝。
+     * 修复前单据轴可逆而资产轴（新卡已建、盘亏 SCRAPPED）无逆动作，静默不一致；修复后响亮阻断
+     * ERR_AST_INVENTORY_REVERSE_ASSET_SIDE_EFFECTS，单据 posted/状态保持 POSTED，凭证不被红冲
+     * （纠错走资产域冲销流程独立处理，inventory.md §五/L71 既有契约）。
+     */
+    @Test
+    public void testAst012cReverseRejectedWhenSurplusNewCardExists() {
+        String[] matchedAssetHolder = new String[1];
+        String invId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            String categoryId = seedCategory("CAT-INV-012A", "盘点侧效类别A");
+            String matched = AstTestSupport.seedAsset(daoProvider, "AST-INV-012-M", "侧效一致资产", categoryId, "1",
+                    new BigDecimal("10000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            matchedAssetHolder[0] = matched;
+            return seedInventory("INV-012-A", "盘盈侧效盘点", categoryId, LocalDate.of(2026, 7, 15));
+        });
+
+        assertEquals(0, createInventory(invId).getStatus());
+        ormTemplate.runInSession(session -> {
+            for (ErpAstInventoryLine line : findLines(invId)) {
+                line.setActualQuantity(1);
+                daoProvider.daoFor(ErpAstInventoryLine.class).saveOrUpdateEntity(line);
+            }
+            // 盘盈行（建新卡 = 资产侧效果）
+            ErpAstInventoryLine surplusLine = daoProvider.daoFor(ErpAstInventoryLine.class).newEntity();
+            surplusLine.setInventoryId(invId);
+            surplusLine.setOrgId("1");
+            surplusLine.setLineNo(99);
+            surplusLine.setAssetId(null);
+            surplusLine.setAssetNameSnapshot("盘盈侧效新设备");
+            surplusLine.setBookQuantity(0);
+            surplusLine.setActualQuantity(1);
+            surplusLine.setAssessedValue(new BigDecimal("3000"));
+            surplusLine.setBookValue(BigDecimal.ZERO);
+            daoProvider.daoFor(ErpAstInventoryLine.class).saveEntity(surplusLine);
+            return null;
+        });
+        assertEquals(0, submitForCount(invId).getStatus());
+        assertEquals(0, reconcile(invId).getStatus());
+        assertEquals(0, processVariance(invId).getStatus());
+        ErpAstInventoryLine surplusAfter = findSurplusLine(invId);
+        assertNotNull(surplusAfter.getNewAssetId(), "盘盈行已建新卡（资产侧效果）");
+        assertEquals(0, approve(invId).getStatus());
+        assertEquals(0, post(invId).getStatus());
+
+        ApiResponse<?> bad = reverse(invId);
+        assertNotEquals(0, bad.getStatus(), "含盘盈新卡的 POSTED 盘点单 reverse 应被拒绝");
+        assertEquals(ErpAstErrors.ERR_AST_INVENTORY_REVERSE_ASSET_SIDE_EFFECTS.getErrorCode(), bad.getCode(),
+                "资产侧效果拒绝码（分支 c：单据轴不可纠错为接受契约）");
+
+        ErpAstInventory after = daoProvider.daoFor(ErpAstInventory.class).getEntityById(invId);
+        assertTrue(Boolean.TRUE.equals(after.getPosted()), "拒绝后 posted 保持 true");
+        assertEquals(ErpAstConstants.INVENTORY_STATUS_POSTED, after.getStatus(), "拒绝后状态保持 POSTED");
+        assertFalse(isAllVouchersReversed("INV-012-A", "ASSET_INVENTORY_ADJUSTMENT"),
+                "凭证未被红冲（拒绝发生在红冲之前）");
+    }
+
+    /**
+     * P2-CK-ast-012（裁决分支 c）第二分支：行含 disposalId（盘亏处置挂接）同样拒绝 reverse。
+     * 盘亏处置经 dao 直挂（既有盘亏路径直接置位资产 SCRAPPED，处置单编号可后挂行上），守卫对
+     * newAssetId / disposalId 双键生效。
+     */
+    @Test
+    public void testAst012cReverseRejectedWhenLineHasDisposalId() {
+        String invId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            String categoryId = seedCategory("CAT-INV-012B", "盘点侧效类别B");
+            AstTestSupport.seedAsset(daoProvider, "AST-INV-012-D", "侧效处置资产", categoryId, "1",
+                    new BigDecimal("6000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            return seedInventory("INV-012-B", "处置挂接盘点", categoryId, LocalDate.of(2026, 7, 15));
+        });
+
+        assertEquals(0, createInventory(invId).getStatus());
+        ormTemplate.runInSession(session -> {
+            for (ErpAstInventoryLine line : findLines(invId)) {
+                line.setActualQuantity(1);
+                daoProvider.daoFor(ErpAstInventoryLine.class).saveOrUpdateEntity(line);
+            }
+            return null;
+        });
+        assertEquals(0, submitForCount(invId).getStatus());
+        assertEquals(0, reconcile(invId).getStatus());
+        assertEquals(0, processVariance(invId).getStatus());
+        assertEquals(0, approve(invId).getStatus());
+        assertEquals(0, post(invId).getStatus());
+
+        // 行挂接处置单（资产侧效果第二键；disposalId 为 Long 型外键，数值直挂）
+        ormTemplate.runInSession(session -> {
+            for (ErpAstInventoryLine line : findLines(invId)) {
+                line.setDisposalId("999888");
+                daoProvider.daoFor(ErpAstInventoryLine.class).saveOrUpdateEntity(line);
+            }
+            return null;
+        });
+
+        ApiResponse<?> bad = reverse(invId);
+        assertNotEquals(0, bad.getStatus(), "行含 disposalId 的 POSTED 盘点单 reverse 应被拒绝");
+        assertEquals(ErpAstErrors.ERR_AST_INVENTORY_REVERSE_ASSET_SIDE_EFFECTS.getErrorCode(), bad.getCode(),
+                "disposalId 分支同样触发资产侧效果拒绝码");
+        assertTrue(Boolean.TRUE.equals(
+                daoProvider.daoFor(ErpAstInventory.class).getEntityById(invId).getPosted()),
+                "拒绝后 posted 保持 true");
+    }
+
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> createInventory(String id) {

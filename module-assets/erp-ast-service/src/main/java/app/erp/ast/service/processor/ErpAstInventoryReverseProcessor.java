@@ -38,6 +38,16 @@ public class ErpAstInventoryReverseProcessor {
         } catch (NopException e) {
             throw e.param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode());
         }
+        // P2-CK-ast-012（裁决分支 c）：存在资产侧效果（盘盈新卡 newAssetId / 盘亏处置 disposalId）的
+        // POSTED 盘点单拒绝 reverse——修复前单据轴可逆而资产轴（新卡/SCRAPPED）无逆动作，静默不一致；
+        // 现为响亮阻断，纠错走资产域冲销流程独立处理（inventory.md §五/L71 既有契约声明）。
+        for (app.erp.ast.dao.entity.ErpAstInventoryLine line : facade.findLines(inv.getId())) {
+            if (line.getNewAssetId() != null || line.getDisposalId() != null) {
+                throw new NopException(ErpAstErrors.ERR_AST_INVENTORY_REVERSE_ASSET_SIDE_EFFECTS)
+                        .param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode())
+                        .param("lineNo", line.getLineNo());
+            }
+        }
         postingDispatcher.reverse(inv);
         inv = facade.reload(id);
         inv.setPosted(false);

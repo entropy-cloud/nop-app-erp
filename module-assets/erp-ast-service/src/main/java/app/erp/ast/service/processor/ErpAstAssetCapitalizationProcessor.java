@@ -130,7 +130,8 @@ public class ErpAstAssetCapitalizationProcessor {
                         .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode())
                         .param(ErpAstErrors.ARG_EXECUTED_COUNT, countExecutedDepreciation(asset.getId(), context));
             }
-            postingDispatcher.reverse(cap);
+            // P2-CK-ast-008：资产状态守卫上提到 GL 红冲之前——修复前 reverse（REQUIRES_NEW）先于
+            // assertCanReverseCapitalize 执行，不可逆态资产红冲已提交而单据侧回滚，GL 凭证孤儿。
             if (asset != null) {
                 // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4；Bean 直抛领域码 + 调用点同码补参，plan 2026-09-07-2200-1）
                 try {
@@ -138,6 +139,9 @@ public class ErpAstAssetCapitalizationProcessor {
                 } catch (NopException e) {
                     throw e.param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
                 }
+            }
+            postingDispatcher.reverse(cap);
+            if (asset != null) {
                 asset.setStatus(assetStateMachine.reverseCapitalizeTargetStatus());
                 asset.setAccumulatedDepreciation(BigDecimal.ZERO);
                 asset.setNetBookValue(asset.getOriginalValue());

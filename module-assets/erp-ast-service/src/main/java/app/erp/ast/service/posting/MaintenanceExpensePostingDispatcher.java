@@ -9,6 +9,11 @@ import app.erp.fin.dao.PostingEvent;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.exceptions.NopException;
+import app.erp.notify.biz.IErpSysNotificationBiz;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
+import io.nop.api.core.beans.query.QueryBean;
+import static io.nop.api.core.beans.FilterBeans.eq;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -38,6 +43,11 @@ public class MaintenanceExpensePostingDispatcher {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    static final String NOTIFY_EVENT_MAINTENANCE_FAILURE = "ast.maintenance-posting-failure";
+
     public String tryPost(ErpAstMaintenance maintenance, ErpAstAsset asset, ErpAstAssetCategory category) {
         PostingEvent event = buildEvent(maintenance, asset, category);
         try {
@@ -48,8 +58,42 @@ public class MaintenanceExpensePostingDispatcher {
             } else {
                 LOG.error("maintenance expense posting error, maintenance bill {} keeps posted=false", maintenance.getCode(), e);
             }
+            dispatchFailureAlert(maintenance, asset, e);
             return null;
         }
+    }
+
+    /**
+     * P2-CK-ast2-009：维修过账失败告警派发（镜像 {@link DepreciationPostingDispatcher} 同名范式，
+     * G4 错误传播分级；通知失败降级 warn 不阻断主流程；维修链无 DeferredPostingSweepJob 覆盖，
+     * 自愈路径为修复后重试 post）。
+     */
+    protected void dispatchFailureAlert(ErpAstMaintenance maintenance, ErpAstAsset asset, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("maintenanceCode", maintenance.getCode());
+        ctx.put("maintenanceId", maintenance.getId());
+        ctx.put("assetCode", asset.getCode());
+        ctx.put("assetId", asset.getId());
+        ctx.put("treatment", maintenance.getTreatment());
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("billHeadCode", maintenance.getCode());
+        IServiceContext serviceCtx = serviceContext();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_MAINTENANCE_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("maintenance posting failure alert dispatch failed (degraded): maintenanceCode={}, reason={}",
+                    maintenance.getCode(), notifyErr.getMessage());
+        }
+    }
+
+    /** 当前服务上下文；无绑定时兜底新建（镜像 DepreciationPostingDispatcher 同名范式）。 */
+    private static IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 
     public void reverse(ErpAstMaintenance maintenance) {
@@ -63,6 +107,20 @@ public class MaintenanceExpensePostingDispatcher {
             }
             throw e;
         }
+    }
+
+    /** SPARE_PART 成本行合计（ast2-013 分支 a 贷方分腿金额）。 */
+    protected BigDecimal sumSparePartAmount(String maintenanceId) {
+        BigDecimal spare = BigDecimal.ZERO;
+        IEntityDao<app.erp.ast.dao.entity.ErpAstMaintenanceCost> costDao =
+                daoProvider.daoFor(app.erp.ast.dao.entity.ErpAstMaintenanceCost.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("maintenanceId", maintenanceId));
+        q.addFilter(eq("costType", ErpAstConstants.MAINTENANCE_COST_TYPE_SPARE_PART));
+        for (app.erp.ast.dao.entity.ErpAstMaintenanceCost line : costDao.findAllByQuery(q)) {
+            spare = spare.add(line.getAmount() != null ? line.getAmount() : BigDecimal.ZERO);
+        }
+        return spare;
     }
 
     private PostingEvent buildEvent(ErpAstMaintenance maintenance, ErpAstAsset asset, ErpAstAssetCategory category) {
@@ -86,6 +144,9 @@ public class MaintenanceExpensePostingDispatcher {
         billData.put(ErpAstConstants.BILL_DATA_MAINTENANCE_CLEARING_SUBJECT_CODE, "2502");
         billData.put(ErpAstConstants.BILL_DATA_MAINTENANCE_BANK_SUBJECT_CODE, "1002");
         billData.put(ErpAstConstants.BILL_DATA_MAINTENANCE_INVENTORY_SUBJECT_CODE, "1403");
+        // P2-CK-ast2-013（分支 a）：备件消耗额供 Provider 贷方分腿（SPARE_PART→存货 1403 / 其余→银行 1002，
+        // 落地 maintenance.md L88/L154 既有声明）；无备件行时为 0（Provider 单腿贷银行，行为同旧）。
+        billData.put(ErpAstConstants.BILL_DATA_MAINTENANCE_SPARE_PART_AMOUNT, sumSparePartAmount(maintenance.getId()));
         billData.put(ErpAstConstants.BILL_DATA_FIXED_ASSET_SUBJECT_CODE,
                 resolveSubjectCode(category != null ? category.getSubjectId() : null, "1601"));
         event.setBillData(billData);

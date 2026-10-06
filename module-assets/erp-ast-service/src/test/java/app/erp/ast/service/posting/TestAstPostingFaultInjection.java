@@ -2,6 +2,7 @@ package app.erp.ast.service.posting;
 
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
+import app.erp.ast.dao.entity.ErpAstMaintenance;
 import app.erp.common.test.FaultInjectionStubs;
 import org.junit.jupiter.api.Test;
 
@@ -48,6 +49,36 @@ public class TestAstPostingFaultInjection {
                 "折旧过账失败应吞异常返回 null（保持 posted=false 悬挂，A1）");
         assertEquals(DepreciationPostingDispatcher.NOTIFY_EVENT_DEPRECIATION_FAILURE, captured[0],
                 "折旧过账失败应派发 ast.depreciation-posting-failure 告警（A2+A4）");
+    }
+
+    /**
+     * P2-CK-ast2-009 告警闭环：维修过账失败（费用化/资本化两路）派发 {@code ast.maintenance-posting-failure}
+     * 告警（镜像折旧 G4 分级，recordingNotify 桩范式）。集成侧的状态保持 COMPLETED/重试语义见
+     * {@code TestErpAstMaintenance} 的 ast2_009 用例。
+     */
+    @Test
+    public void testAst2_009MaintenancePostingFailureDispatchesAlert() {
+        ErpAstMaintenance maintenance = new ErpAstMaintenance();
+        maintenance.setCode("MNT-FAIL-001");
+        maintenance.setTreatment("EXPENSE");
+        ErpAstAsset asset = new ErpAstAsset();
+        asset.setCode("AST-FAIL-002");
+
+        // 费用化路径：tryPost 失败 → dispatchFailureAlert
+        MaintenanceExpensePostingDispatcher expenseDispatcher = new MaintenanceExpensePostingDispatcher();
+        String[] capturedExpense = new String[1];
+        expenseDispatcher.notificationBiz = FaultInjectionStubs.recordingNotificationBiz(capturedExpense);
+        expenseDispatcher.dispatchFailureAlert(maintenance, asset, new RuntimeException("GL engine down"));
+        assertEquals(MaintenanceExpensePostingDispatcher.NOTIFY_EVENT_MAINTENANCE_FAILURE, capturedExpense[0],
+                "费用化过账失败应派发 ast.maintenance-posting-failure 告警");
+
+        // 资本化路径：同事件键
+        MaintenanceCapitalizationPostingDispatcher capDispatcher = new MaintenanceCapitalizationPostingDispatcher();
+        String[] capturedCap = new String[1];
+        capDispatcher.notificationBiz = FaultInjectionStubs.recordingNotificationBiz(capturedCap);
+        capDispatcher.dispatchFailureAlert(maintenance, asset, new RuntimeException("GL engine down"));
+        assertEquals(MaintenanceCapitalizationPostingDispatcher.NOTIFY_EVENT_MAINTENANCE_FAILURE, capturedCap[0],
+                "资本化过账失败应派发 ast.maintenance-posting-failure 告警");
     }
 
     @Test

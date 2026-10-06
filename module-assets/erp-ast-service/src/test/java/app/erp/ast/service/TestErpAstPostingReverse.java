@@ -36,6 +36,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -238,6 +239,122 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
             assertEquals(ErpAstConstants.SCHEDULE_STATUS_PENDING, s.getStatus(), "折旧计划恢复 PENDING");
         }
         assertTrue(isAllVouchersReversed("DISP-REV-001", "DISPOSAL"), "处置凭证已红字冲销");
+    }
+
+    /**
+     * P2-CK-ast-008 回归（资本化链）：不可逆态资产（SCRAPPED）下 reverseApprove——资产状态守卫必须先于
+     * GL 红冲（postingDispatcher.reverse REQUIRES_NEW）执行。修复前 reverse 先提交红冲而单据侧守卫回滚，
+     * GL 凭证孤儿；修复后守卫失败时凭证不被红冲、单据 posted 保持 true、资产终态不被触碰。
+     */
+    @Test
+    public void testAst008CapReverseGuardPrecedesGlReversal() {
+        String[] capAssetHolder = new String[1];
+        String capId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            AstTestSupport.seedPeriod(daoProvider, "2026-06", 2026, 6, ErpAstConstants.PERIOD_STATUS_OPEN);
+            AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
+            String gainLossSubjectId = AstTestSupport.seedSubject(daoProvider, "6711", "营业外支出");
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-AST008-CAP", "反审核守卫类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    AstTestSupport.seedSubject(daoProvider, "1601", "固定资产"),
+                    AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧"),
+                    AstTestSupport.seedSubject(daoProvider, "6602", "管理费用"));
+            daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(categoryId)
+                    .setDisposalGainLossSubjectId(gainLossSubjectId);
+            return seedCapitalization("CAP-AST008-001", categoryId,
+                    ErpAstConstants.SOURCE_TYPE_DIRECT_PURCHASE, new BigDecimal("12000"),
+                    LocalDate.of(2026, 6, 15), "AST-AST008-001");
+        });
+
+        submitCap(capId);
+        approveCap(capId);
+        ErpAstAsset capAsset = findAsset("AST-AST008-001");
+        capAssetHolder[0] = capAsset.getId();
+        assertEquals(ErpAstConstants.ASSET_STATUS_IN_SERVICE, capAsset.getStatus(), "资本化建卡 IN_SERVICE");
+
+        // 资产经独立处置链进入不可逆终态 SCRAPPED（资本化单保持 posted=true 不受影响）
+        String disposalId = ormTemplate.runInSession(session -> seedDisposal("DISP-AST008-001", capAsset.getId(),
+                ErpAstConstants.DISPOSAL_TYPE_SCRAPPED, BigDecimal.ZERO, LocalDate.of(2026, 7, 15)));
+        submitDisposal(disposalId);
+        approveDisposal(disposalId);
+        assertEquals(ErpAstConstants.ASSET_STATUS_SCRAPPED,
+                daoProvider.daoFor(ErpAstAsset.class).getEntityById(capAsset.getId()).getStatus(),
+                "处置链资产已 SCRAPPED（不可逆态）");
+        assertTrue(Boolean.TRUE.equals(
+                daoProvider.daoFor(ErpAstAssetCapitalization.class).getEntityById(capId).getPosted()),
+                "资本化单仍 posted=true");
+
+        // 反审核资本化：SCRAPPED 不满足 assertCanReverseCapitalize（须 IN_SERVICE）→ 守卫先于 GL 红冲抛出
+        ApiResponse<?> bad = reverseApproveCap(capId);
+        assertNotEquals(0, bad.getStatus(), "不可逆态资产反审核应被拒绝");
+        assertEquals(ErpAstErrors.ERR_AST_ASSET_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
+                "资产状态守卫领域码（修复前先红冲 GL 凭证产生孤儿）");
+
+        // GL 凭证不被红冲 + 单据/资产状态未被触碰
+        assertTrue(Boolean.TRUE.equals(
+                daoProvider.daoFor(ErpAstAssetCapitalization.class).getEntityById(capId).getPosted()),
+                "守卫失败资本化单 posted 保持 true（单据侧未被回滚改写）");
+        assertFalse(findBillLinks("CAP-AST008-001", "CAPITALIZATION").isEmpty(), "资本化凭证回链存在");
+        assertFalse(isAllVouchersReversed("CAP-AST008-001", "CAPITALIZATION"),
+                "GL 资本化凭证未被红冲（守卫先于 reverse）");
+        assertEquals(ErpAstConstants.ASSET_STATUS_SCRAPPED,
+                daoProvider.daoFor(ErpAstAsset.class).getEntityById(capAssetHolder[0]).getStatus(),
+                "资产终态 SCRAPPED 未被守卫失败路径触碰");
+    }
+
+    /**
+     * P2-CK-ast-008 回归（处置链）：处置单 posted 后资产状态漂移出可逆集（SCRAPPED/SOLD——模拟场外数据
+     * 修正回 IN_SERVICE，SCRAPPED 终态域内无出边）时 reverseApprove——assertCanReverseDispose 守卫必须
+     * 先于 GL 红冲抛出，处置凭证不被红冲、单据 posted 保持 true。
+     */
+    @Test
+    public void testAst008DisposalReverseGuardPrecedesGlReversal() {
+        String[] assetIdHolder = new String[1];
+        String disposalId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
+            String gainLossSubjectId = AstTestSupport.seedSubject(daoProvider, "6711", "营业外支出");
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-AST008-DISP", "处置守卫类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    AstTestSupport.seedSubject(daoProvider, "1601", "固定资产"),
+                    AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧"),
+                    AstTestSupport.seedSubject(daoProvider, "6602", "管理费用"));
+            daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(categoryId)
+                    .setDisposalGainLossSubjectId(gainLossSubjectId);
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-AST008-D", "处置守卫资产", categoryId, "1",
+                    new BigDecimal("12000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            assetIdHolder[0] = assetId;
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, "1", "2026-08");
+            return seedDisposal("DISP-AST008-002", assetId, ErpAstConstants.DISPOSAL_TYPE_SCRAPPED,
+                    BigDecimal.ZERO, LocalDate.of(2026, 7, 15));
+        });
+
+        submitDisposal(disposalId);
+        approveDisposal(disposalId);
+        assertEquals(ErpAstConstants.ASSET_STATUS_SCRAPPED,
+                daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetIdHolder[0]).getStatus(),
+                "处置审核资产 SCRAPPED");
+
+        // 场外漂移：资产状态被修正回 IN_SERVICE（不在 assertCanReverseDispose 可逆集 SCRAPPED/SOLD 内）
+        ormTemplate.runInSession(session -> {
+            ErpAstAsset drifted = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetIdHolder[0]);
+            drifted.setStatus(ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(drifted);
+            return null;
+        });
+
+        ApiResponse<?> bad = reverseApproveDisposal(disposalId);
+        assertNotEquals(0, bad.getStatus(), "资产漂移出可逆集后处置反审核应被拒绝");
+        assertEquals(ErpAstErrors.ERR_AST_ASSET_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
+                "资产状态守卫领域码（修复前先红冲 GL 处置凭证）");
+
+        ErpAstDisposal disposal = daoProvider.daoFor(ErpAstDisposal.class).getEntityById(disposalId);
+        assertTrue(Boolean.TRUE.equals(disposal.getPosted()), "守卫失败处置单 posted 保持 true");
+        assertFalse(findBillLinks("DISP-AST008-002", "DISPOSAL").isEmpty(), "处置凭证回链存在");
+        assertFalse(isAllVouchersReversed("DISP-AST008-002", "DISPOSAL"),
+                "GL 处置凭证未被红冲（守卫先于 reverse）");
     }
 
     // ---------- rpc helpers ----------

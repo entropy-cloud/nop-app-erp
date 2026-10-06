@@ -69,23 +69,33 @@ public class ErpAstMaintenancePostProcessor {
         ErpAstAsset asset = facade.requireAsset(m.getAssetId());
         ErpAstAssetCategory category = asset.getCategory();
 
+        // P2-CK-ast2-009（分支 i，rollbackCapitalization 配对）：「过账成功才翻 POSTED」——修复前
+        // L82 无条件 setStatus(postTargetStatus()) 在 voucherId 判定之前，GL 失败仍封死重试
+        // （assertCanPost 要求 COMPLETED）且无告警；CAPITALIZE 路径失败时 applyTreatmentCapitalize
+        // 已做资产原值/现值/净值三值增量（非幂等），不配对回滚则重试双计增量而 GL 仅一凭证。
         String voucherId;
         if (Objects.equals(m.getTreatment(), ErpAstConstants.MAINTENANCE_TREATMENT_CAPITALIZE)) {
             facade.applyTreatmentCapitalize(m, asset, context);
             facade.orm().flushSession();
             voucherId = capitalizationDispatcher.tryPost(m, asset, category);
+            if (voucherId == null) {
+                // GL 失败 → 对称回滚资产增量（F1.2 对称回滚范式，rollback 原语既有），重试安全
+                facade.rollbackCapitalization(m, context);
+            }
         } else {
             voucherId = expenseDispatcher.tryPost(m, asset, category);
         }
 
         m = facade.reload(id);
-        m.setStatus(stateMachine.postTargetStatus());
         Timestamp now = CoreMetrics.currentTimestamp();
         if (voucherId != null) {
+            m.setStatus(stateMachine.postTargetStatus());
             m.setPosted(true);
             m.setPostedAt(now);
             m.setPostedBy(facade.currentUserId());
         }
+        // voucherId == null（GL 失败）：状态保持 COMPLETED 可重试；失败告警由两 dispatcher 的
+        // dispatchFailureAlert 派发（镜像折旧 G4 分级），无 DeferredPostingSweepJob 覆盖。
         facade.maintenanceDao().updateEntity(m);
         return m;
     }

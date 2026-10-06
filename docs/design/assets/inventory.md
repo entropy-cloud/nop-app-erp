@@ -22,7 +22,7 @@ DRAFT（草稿）
 | COUNTING → RECONCILING | `reconcile` | 所有账面行已录入实盘数量 | 计算差异（盘盈/盘亏/一致），冻结行不可再改 |
 | RECONCILING → POSTED | `post`（config-gated 先 `approve`） | 所有差异行已处置（建卡/触发处置/标记调查） | 业财过账生成 ASSET_INVENTORY_ADJUSTMENT 凭证，posted=true |
 | DRAFT/COUNTING → CANCELLED | `cancel` | 非终态 | 作废，不可再过账 |
-| POSTED → （回退） | `reverse` | 已过账 | 红字凭证 + posted=false（遵守既有不可逆契约范式，纠错必经 reverse） |
+| POSTED → （回退） | `reverse` | 已过账（且无资产侧效果行——P2-CK-ast-012 前置校验，见 §五.3） | 红字凭证 + posted=false（遵守既有不可逆契约范式，纠错必经 reverse） |
 
 终态：`POSTED`、`CANCELLED`。POSTED 经 `reverse` 回到 RECONCILING（非终态回退，仅纠错路径）。
 
@@ -68,7 +68,7 @@ DRAFT（草稿）
 `reverse(id)` 仅对 POSTED 盘点单可用：
 1. 经 `AssetPostingExecutor.reverse(code, ASSET_INVENTORY_ADJUSTMENT)` 生成红字凭证，原正常凭证标记 `isReversed=true`。
 2. 盘点单 `posted=false`，状态回退 RECONCILING（允许修订后重新 post）。
-3. 盘盈新建资产 / 盘亏 SCRAPPED 资产的状态变更不在 reverse 范围内（资产状态变更不可逆，需经资产域冲销流程独立处理——与 capitalization/disposal 既有契约一致）。
+3. 盘盈新建资产 / 盘亏 SCRAPPED 资产的状态变更不在 reverse 范围内（资产状态变更不可逆，需经资产域冲销流程独立处理——与 capitalization/disposal 既有契约一致）。**P2-CK-ast-012 裁决（分支 c，2026-10-06）：存在资产侧效果的行（`newAssetId` 盘盈新卡 / `disposalId` 盘亏处置）时 `reverse` 响亮拒绝**（`ERR_AST_INVENTORY_REVERSE_ASSET_SIDE_EFFECTS`，逐行前置校验）——修复前单据轴可逆而资产轴静默残留（静默不一致）；纠错路径 = 先经资产域冲销流程处理资产侧（处置链 `reverseDisposal` / 新卡补偿），再 reverse 盘点单。资产侧自动补偿通道（reverse 内联回滚 / 专用补偿 mutation）Deferred：触发条件=产品立项盘点资产侧自动补偿。
 
 ## 六、配置项
 

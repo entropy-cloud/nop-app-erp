@@ -236,4 +236,6 @@ public interface ErpAstConstants extends ErpAstDocStatus {
     String BILL_DATA_MAINTENANCE_BANK_SUBJECT_CODE = "MAINTENANCE_BANK_SUBJECT_CODE";
     /** 存货科目编码（贷方，备件消耗，独立维修时）。 */
     String BILL_DATA_MAINTENANCE_INVENTORY_SUBJECT_CODE = "MAINTENANCE_INVENTORY_SUBJECT_CODE";
+    /** P2-CK-ast2-013（分支 a）：备件消耗额（SPARE_PART 行合计）——贷方分腿 存货(1403)/银行(1002) 的分项金额。 */
+    String BILL_DATA_MAINTENANCE_SPARE_PART_AMOUNT = "MAINTENANCE_SPARE_PART_AMOUNT";
 }

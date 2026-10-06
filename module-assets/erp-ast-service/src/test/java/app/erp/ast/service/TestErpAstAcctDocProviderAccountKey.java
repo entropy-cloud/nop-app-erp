@@ -196,6 +196,61 @@ public class TestErpAstAcctDocProviderAccountKey extends BaseTestCase {
         assertKeys(p.createFacts(e, null), "MAINTENANCE_EXPENSE", "MAINTENANCE_CLEARING");
     }
 
+    /**
+     * P2-CK-ast2-013（分支 a）回归：billData 含备件消耗额（MAINTENANCE_SPARE_PART_AMOUNT&gt;0）时贷方分腿——
+     * SPARE_PART 部分贷存货（1403，独立映射键 INVENTORY_SPARE_PART），其余贷银行（1002）；借贷平衡。
+     * 修复前 inventorySubject 读了不用（死分支），备件消耗整额误贷银行。
+     */
+    @Test
+    public void testAst2_013SparePartAmountSplitsCreditLegs() {
+        MaintenanceExpenseAcctDocProvider p = new MaintenanceExpenseAcctDocProvider();
+        PostingEvent e = event(ErpFinBusinessType.MAINTENANCE_EXPENSE);
+        BigDecimal total = new BigDecimal("300");
+        BigDecimal spare = new BigDecimal("200");
+        e.getBillData().put(ErpAstConstants.BILL_DATA_MAINTENANCE_TOTAL_COST, total);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_MAINTENANCE_LINKED_VISIT, Boolean.FALSE);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_MAINTENANCE_SPARE_PART_AMOUNT, spare);
+
+        List<VoucherFact> facts = p.createFacts(e, null);
+        assertKeys(facts, "MAINTENANCE_EXPENSE", "INVENTORY_SPARE_PART", "BANK_DEPOSIT");
+        assertEquals("1403", facts.get(1).getSubjectCode(), "备件消耗贷腿科目=1403 存货");
+        assertEquals("1002", facts.get(2).getSubjectCode(), "其余贷腿科目=1002 银行存款");
+        assertEquals(0, facts.get(1).getAmount().compareTo(spare), "备件贷腿金额=200");
+        assertEquals(0, facts.get(2).getAmount().compareTo(new BigDecimal("100")), "银行贷腿金额=100");
+        assertBalanced(facts);
+    }
+
+    /** P2-CK-ast2-013（分支 a）无备件行：单腿贷银行，行为同旧（分腿开关闭合）。 */
+    @Test
+    public void testAst2_013NoSparePartKeepsSingleBankLeg() {
+        MaintenanceExpenseAcctDocProvider p = new MaintenanceExpenseAcctDocProvider();
+        PostingEvent e = event(ErpFinBusinessType.MAINTENANCE_EXPENSE);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_MAINTENANCE_TOTAL_COST, AMT);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_MAINTENANCE_LINKED_VISIT, Boolean.FALSE);
+        // 不传 MAINTENANCE_SPARE_PART_AMOUNT（无备件行）
+
+        List<VoucherFact> facts = p.createFacts(e, null);
+        assertKeys(facts, "MAINTENANCE_EXPENSE", "BANK_DEPOSIT");
+        assertEquals(0, facts.get(1).getAmount().compareTo(AMT), "整额贷银行 100");
+        assertBalanced(facts);
+    }
+
+    /** P2-CK-ast2-013（分支 a）备件额超总额：钳制到总额（全部贷存货、无银行腿），不产生负额分腿。 */
+    @Test
+    public void testAst2_013SparePartAmountClampedToTotal() {
+        MaintenanceExpenseAcctDocProvider p = new MaintenanceExpenseAcctDocProvider();
+        PostingEvent e = event(ErpFinBusinessType.MAINTENANCE_EXPENSE);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_MAINTENANCE_TOTAL_COST, AMT);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_MAINTENANCE_LINKED_VISIT, Boolean.FALSE);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_MAINTENANCE_SPARE_PART_AMOUNT, new BigDecimal("150"));
+
+        List<VoucherFact> facts = p.createFacts(e, null);
+        assertKeys(facts, "MAINTENANCE_EXPENSE", "INVENTORY_SPARE_PART");
+        assertEquals("1403", facts.get(1).getSubjectCode(), "钳制后全额贷存货 1403");
+        assertEquals(0, facts.get(1).getAmount().compareTo(AMT), "备件贷腿金额钳制=总额 100");
+        assertBalanced(facts);
+    }
+
     private List<Map<String, Object>> lineRows(BigDecimal amt) {
         Map<String, Object> row = new LinkedHashMap<>();
         row.put("subjectCode", "1601");

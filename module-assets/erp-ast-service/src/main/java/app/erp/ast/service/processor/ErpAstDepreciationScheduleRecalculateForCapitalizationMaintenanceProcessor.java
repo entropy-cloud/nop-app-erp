@@ -43,6 +43,8 @@ public class ErpAstDepreciationScheduleRecalculateForCapitalizationMaintenancePr
         int totalMonths = asset.getUsefulLifeMonths() != null ? asset.getUsefulLifeMonths()
                 : (category != null && category.getUsefulLifeMonths() != null ? category.getUsefulLifeMonths() : 0);
 
+        // C4（plan 2026-09-21-1200-1 双批准条件）：维修资本化重算 = as-of-now 口径——应计全部已执行期，
+        // 无目标期过滤（非 ast2-007 的目标期前口径），禁止静默改为 countExecutedBefore。
         int executedMonths = facade.countExecuted(assetId);
         int remainingMonths = totalMonths - executedMonths;
 

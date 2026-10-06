@@ -83,8 +83,12 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
             seedDepreciationSchedule("203", "101", CURRENT_PERIOD,
                     new BigDecimal("999"), ErpAstConstants.SCHEDULE_STATUS_PENDING);
             // 在建工程：未转固 600 + 已转固 100（不计入）
+            // P2-CK-ast-010：KPI 余额聚合源 = CostItem.postedTransferFlag=false（修复前汇总头表
+            // accumulatedCost）——夹具按新口径补 CostItem 行：301 未转固 600 / 302 已转固 100。
             seedCip("301", new BigDecimal("600"), false);
             seedCip("302", new BigDecimal("100"), true);
+            seedCipCostItem("3011", "301", new BigDecimal("600"), false);
+            seedCipCostItem("3012", "302", new BigDecimal("100"), true);
         });
 
         Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, CTX);
@@ -164,6 +168,32 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
         assertEquals(0, total.compareTo(new BigDecimal("400")), "近 2 月折旧合计 150+250=400");
     }
 
+    /**
+     * P2-CK-ast-010 回归：部分转固后 cipBalance = 未转固成本（按 CostItem postedTransferFlag=false 汇总）。
+     * 修复前汇总 CIP 头表 accumulatedCost——部分转固（CostItem 整行置 postedTransferFlag=true，头表只增不减）
+     * 后已转固部分被双计：夹具 CIP-B 头表累计 700，其中 100 已转固 → KPI 余额应为 600 而非 700；
+     * 完工 CIP-C 的未转固成本行不计入（父 CIP isCompleted=true 排除）。
+     */
+    @Test
+    public void testAst010CipBalanceExcludesTransferredCost() {
+        ormTemplate.runInSession(() -> {
+            // CIP-A：在建、未转固 400 → 全额计入
+            seedCip("401", new BigDecimal("400"), false);
+            seedCipCostItem("4011", "401", new BigDecimal("400"), false);
+            // CIP-B：在建、头表累计 700 = 未转固 600 + 已转固 100（部分转固）→ 仅 600 计入
+            seedCip("402", new BigDecimal("700"), false);
+            seedCipCostItem("4021", "402", new BigDecimal("600"), false);
+            seedCipCostItem("4022", "402", new BigDecimal("100"), true);
+            // CIP-C：已完工（父 CIP 排除）——其未转固成本行不进 KPI 余额
+            seedCip("403", new BigDecimal("999"), true);
+            seedCipCostItem("4031", "403", new BigDecimal("999"), false);
+        });
+
+        Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, CTX);
+        assertEquals(0, ((BigDecimal) kpi.get("cipBalance")).compareTo(new BigDecimal("1000")),
+                "cipBalance = 未转固成本 400+600=1000（已转固 100 与完工 CIP 999 均不计入；修复前=1707 双计）");
+    }
+
     // ---------- helpers ----------
 
     private void seedCategory(String id, String name) {
@@ -231,6 +261,25 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
         c.setAmountSource(balance);
         c.setAmountFunctional(balance);
         dao.saveEntity(c);
+    }
+
+    /** P2-CK-ast-010：KPI 余额聚合源 CostItem 行（postedTransferFlag 标记转固粒度）。 */
+    private void seedCipCostItem(String id, String cipId, BigDecimal amount, boolean postedTransfer) {
+        IEntityDao<app.erp.ast.dao.entity.ErpAstCipCostItem> dao =
+                daoProvider.daoFor(app.erp.ast.dao.entity.ErpAstCipCostItem.class);
+        app.erp.ast.dao.entity.ErpAstCipCostItem item = dao.newEntity();
+        item.orm_propValue(1, id);
+        item.setCipId(cipId);
+        item.setOrgId("1");
+        item.setLineNo(1);
+        item.setCostType(ErpAstConstants.CIP_COST_TYPE_PURCHASE);
+        item.setAmountSource(amount);
+        item.setExchangeRate(BigDecimal.ONE);
+        item.setAmountFunctional(amount);
+        item.setPostedTransferFlag(postedTransfer);
+        item.setCurrencyId("1");
+        item.setBusinessDate(LocalDate.of(2026, 1, 1));
+        dao.saveEntity(item);
     }
 
     private static String minusMonthsPeriod(int monthsAgo) {

@@ -1,3 +1,8 @@
+**2026-10-06 per-site 裁决（plan `2026-09-21-1200-1` F3.11 批，1572→1574，+2 合法 baseline-raise）**：
+1. `MaintenanceExpensePostingDispatcher#sumSparePartAmount` 新增 `daoFor(ErpAstMaintenanceCost.class)`——ast2-013 分支 a 备件分腿金额的同域成本行聚合（该类头部既有 A/U20 豁免登记组件，同域只读批量聚合，逐条 I*Biz 管道不适用批量场景）；
+2. `ErpAstDepreciationScheduleProcessor#countExecutedBefore` 新增 `daoFor(ErpAstDepreciationSchedule.class)`——ast2-007 目标期前口径计数（同类既有 countExecuted 站点的同实体伴随站点，countByQuery 只读）。
+两站点均为审计 finding 修复必需的同域只读聚合/计数，非绕管道；checker 实测 1574。residual 承接：`## BASELINE (machine-readable)` 块 R2c: 1553 跨批滞后 residual（见下方 F3.9 注记）不变，独立追平裁决 successor 维持。
+
 **2026-09-17 per-site 裁决（plan `2026-09-17-0600-1` F3.9 批，1559→1569，+10 合法 baseline-raise；注记为 2026-10-06 successor-followup-closure-roadmap WI-04 f39 结束审计阻塞整改补落——原批门控声称的本注记当时未落盘）**：
 本批 21 个 main 文件（+464/−61）新增 daoFor 站点 11 处、原位替换 1 处（`ErpFinBudgetScenarioCarryForwardProcessor` 的 `daoFor(ErpFinVoucherLine.class)` 行内重构），净 +10，全部为 fin2/fin3/fin4 审计 finding 修复必需的域内查询/删除/锁点，非绕管道：
 1. `BankLedgerQuery` ×2 `daoFor(ErpFinVoucherLine.class)`——fin4-011 窗口凭证预载/fin4-009 勾对行 id 集合查询；

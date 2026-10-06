@@ -374,6 +374,11 @@ public class TestErpAstExtFieldsAndAuditTrail extends JunitAutoTestCase {
             data.put("acquisitionDate", LocalDate.of(2026, 7, 1).toString());
             data.put("originalValue", new BigDecimal("10000"));
             data.put("currentValue", new BigDecimal("10000"));
+            // P2-CK-ast2-014：折旧三要素齐备——本类用例覆盖 DRAFT→IN_SERVICE 生命周期迁移，
+            // 迁移时点三要素完备性校验（C1 裁决）要求种子满足业务前置（state-machine.md §2）。
+            data.put("usefulLifeMonths", 60);
+            data.put("residualValue", new BigDecimal("500"));
+            data.put("depreciationMethod", "STRAIGHT_LINE");
             data.put("status", "DRAFT");
             data.put("currencyId", "1");
             if (modelId != null) {

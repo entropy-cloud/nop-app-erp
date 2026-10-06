@@ -218,6 +218,74 @@ public class TestErpAstCatchUpDepreciation extends JunitAutoTestCase {
         assertEquals(1, links.size(), "幂等：仅 1 张补提汇总凭证回链");
     }
 
+    /**
+     * P2-CK-ast2-007 回归：补提 elapsed 目标期前口径（DECLINING 场景）。
+     * 夹具：25 条早于目标期（2026-07）的 EXECUTED 行（2024-05..2026-06 共 26 个槽位，缺漏 2026-03）
+     * + 1 条晚于目标期的 EXECUTED 行（2026-08，乱序执行异常态）。补提 2026-03 时 elapsed 应=25
+     * （修复前全量 count=26 被污染）：DECLINING 48 期、nbv=23000 → 修复后 remaining=23 落直线分支
+     * 23000/23=1000 精确；修复前 remaining=22 → 1045.4545 错位。
+     */
+    @Test
+    public void testAst2007DecliningElapsedIgnoresExecutedRowsAfterTargetPeriod() {
+        String assetId = ormTemplate.runInSession(session -> {
+            seedBasics();
+            // 补齐 2024-05..2026-04 开放期间（seedBasics 已覆盖 2026-05..2026-09）
+            YearMonth start = YearMonth.parse("2024-05");
+            YearMonth end = YearMonth.parse("2026-04");
+            for (YearMonth ym = start; !ym.isAfter(end); ym = ym.plusMonths(1)) {
+                AstTestSupport.seedPeriod(daoProvider, ym.toString(), ym.getYear(), ym.getMonthValue(),
+                        ErpAstConstants.PERIOD_STATUS_OPEN);
+            }
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-007", "DECLINING口径类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_DECLINING, 48, null, null, null);
+            String newAssetId = AstTestSupport.seedAsset(daoProvider, "AST-CU-007", "DECLINING口径资产", categoryId, "1",
+                    new BigDecimal("48000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_DECLINING, 48,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            // 25 条早于目标期的 EXECUTED 行（各期 1000，累计 25000，净值 23000），缺漏 2026-03
+            YearMonth rowStart = YearMonth.parse("2024-05");
+            YearMonth rowEnd = YearMonth.parse("2026-06");
+            YearMonth skipped = YearMonth.parse("2026-03");
+            int seq = 0;
+            for (YearMonth ym = rowStart; !ym.isAfter(rowEnd); ym = ym.plusMonths(1)) {
+                if (ym.equals(skipped)) {
+                    continue;
+                }
+                seq++;
+                AstTestSupport.seedExecutedPostedSchedule(daoProvider, newAssetId, "1", ym.toString(),
+                        new BigDecimal("1000"), new BigDecimal(1000L * seq),
+                        new BigDecimal(48000L - 1000L * seq));
+            }
+            // 污染行：晚于目标期 2026-07 的 EXECUTED 行（2026-08）——不应计入补提 elapsed
+            AstTestSupport.seedExecutedPostedSchedule(daoProvider, newAssetId, "1", "2026-08",
+                    new BigDecimal("1000"), new BigDecimal("26000"), new BigDecimal("22000"));
+            // 资产卡片汇总与 25 条在目标期前的已执行行一致
+            ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(newAssetId);
+            asset.setAccumulatedDepreciation(new BigDecimal("25000"));
+            asset.setNetBookValue(new BigDecimal("23000"));
+            daoProvider.daoFor(ErpAstAsset.class).saveEntity(asset);
+            return newAssetId;
+        });
+
+        List<ErpAstDepreciationSchedule> created = ormTemplate.runInSession(session ->
+                scheduleBiz.catchUpDepreciation(assetId, "2026-07", List.of("2026-03"), CTX));
+
+        assertEquals(1, created.size(), "补提落行 1 条");
+        ErpAstDepreciationSchedule row = created.get(0);
+        assertEquals("2026-03", row.getPeriod(), "漏提期=2026-03");
+        assertEquals(0, row.getActualAmount().compareTo(new BigDecimal("1000")),
+                "ast2-007：elapsed=目标期前已执行期数 25 → remaining=23 → 23000/23=1000"
+                        + "（修复前全量 count=26 污染 → 1045.4545）");
+        assertEquals(0, row.getAccumulatedDepreciation().compareTo(new BigDecimal("26000")),
+                "计划行累计折旧=26000");
+        assertEquals(0, row.getNetBookValue().compareTo(new BigDecimal("22000")), "计划行净值=22000");
+
+        ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
+        assertEquals(0, nz(asset.getAccumulatedDepreciation()).compareTo(new BigDecimal("26000")),
+                "资产累计折旧=26000（不双计）");
+        assertEquals(0, nz(asset.getNetBookValue()).compareTo(new BigDecimal("22000")), "资产净值=22000");
+    }
+
     // ---------- 出售补提接线（reuse P1-RC-029 投影） ----------
 
     @Test

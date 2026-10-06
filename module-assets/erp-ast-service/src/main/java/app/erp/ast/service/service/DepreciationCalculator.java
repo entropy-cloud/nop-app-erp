@@ -10,7 +10,7 @@ import java.math.RoundingMode;
  * （折旧后净值不得低于残值，§1.4）。纯函数式静态方法，由 {@code ErpAstDepreciationScheduleBizModel} 调用。
  *
  * <ul>
- *   <li>直线法：(原值−残值)/使用年限月数，每期等额。</li>
+ *   <li>直线法：(净值−残值)/剩余期数（P2-CK-ast-016 分支 A 净值轨迹口径；名义轨迹与 (原值−残值)/总期数 代数恒等）。</li>
  *   <li>双倍余额递减：2×账面净值/使用年限月数；最后 24 个月（剩余寿命≤2 年）改为直线法 (账面净值−残值)/剩余月数。</li>
  *   <li>工作量法：(原值−残值)/预计总工作量×本期工作量。</li>
  * </ul>
@@ -62,7 +62,15 @@ public final class DepreciationCalculator {
             }
             case ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE:
             default: {
-                amount = original.subtract(residual).divide(BigDecimal.valueOf(months), SCALE, RoundingMode.HALF_UP);
+                // P2-CK-ast-016≡ast2-010（分支 A）：净值轨迹口径——(净值−残值)/剩余期。
+                // 名义轨迹下与 (原值−残值)/总期数 代数恒等（净值=原值−k·m ⟹ 商≡m，SCALE 内舍入反馈
+                // 可致 ≤1e-4 漂移）；减值/重估后随净值轨迹下降。修复前恒用原值口径，减值后未来折旧不降。
+                int elapsed = Math.max(elapsedMonths, 0);
+                int remaining = months - elapsed;
+                if (remaining <= 0) {
+                    remaining = 1;
+                }
+                amount = nbv.subtract(residual).divide(BigDecimal.valueOf(remaining), SCALE, RoundingMode.HALF_UP);
                 break;
             }
         }

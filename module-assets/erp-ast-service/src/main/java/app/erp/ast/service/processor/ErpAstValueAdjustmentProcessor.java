@@ -265,13 +265,10 @@ public class ErpAstValueAdjustmentProcessor {
         asset.setNetBookValue(newNbv);
         asset.setCurrentValue(newNbv);
 
-        if (shouldAdjustDepreciationBase(type)) {
-            BigDecimal residual = nz(asset.getResidualValue());
-            BigDecimal newDepreciableBase = newNbv.subtract(residual);
-            if (newDepreciableBase.signum() < 0) {
-                newDepreciableBase = BigDecimal.ZERO;
-            }
-        }
+        // P2-CK-ast-016≡ast2-010（分支 A）：折旧基数联动经 DepreciationCalculator 净值轨迹口径实现
+        // （减值/重估后未来折旧随 NBV 自动下降），本处理器不再单独计算基数——原 newDepreciableBase
+        // 死代码块（算后弃置）删除；config `erp-ast.revaluation-adjust-depreciation-base` 退役为
+        // no-op（净值轨迹使基数联动恒开；键保留向后兼容，分离基数语义归 Deferred 基数持久列）。
 
         daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
         auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_VALUATION,
@@ -305,16 +302,6 @@ public class ErpAstValueAdjustmentProcessor {
                 new ErpAstAssetAuditRecorder.Before(asset.getStatus(), asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
                 "ErpAstValueAdjustment", adjustment.getId(),
                 "Value adjustment reversal (" + type + " " + amount + "): " + nz(fromValue) + " -> " + restoredNbv);
-    }
-
-    protected boolean shouldAdjustDepreciationBase(String adjustmentType) {
-        if (Objects.equals(adjustmentType, ErpAstConstants.ADJUSTMENT_TYPE_IMPAIRMENT)) {
-            return true;
-        }
-        if (Objects.equals(adjustmentType, ErpAstConstants.ADJUSTMENT_TYPE_REVALUATION_UP)) {
-            return AppConfig.var(ErpAstConstants.CONFIG_REVALUATION_ADJUST_DEPRECIATION_BASE, true);
-        }
-        return false;
     }
 
     public boolean isApprovalRequired() {

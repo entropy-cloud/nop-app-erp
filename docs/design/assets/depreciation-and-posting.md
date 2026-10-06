@@ -347,6 +347,7 @@
 以下为实现相对上文设计的明确偏离/收窄，均为 Non-Goal：
 
 - **资产减值/重估（VALUE_ADJUSTMENT）**：§一/§四描述的减值/重估凭证；`ErpAstValueAdjustmentBizModel` 实现三轴状态机（docStatus/approveStatus/posted）+ VALUE_ADJUSTMENT 过账 Provider（按 adjustmentType 分支科目分解）+ 资产净值/折旧基数联动 + 反向红冲。Deferred 仅余自动减值测试（可收回金额计算 + cron），触发条件：减值测试自动化需求 + 可收回金额数据源就绪时。
+- **折旧基数联动实现口径（P2-CK-ast-016≡ast2-010 分支 A，2026-10-06）**：直线法改**净值轨迹口径** `(净值−残值)/剩余期`（DepreciationCalculator）——名义轨迹与 (原值−残值)/总期数 代数恒等，减值/重估后未来折旧随净值自动下降（§4.1「减值后折旧基数调整」的代码落地）；config `erp-ast.revaluation-adjust-depreciation-base` **退役为 no-op**（净值轨迹使基数联动恒开；分离基数语义需持久列，归 Deferred 触发条件=基数与净值分离的核算需求立项）。DECLINING 本以净值为输入经 ast2-007 elapsed 修正自动传导。
 - **库存物料转固（INVENTORY 来源）**：§2.1 库存转固需跨域调 `IErpInvStockMoveBiz` 生成出库移动单，本期不支持；资本化 `sourceType` 仅支持 `DIRECT_PURCHASE(30)` + `CIP(20)`。触发条件：库存转固业务上线。
 - **nop-job 定时自动折旧**：§5.1 定时任务触发折旧本期 Deferred；本实现提供手动 `executeBatchDepreciation`，期末结账可经 I*Biz 调用。触发条件：nop-job 接线。
 - **工作量法（UNITS）计算通路**：§1.3 工作量法公式 Deferred——ORM 无工作量（本期工作量/累计工作量）列，无法落计算输入；实现侧 `executeDepreciation`/`catchUpDepreciation` 对 UNITS 资产显式抛 `ERR_DEPRECIATION_UNITS_NOT_CONFIGURED`（F2.9 收窄，禁止静默恒 0）。触发条件：工作量数据模型（列 + 维护入口）需求落地。

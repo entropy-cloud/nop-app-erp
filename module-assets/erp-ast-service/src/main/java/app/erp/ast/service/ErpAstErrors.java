@@ -120,7 +120,7 @@ public interface ErpAstErrors {
             ARG_ASSET_CODE);
     ErrorCode ERR_DEPRECIATION_USEFUL_LIFE_INVALID = ErrorCode.define(
             "erp.err.ast.depreciation.useful-life-invalid",
-            "资产 {assetCode} 使用年限或折旧方法无效，无法计算折旧",
+            "资产 {assetCode} 折旧三要素无效：使用年限须为正数、残值须小于原值、折旧方法须在字典内",
             ARG_ASSET_CODE);
     // P1-CK-ast2-001：工作量法（UNITS）运行时零数据面（ORM 无工作量列）——拒绝静默零，改为显式业务错误
     ErrorCode ERR_DEPRECIATION_UNITS_NOT_CONFIGURED = ErrorCode.define(
@@ -358,6 +358,22 @@ public interface ErpAstErrors {
             "erp.err.ast.merge.no-sources",
             "资产合并单 {mergeCode} 没有源资产行",
             ARG_MERGE_CODE);
+    ErrorCode ERR_AST_MERGE_SOURCE_NOT_FOUND = ErrorCode.define(
+            "erp.err.ast.merge.source-not-found",
+            "资产合并单 {mergeCode} 第 {lineIndex} 行源资产不存在（悬空引用）",
+            ARG_MERGE_CODE, "lineIndex");
+    ErrorCode ERR_AST_MERGE_SOURCE_DUPLICATE = ErrorCode.define(
+            "erp.err.ast.merge.source-duplicate",
+            "资产合并单 {mergeCode} 源资产重复：{assetCode}",
+            ARG_MERGE_CODE, ARG_ASSET_CODE);
+    ErrorCode ERR_AST_INVENTORY_REVERSE_ASSET_SIDE_EFFECTS = ErrorCode.define(
+            "erp.err.ast.inventory.reverse-asset-side-effects",
+            "盘点单 {inventoryCode} 第 {lineNo} 行存在资产侧效果（盘盈新卡/盘亏处置），reverse 须先经资产域冲销流程处理",
+            ARG_INVENTORY_CODE, "lineNo");
+    ErrorCode ERR_CIP_REVERSE_OWNERSHIP_MISMATCH = ErrorCode.define(
+            "erp.err.ast.cip.reverse-ownership-mismatch",
+            "CIP {cipCode} 反向移交失败：资本化单 {capitalizationId} 的成本项不属于本 CIP",
+            ARG_CIP_CODE, "capitalizationId");
     ErrorCode ERR_AST_MERGE_ALREADY_POSTED = ErrorCode.define(
             "erp.err.ast.merge.already-posted",
             "资产合并单 {mergeCode} 已执行过账，不允许重复执行",

@@ -220,10 +220,21 @@ public class ErpAstMergeProcessor {
                 ErpAstConstants.CONFIG_SPLIT_MERGE_ALLOW_CROSS_CATEGORY, false);
         String firstCategory = null;
         String firstCurrency = null;
+        java.util.Set<String> seenSourceIds = new java.util.HashSet<>();
         for (int i = 0; i < sources.size(); i++) {
             ErpAstAsset src = sources.get(i);
+            // P2-CK-ast-013：悬空源引用拒绝（对齐 Split 范式）——修复前 null 放行、
+            // executeApprove 价值汇总 NPE。
             if (src == null) {
-                continue;
+                throw new NopException(ErpAstErrors.ERR_AST_MERGE_SOURCE_NOT_FOUND)
+                        .param(ErpAstErrors.ARG_MERGE_CODE, merge.getCode())
+                        .param("lineIndex", i + 1);
+            }
+            // P2-CK-ast-014：源资产去重——修复前同一资产多行价值双计。
+            if (!seenSourceIds.add(src.getId())) {
+                throw new NopException(ErpAstErrors.ERR_AST_MERGE_SOURCE_DUPLICATE)
+                        .param(ErpAstErrors.ARG_MERGE_CODE, merge.getCode())
+                        .param(ErpAstErrors.ARG_ASSET_CODE, src.getCode());
             }
             String status = src.getStatus();
             if (!Objects.equals(status, ErpAstConstants.ASSET_STATUS_IN_SERVICE)) {

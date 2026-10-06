@@ -498,6 +498,123 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
         assertTrue(bad.getStatus() != 0, "二次红冲应被拒绝");
     }
 
+    /**
+     * P2-CK-ast2-009 回归（EXPENSE 路径）：GL 过账失败 → post 调用本身成功返回但状态保持 COMPLETED、
+     * posted=false（「过账成功才翻 POSTED」，对齐 VA voucherId 门控范式）且可重试——补齐科目后重试翻
+     * POSTED。失败告警派发面（dispatchFailureAlert）为纯单元断言，见 posting 包
+     * {@code TestAstPostingFaultInjection} 的 recordingNotify 桩用例。
+     *
+     * <p>确定性诱导 GL 失败：省略维修费用科目 6602（类别 expenseSubjectId=null → billData 回退默认
+     * 6602，引擎 resolveSubjects 抛 ERR_SUBJECT_NOT_FOUND → expenseDispatcher.tryPost catch 返回 null）。
+     */
+    @Test
+    public void testAst2_009ExpenseGlFailureKeepsCompletedAndRetryable() {
+        String mntId = ormTemplate.runInSession(session -> {
+            AstTestSupport.seedAcctSchema(daoProvider, "1");
+            AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
+            // 故意省略 6602（仅 seed 贷方腿 1002 银行存款）→ 费用化过账 resolveSubjects 失败
+            AstTestSupport.seedSubject(daoProvider, "1002", "银行存款");
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-MNT-009E", "费用悬挂类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-009E", "费用悬挂资产", categoryId, "1",
+                    new BigDecimal("50000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            return createMaintenanceEntity(assetId, "MNT-009E-001", "费用悬挂维修单", null);
+        });
+
+        submit(mntId);
+        startWork(mntId);
+        addCostLine(mntId, ErpAstConstants.MAINTENANCE_COST_TYPE_LABOR, new BigDecimal("8000"));
+        completeWork(mntId);
+        decideTreatment(mntId, ErpAstConstants.MAINTENANCE_TREATMENT_EXPENSE, null);
+        approve(mntId);
+
+        // GL 失败：post 调用本身不抛（吞异常返回 null voucherId），状态保持 COMPLETED 可重试
+        assertEquals(0, post(mntId).getStatus(), "GL 失败时 post 调用本身成功（不向调用方抛错）");
+        ErpAstMaintenance afterFail = daoProvider.daoFor(ErpAstMaintenance.class).getEntityById(mntId);
+        assertEquals(ErpAstConstants.MAINTENANCE_STATUS_COMPLETED, afterFail.getStatus(),
+                "ast2-009：GL 失败状态保持 COMPLETED（修复前无条件翻 POSTED 封死重试）");
+        assertFalse(Boolean.TRUE.equals(afterFail.getPosted()), "posted=false 悬挂");
+        assertTrue(findBillLinks("MNT-009E-001", "MAINTENANCE_EXPENSE").isEmpty(),
+                "无 MAINTENANCE_EXPENSE 凭证回链（过账未成功）");
+
+        // 可重试：补齐科目 6602 后重试 post → 翻 POSTED
+        ormTemplate.runInSession(session -> {
+            AstTestSupport.seedSubject(daoProvider, "6602", "维修费用");
+            return null;
+        });
+        assertEquals(0, post(mntId).getStatus(), "重试 post 成功");
+        ErpAstMaintenance afterRetry = daoProvider.daoFor(ErpAstMaintenance.class).getEntityById(mntId);
+        assertEquals(ErpAstConstants.MAINTENANCE_STATUS_POSTED, afterRetry.getStatus(), "重试后状态 POSTED");
+        assertTrue(Boolean.TRUE.equals(afterRetry.getPosted()), "重试后 posted=true");
+        assertFalse(findBillLinks("MNT-009E-001", "MAINTENANCE_EXPENSE").isEmpty(),
+                "重试生成 MAINTENANCE_EXPENSE 凭证回链");
+    }
+
+    /**
+     * P2-CK-ast2-009 回归（CAPITALIZE 路径，分支 i rollbackCapitalization 配对）：GL 失败 → 资产原值
+     * 对称回滚（applyTreatmentCapitalize 非幂等增量被配对撤销，重试安全），状态保持 COMPLETED 可重试；
+     * 重试成功后原值单倍增量（不双计）。
+     *
+     * <p>确定性诱导 GL 失败：省略固定资产科目 1601（类别 subjectId=null → Dr 腿回退默认 1601 缺失 →
+     * capitalizationDispatcher.tryPost 返回 null）。
+     */
+    @Test
+    public void testAst2_009CapitalizeGlFailureRollsBackOriginalValueAndRetryable() {
+        String[] assetHolder = new String[1];
+        String mntId = ormTemplate.runInSession(session -> {
+            AstTestSupport.seedAcctSchema(daoProvider, "1");
+            AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
+            // 故意省略 1601（仅 seed 贷方腿 1002）→ 资本化过账 resolveSubjects 失败
+            AstTestSupport.seedSubject(daoProvider, "1002", "银行存款");
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-MNT-009C", "资本化悬挂类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 24, null, null, null);
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-009C", "资本化悬挂资产", categoryId, "1",
+                    new BigDecimal("100000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 24,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            assetHolder[0] = assetId;
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, "1", "2026-08");
+            return createMaintenanceEntity(assetId, "MNT-009C-001", "资本化悬挂维修单", null);
+        });
+
+        submit(mntId);
+        startWork(mntId);
+        addCostLine(mntId, ErpAstConstants.MAINTENANCE_COST_TYPE_LABOR, new BigDecimal("20000"));
+        completeWork(mntId);
+        decideTreatment(mntId, ErpAstConstants.MAINTENANCE_TREATMENT_CAPITALIZE, new BigDecimal("20000"));
+        approve(mntId);
+
+        assertEquals(0, post(mntId).getStatus(), "GL 失败时 post 调用本身成功");
+        ErpAstMaintenance afterFail = daoProvider.daoFor(ErpAstMaintenance.class).getEntityById(mntId);
+        assertEquals(ErpAstConstants.MAINTENANCE_STATUS_COMPLETED, afterFail.getStatus(),
+                "ast2-009：CAPITALIZE 路径 GL 失败状态保持 COMPLETED");
+        assertFalse(Boolean.TRUE.equals(afterFail.getPosted()), "posted=false 悬挂");
+        assertTrue(findBillLinks("MNT-009C-001", "MAINTENANCE_CAPITALIZATION").isEmpty(),
+                "无 MAINTENANCE_CAPITALIZATION 凭证回链");
+
+        // 分支 i：rollbackCapitalization 配对——资产原值对称回滚（单倍增量被撤销，重试安全）
+        ErpAstAsset afterRollback = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetHolder[0]);
+        assertEquals(0, nz(afterRollback.getOriginalValue()).compareTo(new BigDecimal("100000")),
+                "GL 失败后原值回滚=100000（applyTreatmentCapitalize 增量被配对撤销，不残留半程增量）");
+
+        // 可重试：补齐 1601 后重试 post → POSTED + 原值单倍增量（不双计）
+        ormTemplate.runInSession(session -> {
+            AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
+            return null;
+        });
+        assertEquals(0, post(mntId).getStatus(), "重试 post 成功");
+        ErpAstMaintenance afterRetry = daoProvider.daoFor(ErpAstMaintenance.class).getEntityById(mntId);
+        assertEquals(ErpAstConstants.MAINTENANCE_STATUS_POSTED, afterRetry.getStatus(), "重试后状态 POSTED");
+        assertTrue(Boolean.TRUE.equals(afterRetry.getPosted()), "重试后 posted=true");
+        ErpAstAsset afterRetryAsset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetHolder[0]);
+        assertEquals(0, nz(afterRetryAsset.getOriginalValue()).compareTo(new BigDecimal("120000")),
+                "重试成功原值=120000（单倍增量 20000，rollback 配对保证不双计）");
+        assertFalse(findBillLinks("MNT-009C-001", "MAINTENANCE_CAPITALIZATION").isEmpty(),
+                "重试生成 MAINTENANCE_CAPITALIZATION 凭证回链");
+    }
+
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> submit(String id) {
