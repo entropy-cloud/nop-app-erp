@@ -567,6 +567,10 @@
       },
       {
         "allowWrite": true,
+        "name": "scheduleTocProcessor"
+      },
+      {
+        "allowWrite": true,
         "name": "schedulingProcessor"
       },
       {
@@ -585,6 +589,10 @@
           "io.nop.biz.crud.EntityData",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "discardFailedRowState",
+        "parameterTypes": []
       },
       {
         "name": "illegalTransition",
@@ -918,11 +926,19 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "bottleneckDetector"
+      },
+      {
+        "allowWrite": true,
         "name": "daoProvider"
       },
       {
         "allowWrite": true,
         "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
+        "name": "schedulingSolvers"
       }
     ],
     "methods": [
@@ -963,6 +979,12 @@
       {
         "name": "loadEnabledRoutings",
         "parameterTypes": []
+      },
+      {
+        "name": "loadFrozenPlanned",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
       },
       {
         "name": "loadMaintenanceConstraints",
@@ -1081,10 +1103,21 @@
         ]
       },
       {
+        "name": "resolveSolver",
+        "parameterTypes": []
+      },
+      {
         "name": "run",
         "parameterTypes": [
           "app.erp.aps.dao.entity.ErpApsSchedule",
           "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "runToc",
+        "parameterTypes": [
+          "app.erp.aps.dao.entity.ErpApsSchedule",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -1124,6 +1157,21 @@
     ],
     "methods": [],
     "name": "app.erp.aps.service.processor.ErpApsSchedulingScheduleForwardProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "facade"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.aps.service.processor.ErpApsSchedulingScheduleTocProcessor"
   },
   {
     "allDeclaredConstructors": true,
@@ -1200,6 +1248,35 @@
       }
     ],
     "name": "app.erp.aps.service.processor.ErpApsWorkOrderToOperationProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "capacityProviders"
+      },
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.aps.service.scheduling.ApsBottleneckDetector"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.aps.service.scheduling.GreedyApsSchedulingSolver"
   },
   {
     "allDeclaredConstructors": true,
@@ -1848,6 +1925,13 @@
         "name": "validateExtFieldValues",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstAsset"
+        ]
+      },
+      {
+        "name": "validateExtFieldValues",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAsset",
+          "boolean"
         ]
       }
     ],
@@ -2501,6 +2585,62 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "assetBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "scheduleBiz"
+      }
+    ],
+    "methods": [
+      {
+        "name": "findAssetByCode",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "findSchedule",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "findSchedulesByVoucherId",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "rollbackCatchUpSchedules",
+        "parameterTypes": [
+          "app.erp.fin.service.posting.VoucherReversedEvent",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "rollbackDepreciationSchedule",
+        "parameterTypes": [
+          "app.erp.fin.service.posting.VoucherReversedEvent",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
+    "name": "app.erp.ast.service.posting.ErpAstDepreciationReversalListener"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
     "fields": [],
     "methods": [],
     "name": "app.erp.ast.service.posting.MaintenanceCapitalizationAcctDocProvider"
@@ -2610,6 +2750,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAssetCapitalization",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isApproved",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstAssetCapitalization"
@@ -2696,6 +2844,10 @@
       },
       {
         "allowWrite": true,
+        "name": "scheduleBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "scheduleStateMachine"
       },
       {
@@ -2728,6 +2880,13 @@
         "name": "clearPosted",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstAssetCapitalization"
+        ]
+      },
+      {
+        "name": "countExecutedDepreciation",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
         ]
       },
       {
@@ -2958,6 +3117,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAssetCapitalization",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstAssetCapitalization"
@@ -3035,6 +3202,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAssetCapitalization",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isRejected",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstAssetCapitalization"
@@ -3098,6 +3273,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAssetCapitalization",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstAssetCapitalization"
@@ -3152,6 +3335,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstAssetCapitalization"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAssetCapitalization",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -3762,6 +3953,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstDisposal",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isApproved",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstDisposal"
@@ -4115,6 +4314,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstDisposal",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstDisposal"
@@ -4192,6 +4399,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstDisposal",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isRejected",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstDisposal"
@@ -4255,6 +4470,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstDisposal",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstDisposal"
@@ -4312,6 +4535,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstDisposal",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstDisposal"
@@ -4366,6 +4597,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstInventory"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstInventory",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -4759,6 +4998,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMaintenance",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isApproved",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstMaintenance"
@@ -5147,6 +5394,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMerge",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isApproved",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstMerge"
@@ -5217,6 +5472,14 @@
         "name": "getDocStatus",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstMerge"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMerge",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -5300,6 +5563,23 @@
         ]
       },
       {
+        "name": "createTargetAsset",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMerge",
+          "java.util.List",
+          "java.util.List",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.lang.String",
+          "int",
+          "int",
+          "java.time.LocalDate",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "currentApproveStatus",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstMerge"
@@ -5345,6 +5625,18 @@
         ]
       },
       {
+        "name": "generateDepreciationScheduleForTarget",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMerge",
+          "app.erp.ast.dao.entity.ErpAstAsset",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.lang.String",
+          "int",
+          "int"
+        ]
+      },
+      {
         "name": "generateTargetCode",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstMerge"
@@ -5382,6 +5674,12 @@
           "java.lang.String",
           "java.lang.String",
           "io.nop.api.core.exceptions.NopException"
+        ]
+      },
+      {
+        "name": "inheritedMonths",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAsset"
         ]
       },
       {
@@ -5427,6 +5725,12 @@
         ]
       },
       {
+        "name": "remainingMonths",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAsset"
+        ]
+      },
+      {
         "name": "requireMerge",
         "parameterTypes": [
           "java.lang.String",
@@ -5443,6 +5747,13 @@
         "name": "resolveEarliestAcquisitionDate",
         "parameterTypes": [
           "java.util.List"
+        ]
+      },
+      {
+        "name": "resolveElapsedMonths",
+        "parameterTypes": [
+          "java.util.List",
+          "int"
         ]
       },
       {
@@ -5542,6 +5853,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMerge",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstMerge"
@@ -5619,6 +5938,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMerge",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isRejected",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstMerge"
@@ -5682,6 +6009,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMerge",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstMerge"
@@ -5739,6 +6074,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMerge",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstMerge"
@@ -5793,6 +6136,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstSplit"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstSplit",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -5869,6 +6220,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstSplit",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "notFoundException",
         "parameterTypes": [
           "java.lang.String"
@@ -5933,6 +6292,13 @@
       }
     ],
     "methods": [
+      {
+        "name": "allocatedResidual",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAsset",
+          "app.erp.ast.dao.entity.ErpAstSplitLine"
+        ]
+      },
       {
         "name": "applyRemainder",
         "parameterTypes": [
@@ -6197,6 +6563,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstSplit",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstSplit"
@@ -6274,6 +6648,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstSplit",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isRejected",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstSplit"
@@ -6337,6 +6719,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstSplit",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstSplit"
@@ -6394,6 +6784,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstSplit",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstSplit"
@@ -6448,6 +6846,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstValueAdjustment"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstValueAdjustment",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -6521,6 +6927,14 @@
         "name": "getDocStatus",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstValueAdjustment"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstValueAdjustment",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -6809,6 +7223,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstValueAdjustment",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstValueAdjustment"
@@ -6886,6 +7308,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstValueAdjustment",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isRejected",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstValueAdjustment"
@@ -6949,6 +7379,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstValueAdjustment",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstValueAdjustment"
@@ -7003,6 +7441,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstValueAdjustment"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstValueAdjustment",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -8050,6 +8496,12 @@
         ]
       },
       {
+        "name": "resolveMaterialIdByCode",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "verifySignature",
         "parameterTypes": [
           "java.lang.String",
@@ -8646,6 +9098,13 @@
         ]
       },
       {
+        "name": "defaultPrepareSave",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "defaultPrepareUpdate",
         "parameterTypes": [
           "io.nop.biz.crud.EntityData",
@@ -8678,6 +9137,13 @@
         "name": "defaultPrepareDelete",
         "parameterTypes": [
           "io.nop.orm.IOrmEntity",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "defaultPrepareSave",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -10824,6 +11290,13 @@
     ],
     "methods": [
       {
+        "name": "defaultPrepareSave",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "requireOpen",
         "parameterTypes": [
           "app.erp.crm.dao.entity.ErpCrmForecastPeriod"
@@ -12020,6 +12493,13 @@
           "app.erp.crm.dao.entity.ErpCrmLead",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "writeConversionConvLog",
+        "parameterTypes": [
+          "app.erp.crm.dao.entity.ErpCrmLead",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.crm.service.processor.ErpCrmConversionProcessor"
@@ -12236,6 +12716,14 @@
         "name": "getDocStatus",
         "parameterTypes": [
           "app.erp.crm.dao.entity.ErpCrmLead"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.crm.dao.entity.ErpCrmLead",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -13077,6 +13565,12 @@
       },
       {
         "name": "requireConfiguratorActive",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "resolveProductCategoryCode",
         "parameterTypes": [
           "java.lang.String"
         ]
@@ -13986,6 +14480,14 @@
         ]
       },
       {
+        "name": "ruleMatchesProduct",
+        "parameterTypes": [
+          "app.erp.crm.dao.entity.ErpCrmPriceRule",
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "ruleMatchesQuantity",
         "parameterTypes": [
           "app.erp.crm.dao.entity.ErpCrmPriceRule",
@@ -14067,11 +14569,19 @@
         ]
       },
       {
+        "name": "convLogDao",
+        "parameterTypes": []
+      },
+      {
         "name": "distributeMonthly",
         "parameterTypes": []
       },
       {
         "name": "forecastDao",
+        "parameterTypes": []
+      },
+      {
+        "name": "forecastPeriodDao",
         "parameterTypes": []
       },
       {
@@ -16974,6 +17484,10 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [
+      {
+        "allowWrite": true,
+        "name": "rebateAgreementStateMachine"
+      },
       {
         "allowWrite": true,
         "name": "rebateEngine"
@@ -21650,6 +22164,13 @@
         ]
       },
       {
+        "name": "countLinesAcrossStatements",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.util.function.Function"
+        ]
+      },
+      {
         "name": "countLinesByFilter",
         "parameterTypes": [
           "io.nop.api.core.beans.ITreeBean"
@@ -21978,6 +22499,21 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.fin.service.classify.ErpFinApDocRuleClassifier"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
       },
       {
         "allowWrite": true,
@@ -22045,6 +22581,31 @@
     "fields": [],
     "methods": [],
     "name": "app.erp.fin.service.entity.ErpFinAccountingPeriodStatusBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "pipelineProcessor"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.fin.service.entity.ErpFinApDocumentBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.entity.ErpFinApDocumentLogBizModel"
   },
   {
     "allDeclaredConstructors": true,
@@ -23076,6 +23637,16 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.ocr.ErpFinTextExtractOcrEngine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
     "fields": [
       {
         "allowWrite": true,
@@ -23084,6 +23655,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "partnerBalanceUpdater"
       }
     ],
     "methods": [],
@@ -23157,8 +23732,26 @@
         ]
       },
       {
+        "name": "existsItem",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "findItems",
         "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "findItems",
+        "parameterTypes": [
+          "java.lang.String",
           "java.lang.String",
           "java.lang.String",
           "io.nop.core.context.IServiceContext"
@@ -23730,6 +24323,14 @@
         "name": "resolveSubjects",
         "parameterTypes": [
           "java.util.List",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "resolveSubjects",
+        "parameterTypes": [
+          "java.util.List",
+          "java.lang.String",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -24602,6 +25203,85 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "classifiers"
+      },
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "fileStore"
+      },
+      {
+        "allowWrite": true,
+        "name": "ocrEngines"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
+        "name": "transactionTemplate"
+      }
+    ],
+    "methods": [
+      {
+        "name": "buildDraftData",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinApDocument",
+          "java.util.Map"
+        ]
+      },
+      {
+        "name": "classifyAndDraft",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinApDocument",
+          "java.util.Map",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "draft",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinApDocument",
+          "java.util.Map",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "extractText",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinApDocument",
+          "[B"
+        ]
+      },
+      {
+        "name": "parse",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinApDocument"
+        ]
+      },
+      {
+        "name": "processOne",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
+    "name": "app.erp.fin.service.processor.ErpFinApDocumentPipelineProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
         "name": "processor"
       }
     ],
@@ -24618,6 +25298,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinBadDebt"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinBadDebt",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -24691,6 +25379,10 @@
       },
       {
         "allowWrite": true,
+        "name": "partnerBalanceUpdater"
+      },
+      {
+        "allowWrite": true,
         "name": "rejectProcessor"
       },
       {
@@ -24719,6 +25411,30 @@
         "name": "assertCanReverseApprove",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinBadDebt"
+        ]
+      },
+      {
+        "name": "assertItemStatusForRecovery",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinArApItem"
+        ]
+      },
+      {
+        "name": "assertItemStatusForReverseOfRecovery",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinArApItem"
+        ]
+      },
+      {
+        "name": "assertItemStatusForReverseOfWriteOff",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinArApItem"
+        ]
+      },
+      {
+        "name": "assertItemStatusForWriteOff",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinArApItem"
         ]
       },
       {
@@ -24800,6 +25516,13 @@
       {
         "name": "isWriteOffApprovalRequired",
         "parameterTypes": []
+      },
+      {
+        "name": "itemStateMismatch",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinArApItem",
+          "java.lang.String"
+        ]
       },
       {
         "name": "loadArApItem",
@@ -24945,6 +25668,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinBadDebt",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinBadDebt"
@@ -25022,6 +25753,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinBadDebt",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isRejected",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinBadDebt"
@@ -25082,6 +25821,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinBadDebt"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinBadDebt",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -25251,6 +25998,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinBudgetScenario",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isApproved",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinBudgetScenario"
@@ -25321,6 +26076,14 @@
         "name": "getDocStatus",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinBudgetScenario"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinBudgetScenario",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -25398,6 +26161,13 @@
           "java.math.BigDecimal",
           "java.math.BigDecimal",
           "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "findVoucherLinesByVoucherIds",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinBudgetLine",
+          "java.util.List"
         ]
       },
       {
@@ -25485,6 +26255,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinBudgetScenario"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinBudgetScenario",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -25664,6 +26442,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinBudgetScenario",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinBudgetScenario"
@@ -25819,6 +26605,18 @@
         "parameterTypes": []
       },
       {
+        "name": "resolveCandidateAcctSchemaId",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "resolveCandidateCurrencyId",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "resolveEliminationSubjectCode",
         "parameterTypes": [
           "java.lang.String",
@@ -25951,6 +26749,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinEmployeeAdvance",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isApproved",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
@@ -26021,6 +26827,14 @@
         "name": "getDocStatus",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinEmployeeAdvance",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -26341,6 +27155,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinEmployeeAdvance",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
@@ -26418,6 +27240,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinEmployeeAdvance",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isRejected",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
@@ -26481,6 +27311,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinEmployeeAdvance",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
@@ -26538,6 +27376,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinEmployeeAdvance",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
@@ -26592,6 +27438,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinExpenseClaim"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinExpenseClaim",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -26665,6 +27519,14 @@
         "name": "getDocStatus",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinExpenseClaim"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinExpenseClaim",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -26925,6 +27787,12 @@
         ]
       },
       {
+        "name": "resolveFirstLineCostCenterId",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinExpenseClaim"
+        ]
+      },
+      {
         "name": "resolvePeriodId",
         "parameterTypes": [
           "java.time.LocalDate"
@@ -27020,6 +27888,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinExpenseClaim",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinExpenseClaim"
@@ -27097,6 +27973,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinExpenseClaim",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isRejected",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinExpenseClaim"
@@ -27160,6 +28044,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinExpenseClaim",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinExpenseClaim"
@@ -27214,6 +28106,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinExpenseClaim"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinExpenseClaim",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -28172,7 +29072,15 @@
         "name": "stateMachine"
       }
     ],
-    "methods": [],
+    "methods": [
+      {
+        "name": "validateAggregatedNotOver",
+        "parameterTypes": [
+          "java.util.List",
+          "java.math.BigDecimal"
+        ]
+      }
+    ],
     "name": "app.erp.fin.service.processor.ErpFinReconciliationPostProcessor"
   },
   {
@@ -30030,9 +30938,25 @@
       {
         "allowWrite": true,
         "name": "employeeBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
+        "name": "recruitmentBiz"
       }
     ],
-    "methods": [],
+    "methods": [
+      {
+        "name": "defaultPrepareDelete",
+        "parameterTypes": [
+          "app.erp.hr.dao.entity.ErpHrDepartment",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
     "name": "app.erp.hr.service.entity.ErpHrDepartmentBizModel"
   },
   {
@@ -30357,8 +31281,29 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
-    "methods": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "employeeBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
+        "name": "recruitmentBiz"
+      }
+    ],
+    "methods": [
+      {
+        "name": "defaultPrepareDelete",
+        "parameterTypes": [
+          "app.erp.hr.dao.entity.ErpHrPosition",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
     "name": "app.erp.hr.service.entity.ErpHrPositionBizModel"
   },
   {
@@ -32691,7 +33636,12 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "postingDispatcher"
+      }
+    ],
     "methods": [],
     "name": "app.erp.hr.service.processor.ErpHrSalaryGenerateBankFileProcessor"
   },
@@ -32760,6 +33710,10 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [
+      {
+        "allowWrite": true,
+        "name": "notificationBiz"
+      },
       {
         "allowWrite": true,
         "name": "payrollCalculator"
@@ -33778,6 +34732,21 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.inv.service.barcode.ErpInvBarcodeBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
       },
       {
         "allowWrite": true,
@@ -34420,6 +35389,22 @@
           "java.lang.String",
           "java.math.BigDecimal"
         ]
+      },
+      {
+        "name": "restoreBalance",
+        "parameterTypes": [
+          "java.lang.String",
+          "app.erp.inv.dao.entity.ErpInvReservationLine",
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "restoreFromLines",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.util.List",
+          "app.erp.inv.biz.ReservationConsumeLine"
+        ]
       }
     ],
     "name": "app.erp.inv.service.entity.ErpInvReservationBizModel"
@@ -34863,6 +35848,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvCostAdjust",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isApproved",
         "parameterTypes": [
           "app.erp.inv.dao.entity.ErpInvCostAdjust"
@@ -35095,6 +36088,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvCostAdjust",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.inv.dao.entity.ErpInvCostAdjust"
@@ -35169,6 +36170,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.inv.dao.entity.ErpInvCostAdjust"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvCostAdjust",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -35300,6 +36309,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvCostAdjust",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.inv.dao.entity.ErpInvCostAdjust"
@@ -35354,6 +36371,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.inv.dao.entity.ErpInvCostAdjust"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvCostAdjust",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -35415,6 +36440,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.inv.dao.entity.ErpInvLandedCost"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvLandedCost",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -35808,6 +36841,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvLandedCost",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isRejected",
         "parameterTypes": [
           "app.erp.inv.dao.entity.ErpInvLandedCost"
@@ -36126,6 +37167,10 @@
       },
       {
         "allowWrite": true,
+        "name": "serialNumberBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "stateMachine"
       },
       {
@@ -36140,6 +37185,13 @@
           "app.erp.inv.dao.entity.ErpInvStockMove",
           "java.util.List",
           "boolean",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "assertSerialInStock",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvStockMoveLine",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -36186,6 +37238,14 @@
         ]
       },
       {
+        "name": "findSerial",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "inverseMoveType",
         "parameterTypes": [
           "java.lang.String"
@@ -36213,6 +37273,14 @@
         "name": "loadLines",
         "parameterTypes": [
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "markSerialNumbersOutbound",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvStockMove",
+          "java.util.List",
+          "io.nop.core.context.IServiceContext"
         ]
       },
       {
@@ -36300,6 +37368,14 @@
       },
       {
         "name": "validateBatchExpiry",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvStockMove",
+          "java.util.List",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateBatchSerialPresence",
         "parameterTypes": [
           "app.erp.inv.dao.entity.ErpInvStockMove",
           "java.util.List",
@@ -38952,6 +40028,15 @@
           "java.lang.String",
           "java.time.LocalDate"
         ]
+      },
+      {
+        "name": "findExistingRates",
+        "parameterTypes": [
+          "io.nop.dao.api.IEntityDao",
+          "java.lang.String",
+          "java.util.Collection",
+          "java.time.LocalDate"
+        ]
       }
     ],
     "name": "app.erp.md.service.processor.ErpMdCurrencyRefreshRatesFromApiProcessor"
@@ -40106,6 +41191,21 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "crpLoadCalculator"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.mfg.service.crp.CrpCapacityProvider"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
         "name": "apsLoadSourceProviders"
       },
       {
@@ -40695,7 +41795,15 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [],
-    "methods": [],
+    "methods": [
+      {
+        "name": "defaultPrepareUpdate",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
     "name": "app.erp.mfg.service.entity.ErpMfgWorkOrderBomLineSnapshotBizModel"
   },
   {
@@ -40705,7 +41813,15 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [],
-    "methods": [],
+    "methods": [
+      {
+        "name": "defaultPrepareUpdate",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
     "name": "app.erp.mfg.service.entity.ErpMfgWorkOrderBomOperationSnapshotBizModel"
   },
   {
@@ -40715,7 +41831,15 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [],
-    "methods": [],
+    "methods": [
+      {
+        "name": "defaultPrepareUpdate",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
     "name": "app.erp.mfg.service.entity.ErpMfgWorkOrderBomSnapshotBizModel"
   },
   {
@@ -41238,6 +42362,10 @@
       },
       {
         "allowWrite": true,
+        "name": "reservationBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "stateMachine"
       },
       {
@@ -41269,12 +42397,28 @@
         ]
       },
       {
+        "name": "findReservation",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "findReservationLines",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "illegalTransition",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgMaterialIssue",
           "java.lang.String",
           "java.lang.String"
         ]
+      },
+      {
+        "name": "isReservationEnabled",
+        "parameterTypes": []
       },
       {
         "name": "issueDao",
@@ -41309,6 +42453,14 @@
         "name": "requireIssue",
         "parameterTypes": [
           "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "unconsumeReservations",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgMaterialIssue",
+          "java.util.List",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -41708,6 +42860,14 @@
         ]
       },
       {
+        "name": "enforceConsumptionControl",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgMaterialIssue",
+          "java.util.List",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "findReservation",
         "parameterTypes": [
           "java.lang.String"
@@ -41726,6 +42886,12 @@
       {
         "name": "isReservationEnabled",
         "parameterTypes": []
+      },
+      {
+        "name": "resolveBomConsumption",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder"
+        ]
       },
       {
         "name": "warnIfOverPick",
@@ -41758,6 +42924,21 @@
         "name": "doReverseConfirm",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgMaterialIssue",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "rollbackMaterialCostToWorkOrder",
+        "parameterTypes": [
+          "java.lang.String",
+          "app.erp.inv.dao.entity.ErpInvStockMove",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "rollbackWorkOrderLineActualQty",
+        "parameterTypes": [
+          "java.util.List",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -42125,6 +43306,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isApproved",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
@@ -42229,11 +43418,19 @@
       },
       {
         "allowWrite": true,
+        "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
         "name": "rejectProcessor"
       },
       {
         "allowWrite": true,
         "name": "reverseApproveProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stockLedgerBiz"
       },
       {
         "allowWrite": true,
@@ -42254,6 +43451,19 @@
     ],
     "methods": [
       {
+        "name": "aggregateIssueMaterialCost",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "assertNotCancelled",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
+        ]
+      },
+      {
         "name": "canSafelyReverse",
         "parameterTypes": [
           "app.erp.inv.dao.entity.ErpInvStockMove"
@@ -42264,6 +43474,14 @@
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
           "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "computeReceiptUnitCost",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "java.math.BigDecimal",
+          "io.nop.core.context.IServiceContext"
         ]
       },
       {
@@ -42513,6 +43731,12 @@
           "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "wrapReversalFailure",
+        "parameterTypes": [
+          "java.lang.Throwable"
+        ]
       }
     ],
     "name": "app.erp.mfg.service.processor.ErpMfgSubcontractOrderProcessor"
@@ -42557,6 +43781,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -42638,6 +43870,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -42723,6 +43963,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
@@ -42784,6 +44032,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
@@ -42842,6 +44098,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgWorkOrder"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -42991,6 +44255,10 @@
       },
       {
         "allowWrite": true,
+        "name": "subcontractOrderBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "submitForApprovalProcessor"
       },
       {
@@ -42999,6 +44267,13 @@
       }
     ],
     "methods": [
+      {
+        "name": "applySubcontractCostToWorkOrder",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
       {
         "name": "cancelLinkedInspections",
         "parameterTypes": [
@@ -43131,6 +44406,10 @@
       },
       {
         "name": "isReservationEnabled",
+        "parameterTypes": []
+      },
+      {
+        "name": "isSubcontractCostAggregationEnabled",
         "parameterTypes": []
       },
       {
@@ -43339,6 +44618,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgWorkOrder"
@@ -43457,6 +44744,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isRejected",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgWorkOrder"
@@ -43561,6 +44856,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgWorkOrder"
@@ -43619,6 +44922,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgWorkOrder"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -45882,6 +47193,13 @@
       {
         "name": "guardCacheSize",
         "parameterTypes": []
+      },
+      {
+        "name": "readEquipmentStatus",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.mnt.service.support.EquipmentStatusLinker"
@@ -46367,6 +47685,13 @@
       }
     ],
     "methods": [
+      {
+        "name": "assertActorAllowed",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
       {
         "name": "isRead",
         "parameterTypes": [
@@ -47018,7 +48343,19 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "collectionBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "lineBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "projectBiz"
       }
     ],
     "methods": [],
@@ -47060,7 +48397,28 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [],
-    "methods": [],
+    "methods": [
+      {
+        "name": "defaultPrepareSave",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "defaultPrepareUpdate",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "syncAmountFunctional",
+        "parameterTypes": [
+          "app.erp.prj.dao.entity.ErpPrjBilling"
+        ]
+      }
+    ],
     "name": "app.erp.prj.service.entity.ErpPrjBillingBizModel"
   },
   {
@@ -47751,6 +49109,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.prj.dao.entity.ErpPrjProjectSettlement",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isApproved",
         "parameterTypes": [
           "app.erp.prj.dao.entity.ErpPrjProjectSettlement"
@@ -47821,6 +49187,14 @@
         "name": "getDocStatus",
         "parameterTypes": [
           "app.erp.prj.dao.entity.ErpPrjProjectSettlement"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.prj.dao.entity.ErpPrjProjectSettlement",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -48107,6 +49481,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.prj.dao.entity.ErpPrjProjectSettlement",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.prj.dao.entity.ErpPrjProjectSettlement"
@@ -48210,6 +49592,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.prj.dao.entity.ErpPrjProjectSettlement",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.prj.dao.entity.ErpPrjProjectSettlement"
@@ -48277,6 +49667,10 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [
+      {
+        "allowWrite": true,
+        "name": "costAggregator"
+      },
       {
         "allowWrite": true,
         "name": "daoProvider"
@@ -49833,7 +51227,15 @@
       },
       {
         "allowWrite": true,
+        "name": "postingExceptionBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "settler"
       }
     ],
     "methods": [
@@ -50308,6 +51710,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "postingExceptionBiz"
       },
       {
         "allowWrite": true,
@@ -51504,6 +52910,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "settler"
       }
     ],
     "methods": [
@@ -51911,6 +53321,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "settler"
       }
     ],
     "methods": [
@@ -52604,6 +54018,12 @@
         ]
       },
       {
+        "name": "isReceiveEffective",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReceive"
+        ]
+      },
+      {
         "name": "loadLines",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurReceive"
@@ -52623,6 +54043,12 @@
       },
       {
         "name": "loadOrderLines",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "lockOrderForToleranceAggregation",
         "parameterTypes": [
           "java.lang.String"
         ]
@@ -53469,6 +54895,12 @@
         "name": "loadLines",
         "parameterTypes": [
           "java.lang.Long"
+        ]
+      },
+      {
+        "name": "lockRequisitionForConversion",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurRequisition"
         ]
       },
       {
@@ -56510,6 +57942,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.qa.dao.entity.ErpQaRecall",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isApproved",
         "parameterTypes": [
           "app.erp.qa.dao.entity.ErpQaRecall"
@@ -56804,6 +58244,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.qa.dao.entity.ErpQaRecall",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.qa.dao.entity.ErpQaRecall"
@@ -56881,6 +58329,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.qa.dao.entity.ErpQaRecall",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isRejected",
         "parameterTypes": [
           "app.erp.qa.dao.entity.ErpQaRecall"
@@ -56944,6 +58400,14 @@
         ]
       },
       {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.qa.dao.entity.ErpQaRecall",
+          "java.lang.String",
+          "[Ljava.lang.String;"
+        ]
+      },
+      {
         "name": "isCancelled",
         "parameterTypes": [
           "app.erp.qa.dao.entity.ErpQaRecall"
@@ -56998,6 +58462,14 @@
         "name": "getApproveStatus",
         "parameterTypes": [
           "app.erp.qa.dao.entity.ErpQaRecall"
+        ]
+      },
+      {
+        "name": "illegalStatusException",
+        "parameterTypes": [
+          "app.erp.qa.dao.entity.ErpQaRecall",
+          "java.lang.String",
+          "[Ljava.lang.String;"
         ]
       },
       {
@@ -58361,6 +59833,10 @@
       },
       {
         "allowWrite": true,
+        "name": "invoiceLineBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "receiptSettler"
       }
     ],
@@ -58872,6 +60348,12 @@
       },
       {
         "name": "isApproved",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalDelivery"
+        ]
+      },
+      {
+        "name": "isDeliveryEffective",
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalDelivery"
         ]
@@ -59478,6 +60960,10 @@
       },
       {
         "allowWrite": true,
+        "name": "postingExceptionBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "processor"
       },
       {
@@ -59577,6 +61063,14 @@
       {
         "allowWrite": true,
         "name": "submitForApprovalProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "voucherBillRBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "voucherBiz"
       },
       {
         "allowWrite": true,
@@ -59918,6 +61412,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "postingExceptionBiz"
       },
       {
         "allowWrite": true,
@@ -62069,6 +63567,10 @@
       },
       {
         "allowWrite": true,
+        "name": "receiptSettler"
+      },
+      {
+        "allowWrite": true,
         "name": "stateMachine"
       }
     ],
@@ -62452,6 +63954,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "receiptSettler"
       },
       {
         "allowWrite": true,
@@ -63970,6 +65476,13 @@
     ],
     "methods": [
       {
+        "name": "comparePriceLineCandidates",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalPriceListLine",
+          "app.erp.sal.dao.entity.ErpSalPriceListLine"
+        ]
+      },
+      {
         "name": "findCandidatePriceLists",
         "parameterTypes": [
           "java.lang.Long",
@@ -64051,6 +65564,16 @@
       }
     ],
     "name": "app.erp.sal.service.support.ErpSalCustomerPriceResolver"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.support.ErpSalInlineSodGuard"
   },
   {
     "allDeclaredConstructors": true,
@@ -65209,6 +66732,10 @@
       },
       {
         "allowWrite": true,
+        "name": "loginAttemptStore"
+      },
+      {
+        "allowWrite": true,
         "name": "loginFailCache"
       },
       {
@@ -65235,7 +66762,27 @@
     "allPublicMethods": true,
     "fields": [],
     "methods": [],
+    "name": "io.nop.auth.core.login.ILoginAttemptStore"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
     "name": "io.nop.auth.core.login.ILoginService"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.core.login.LocalLoginAttemptStore"
   },
   {
     "allDeclaredConstructors": true,
@@ -66408,6 +67955,16 @@
     "allPublicMethods": true,
     "fields": [],
     "methods": [],
+    "name": "io.nop.auth.service.entity.NopAuthLoginAttemptBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
     "name": "io.nop.auth.service.entity.NopAuthMfaChallengeBizModel"
   },
   {
@@ -66474,6 +68031,16 @@
     "fields": [],
     "methods": [],
     "name": "io.nop.auth.service.entity.NopAuthPositionBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.entity.NopAuthRateLimitCounterBizModel"
   },
   {
     "allDeclaredConstructors": true,
@@ -66706,6 +68273,10 @@
       },
       {
         "allowWrite": true,
+        "name": "sendCodeRateLimiter"
+      },
+      {
+        "allowWrite": true,
         "name": "smsCodeStore"
       },
       {
@@ -66743,6 +68314,14 @@
           "io.nop.biz.crud.EntityData",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "rateLimiter",
+        "parameterTypes": []
+      },
+      {
+        "name": "selfService",
+        "parameterTypes": []
       }
     ],
     "name": "io.nop.auth.service.entity.NopAuthUserBizModel"
@@ -66802,6 +68381,39 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "config"
+      },
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      }
+    ],
+    "methods": [],
+    "name": "io.nop.auth.service.login.DbLoginAttemptStore"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.login.LoginAttemptStoreProvider"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
         "name": "auditService"
       },
       {
@@ -66826,6 +68438,10 @@
       },
       {
         "allowWrite": true,
+        "name": "loginAttemptStore"
+      },
+      {
+        "allowWrite": true,
         "name": "mfaChallengeStore"
       },
       {
@@ -66843,6 +68459,10 @@
       {
         "allowWrite": true,
         "name": "roleMfaPolicyEvaluator"
+      },
+      {
+        "allowWrite": true,
+        "name": "sendCodeRateLimiter"
       },
       {
         "allowWrite": true,
@@ -66866,6 +68486,10 @@
       }
     ],
     "methods": [
+      {
+        "name": "attemptStore",
+        "parameterTypes": []
+      },
       {
         "name": "auditLogFail",
         "parameterTypes": [
@@ -66941,6 +68565,17 @@
         ]
       },
       {
+        "name": "completeLoginPort",
+        "parameterTypes": [
+          "io.nop.auth.dao.entity.NopAuthUser",
+          "io.nop.auth.api.messages.LoginRequest",
+          "java.util.Map",
+          "boolean",
+          "boolean",
+          "boolean"
+        ]
+      },
+      {
         "name": "completeMfaLogin",
         "parameterTypes": [
           "io.nop.auth.dao.entity.NopAuthUser",
@@ -66997,10 +68632,28 @@
         ]
       },
       {
+        "name": "incrementLoginFailCount",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "loadMfaSetting",
         "parameterTypes": [
           "java.lang.String"
         ]
+      },
+      {
+        "name": "mfaCodeSender",
+        "parameterTypes": []
+      },
+      {
+        "name": "mfaFlow",
+        "parameterTypes": []
+      },
+      {
+        "name": "rateLimiter",
+        "parameterTypes": []
       },
       {
         "name": "saveSession",
@@ -67335,6 +68988,55 @@
       },
       {
         "allowWrite": true,
+        "name": "ormTemplate"
+      }
+    ],
+    "methods": [],
+    "name": "io.nop.auth.service.ratelimit.DbSendCodeRateLimiter"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.ratelimit.ISendCodeRateLimiter"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.ratelimit.LocalSendCodeRateLimiter"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.ratelimit.SendCodeRateLimiterProvider"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
         "name": "siteCache"
       }
     ],
@@ -67484,6 +69186,19 @@
         "parameterTypes": []
       },
       {
+        "name": "tryInsertNewTask",
+        "parameterTypes": [
+          "io.nop.batch.core.IBatchTaskContext"
+        ]
+      },
+      {
+        "name": "tryMarkTaskRunning",
+        "parameterTypes": [
+          "io.nop.orm.IOrmSession",
+          "io.nop.batch.dao.entity.NopBatchTask"
+        ]
+      },
+      {
         "name": "updateTask",
         "parameterTypes": [
           "io.nop.dao.api.IEntityDao",
@@ -67605,6 +69320,13 @@
         ]
       },
       {
+        "name": "checkByQueryNotExceedLimit",
+        "parameterTypes": [
+          "io.nop.api.core.beans.query.QueryBean",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "checkChildrenNotExistsWhenDelete",
         "parameterTypes": [
           "io.nop.orm.IOrmEntity",
@@ -67640,6 +69362,13 @@
           "java.lang.String",
           "java.lang.String",
           "java.lang.Object"
+        ]
+      },
+      {
+        "name": "checkMaxBatchSize",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.util.Collection"
         ]
       },
       {
@@ -67851,6 +69580,12 @@
         "name": "getTreeEntityList",
         "parameterTypes": [
           "io.nop.api.core.beans.query.QueryBean"
+        ]
+      },
+      {
+        "name": "getTreeEntityModel",
+        "parameterTypes": [
+          "io.nop.xlang.xmeta.IObjMeta"
         ]
       },
       {
@@ -68124,6 +69859,14 @@
         "name": "buildBizObject",
         "parameterTypes": [
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "newBizObject",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.biz.model.BizModel",
+          "io.nop.xlang.xmeta.IObjMeta"
         ]
       }
     ],
@@ -69774,6 +71517,16 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [],
+    "methods": [],
+    "name": "io.nop.dao.jdbc.datasource.ReadWriteDataSourceInitializer"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
     "methods": [
       {
         "name": "runWithConnection",
@@ -69806,6 +71559,16 @@
     "fields": [],
     "methods": [],
     "name": "io.nop.dao.metrics.DaoMetricsImpl"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.dao.shard.ConfigShardSelector"
   },
   {
     "allDeclaredConstructors": true,
@@ -70224,7 +71987,12 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "actionAuthNoCheckerWarned"
+      }
+    ],
     "methods": [
       {
         "name": "getExecutionInvoker",
@@ -71323,7 +73091,12 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "redeliveryExecutor"
+      }
+    ],
     "methods": [
       {
         "name": "handleMessageResult",
@@ -71493,6 +73266,16 @@
     "allPublicMethods": true,
     "fields": [],
     "methods": [],
+    "name": "io.nop.orm.eql.compile.OracleEqlAstTransformer"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
     "name": "io.nop.orm.factory.DefaultOrmColumnBinderEnhancer"
   },
   {
@@ -71551,6 +73334,16 @@
     "fields": [],
     "methods": [],
     "name": "io.nop.orm.initialize.DataBaseSchemaInitializer"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.orm.initialize.DataInitInitializer"
   },
   {
     "allDeclaredConstructors": true,
@@ -73698,8 +75491,22 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
-    "methods": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "compactExtFieldHelper"
+      }
+    ],
+    "methods": [
+      {
+        "name": "afterEntityChange",
+        "parameterTypes": [
+          "io.nop.sys.dao.entity.NopSysCompactExtField",
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
     "name": "io.nop.sys.service.entity.NopSysCompactExtFieldBizModel"
   },
   {
