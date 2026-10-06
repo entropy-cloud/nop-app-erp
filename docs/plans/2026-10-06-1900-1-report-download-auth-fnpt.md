@@ -66,18 +66,18 @@ Skill: none
 
 - Item Types: `Fix | Add`（FNPT ×4 为已确诊缺陷修复 + spec 新增）、`Proof`（红→绿）
 
-- [ ] （Proof·红灯先行）新增 `reports.download.auth.spec.ts`：具名角色账号 × 每域具名报表——fin=`role-finance`/income-statement、md=`role-pur`(采购员，13 角色 CSV 成员)/material-price-list（避开 partner-list 正交缺陷）、mfg=`role-mfg-lead`/production-variance-report（避开 crp-load 运行时波动）、cs=`role-biz-admin`(业务管理员，双命名空间不触发 skip-check)/ticket-sla-csat-summary——POST 断言 200 + XLSX magic + token。**禁用 nop（平台 admin）作断言主体**（skip-check 恒放行假绿正是 fin/md 假通过根因）。**实施 FNPT 前四域全红**（verbatim 失败输出留本计划；探针级红灯已在根因报告节留证）。
+- [x] （Proof·红灯先行）新增 `reports.download.auth.spec.ts`：具名角色账号 × 每域具名报表——fin=`role-finance`/income-statement、md=`role-pur`(采购员，13 角色 CSV 成员)/material-price-list（避开 partner-list 正交缺陷）、mfg=`role-mfg-lead`/production-variance-report（避开 crp-load 运行时波动）、cs=`role-biz-admin`(业务管理员，双命名空间不触发 skip-check)/ticket-sla-csat-summary——POST 断言 200 + XLSX magic + token。**禁用 nop（平台 admin）作断言主体**（skip-check 恒放行假绿正是 fin/md 假通过根因）。**实施 FNPT 前四域全红**（verbatim 失败输出留本计划；探针级红灯已在根因报告节留证）。
       - Skill: none
       - Skill: none
-- [ ] （Add）四域 overlay 各注册 `FNPT:ErpXxxReport:query`（displayName 中文、resourceType=FNPT、roles 镜像该域报表菜单种子、`<permissions>ErpXxxReport:query</permissions>`；TOPM/SUBM 无 permissions 不变量保持）。
+- [x] （Add）四域 overlay 各注册 `FNPT:ErpXxxReport:query`（displayName 中文、resourceType=FNPT、roles 镜像该域报表菜单种子、`<permissions>ErpXxxReport:query</permissions>`；TOPM/SUBM 无 permissions 不变量保持）。
       - Skill: none
-- [ ] （Proof·转绿）重新打包（`mvn clean install -DskipTests`）+ 重启后同 spec 四域全绿；**negative 目录全量套件零回归**（不窄化—— roadmap 验收原文；本变更仅新增四个 `ErpXxxReport:query` permissionToRoles 键 + cs-report 对业务「管理员」新可见，e1-1/e1-3 权限键零交集、e1-2 逐断言核对无翻转）；48 用例 admin 套件零回归。
+- [x] （Proof·转绿）重建链（`mvn clean install -DskipTests`）+ 重启后同 spec 四域全绿；**negative 目录全量套件零回归**（不窄化—— roadmap 验收原文；本变更仅新增四个 `ErpXxxReport:query` permissionToRoles 键 + cs-report 对业务「管理员」新可见，e1-1/e1-3 权限键零交集、e1-2 逐断言核对无翻转）；48 用例 admin 套件零回归。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 红灯四域留证 → FNPT 落位 → 同 spec 全绿
-- [ ] negative 目录全量零回归 + reports.download（48）零回归
+- [x] 红灯四域留证（`Error: XLSX magic (PK zip header)` ×4）→ FNPT 落位 → 同 spec 全绿（4 passed）
+- [x] negative 目录全量零回归（74 passed）+ reports.download（48）零回归（48 passed）
 
 ### Phase 2 — owner doc 对齐 + md partner-list 正交诊断
 
@@ -96,7 +96,7 @@ Skill: none
 
 Exit Criteria:
 
-- [ ] owner doc 条款在案
+- [x] owner doc 条款在案
 - [ ] md partner-list 诊断分流落盘（successor 或注销）
 - [ ] roadmap/日志回写完成
 
