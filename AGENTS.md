@@ -44,7 +44,6 @@
 | 文档放置/命名 | `docs/guides/doc-organization.md` |
 | 变更后决定更新哪些文档 | `docs/guides/doc-maintenance-checklist.md` |
 | 检查可复用技能 | `docs/skills/README.md` |
-| 收口工作项并将已验收计划一次提交 | `docs/guides/roadmap-goal-execution.md` · `docs/backlog/00-roadmap-authoring-guide.md` |
 
 **计划起草与执行**：创建、修订、执行或审计 `docs/plans/` 下的文件时，必须首先阅读 `docs/guides/plan-authoring-and-execution.md`。计划是具有明确状态、范围、退出标准和验证检查清单的执行文档。完成时勾选检查清单项。在声称完成之前，重新审计实时仓库。对于非平凡工作，在实现前记录所选路线和计划的技能使用情况。除非从相关需求和 owner docs 中路线已经很明显，否则不要从功能请求直接跳转到代码。
 

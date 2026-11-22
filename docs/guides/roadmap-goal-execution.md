@@ -29,3 +29,23 @@ A created plan needs an independent draft review, an independent executor, and a
 ## Degradation
 
 If an independent reviewer or auditor is unavailable, keep the plan open and report the blocker. Cold replay is not a second reviewer.
+
+## Delivery Commands (explicit)
+
+A cold-start coordinator does not get an automatic commit. Use the helper explicitly after closure acceptance:
+
+```bash
+node tools/plan-status.mjs --check docs/plans/<slug>/<plan>.md
+node tools/commit-plan.mjs --snapshot docs/plans/<slug>/<plan>.md -- docs/plans/<slug>/<plan>.md <changed-file>...
+# record "- payload <sha> base=<base> paths=[...]" in ## Verification
+# append "- pass <key> <runId> exit=0 payload=<sha>" after real verification
+# auditor appends "- accepted #...: ... payload=<sha> ownership=whole-files"
+node tools/commit-plan.mjs --snapshot docs/plans/<slug>/<plan>.md -- docs/plans/<slug>/<plan>.md <changed-file>...  # fixed point
+node tools/commit-plan.mjs --commit docs/plans/<slug>/<plan>.md --message "feat(scope): deliver <work-item>" -- docs/plans/<slug>/<plan>.md <changed-file>...
+```
+
+The helper guarantees **exactly one** commit per plan: it refuses when an `AGE-Plan: <repo-relative-plan-path>` receipt already exists and reports `alreadyDelivered` on a matching retry. It stages only the explicit paths and requires `deliveryReady`, current payload, and whole-file ownership. Re-running `--commit` never creates a second commit. No hook or engine performs this step automatically.
+
+## No Auto-Commit
+
+There is **no** Git hook, Mission Driver, scheduler, or status transition that commits when a plan closes. Historical notes or older plans may say "每计划完成后自动提交一次"; that phrase described an earlier convention and is superseded by this guide: one accepted plan = **one commit**, triggered explicitly by the coordinator via `tools/commit-plan.mjs --commit`. Closing a plan without invoking the helper leaves changes uncommitted; a plain `git commit` / `git add -A` is not the delivery path and can cause mixed or duplicate commits.

@@ -153,7 +153,7 @@ Projects copied from the pre-v2 template (with `docs/backlog/`, `docs/process/`,
 | `docs/process/*` + `00-*-guide.md` in each dir | consolidated under `docs/guides/` |
 | `docs/context/{conventions,source-of-truth-and-precedence}.md` | absorbed into this guide |
 | `docs/references/document-naming-and-timeliness.md` | absorbed into this guide | <!-- doc-ref: example reason="old layout path, not a current link" -->
-| `.opencode/skills/` (or other tool dirs) | canonical home is `.agents/skills/` |
+| `.agents/skills/` | canonical home for operational skills (tool-native skill dirs such as `.opencode/skills/` have been removed from this repo) |
 
 Move (don't copy) the files; keep git history. Old cross-references break silently — run the doc-reference checker after the move and fix what it reports. Status-table roadmaps convert to column-0 checkbox milestone blocks per `docs/guides/roadmap-authoring.md`.
 
