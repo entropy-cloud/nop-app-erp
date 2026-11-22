@@ -5,7 +5,7 @@
 > Domain/Scope: 全 19 域 / `docs/plans/*.md`（396 份）+ `docs/audits/arm-index.md` P0 追踪 + git 历史
 > Status: done（报告产出）
 > Audit Plan: `docs/plans/2026-07-29-1410-2-ma6-protected-area-discipline-audit.md`
-> Owner Doc: `docs/context/ai-autonomy-policy.md §保护区域`（6 区域 + 必需证据规则）+ `docs/context/project-context.md §AI 阻塞条件` + `docs/plans/00-plan-authoring-and-execution-guide.md §计划决策表`
+> Owner Doc: `docs/context/ai-autonomy-policy.md §保护区域`（6 区域 + 必需证据规则）+ `docs/context/project-context.md §AI 阻塞条件` + `docs/guides/plan-authoring-and-execution.md §计划决策表`
 > Skill: `docs/skills/multi-dimensional-audit-prompt.md`（7 维度 + 项目定制化层）
 > Verdict: ⚠️(P1)（零 P0——无活跃数据破坏；2 项新 P1 + 1 项新 P2 watch-only）
 

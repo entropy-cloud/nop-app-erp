@@ -4,7 +4,7 @@
 
 - **Repository**: nop-app-erp at `/Users/abc/app/nop-app-erp` (root pom, 154 reactor modules)
 - **Branch context**: main branch, active development shown through daily commits
-- **Baseline documents read**: AGENTS.md, docs/index.md, docs/process/application-development-workflow.md, docs/context/project-context.md, docs/context/ai-autonomy-policy.md, docs/context/codebase-map.md, docs/context/source-of-truth-and-precedence.md, docs/skills/README.md, docs/backlog/README.md, docs/plans/00-plan-authoring-and-execution-guide.md, docs/audits/00-audit-execution-guide.md, docs/logs/index.md, docs/analysis/README.md
+- **Baseline documents read**: AGENTS.md, docs/index.md, docs/process/application-development-workflow.md, docs/context/project-context.md, docs/context/ai-autonomy-policy.md, docs/context/codebase-map.md, docs/context/source-of-truth-and-precedence.md, docs/skills/README.md, docs/backlog/README.md, docs/guides/plan-authoring-and-execution.md, docs/audits/00-audit-execution-guide.md, docs/logs/index.md, docs/analysis/README.md
 - **Real evidence sampled**: docs/plans/ (267 files), docs/logs/2026/ (26 files), docs/audits/ (15 entries), docs/bugs/ (10 entries), docs/retrospectives/ (5 entries), docs/backlog/README.md (67+ work items), docs/logs/2026/07-20.md (latest daily log)
 - **Project customization layer injected**: per docs/skills/README.md §项目定制化层 — protection zones (ORM model accounting/finance/data deletion, generated artifacts), validation commands, naming conventions, known failure patterns
 
@@ -110,7 +110,7 @@
 - docs/skills/README.md (201 lines) — 19 skills registered, project customization layer, skill lifecycle guide added 2026-07-20
 - docs/backlog/README.md (67+ work items, many truncated >2000 chars) — P0-P8 items, nearly all ✅ done
 - docs/plans/ — 267 files (1 guide + 3 legacy numbered + 263 timestamped plans)
-- docs/plans/00-plan-authoring-and-execution-guide.md (226 lines) — detailed rules for plan lifecycle
+- docs/guides/plan-authoring-and-execution.md (226 lines) — detailed rules for plan lifecycle
 - docs/audits/ — 15 entries (1 guide, 1 shell script, 13 audit records)
 - docs/audits/00-audit-execution-guide.md (100 lines) — three default audit types defined
 - docs/logs/ — 26 daily files (2026-06-22 through 2026-07-20)

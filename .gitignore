@@ -64,3 +64,5 @@ module-*/erp-*-meta/module-meta.yaml
 # Raw full-reactor mvn test logs under audit execution dirs: multi-GB local evidence
 # (summaries live in the .md records; e.g. ai-check-r3 m0-3 logs are ~5GB each).
 docs/audits/check/**/*mvn-test*.log
+.env
+tmp/

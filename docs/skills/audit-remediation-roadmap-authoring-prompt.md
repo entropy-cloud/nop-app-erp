@@ -55,7 +55,7 @@
 ### Mission Driver 与 roadmap 规范（必需）
 - `docs/articles/mission-driver--loop-engineering.md`（Mission Driver 运作机制、四层定义体系、Plan Loop）
 - `docs/backlog/00-roadmap-authoring-guide.md`（roadmap 术语、结构、编写规则、反模式）
-- `docs/plans/00-plan-authoring-and-execution-guide.md`（plan 格式、状态、关闭契约）
+- `docs/guides/plan-authoring-and-execution.md`（plan 格式、状态、关闭契约）
 - `docs/audits/00-audit-execution-guide.md`（三个默认审计、审计对象与风格）
 - `missions/erp.json`（现有 mission 配置范例）
 - `tools/mission-driver.sh`（launcher）
@@ -568,7 +568,7 @@ graph LR
   "description": "nop-app-erp 全面审计与 P0/P1 彻底修复（流水线模式：P0 即时止血 + P1 维度内批量修复）。基于已有 19 skill + 残留风险新维度，ORM 变更已授权。",
   "roadmapPath": "docs/backlog/audit-remediation-roadmap.md",
   "plansDir": "docs/plans",
-  "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
+  "planGuide": "docs/guides/plan-authoring-and-execution.md",
   "auditsDir": "docs/audits",
   "contextDir": "docs/context",
   "moduleDir": ".",

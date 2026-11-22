@@ -37,11 +37,16 @@
 | 运行或验证项目 | `docs/context/project-context.md` · `docs/context/codebase-map.md` |
 | 编写或修改 E2E 用例 | `docs/testing/e2e-runbook.md` 的「E2E 编写规范（强制）」节（**E2E 强制 flux 渲染模式运行**：`E2E_ENGINE` 缺省即 flux，见 runbook「渲染模式」节） · nop-chaos-next `packages/e2e-shared/` · `../nop-chaos-next/docs/design/e2e-shared-infrastructure.md` · nop-entropy-e2e 各包作写法范本 |
 | 排查前端渲染/控件问题（跨仓库） | `docs/testing/e2e-runbook.md` 的「渲染模式与 flux 调试三路径」节（**跨仓库原则**：可在 `nop-chaos-flux` 增测试/复现用例；修改其代码须双独立子 agent 批准） · `docs/context/ai-autonomy-policy.md` 保护区域「外部仓库代码」（auto + dual-agent-approval） |
-| 起草、执行或审计 `docs/plans/` 下的计划 | `docs/plans/00-plan-authoring-and-execution-guide.md` · `docs/logs/00-log-writing-guide.md` |
+| 起草、执行或审计 `docs/plans/` 下的计划 | `docs/guides/plan-authoring-and-execution.md`（含 Local Additions）· `docs/guides/log-writing.md` |
+| 收口工作项并将已验收计划一次提交 | `docs/guides/roadmap-goal-execution.md` · `tools/commit-plan.mjs` |
+| 澄清模糊需求 | `.agents/skills/nop-grillme/SKILL.md` |
+| 提交、rebase、查历史 | `.agents/skills/nop-git/SKILL.md` |
+| 文档放置/命名 | `docs/guides/doc-organization.md` |
+| 变更后决定更新哪些文档 | `docs/guides/doc-maintenance-checklist.md` |
 | 检查可复用技能 | `docs/skills/README.md` |
 | 收口工作项并将已验收计划一次提交 | `docs/guides/roadmap-goal-execution.md` · `docs/backlog/00-roadmap-authoring-guide.md` |
 
-**计划起草与执行**：创建、修订、执行或审计 `docs/plans/` 下的文件时，必须首先阅读 `docs/plans/00-plan-authoring-and-execution-guide.md`。计划是具有明确状态、范围、退出标准和验证检查清单的执行文档。完成时勾选检查清单项。在声称完成之前，重新审计实时仓库。对于非平凡工作，在实现前记录所选路线和计划的技能使用情况。除非从相关需求和 owner docs 中路线已经很明显，否则不要从功能请求直接跳转到代码。
+**计划起草与执行**：创建、修订、执行或审计 `docs/plans/` 下的文件时，必须首先阅读 `docs/guides/plan-authoring-and-execution.md`。计划是具有明确状态、范围、退出标准和验证检查清单的执行文档。完成时勾选检查清单项。在声称完成之前，重新审计实时仓库。对于非平凡工作，在实现前记录所选路线和计划的技能使用情况。除非从相关需求和 owner docs 中路线已经很明显，否则不要从功能请求直接跳转到代码。
 
 ## 操作规则
 
@@ -143,6 +148,19 @@ codegen 后阶段规则：
 - 设计与讨论工作仍应集中在 `<domain>/model/*.orm.xml`（权威源）以及 `docs/design/`、`docs/architecture/`、`docs/requirements/`
 - `docs/context/project-context.md` 中的验证命令已可执行（156 reactor 模块全绿基线见 `docs/testing/known-good-baselines.md`）
 
+## 构建：nop-ib 增量编译服务（日常入口）
+
+**日常编译/测试一律走 nop-ib 服务；`mvn` 只用于最终打包与全量冷构建。**
+
+```bash
+curl -s http://127.0.0.1:8188/v1/health                       # 健康检查
+~/nop-ib/bin/ib-run check --paths <变更文件> --json           # 日常检查（自动从 cwd 推断 projectDir）
+~/nop-ib/bin/ib-run model refresh                             # pom 变更后刷新构建事实
+```
+
+- 回复 `exit` 字段即构建结果（0 成功 / 1 失败 / 6 partial）；`fallback.reason` 非 null 表示该轮走了 Maven 回退。
+- 服务由 nop-entropy 提供（`~/nop-ib/bin/start.sh`），多项目共享，按 projectDir 排队。
+
 ## Nop Platform 特定规则
 
 - 代码生成由 XML 模型驱动（`<domain>/model/*.orm.xml`、`<domain>/model/*.api.xml`）。XLSX 文件可通过 `nop-cli convert` 从 XML 生成，但不是真相源。不要手动编辑生成的代码；应从模型重新生成。
@@ -211,8 +229,10 @@ Nop Platform 的权威开发文档位于 `../nop-entropy/docs-for-ai/`（兄弟�
 | `<domain>/model/*.orm.xml` · `<domain>/model/*.api.xml` | 持久化模型、数据字典与生成的契约真相 |
 | `docs/plans/` · `docs/audits/` · `docs/skills/` | 执行/收口 · 审计方法 · 可复用提示 |
 | `docs/logs/` · `docs/testing/` · `docs/bugs/` · `docs/lessons/` · `docs/analysis/` · `docs/retrospectives/` | 日期记忆 · 手动/探索测试 · 回归笔记 · 经验 · 权衡 · 差距分析 |
+| `docs/guides/` | AGE 方法论 how-to guides（模板分发，`<artifact>-<activity>` 命名）+ 项目 Local Additions |
+| `.agents/skills/` · `docs/skills/` | 操作技能（nop-git · nop-grillme） · 可复用审计/方法提示 |
 | `docs/errors/` · `docs/ppts/` · `docs/opencode/` · `docs/articles/` · `docs/examples/` | 错误记录 · 演示材料 · opencode 资料 · 文章 · 可复制骨架 |
-| 按需创建：`docs/guides/` · `docs/references/` · `docs/archive/` | how-to 索引 · 稳定查询资料 · 人工决定的归档 |
+| 按需创建：`docs/references/` · `docs/archive/` | 稳定查询资料 · 人工决定的归档 |
 
 不要将强制规则隐藏在 `docs/references/` 中；如果 AI 必须默认应用它，将其放在 `docs/context/` 或 `AGENTS.md` 中。
 

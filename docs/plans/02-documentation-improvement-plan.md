@@ -324,7 +324,7 @@
 ## 资源
 
 - 设计审查讨论文件：`docs/discussions/2026-06-29-1000-grill-with-docs-design-review.md`
-- 计划指南：`docs/plans/00-plan-authoring-and-execution-guide.md`
+- 计划指南：`docs/guides/plan-authoring-and-execution.md`
 - 项目上下文：`docs/context/project-context.md`
 - 设计文档目录：`docs/design/`
 - 架构文档目录：`docs/architecture/`

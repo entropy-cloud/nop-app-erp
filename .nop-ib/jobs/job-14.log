@@ -1,0 +1,4 @@
+[out] {"ok":true}
+[out] {"compiled":true}
+[out] {"tests":{"failed":0,"run":0,"selected":0,"passed":0},"ok":true}
+[out] [nop-ib] log: /Users/abc/app/nop-app-erp/_tmp/nop-ib/check-20261122-100023.log

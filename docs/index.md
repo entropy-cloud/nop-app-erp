@@ -27,7 +27,7 @@
 | 阅读原始 PM、原型、文章或卡片集输入 | `docs/input/README.md` | `docs/input/` 中的活动文件 |
 | 阅读解释性方法论文章 | `docs/articles/README.md` | `docs/articles/` 下的相关文章 |
 | 澄清模糊需求 | `docs/discussions/README.md` | `docs/requirements/00-requirement-synthesis-guide.md` |
-| 编码前路由任务 | `AGENTS.md` | `docs/skills/README.md`、相关 owner doc 和 `docs/plans/00-plan-authoring-and-execution-guide.md` |
+| 编码前路由任务 | `AGENTS.md` | `docs/skills/README.md`、相关 owner doc 和 `docs/guides/plan-authoring-and-execution.md` |
 | 决定现有技能是否适用 | `docs/skills/README.md` | 相关 owner doc 和活动需求 |
 | 了解项目目标和产品形态 | `docs/architecture/project-vision.md` | `docs/design/app-overview.md` |
 | 了解当前应用层基线 | `docs/design/app-overview.md` | `docs/design/feature-inventory.md`、`docs/design/roles-and-permissions.md` |
@@ -42,7 +42,7 @@
 | 决定更改应使用模型、Delta、钩子还是 Java | `../nop-entropy/docs-for-ai/INDEX.md` | `../nop-entropy/docs-for-ai/03-runbooks/` |
 | 从 ORM 模型生成多模块项目 | `module-<domain>/model/app-erp-<domain>.orm.xml` | `../nop-entropy/docs-for-ai/03-runbooks/`（代码生成 runbooks） |
 | 了解 owner-doc 优先级和真相源边界 | `docs/context/source-of-truth-and-precedence.md` | 相关 owner doc |
-| 开始或审查非平凡实现 | `AGENTS.md` | `docs/skills/README.md`、`docs/plans/00-plan-authoring-and-execution-guide.md`、活动计划和 `docs/audits/00-audit-execution-guide.md` |
+| 开始或审查非平凡实现 | `AGENTS.md` | `docs/skills/README.md`、`docs/guides/plan-authoring-and-execution.md`、活动计划和 `docs/audits/00-audit-execution-guide.md` |
 | 审查审计工作流或所需草案审查/结束审计规则 | `docs/audits/00-audit-execution-guide.md` | `docs/skills/` 中的相关提示 |
 | 审计业务状态机的正确性和可达性 | `docs/skills/state-machine-business-review-prompt.md` | 定义状态机的 owner doc |
 | 将设计文档审计为应用层行为基线 | `docs/skills/design-doc-audit-prompt.md` | `docs/design/README.md`、存在时的 `docs/design/domain-design-guidelines.md` |
@@ -88,7 +88,7 @@
 | 如果任务是... | 首先阅读 | 然后决定 |
 | --------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | 模糊需求 | `docs/requirements/00-requirement-synthesis-guide.md` | 是否首先需要需求文件或讨论文件 |
-| 非平凡实现 | `AGENTS.md` | 每个阶段或项目需要哪些技能，然后使用 `docs/plans/00-plan-authoring-and-execution-guide.md` |
+| 非平凡实现 | `AGENTS.md` | 每个阶段或项目需要哪些技能，然后使用 `docs/guides/plan-authoring-and-execution.md` |
 | 文档、计划或结束验证 | `docs/skills/README.md` | 哪个审计提示或审查技能适用 |
 | 重复已知方法或审查模式 | 相关 owner doc | 现有技能是否适用或是否应创建新技能 |
 

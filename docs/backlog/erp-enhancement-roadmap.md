@@ -205,7 +205,7 @@ graph LR
 
 ## Follow-up Backlog
 
-> 2026-08-27 由 erp-enhancement mission 审计轮登记（multi/open 两审计 P2 项分流，`docs/plans/00-plan-authoring-and-execution-guide.md` 反松弛规则：P2 不单独驱动 remediation plan）。每项带来源审计路径保持可追溯；标注「随 plan 顺带」的项在对应 P1 修复计划执行时可顺带收口（须在计划中补记范围变更理由），不构成该计划的完成义务。
+> 2026-08-27 由 erp-enhancement mission 审计轮登记（multi/open 两审计 P2 项分流，`docs/guides/plan-authoring-and-execution.md` 反松弛规则：P2 不单独驱动 remediation plan）。每项带来源审计路径保持可追溯；标注「随 plan 顺带」的项在对应 P1 修复计划执行时可顺带收口（须在计划中补记范围变更理由），不构成该计划的完成义务。
 
 - [x] E3.5 重复上传幂等缺失（无 fileId/内容哈希去重，同文件重传 → 第二 RECEIVED → 第二草稿；去重责任是否后移三单匹配未落文档）（来源：`docs/audits/2026-08-26-2226-multi-audit-erp-enhancement.md` P2-1；建议随 plan 2026-08-27-2006-1 顺带评估） ✅ plan `2026-08-28-0219-1`（方案 A 应用层守卫：fileName+非终态+SHA-256 内容比对，`ERR_AP_DOC_DUPLICATE_UPLOAD` 指向既有文档；并发残留风险 + 最终权威去重 = 三单匹配边界登记 owner doc §P2 加固裁决登记）
 - [x] E3.5 `getInventorySnapshot` 绕过 role-row-filter 未登记入 G1 缺口族（`dashboard-semantic-layer.md` §4 清单补录）（来源：multi-audit P2-2；归 permissions-enforcement G1 族同机制收口） ✅ plan `2026-08-28-0219-3`（G1 行补录 3 个 E3 批同型 API：`getInventorySnapshot`/`checkStockBalanceConsistency`/`getAssetAuditTrail`（逐一核查确认直连绕过）；排除 2 写路径 action 带理由；修复本体仍归 G1 族——本项只补登记）

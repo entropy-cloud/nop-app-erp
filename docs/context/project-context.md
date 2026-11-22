@@ -40,6 +40,7 @@
 
 | 目的 | 命令 |
 |------|------|
+| 日常检查（增量，默认入口） | `~/nop-ib/bin/ib-run check --paths <变更文件> --json`（nop-ib 服务；exit=0 绿；pom 变更后先 `~/nop-ib/bin/ib-run model refresh`） |
 | 构建全项目 | `mvn clean install -DskipTests` |
 | 本地运行应用 | `java -Dfile.encoding=UTF8 -Dquarkus.profile=dev -jar app-erp-all/target/app-erp-all-1.0-SNAPSHOT-runner.jar` |
 | 类型检查/编译检查 | `mvn compile -DskipTests` |

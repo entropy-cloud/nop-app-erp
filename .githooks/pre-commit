@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+#
+# pre-commit (consumer version) — document hygiene + plan/roadmap structural
+# checks, fail-open.
+#
+# Enable (one-time, per clone):  git config core.hooksPath .githooks
+#
+# Runs the standalone guards shipped with the template (zero npm deps; skipped
+# individually when missing):
+#   tools/check-doc-timeliness.mjs  — normative docs must carry no history
+#                                     (docs/guides/doc-organization.md)
+#   tools/check-docs-garbled.mjs    — encoding-garbled text detection
+#   tools/plan-status.mjs --check   — staged plan ledger structure
+#                                     (docs/guides/plan-authoring-and-execution.md)
+#   tools/plan-status.mjs --roadmap — staged roadmap checkbox structure
+#                                     (docs/guides/roadmap-authoring.md)
+#
+# Fail-open discipline: node unavailable → skip everything with a note (the
+# hook must not be more fragile than the project's existing toolchain).
+# This checks working-tree files, not staged-blob identity.
+
+set -uo pipefail
+cd "$(git rev-parse --show-toplevel)" || exit 0
+
+fail=0
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "[pre-commit] (note) node not found — hygiene checks skipped (fail-open)"
+  exit 0
+fi
+
+if [ -f tools/check-doc-timeliness.mjs ]; then
+  if out=$(node tools/check-doc-timeliness.mjs 2>&1); then
+    echo "[pre-commit][timeliness] ok"
+  else
+    echo "[pre-commit][timeliness] DENY:"
+    printf '%s\n' "$out" | head -20
+    fail=1
+  fi
+fi
+
+if [ -f tools/check-docs-garbled.mjs ]; then
+  if out=$(node tools/check-docs-garbled.mjs 2>&1); then
+    printf '%s\n' "$out" | tail -5
+  else
+    echo "[pre-commit][garbled] DENY:"
+    printf '%s\n' "$out" | head -20
+    fail=1
+  fi
+fi
+
+# ---- standalone structural sections ----------------------------------------
+while IFS= read -r -d '' f; do
+  [ -f "$f" ] || continue
+  case "$f" in
+    docs/plans/*.md)
+      if [ "$(head -n 1 "$f")" != "---" ]; then
+        echo "[pre-commit][plans] legacy/non-ledger file skipped: $f"
+        continue
+      fi
+      if [ -f tools/plan-status.mjs ]; then
+        if out=$(node tools/plan-status.mjs --check "$f" 2>&1); then
+          echo "[pre-commit][plan-status] ok: $f"
+        else
+          echo "[pre-commit][plan-status] DENY: $f"
+          printf '%s\n' "$out" | head -15
+          fail=1
+        fi
+      fi
+      ;;
+    docs/roadmaps/*-roadmap.md)
+      # Informational only: unchecked work items are normal roadmap state.
+      if [ -f tools/plan-status.mjs ]; then
+        node tools/plan-status.mjs --roadmap "$f" 2>&1 | head -2
+      fi
+      ;;
+  esac
+done < <(git diff --cached --name-only --diff-filter=ACMR -z)
+
+exit "$fail"

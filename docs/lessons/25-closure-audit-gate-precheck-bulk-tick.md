@@ -17,4 +17,4 @@
 ## 关联
 
 - Lesson 22（closure-assertion-scope-full-gating-table）：结束断言须覆盖全门控表。
-- `docs/plans/00-plan-authoring-and-execution-guide.md` 规则 12/结束时规则 6（结束审计独立性）。
+- `docs/guides/plan-authoring-and-execution.md` 规则 12/结束时规则 6（结束审计独立性）。

@@ -48,7 +48,7 @@
 
 ### 3. 计划状态/复选框一致性检查点
 
-**现状**：`docs/plans/00-plan-authoring-and-execution-guide.md` 已有 Rule 10（"No in-scope checklist item may remain unchecked"）和 Rule 11（"Text consistency verification before closure"），但未覆盖状态/复选框组合不一致导致工作流循环的场景，也没有具体的 `grep` 验证命令。
+**现状**：`docs/guides/plan-authoring-and-execution.md` 已有 Rule 10（"No in-scope checklist item may remain unchecked"）和 Rule 11（"Text consistency verification before closure"），但未覆盖状态/复选框组合不一致导致工作流循环的场景，也没有具体的 `grep` 验证命令。
 
 **建议**：在计划编写指南中强化：
 

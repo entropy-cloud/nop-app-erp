@@ -73,7 +73,7 @@
 > 状态：2026-08-31 全部 `ready`（人工批准 + 4 轮独立子代理审查收敛）
 > **补齐原则**（待 M0.1 裁决确认）：每实体最小可用数据集（行数 ≤ 20，FK 引用闭环，能触发域内核心业务动作的最小正例 + 必要 negative 用例）；不引入生产种子（演示/沙盒语义）；优先触发既有 E2E 套件的「数据可见性」断言。
 > **owner-doc 同步**：每工作项完成后回写 `docs/design/<domain>/` owner doc 增「种子数据」段。
-> **工作项拆分依据**：按 `docs/plans/00-plan-authoring-and-execution-guide.md:55`「一个计划，一个结果表面」+ 本 roadmap 自设阈值（每工作项 ≤ 50 缺 seed 实体）+ 域业务边界，拆为 11 个可独立 plan 工作项。
+> **工作项拆分依据**：按 `docs/guides/plan-authoring-and-execution.md:55`「一个计划，一个结果表面」+ 本 roadmap 自设阈值（每工作项 ≤ 50 缺 seed 实体）+ 域业务边界，拆为 11 个可独立 plan 工作项。
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
@@ -350,7 +350,7 @@ graph LR
 
 本路线图由 mission driver（`./tools/mission-driver.sh run comprehensive-test-data-and-visual-coverage`）自主驱动，逐项闭环：
 
-> **plan guide 声明**：本 roadmap 引用 `docs/plans/00-plan-authoring-and-execution-guide.md`（plan 写作规范，roadmap §规则 1 引用 + L71 拆分依据）；mission JSON `planGuide` 字段同步声明同一路径。roadmap 自身写作遵循 `docs/backlog/00-roadmap-authoring-guide.md`（不同指南，分别管 roadmap 与 plan）。
+> **plan guide 声明**：本 roadmap 引用 `docs/guides/plan-authoring-and-execution.md`（plan 写作规范，roadmap §规则 1 引用 + L71 拆分依据）；mission JSON `planGuide` 字段同步声明同一路径。roadmap 自身写作遵循 `docs/backlog/00-roadmap-authoring-guide.md`（不同指南，分别管 roadmap 与 plan）。
 >
 > **规则 10 实际行为声明**：「mission-driver 不得在 roadmap `todo`/`ready` 状态下 DRAFT_PLANS」属 roadmap 自述约定——实际 driver 代码（`engine.js` / `config.js` / `roadmap-check.mjs`）无 todo/ready 强制 gate（roadmap-check.mjs:14 `VALID_STATUSES` 仅用于状态解析），依赖 plan 阶段人工校验 + mission-driver 流程纪律；mission driver run 时实际可启动 DRAFT_PLANS，仅由 plan 模板 + 流程纪律兜底。
 

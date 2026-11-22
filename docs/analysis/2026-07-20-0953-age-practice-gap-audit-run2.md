@@ -4,7 +4,7 @@
 
 - **Repository**: `/Users/abc/app/nop-app-erp` (nop-app-erp)
 - **Branch**: current working tree (post-commit, no uncommitted changes)
-- **Reading Phase**: All 18+ baseline documents read (AGENTS.md, docs/index.md, docs/process/application-development-workflow.md, docs/context/project-context.md, docs/context/ai-autonomy-policy.md, docs/context/codebase-map.md, docs/context/source-of-truth-and-precedence.md, docs/skills/README.md, docs/backlog/README.md, docs/plans/00-plan-authoring-and-execution-guide.md, docs/audits/00-audit-execution-guide.md, docs/logs/index.md, docs/analysis/README.md, docs/design/README.md, docs/input/README.md, docs/requirements/README.md)
+- **Reading Phase**: All 18+ baseline documents read (AGENTS.md, docs/index.md, docs/process/application-development-workflow.md, docs/context/project-context.md, docs/context/ai-autonomy-policy.md, docs/context/codebase-map.md, docs/context/source-of-truth-and-precedence.md, docs/skills/README.md, docs/backlog/README.md, docs/guides/plan-authoring-and-execution.md, docs/audits/00-audit-execution-guide.md, docs/logs/index.md, docs/analysis/README.md, docs/design/README.md, docs/input/README.md, docs/requirements/README.md)
 - **Sampled Real-Time Areas**:
   - 3 recent completed plans (2026-07-19-2200-1, 2026-07-20-0629-2, 2026-07-19-1122-1) — full lifecycle audit
   - 2 days of logs (2026/07-19.md, 2026/07-20.md) — 80+ log entries
@@ -76,7 +76,7 @@
 
 1. **No urgent migrations needed.** The project is already highly aligned with AGE practices.
 2. If `docs/input/` pipeline needs activation: ensure `00-input-processing-guide.md` exists before the next raw-input cycle.
-3. Consider formalizing the "low-risk fast-track" exception in `docs/plans/00-plan-authoring-and-execution-guide.md` if self-audit deviations become more frequent.
+3. Consider formalizing the "low-risk fast-track" exception in `docs/guides/plan-authoring-and-execution.md` if self-audit deviations become more frequent.
 
 ## Evidence Reviewed
 
@@ -90,7 +90,7 @@
 - docs/skills/README.md (full, incl. 项目定制化层)
 - docs/skills/age-practice-gap-audit-prompt.md (full — the prompt being run)
 - docs/backlog/README.md (67 lines sampled)
-- docs/plans/00-plan-authoring-and-execution-guide.md (full)
+- docs/guides/plan-authoring-and-execution.md (full)
 - docs/plans/2026-07-19-2200-1-f4p2-child-table-editor-p0.md (full — 297 lines)
 - docs/plans/2026-07-20-0629-2-f8-f2-search-filter-and-readonly-views.md (full — 307 lines)
 - docs/plans/2026-07-19-1122-1-view-button-gap-fix.md (full — 330 lines)

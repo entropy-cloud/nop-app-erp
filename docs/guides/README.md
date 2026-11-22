@@ -3,7 +3,7 @@
 指南与提示词保留在原有 canonical 位置；本页面只负责路由。
 
 ## 方法与流程
-- 计划起草与执行：`docs/plans/00-plan-authoring-and-execution-guide.md`
+- 计划起草与执行：`docs/guides/plan-authoring-and-execution.md`
 - 路线图编写：`docs/backlog/00-roadmap-authoring-guide.md`
 - 需求综合：`docs/requirements/00-requirement-synthesis-guide.md`
 - 原始输入处理：`docs/input/00-input-processing-guide.md`

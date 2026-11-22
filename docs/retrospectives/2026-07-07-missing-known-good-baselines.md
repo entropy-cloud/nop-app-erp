@@ -20,7 +20,7 @@
 
 ## 下次应提前在流程中移动的内容
 
-- "更新 known-good-baselines.md" 应作为每个非平凡计划结束审计的强制检查项（已加入 `docs/plans/00-plan-authoring-and-execution-guide.md` 的退出标准模板）
+- "更新 known-good-baselines.md" 应作为每个非平凡计划结束审计的强制检查项（已加入 `docs/guides/plan-authoring-and-execution.md` 的退出标准模板）
 - "提交消息中包含 full-green 标记时同步更新 baselines" 应作为 git-master 技能的内置步骤
 
 ## 应创建哪些新技能、审计提示或工作流规则

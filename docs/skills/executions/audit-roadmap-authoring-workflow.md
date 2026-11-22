@@ -407,7 +407,7 @@ Mission Driver 会按 M0 → MA1-... → MV → MG 顺序推进；每个工作�
 - **skill 关联**：`docs/skills/code-quality-audit-prompt.md`（第一路通用框架）
 - **方法论**：`docs/audits/00-audit-execution-guide.md`（三个默认审计 + 持久审查证据规则）
 - **roadmap 规范**：`docs/backlog/00-roadmap-authoring-guide.md`（里程碑 + 工作项状态表面）
-- **plan 规范**：`docs/plans/00-plan-authoring-and-execution-guide.md`（plan 格式 + 关闭契约）
+- **plan 规范**：`docs/guides/plan-authoring-and-execution.md`（plan 格式 + 关闭契约）
 - **项目定制层**：`docs/skills/README.md §项目定制化层（nop-app-erp）`（保护区域 / 验证命令 / 命名约定 / 已知失败模式）
 - **真实案例**：`docs/audits/check/ai-check-index.md`（533 finding / 19 域 / 三路交叉产物范例）
 - **真实案例**：`docs/backlog/ai-check-roadmap.md`（roadmap + mission + 阶段拆分范例）

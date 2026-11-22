@@ -36,7 +36,7 @@
 - `docs/context/source-of-truth-and-precedence.md`
 - `docs/skills/README.md`（特别是「技能组合使用方式」节，了解技能系统设计意图）
 - `docs/backlog/README.md`（如果存在）
-- `docs/plans/00-plan-authoring-and-execution-guide.md`（如果存在）
+- `docs/guides/plan-authoring-and-execution.md`（如果存在）
 - `docs/audits/00-audit-execution-guide.md`（如果存在）
 - `docs/logs/index.md`
 - `docs/analysis/README.md`

@@ -241,7 +241,7 @@ graph TD
 5. 依赖以表格 Deps 列为权威，依赖图仅为关键边示意；两者冲突时以表格为准，并在同一轮修订中修正图。
 6. 保持状态与基线计数准确：任何工作项状态流转、既有框架能力增减、§当前基线 计数变化，必须在同一轮修订中同步更新本文件相关段落、文首「最后更新」行与 backlog README 行；过时状态/计数比没有更糟。
 7. 独立草案审查通过后 `todo` → `ready`；独立结束审计通过后 `ready` → `done`（结束审计不得由执行者自审）。
-8. 每个 `ready` 工作项执行时**起草自己的 plan**（`docs/plans/00-plan-authoring-and-execution-guide.md`），plan 自身须过独立草案审查后方可实施；M0.1 只能增补 §当前基线 / §框架/平台复用 的事实结论并在 §审查记录 追加一行，**不得增删或重排工作项**。
+8. 每个 `ready` 工作项执行时**起草自己的 plan**（`docs/guides/plan-authoring-and-execution.md`），plan 自身须过独立草案审查后方可实施；M0.1 只能增补 §当前基线 / §框架/平台复用 的事实结论并在 §审查记录 追加一行，**不得增删或重排工作项**。
 9. Update Triggers：(a) 独立草案审查通过 → 该工作项 `todo` → `ready`；(b) 独立结束审计通过 → `ready` → `done`，同步 owner docs 与日志；(c) 结束审计揭示新的框架/平台复用机会 → 更新 §框架/平台复用 与该工作项 Details；(d) 新增或调整 owner doc → 修订受影响工作项的 Details 与 Owner Doc 列；(e) 拆分或合并工作项 → 同步 §Work Item Status、§Milestones、§依赖图 三处。
 10. 本 roadmap 由 mission driver 驱动（`missions/fixture-bundle.json`）；起草 plan 时必须逐行检查 Deps 列，仅 draft 全部 Deps 已 `done` 的工作项。
 11. 不将 roadmap 编写为实施规格（无复选框、无关闭标准）；不重述 owner-doc 内容；不重复现有框架能力。

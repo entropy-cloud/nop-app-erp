@@ -52,7 +52,7 @@
 
 ### 通用规范
 - `docs/audits/00-audit-execution-guide.md`（审计执行通用规范、草案审查/结束审计检查点）
-- `docs/plans/00-plan-authoring-and-execution-guide.md`（plan 格式与关闭契约）
+- `docs/guides/plan-authoring-and-execution.md`（plan 格式与关闭契约）
 - `docs/context/ai-autonomy-policy.md`（保护区域表、自主级别）
 - `docs/audits/compliance-baseline.md` + `docs/audits/nop-compliance-checker.sh`（过程纪律门控工具）
 
