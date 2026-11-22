@@ -2,6 +2,17 @@
 
 ## 目标
 
+
+### Receipt-line pitfalls (delivery hardening)
+
+Each of these has actually caused a rejected delivery in a full-cycle consumer; check them before a plan is accepted:
+
+1. **The receipt id must be the last token of its line, preceded by a space.** Annotations go on a separate continuation line, never after the id, and never between `共识`/`accepted` and the id without a space.
+2. **The review verdict is a single bare token** — one of `pass` / `passes draft review` / `approved` / `accepted` (lowercase, exact). `pass（附注…）` is parsed as a non-token verdict and reads as rejection. Put commentary on the next line.
+3. **A receipt line is only exempt from the payload digest if it is one physical line.** A wrapped continuation line carrying `payload=<hash>` is ordinary prose — it re-introduces the digest's own hash and makes any snapshot/fixed-point check fail. Keep the accepted conclusion (including its `payload=` suffix) on one line.
+4. **Re-run the local plan/status checker after every receipt edit** (where this repo provides one; otherwise re-read the whole plan) before attempting delivery.
+
+
 `docs/plans/` 用于需要明确范围、结束标准和证明的非平凡执行切片。
 
 ## 何时编写计划
@@ -265,3 +276,5 @@ Follow-up:
 
 - <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
 ```
+
+交付前按 `docs/guides/roadmap-goal-execution.md` 执行一次提交与 fixed-point 校验。

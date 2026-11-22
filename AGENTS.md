@@ -20,43 +20,28 @@
 当事实冲突或不确定哪个工件拥有答案时，请阅读 `docs/context/source-of-truth-and-precedence.md`。
 当规划或工作流决策是任务的一部分时，请阅读 `docs/process/application-development-workflow.md`。
 
-## 快速路由
-
-> **路由权威**：`docs/index.md` 是顶级文档路由器（完整导航单一真相源）。本表仅列**代理高频任务**的精简子集——"然后检查"列携带 index.md 未覆盖的 Nop 平台/代理导向指引，故按需保留而非删除；与 index.md 语义重叠的导航以 index.md 为准，本表内容漂移时以 index.md 修正。
-
-| 如果你需要... | 从这里开始 | 然后检查 |
-| --- | --- | --- |
-| 了解产品基线 | `docs/requirements/product-scope.md` | `docs/design/app-overview.md` |
-| 选择下一个工作项 | `docs/backlog/README.md` | 相关需求和 owner docs |
-| 实现一个功能 | 相关需求或待办项 | `docs/design/`、`docs/architecture/`、`<domain>/model/*.orm.xml`，如需触发则参考计划指南 |
-| 更改持久化模型或 API 契约 | `<domain>/model/*.orm.xml`、`<domain>/model/*.api.xml` | `../nop-entropy/docs-for-ai/` 下的 Nop 文档 |
-| 更改页面或视图 | 相关设计 owner doc | 各域 `erp-*-web` 下的 AMIS `.view.xml` 文件 |
-| 审查已计划或已完成的切片 | `docs/plans/` 下的相关计划 | 计划/结束审计提示；普通审计证据保留在计划中 |
-| 运行或验证项目 | `docs/context/project-context.md` | `docs/context/codebase-map.md` |
-| 编写或修改 E2E 用例 | `docs/testing/e2e-runbook.md` 的「E2E 编写规范（强制）」节（**E2E 强制 flux 渲染模式运行**：`E2E_ENGINE` 缺省即 flux，见 runbook「渲染模式」节） | nop-chaos-next `packages/e2e-shared/`、`docs/design/e2e-shared-infrastructure.md`；nop-entropy-e2e 各包作写法范本 |
-| 排查前端渲染/控件问题（跨仓库） | `docs/testing/e2e-runbook.md` 的「渲染模式与 flux 调试三路径」节（**跨仓库原则**：可在 `nop-chaos-flux` 增测试/复现用例；修改其代码须双独立子 agent 批准） | `docs/context/ai-autonomy-policy.md` 保护区域「外部仓库代码」（auto + dual-agent-approval） |
-| 起草、执行或审计 `docs/plans/` 下的计划 | `docs/plans/00-plan-authoring-and-execution-guide.md` | `docs/logs/00-log-writing-guide.md` |
-
-### 计划起草与执行
-
-创建、修订、执行或审计 `docs/plans/` 下的文件时，必须首先阅读 `docs/plans/00-plan-authoring-and-execution-guide.md`。计划是具有明确状态、范围、退出标准和验证检查清单的执行文档。完成时勾选检查清单项。在声称完成之前，重新审计实时仓库。
-
 ## 任务路由
 
-编写代码前，代理必须首先对任务进行分类：
+> **路由权威**：`docs/index.md` 是顶级文档路由器（完整导航单一真相源）。本表仅列**代理高频任务**的精简子集——"首先阅读"列携带 index.md 未覆盖的 Nop 平台/代理导向指引，故按需保留而非删除；与 index.md 语义重叠的导航以 index.md 为准，本表内容漂移时以 index.md 修正。
 
-1. 确定任务类型：
-   - 需求澄清
-   - 应用层设计变更
-   - 架构变更
-   - 仅实现变更
-   - Bug 调查
-   - 验证或审计工作
-2. 在行动前，使用 `docs/index.md` 阅读该任务类型的 owner docs。
-3. 在起草或修订计划前，检查 `docs/skills/README.md` 中的候选可复用技能。
-4. 对于非平凡工作，在实现前记录所选路线和计划的技能使用情况。
+先分类再行动，然后阅读对应指南/owner doc。任务类型：需求澄清 · 应用层设计变更 · 架构变更 · 仅实现变更 · Bug 调查 · 验证或审计工作。
 
-除非从相关需求和 owner docs 中路线已经很明显，否则不要从功能请求直接跳转到代码。
+| 你将要... | 首先阅读 |
+| --- | --- |
+| 了解产品基线 | `docs/requirements/product-scope.md` · `docs/design/app-overview.md` |
+| 选择下一个工作项 | `docs/backlog/README.md` · 相关需求和 owner docs |
+| 实现一个功能 | 相关需求或待办项 · `docs/design/` · `docs/architecture/` · `<domain>/model/*.orm.xml` · 触发时读计划指南 |
+| 更改持久化模型或 API 契约 | `<domain>/model/*.orm.xml` · `<domain>/model/*.api.xml` · `../nop-entropy/docs-for-ai/` 下的 Nop 文档 |
+| 更改页面或视图 | 相关设计 owner doc · 各域 `erp-*-web` 下的 AMIS `.view.xml` 文件 |
+| 审查已计划或已完成的切片 | `docs/plans/` 下的相关计划 · 计划/结束审计提示；普通审计证据保留在计划中 |
+| 运行或验证项目 | `docs/context/project-context.md` · `docs/context/codebase-map.md` |
+| 编写或修改 E2E 用例 | `docs/testing/e2e-runbook.md` 的「E2E 编写规范（强制）」节（**E2E 强制 flux 渲染模式运行**：`E2E_ENGINE` 缺省即 flux，见 runbook「渲染模式」节） · nop-chaos-next `packages/e2e-shared/` · `../nop-chaos-next/docs/design/e2e-shared-infrastructure.md` · nop-entropy-e2e 各包作写法范本 |
+| 排查前端渲染/控件问题（跨仓库） | `docs/testing/e2e-runbook.md` 的「渲染模式与 flux 调试三路径」节（**跨仓库原则**：可在 `nop-chaos-flux` 增测试/复现用例；修改其代码须双独立子 agent 批准） · `docs/context/ai-autonomy-policy.md` 保护区域「外部仓库代码」（auto + dual-agent-approval） |
+| 起草、执行或审计 `docs/plans/` 下的计划 | `docs/plans/00-plan-authoring-and-execution-guide.md` · `docs/logs/00-log-writing-guide.md` |
+| 检查可复用技能 | `docs/skills/README.md` |
+| 收口工作项并将已验收计划一次提交 | `docs/guides/roadmap-goal-execution.md` · `docs/backlog/00-roadmap-authoring-guide.md` |
+
+**计划起草与执行**：创建、修订、执行或审计 `docs/plans/` 下的文件时，必须首先阅读 `docs/plans/00-plan-authoring-and-execution-guide.md`。计划是具有明确状态、范围、退出标准和验证检查清单的执行文档。完成时勾选检查清单项。在声称完成之前，重新审计实时仓库。对于非平凡工作，在实现前记录所选路线和计划的技能使用情况。除非从相关需求和 owner docs 中路线已经很明显，否则不要从功能请求直接跳转到代码。
 
 ## 操作规则
 
@@ -209,38 +194,25 @@ Nop Platform 的权威开发文档位于 `../nop-entropy/docs-for-ai/`（兄弟�
 
 ## 首先阅读
 
-- `docs/context/project-context.md`
-- `docs/context/ai-autonomy-policy.md`
-- `docs/context/codebase-map.md`
-- 定义当前切片的需求、待办事项、路线图、计划或用户请求
-- 从 `docs/index.md` 路由的相关 owner docs
+1. `docs/context/project-context.md`
+2. `docs/context/ai-autonomy-policy.md`
+3. 通过 `docs/index.md` 和上面的任务路由表，找到当前切片的活动需求/owner doc 与对应指南；同时阅读 `docs/context/codebase-map.md`、定义当前切片的需求/待办/路线图/计划/用户请求，以及相关 owner docs。
 
-根据需要额外阅读：
+根据需要额外阅读：`docs/context/source-of-truth-and-precedence.md` — 所有权或冲突问题 · `docs/context/conventions.md` — 项目范围约定 · `docs/process/application-development-workflow.md` — 工作流问题 · `docs/index.md` — 当需要超出活动文件的路由时。
 
-- `docs/context/source-of-truth-and-precedence.md` — 所有权或冲突问题
-- `docs/context/conventions.md` — 项目范围约定
-- `docs/process/application-development-workflow.md` — 工作流问题
-- `docs/index.md` — 当需要超出活动文件的路由时
+## 文档映射 (Documentation Map)
 
-## 文档所有权
-
-- `docs/context/` — 强制 AI 上下文、真相源优先级和项目范围约定
-- `docs/backlog/` — 路线图、实现顺序和候选工作选择
-- `docs/input/` — 原始外部输入，如 PM 笔记、卡片文档、文章摘录、原型参考和复制的源材料
-- `docs/discussions/` — 需求澄清对话和未解决问题记录
-- `docs/requirements/` — 实现就绪需求综合
-- `docs/design/` — 稳定的应用层业务和功能设计
-- `docs/architecture/` — 跨领域技术和模块边界真相
-- `<domain>/model/*.orm.xml` 和 `<domain>/model/*.api.xml` — 持久化模型结构、数据字典和生成的契约真相
-- `docs/lessons/` — 从 Bug、审计和回顾中提取的持久可复用经验
-- `docs/plans/` — 非平凡工作的执行和结束标准
-- `docs/audits/` — 审计方法论和专业审计记录
-- `docs/skills/` — 可复用提示、审查剧本和审计提示模板
-- `docs/logs/` — 带日期的实现记忆
-- `docs/testing/` — 手动和探索性测试记录
-- `docs/bugs/` — 非显而易见的 Bug 历史和回归笔记
-- `docs/analysis/` — 研究、权衡分析和被拒绝的方向
-- `docs/retrospectives/` — 实现后差距分析和流程改进
+| 路径 | 职责 |
+| --- | --- |
+| `docs/index.md` | 顶级文档路由器 |
+| `docs/context/` · `docs/process/` | 强制上下文、真相源优先级、项目约定 · 工作流文档 |
+| `docs/backlog/` · `docs/input/` · `docs/discussions/` | 路线图/候选工作 · 原始输入 · 需求澄清 |
+| `docs/requirements/` · `docs/design/` · `docs/architecture/` | 需求 · 应用层基线 · 技术结构基线 |
+| `<domain>/model/*.orm.xml` · `<domain>/model/*.api.xml` | 持久化模型、数据字典与生成的契约真相 |
+| `docs/plans/` · `docs/audits/` · `docs/skills/` | 执行/收口 · 审计方法 · 可复用提示 |
+| `docs/logs/` · `docs/testing/` · `docs/bugs/` · `docs/lessons/` · `docs/analysis/` · `docs/retrospectives/` | 日期记忆 · 手动/探索测试 · 回归笔记 · 经验 · 权衡 · 差距分析 |
+| `docs/errors/` · `docs/ppts/` · `docs/opencode/` · `docs/articles/` · `docs/examples/` | 错误记录 · 演示材料 · opencode 资料 · 文章 · 可复制骨架 |
+| 按需创建：`docs/guides/` · `docs/references/` · `docs/archive/` | how-to 索引 · 稳定查询资料 · 人工决定的归档 |
 
 不要将强制规则隐藏在 `docs/references/` 中；如果 AI 必须默认应用它，将其放在 `docs/context/` 或 `AGENTS.md` 中。
 

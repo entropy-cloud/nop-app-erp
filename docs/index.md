@@ -64,6 +64,8 @@
 | 阅读实现就绪需求 | `docs/requirements/README.md` | 活动需求文件 |
 | 查看为什么落地结果仍未达到预期 | `docs/retrospectives/README.md` | 相关回顾笔记 |
 
+| 查找 how-to 指南 | `docs/guides/README.md` | 原指南保持在各自 canonical 目录 |
+
 ## 推荐默认路径
 
 对于大多数中小型项目，默认路径是：

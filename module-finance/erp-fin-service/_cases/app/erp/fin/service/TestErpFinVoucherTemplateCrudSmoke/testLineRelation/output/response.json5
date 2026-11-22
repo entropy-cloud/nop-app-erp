@@ -5,11 +5,11 @@
     "hasPrev": null,
     "items": [
       {
-        "id": "@var:NopSysChangeLog@newValue_10",
+        "id": "@var:NopSysChangeLog@newValue_15",
         "templateId": "@var:NopSysChangeLog@newValue",
         "lineNo": 1,
-        "subjectCode": "@var:NopSysChangeLog@newValue_13",
-        "dcDirection": "@var:NopSysChangeLog@newValue_14",
+        "subjectCode": "@var:NopSysChangeLog@newValue_18",
+        "dcDirection": "@var:NopSysChangeLog@newValue_19",
         "dcDirection_label": "DEBIT-借",
         "amountExpression": null,
         "accountKey": null,
@@ -17,10 +17,10 @@
         "memoTemplate": null,
         "delVersion": 0,
         "version": 0,
-        "createdBy": "@var:NopSysChangeLog@newValue_8",
-        "createTime": "@var:ErpFinVoucherTemplateLine@updateTime",
-        "updatedBy": "@var:NopSysChangeLog@newValue_8",
-        "updateTime": "@var:ErpFinVoucherTemplateLine@updateTime"
+        "createdBy": "@var:NopSysChangeLog@newValue_27",
+        "createTime": "@var:NopSysChangeLog@newValue_26",
+        "updatedBy": "@var:NopSysChangeLog@newValue_27",
+        "updateTime": "@var:NopSysChangeLog@newValue_26"
       }
     ],
     "limit": 10,

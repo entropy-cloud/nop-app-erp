@@ -1916,9 +1916,22 @@
         ]
       },
       {
+        "name": "isSupportedDepreciationMethod",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "parseExtFieldDefs",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstAssetModel"
+        ]
+      },
+      {
+        "name": "validateDepreciationFactors",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAsset",
+          "boolean"
         ]
       },
       {
@@ -2659,9 +2672,22 @@
       {
         "allowWrite": true,
         "name": "executor"
+      },
+      {
+        "allowWrite": true,
+        "name": "notificationBiz"
       }
     ],
-    "methods": [],
+    "methods": [
+      {
+        "name": "dispatchFailureAlert",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMaintenance",
+          "app.erp.ast.dao.entity.ErpAstAsset",
+          "java.lang.Exception"
+        ]
+      }
+    ],
     "name": "app.erp.ast.service.posting.MaintenanceCapitalizationPostingDispatcher"
   },
   {
@@ -2688,9 +2714,28 @@
       {
         "allowWrite": true,
         "name": "executor"
+      },
+      {
+        "allowWrite": true,
+        "name": "notificationBiz"
       }
     ],
-    "methods": [],
+    "methods": [
+      {
+        "name": "dispatchFailureAlert",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMaintenance",
+          "app.erp.ast.dao.entity.ErpAstAsset",
+          "java.lang.Exception"
+        ]
+      },
+      {
+        "name": "sumSparePartAmount",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ],
     "name": "app.erp.ast.service.posting.MaintenanceExpensePostingDispatcher"
   },
   {
@@ -3743,9 +3788,22 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "notificationBiz"
       }
     ],
-    "methods": [],
+    "methods": [
+      {
+        "name": "dispatchBatchFailureAlert",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAsset",
+          "java.lang.String",
+          "java.lang.Exception"
+        ]
+      }
+    ],
     "name": "app.erp.ast.service.processor.ErpAstDepreciationScheduleExecuteBatchDepreciationProcessor"
   },
   {
@@ -3801,6 +3859,13 @@
       {
         "name": "countExecuted",
         "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "countExecutedBefore",
+        "parameterTypes": [
+          "java.lang.String",
           "java.lang.String"
         ]
       },

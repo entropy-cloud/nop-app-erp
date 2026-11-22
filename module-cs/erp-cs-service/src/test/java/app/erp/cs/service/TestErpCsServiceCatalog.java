@@ -20,6 +20,7 @@ import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -41,11 +42,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *   <li>履行链引擎实化断言（RC-R1.71）：CREATE_TICKET DONE + INVOKE_WORKFLOW SKIPPED（L1 未枚举边界）+
  *       ASSIGN_TEAM 无池 FAILED + 失败暂停后续 PENDING（步骤执行行 + TicketAction 审计双侧断言）。</li>
  * </ul>
+ *
+ * <p>冻结时钟（CsFrozenClockExtension 参考日 2026-07-17）：TK 编号/月序列行名 {@code cs_ticket_code_seq_{yyyyMM}}
+ * 内嵌真实时钟月份，录制表快照会随月份漂移翻红（2026-10 跨月实证）——镜像 TestErpCsTicketCreateEnrichment
+ * 的 nopSysCalendar→CoreMetrics 冻结链路对齐参考日。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCsServiceCatalog extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static CsFrozenClockExtension frozenClock = new CsFrozenClockExtension();
 
     static final String PARTNER_ID = "9301";
     static final String TICKET_TYPE_ID = "6301";
@@ -429,7 +437,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
             throw new AssertionError("目录工单应计算 SLA deadline（修复前恒 null）");
         }
         assertTrue(ticket.getDeadlineDateTime().toLocalDateTime()
-                .isAfter(java.time.LocalDateTime.now().minusMinutes(1)), "deadline 在当前时间之后");
+                .isAfter(io.nop.api.core.time.CoreMetrics.currentDateTime().minusMinutes(1)), "deadline 在当前时间之后");
     }
 
     @Test

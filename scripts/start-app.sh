@@ -11,6 +11,9 @@
 #     演示默认不开启，按需另行追加 -D。
 #   - 镜像 _tmp-server.sh（SKIP_WEBSERVER=1 测试专用）的 stop/start/wait 范式，
 #     但去除 quarkus.profile=test 与测试专用 JVM flags。
+#   - 必须用 dev profile（对齐 docs/context/project-context.md 本地运行命令）：
+#     prod profile 下 WI-01 后 auth fail-closed（skip-check-for-admin 默认 false +
+#     菜单角色镜像），admin 侧栏会被裁剪到仅业务角色路由，核心页面 403/404。
 #
 # Usage:
 #   ./scripts/start-app.sh start    # kill existing, reset H2 db (fresh seed), boot on 8011, wait ready
@@ -48,6 +51,7 @@ start_server() {
   rm -f db/erp.mv.db db/erp.trace.db
   echo "booting server on ${PORT}"
   nohup java -Dfile.encoding=UTF8 \
+    -Dquarkus.profile=dev \
     -Dnop.auth.service-public=true \
     -Dnop.auth.login.allow-create-default-user=true \
     -Dnop.web.render-mode=flux \

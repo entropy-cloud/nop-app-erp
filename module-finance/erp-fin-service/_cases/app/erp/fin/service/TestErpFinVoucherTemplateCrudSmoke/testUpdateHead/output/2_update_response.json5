@@ -1,10 +1,10 @@
 {
   "data": {
     "id": "@var:NopSysChangeLog@newValue",
-    "code": "@var:NopSysChangeLog@newValue_1",
-    "name": "@var:NopSysChangeLog@newValue_10",
+    "code": "@var:ErpFinVoucherTemplate@code",
+    "name": "@var:NopSysChangeLog@newValue_15",
     "acctSchemaId": null,
-    "businessType": "@var:NopSysChangeLog@newValue_3",
+    "businessType": "@var:NopSysChangeLog@newValue_4",
     "businessType_label": "PURCHASE_INPUT-采购入库",
     "voucherType": null,
     "voucherType_label": null,
@@ -14,10 +14,10 @@
     "validTo": null,
     "delVersion": 0,
     "version": 1,
-    "createdBy": "@var:NopSysChangeLog@newValue_8",
+    "createdBy": "@var:NopSysChangeLog@newValue_11",
     "createTime": "@var:NopSysChangeLog@oldValue_1",
-    "updatedBy": "@var:NopSysChangeLog@newValue_8",
-    "updateTime": "@var:NopSysChangeLog@newValue_11"
+    "updatedBy": "@var:NopSysChangeLog@newValue_11",
+    "updateTime": "@var:NopSysChangeLog@newValue_16"
   },
   "status": 0
 }

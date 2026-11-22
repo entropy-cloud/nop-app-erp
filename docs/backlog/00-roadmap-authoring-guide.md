@@ -114,3 +114,7 @@ Roadmap 有两层：
 - AI 重新仲裁优先级或发明工作项，而不是按人工设定的顺序执行
 - 在 `project-context.md` 中跟踪"活跃工作/当前阻塞/AI 自主权"作为字段——这些变化频繁且容易过时；改为从活跃工作项读取进行中的工作
 - 用 "phase / 阶段" 指代 roadmap 单元
+
+
+Signs a work item is cut too fine: several same-shaped mechanical siblings (e.g. N identical batch reviews over different inputs) minted as N separate work items — each carries a full plan/review/audit/delivery cycle for near-zero extra assurance. When the slices share one result surface and one method, mint ONE work item with the batches as internal phases; plan overhead (independent review + audit + delivery commit) is the per-item cost, so price the granularity accordingly.
+
